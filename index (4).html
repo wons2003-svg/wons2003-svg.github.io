@@ -137,7 +137,7 @@ kbd{background:#f1f5f9;border:1px solid var(--line);border-radius:4px;padding:1p
     <button data-v="home" class="on">홈</button>
     <button data-v="analyze">근태 분석기</button>
     <button data-v="audit">근태 검수기</button>
-    <span style="margin-left:auto;align-self:center;font-size:11.5px;opacity:.7">v1.7 · 2026-09</span>
+    <span style="margin-left:auto;align-self:center;font-size:11.5px;opacity:.7">v2.4 · 2026-09</span>
   </nav>
 </div></header>
 
@@ -288,6 +288,29 @@ kbd{background:#f1f5f9;border:1px solid var(--line);border-radius:4px;padding:1p
 </div>
 
 <!-- 5 -->
+<!-- 5-2 급여 계산 -->
+<div class="card off" id="c46">
+  <h2><span class="n">6</span>급여 계산 (선택 · 참고용)</h2>
+  <p class="hint">시급을 넣으면 기본급과 연장수당을 함께 뽑아줍니다. 비워두면 이 단계는 건너뜁니다.</p>
+  <div class="row" style="margin-bottom:12px">
+    <div class="f"><label>1일 휴게시간(시간)</label><input type="number" id="wBreak" value="1" step="0.5" style="width:140px"></div>
+    <div class="f"><label>연장 배율</label><input type="number" id="wOtRate" value="1.5" step="0.1" style="width:110px"></div>
+    <div class="f"><label>기본 시급 (표에 없는 인원용)</label><input type="number" id="wDefault" placeholder="비우면 계산 제외" style="width:190px"></div>
+  </div>
+  <div class="split">
+    <b style="font-size:13px">사번별 시급표</b>
+    <span class="muted">엑셀에서 <b>사번·시급 두 열</b>을 선택해 복사한 뒤 아래에 붙여넣으세요 (Ctrl+V)</span>
+  </div>
+  <textarea id="wTable" placeholder="2019101&#9;10400&#10;2020102&#9;10800&#10;2021103&#9;11200" style="width:100%;height:120px;font-family:ui-monospace,monospace;font-size:12px;border:1px solid var(--line);border-radius:8px;padding:9px"></textarea>
+  <div id="wInfo" class="muted" style="margin-top:8px"></div>
+  <div class="note w" style="margin-top:10px">
+    <b>⚠️ 이 금액은 참고용입니다. 실제 지급액은 급여 시스템과 반드시 대조하세요.</b><br>
+    계산에 <b>포함된 것</b> — 기본급(실근로 기본시간 − 휴게), 연장수당(연장시간 × 배율).<br>
+    계산에 <b>포함되지 않은 것</b> — 주휴수당, 연차·유급휴가 수당, 심야 가산, 휴일근로 가산, 각종 수당·공제.
+    해당 시간은 다른 탭에 그대로 있으니 필요하면 직접 반영하세요.
+  </div>
+</div>
+
 <div class="card off" id="c5">
   <h2><span class="n">6</span>분석 결과</h2>
   <p class="hint">행을 클릭하면 그 사람의 일자별 근태가 달력으로 열립니다.</p>
@@ -302,6 +325,7 @@ kbd{background:#f1f5f9;border:1px solid var(--line);border-radius:4px;padding:1p
   <div class="tabs">
     <button class="on" data-t="pay">급여기준 집계</button>
     <button data-t="sum">사번별 요약</button>
+    <button data-t="wage">급여 계산</button>
     <button data-t="piv">코드별 일수</button>
     <button data-t="wk">주차별 근로시간</button>
     <button data-t="raw">정규화 원본</button>
@@ -310,7 +334,7 @@ kbd{background:#f1f5f9;border:1px solid var(--line);border-radius:4px;padding:1p
 </div>
 
 <footer>
-  <b>근태 도구 v1.7 (2026-09 빌드 · 정일 2일/월 법일 개수 기준)</b> · 문의는 이 파일을 배포한 담당자에게<br>
+  <b>근태 도구 v2.4 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
   ⓘ 이 도구는 업로드한 파일을 브라우저 메모리에서만 계산합니다. 네트워크 전송·서버 저장이 없습니다.<br>
   ⓘ 총근로시간 = 기본(소정) + 연장 + 휴일근로. <b>야간·심야는 가산수당 산정용으로 따로 표시</b>하며 총합에 중복 더하지 않습니다 — 심야 연장은 이미 연장시간에 포함돼 있는 경우가 많아 더하면 이중 계산이 됩니다.<br>
   ⓘ 급여일수 = 평일(월~금, 법정공휴일 제외) + 법정공휴일. 인정 일요일수 = 데이터상 일요일 수 − 결근이 있는 주(월~일)의 일요일 수.<br>
@@ -349,6 +373,7 @@ kbd{background:#f1f5f9;border:1px solid var(--line);border-radius:4px;padding:1p
   <h2><span class="n">3</span>열 연결</h2>
   <p class="hint">이름이 비슷한 열을 자동으로 찾아 넣었습니다. 다르면 바꿔주세요. <b>사번·근태·급여요일</b>은 필수입니다.</p>
   <div class="row" id="mapA"></div>
+  <div id="mapWarn"></div>
 </div>
 
 <!-- V4 -->
@@ -366,6 +391,12 @@ kbd{background:#f1f5f9;border:1px solid var(--line);border-radius:4px;padding:1p
     <div class="f"><label>소정 근무시간 기준</label><input type="text" id="vStd" value="08:00" style="width:100px"></div>
     <div class="f"><label>휴게시간 차감(분)</label><input type="number" id="vBreak" value="0" step="5" style="width:110px"></div>
     <div class="f"><label>출근센싱 허용 오차(분)</label><input type="number" id="vTol" value="29" style="width:130px"></div>
+    <div class="f"><label>연장 절사 단위(분)</label><input type="number" id="vOtUnit" value="10" style="width:130px"></div>
+    <div class="f"><label>절사 방식</label><select id="vOtMode">
+      <option value="ceil" selected>올림 — 1분만 넘어도 한 단위 인정</option>
+      <option value="floor">내림 — 단위 미만은 버림</option>
+      <option value="round">반올림</option>
+    </select></div>
   </div>
   <div class="row" style="margin-bottom:14px">
     <div class="f"><label>휴무(정일) 근태값 (쉼표 구분)</label><input type="text" id="vOff" value="정일" style="min-width:230px"></div>
@@ -399,8 +430,38 @@ kbd{background:#f1f5f9;border:1px solid var(--line);border-radius:4px;padding:1p
 </div>
 
 <!-- V5 -->
+<!-- V4-2 -->
+<div class="card off" id="v45">
+  <h2><span class="n">5</span>대상 인원 · 시급 (선택)</h2>
+  <p class="hint">넣지 않아도 검수는 됩니다. 넣으면 <b>명단 대조</b>와 <b>이상 건별 급여 영향액</b>이 추가됩니다.</p>
+
+  <div class="split">
+    <b style="font-size:13px">① 대상 인원 명단</b>
+    <button class="sm" id="rosBtn">명단 파일 선택 (.xlsx/.csv)</button>
+    <input type="file" id="rosFile" accept=".xlsx,.xlsm,.xls,.csv" hidden>
+    <button class="sm" id="rosClear">지우기</button>
+    <span class="muted">사번 열 필수 · 성명 열이 있으면 함께 표시합니다</span>
+  </div>
+  <div id="rosInfo" class="muted" style="margin-bottom:16px">명단을 넣으면 <b>근태가 빠진 인원</b>과 <b>명단에 없는 사번</b>을 찾아줍니다.</div>
+
+  <div class="split">
+    <b style="font-size:13px">② 사번별 시급</b>
+    <button class="sm" id="wgBtn">시급 파일 선택 (.xlsx/.csv)</button>
+    <input type="file" id="wgFile" accept=".xlsx,.xlsm,.xls,.csv" hidden>
+    <div class="f" style="margin-left:auto"><label style="font-size:11px">연장 배율</label>
+      <input type="number" id="aOtRate" value="1.5" step="0.1" style="width:90px;padding:4px 8px"></div>
+  </div>
+  <textarea id="wgTable" placeholder="엑셀에서 사번·시급 두 열을 복사해 붙여넣어도 됩니다&#10;521900&#9;10400&#10;521901&#9;10800" style="width:100%;height:96px;font-family:ui-monospace,monospace;font-size:12px;border:1px solid var(--line);border-radius:8px;padding:9px"></textarea>
+  <div id="wgInfo" class="muted" style="margin-top:8px"></div>
+
+  <div class="note w" style="margin-top:12px">
+    <b>급여 영향액은 참고용입니다.</b> 연장 관련 이상(R9·R10·R12)은 <b>시급 × 배율 × 시간</b>, 근무시간 이상(R6)은 <b>시급 × 시간</b>으로 환산합니다.
+    금액이 <b>+</b>면 지급이 모자란 쪽, <b>−</b>면 과다 지급 쪽입니다. 실제 정산은 급여 시스템에서 확인하세요.
+  </div>
+</div>
+
 <div class="card off" id="v5">
-  <h2><span class="n">5</span>검수 결과</h2>
+  <h2><span class="n">6</span>검수 결과</h2>
   <p class="hint">규칙 카드를 클릭하면 그 규칙의 이상 건만 봅니다. 행을 클릭하면 원본 값이 열립니다.</p>
   <div class="cards" id="kpiA"></div>
   <div class="split">
@@ -600,6 +661,8 @@ $('#holReload').onclick = () => { $('#holList').value = holDefaults(+$('#yy').va
 $('#holList').oninput = () => { S.holTouched=true; recalc(); };
 $('#sunDow').onchange = $('#holFromCode').onchange = recalc;
 $('#pdWd').oninput = $('#pdHd').oninput = recalc;
+['wTable','wBreak','wOtRate','wDefault'].forEach(id=>{ const el=$('#'+id);
+  if(el) el.oninput=()=>{ calcWage(); if(S.tab==='wage') renderTable(); }; });
 function syncHolidays(){ if(!S.holTouched) $('#holList').value = holDefaults(+$('#yy').value||new Date().getFullYear()); }
 $('#hrow').oninput = () => applyHeader(true);
 $('#mode').onchange = () => { renderMap(); recalc(); };
@@ -917,7 +980,9 @@ function recalc(){
   showUnits();
   S.sum = aggregate();
   renderDict();
-  $('#c4').classList.remove('off'); $('#c45').classList.remove('off'); $('#c5').classList.remove('off');
+  $('#c4').classList.remove('off'); $('#c45').classList.remove('off');
+  $('#c46').classList.remove('off'); $('#c5').classList.remove('off');
+  calcWage();
   renderUnknown(); renderKpi(); renderDeptFilter(); renderTable();
 }
 function renderUnknown(){
@@ -956,6 +1021,47 @@ function filtered(){
   return S.sum.filter(e=>(!d||e.dept===d) &&
     (!q || (e.empId+' '+e.name+' '+e.dept).toLowerCase().includes(q)));
 }
+/* 사번별 시급표 파싱: "사번<탭|쉼표|공백>시급" */
+function wageMap(){
+  const m=new Map();
+  ($('#wTable')?.value||'').split(/\r?\n/).forEach(line=>{
+    const t=line.trim(); if(!t) return;
+    const p=t.split(/[\t,;]+|\s{1,}/).filter(Boolean);
+    if(p.length<2) return;
+    const id=norm(p[0]), w=num(p[p.length-1]);
+    if(id && isFinite(w) && w>0) m.set(id, w);
+  });
+  return m;
+}
+/* 인원별 급여 계산 (참고용) */
+function calcWage(){
+  const wm=wageMap();
+  const br=+($('#wBreak')?.value)||0, rate=+($('#wOtRate')?.value)||1.5;
+  const dft=$('#wDefault')?.value.trim()===''? null : (+$('#wDefault').value||0);
+  let matched=0;
+  const list=S.sum.map(e=>{
+    const wage = wm.has(e.empId) ? wm.get(e.empId) : dft;
+    if(wm.has(e.empId)) matched++;
+    const cut  = r2(e.근무일수*br);                 // 휴게 차감 시간
+    const paidH= r2(Math.max(0, e.기본시간 - cut)); // 유급 기본시간
+    const otH  = e.연장시간;
+    const base = wage==null? null : Math.round(paidH*wage);
+    const otPay= wage==null? null : Math.round(otH*wage*rate);
+    return {...e, 시급:wage, 휴게차감:cut, 유급시간:paidH, 기본급:base,
+            연장수당:otPay, 지급합계: (base==null?null:base+otPay)};
+  });
+  S.wage=list; S.wageMatched=matched; S.wageTotal=wm.size;
+  if($('#wInfo')) $('#wInfo').innerHTML = wm.size===0
+    ? '<span style="color:#8b93a1">시급표가 비어 있습니다. 위에 붙여넣으면 급여 계산 탭이 채워집니다.</span>'
+    : `시급표 <b>${wm.size}명</b> 인식 · 이번 파일 인원 ${S.sum.length}명 중 <b>${matched}명</b> 매칭` +
+      (matched<S.sum.length ? ` · <span style="color:#b45309">${S.sum.length-matched}명은 시급 없음${dft!=null?` (기본 시급 ${dft.toLocaleString()}원 적용)`:' (금액 계산 제외)'}</span>` : '');
+  return list;
+}
+const WAGECOLS=[['사번','empId'],['성명','name'],['부서','dept'],['근무일수','근무일수',1],
+  ['기본시간','기본시간',1],['휴게차감','휴게차감',1],['유급시간','유급시간',1],
+  ['시급','시급',1,'won'],['기본급','기본급',1,'won'],
+  ['연장(분)','연장분',1],['연장시간','연장시간',1],['연장수당','연장수당',1,'won'],
+  ['지급합계','지급합계',1,'won']];
 const PAYCOLS=[['사번','empId'],['성명','name'],['부서','dept'],
   ['출근일수','출근일수',1],['평일수','평일수',1],['법정공휴일수','공휴일수',1],['급여일수','급여일수',1],
   ['일요일수','일요일수',1],['결근 주','결근주',1],['차감 일요일','차감일요일',1],['인정 일요일수','인정일요일',1],
@@ -975,6 +1081,21 @@ function renderTable(){
       `</tbody><tfoot><tr style="background:#f7f9fc;font-weight:700;position:sticky;bottom:0">
         <td>합계</td><td>${rows.length}명</td><td></td>`+
       PAYCOLS.slice(3).map(c=>`<td class="${c[2]?'num':''}">${c[1]==='연장분'?(tot[c[1]]||0).toLocaleString():(c[2]?tot[c[1]]:'')}</td>`).join('')+
+      `</tr></tfoot>`;
+    $$('#out tbody tr').forEach(tr=>tr.onclick=()=>detail(tr.dataset.id));
+  }
+  else if(S.tab==='wage'){
+    const W=calcWage();
+    const ids=new Set(rows.map(r=>r.empId));
+    const rs=W.filter(e=>ids.has(e.empId));
+    const fmt=(v,w)=> v==null? '<span class="muted">-</span>' : (w==='won'? v.toLocaleString()+'원' : v);
+    const tot={}; WAGECOLS.forEach(c=>{ if(c[2]) tot[c[1]]=rs.reduce((s,e)=>s+(e[c[1]]||0),0); });
+    $('#out').innerHTML=`<thead><tr>${WAGECOLS.map(c=>`<th class="${c[2]?'num':''}">${c[0]}</th>`).join('')}</tr></thead><tbody>`+
+      rs.map(e=>`<tr data-id="${e.empId}" style="cursor:pointer">${WAGECOLS.map(c=>
+        `<td class="${c[2]?'num':''}">${fmt(e[c[1]],c[3])}</td>`).join('')}</tr>`).join('')+
+      `</tbody><tfoot><tr style="background:#f7f9fc;font-weight:700;position:sticky;bottom:0">
+        <td>합계</td><td>${rs.length}명</td><td></td>`+
+      WAGECOLS.slice(3).map(c=>`<td class="num">${c[3]==='won'? (tot[c[1]]||0).toLocaleString()+'원' : r2(tot[c[1]]||0)}</td>`).join('')+
       `</tr></tfoot>`;
     $$('#out tbody tr').forEach(tr=>tr.onclick=()=>detail(tr.dataset.id));
   }
@@ -1053,6 +1174,14 @@ $('#exp').onclick=()=>{
     '심야시간(분)':e.심야분,'심야시간(시:분)':e.심야HM,
     '휴일근로(분)':e.휴일분,'연장시간(h)':e.연장시간}));
   XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(pay),'급여기준집계');
+  const W=(S.wage||[]).filter(e=>filtered().some(f=>f.empId===e.empId));
+  if(W.length && W.some(e=>e.시급!=null)){
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(W.map(e=>({
+      사번:e.empId,성명:e.name,부서:e.dept,근무일수:e.근무일수,'기본시간(h)':e.기본시간,
+      '휴게차감(h)':e.휴게차감,'유급시간(h)':e.유급시간,시급:e.시급,기본급:e.기본급,
+      '연장(분)':e.연장분,'연장시간(h)':e.연장시간,연장수당:e.연장수당,지급합계:e.지급합계,
+      비고:'참고용 — 주휴·유급휴가·심야·휴일근로 수당 미포함'}))),'급여계산(참고)');
+  }
   const codes=[...new Set(S.records.map(r=>r.code).filter(Boolean))].sort();
   XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(filtered().map(e=>
     Object.assign({사번:e.empId,성명:e.name,부서:e.dept},Object.fromEntries(codes.map(c=>[c,e.codes[c]||0]))))),'코드별일수');
@@ -1085,12 +1214,17 @@ const VTXT={
   analyze:['근태 분석기','사번·성명 기준으로 출근일수 · 급여일수 · 개별 연장시간(분)을 집계합니다.'],
   audit:['근태 검수기','사번·성명 기준으로 근태 입력값의 정합성을 규칙으로 검사합니다.']
 };
-function go(v){
+function go(v,syncHash){
+  if(!VIEWS[v]) v='home';
   Object.entries(VIEWS).forEach(([k,id])=>{ const el=$('#'+id); if(el) el.hidden = (k!==v); });
   $$('#nav button').forEach(b=>b.classList.toggle('on', b.dataset.v===v));
   $('#hTitle').textContent=VTXT[v][0]; $('#hSub').textContent=VTXT[v][1];
+  if(syncHash!==false){ try{ history.replaceState(null,'', v==='home'? location.pathname+location.search : '#'+v); }catch(e){} }
   window.scrollTo({top:0,behavior:'instant'});
 }
+const hashView=()=>{ const h=(location.hash||'').replace('#','').toLowerCase();
+  return (h==='audit'||h==='analyze'||h==='home')? h : 'home'; };
+window.addEventListener('hashchange',()=>go(hashView(),false));
 $$('#nav button').forEach(b=>b.onclick=()=>go(b.dataset.v));
 $$('.pcard').forEach(c=>c.onclick=()=>go(c.dataset.go));
 
@@ -1136,6 +1270,32 @@ function pDate(v,Y){
 }
 const dKey=d=>d? `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}` : '';
 /* 검수기 공휴일 목록 */
+/* 엑셀/CSV 한 장을 읽어 헤더명으로 열을 찾아 객체 배열로 */
+function readTable(file, pats, done){
+  const fr=new FileReader();
+  fr.onload=e=>{ try{
+    const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array',cellDates:true});
+    const aoa=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,defval:null,blankrows:false,raw:true});
+    let hi=0,bc=-1;
+    aoa.slice(0,10).forEach((r,i)=>{ const c=r.filter(x=>norm(x)!=='').length; if(c>bc){bc=c;hi=i;} });
+    const hdr=(aoa[hi]||[]).map(norm);
+    const col={}; Object.keys(pats).forEach(k=>{ col[k]=hdr.findIndex(h=>pats[k].test(h)); });
+    const out=[];
+    aoa.slice(hi+1).forEach(r=>{ const o={}; let any=false;
+      Object.keys(col).forEach(k=>{ o[k]= col[k]>=0? r[col[k]] : null; if(norm(o[k])!=='') any=true; });
+      if(any) out.push(o); });
+    done(out, hdr, col);
+  }catch(err){ alert('파일을 읽지 못했습니다: '+err.message); } };
+  fr.readAsArrayBuffer(file);
+}
+/* 근무종료 이후 초과분(분) → 회사 기준으로 인정되는 개별연장 분 */
+function otRound(mins){
+  if(!(mins>0)) return 0;
+  const u=Math.max(1,+($('#vOtUnit')?.value)||10), md=$('#vOtMode')?.value||'ceil';
+  if(md==='floor') return Math.floor(mins/u)*u;
+  if(md==='round') return Math.round(mins/u)*u;
+  return Math.ceil(mins/u)*u;
+}
 function holSetA(){
   const Y=+$('#vYear')?.value||new Date().getFullYear(), out=new Set();
   ($('#vHolList')?.value||'').split(/[\n,;]+/).forEach(line=>{
@@ -1156,16 +1316,18 @@ const RULES=[
  {id:'R3',n:'법일 → 급여요일이 법일이 아님',d:'근태가 법일이면 급여요일도 법일이어야 합니다.'},
  {id:'R4',n:'법일인데 근무/센싱 시간이 입력됨',d:'근무시작·근무종료·출근(센싱)·퇴근(센싱)이 모두 비어 있어야 합니다.'},
  {id:'R5',n:'조퇴·미입력 → 급여요일이 평일이 아님',d:'근태가 조퇴이거나 비어 있으면 급여요일은 평일이어야 합니다.'},
- {id:'R6',n:'근무시간이 기준(08:00)과 다름',d:'근무종료 − 근무시작 − 휴게시간 이 기준 시간과 다른 행을 찾습니다.'},
- {id:'R7',n:'개별연장 시작 ≠ 근무종료',d:'개별연장 시작시간은 근무종료시간과 무조건 일치해야 합니다 (차이 = 0).'},
- {id:'R8',n:'개별연장 종료 ≠ 퇴근(센싱)',d:'개별연장 종료시간은 퇴근(센싱)시간과 무조건 일치해야 합니다 (차이 = 0).'},
- {id:'R9',n:'연장 없음(≥0)인데 개별연장(분)이 0이 아님',d:'근무종료 − 퇴근(센싱) 이 0보다 크거나 같으면 개별연장시간(분)은 무조건 0이어야 합니다.'},
- {id:'R10',n:'연장 발생(<0)인데 개별연장(분)이 비어 있음',d:'근무종료 − 퇴근(센싱) 이 0보다 작으면 개별연장시간(분)에 무조건 값이 있어야 합니다.'},
- {id:'R11',n:'근무시작 ↔ 출근(센싱) 차이가 허용치 초과',d:'두 시각 차이가 허용 오차(기본 29분)를 넘는 행 = 30분 이상 차이나는 행을 찾습니다.'},
- {id:'R12',n:'[추가] 개별연장(분)이 종료−시작과 다름',d:'개별연장 종료 − 개별연장 시작 이 개별연장시간(분)과 맞는지 확인합니다. 기본 꺼짐.',off:1},
- {id:'R13',n:'한 주(월~일) 정일 일수가 기준과 다름',d:'인원별로 월요일~일요일 한 주에 정일이 지정 일수(기본 2일)만큼 있어야 합니다. <b>법일이 있는 주도 정일은 그대로 2일</b>이어야 합니다(정일 2 + 법일 1). 중도 입사·퇴사로 생긴 부분 주도 검사하며, 파일 앞뒤가 잘려서 생긴 주만 제외합니다.'},
- {id:'R14',n:'이 달 법일 일수가 기준과 다름',d:'법일은 날짜가 정해져 있지 않고 그 달 안에서 자유롭게 잡을 수 있으므로, <b>인원별 법일 개수</b>가 그 달 기준과 맞는지 봅니다. 기준 = 공휴일 목록 중 평일에 해당하는 날 수 (토·일에 온 공휴일은 법일이 생기지 않고, 대체공휴일이 평일이면 그 몫으로 1개). 위 칸에 숫자를 넣어 직접 지정할 수도 있습니다.'},
- {id:'R16',n:'퇴근(센싱)이 비어 있는데 개별연장(분)에 값이 있음',d:'퇴근(센싱)시간이 공란이면 근무종료 − 퇴근(센싱) 을 계산할 수 없어 R9·R10이 건너뜁니다. 그 틈에 개별연장시간(분)만 값이 들어간 행을 따로 찾습니다.'},
+ {id:'R6',dep:['ws','we'],n:'근무시간이 기준(08:00)과 다름',d:'근무종료 − 근무시작 − 휴게시간 이 기준 시간과 달라야 합니다. <b>근무종료는 「근무시작 + 소정시간」</b>이어야 하며, 실제 퇴근시각을 넣으면 안 됩니다 — 예) 08:00 시작이면 근무종료는 16:00, 18:00까지 있었다면 16:00 이후는 개별연장으로 빠집니다.'},
+ {id:'R7',dep:['es','we'],n:'개별연장 시작 ≠ 근무종료',d:'개별연장 시작시간은 근무종료시간과 무조건 일치해야 합니다 (차이 = 0).'},
+ {id:'R8',dep:['ee','tout'],n:'개별연장 종료 ≠ 퇴근(센싱)',d:'개별연장 종료시간은 퇴근(센싱)시간과 무조건 일치해야 합니다 (차이 = 0).'},
+ {id:'R9',dep:['we','tout','em'],n:'연장 없음(≥0)인데 개별연장(분)이 0이 아님',d:'근무종료 − 퇴근(센싱) 이 0보다 크거나 같으면 개별연장시간(분)은 0이거나 비어 있어야 합니다.'},
+ {id:'R10',dep:['we','tout','em'],n:'연장 발생(<0)인데 개별연장(분)이 비어 있음',d:'근무종료 − 퇴근(센싱) 이 0보다 작으면 개별연장시간(분)에 값이 있어야 하며, <b>절사 단위(기본 10분) 이상</b>이어야 합니다. 0·빈칸·10분 미만이면 잡습니다. 정확한 액수는 R12가 봅니다.'},
+ {id:'R11',dep:['ws','tin'],n:'근무시작 ↔ 출근(센싱) 차이가 허용치 초과',d:'두 시각 차이가 허용 오차(기본 29분)를 넘는 행 = 30분 이상 차이나는 행을 찾습니다.'},
+ {id:'R12',dep:['ws','tout','em'],n:'개별연장(분) 금액이 절사 기준과 다름',d:'기준은 <b>근무시작 + 소정근무시간(8시간)</b> 입니다. 퇴근(센싱)이 그 시각을 넘으면 넘은 만큼이 연장이고, 절사 단위(기본 10분, 올림)로 인정합니다. 예) 08:00 시작 → 기준 16:00, 퇴근 18:04 → 초과 124분 → <b>130분</b>. 근무종료가 잘못 입력돼 있어도 이 기준은 흔들리지 않습니다.'},
+ {id:'R13',dep:['date'],n:'한 주(월~일) 정일 일수가 기준과 다름',d:'인원별로 월요일~일요일 한 주에 정일이 지정 일수(기본 2일)만큼 있어야 합니다. <b>법일이 있는 주도 정일은 그대로 2일</b>이어야 합니다(정일 2 + 법일 1). 중도 입사·퇴사로 생긴 부분 주도 검사하며, 파일 앞뒤가 잘려서 생긴 주만 제외합니다.'},
+ {id:'R14',dep:['date'],n:'이 달 법일 일수가 기준과 다름',d:'법일은 날짜가 정해져 있지 않고 그 달 안에서 자유롭게 잡을 수 있으므로, <b>인원별 법일 개수</b>가 그 달 기준과 맞는지 봅니다. 기준 = 공휴일 목록 중 평일에 해당하는 날 수 (토·일에 온 공휴일은 법일이 생기지 않고, 대체공휴일이 평일이면 그 몫으로 1개). 위 칸에 숫자를 넣어 직접 지정할 수도 있습니다.'},
+ {id:'R18',n:'명단에 있는데 근태 기록이 없는 인원',d:'대상 인원 명단에는 있는데 이 근태 파일에 한 줄도 없는 사번을 찾습니다. 명단을 넣었을 때만 동작합니다.'},
+ {id:'R19',n:'근태에 있는데 명단에 없는 사번',d:'근태 파일에는 있는데 대상 인원 명단에 없는 사번을 찾습니다. 퇴사자이거나 사번 오입력일 수 있습니다. 명단을 넣었을 때만 동작합니다.'},
+ {id:'R16',dep:['tout','em'],n:'퇴근(센싱)이 비어 있는데 개별연장(분)에 값이 있음',d:'퇴근(센싱)이 비어 있으면 정시 퇴근으로 보아 개별연장(분)은 0이거나 비어 있는 것이 정상입니다. 그런데 값이 들어가 있으면 <b>수기 입력</b>일 수 있으므로 따로 확인하라고 알려줍니다.'},
 ];
 const RON={}; RULES.forEach(r=>RON[r.id]=!r.off);
 
@@ -1219,14 +1381,15 @@ const AFIELDS=[
  {k:'we',   n:'근무종료시간',p:/근무.*(종료|마감)/i},
  {k:'tin',  n:'출근(센싱)시간',p:/출근/i},
  {k:'tout', n:'퇴근(센싱)시간',p:/퇴근/i},
- {k:'es',   n:'개별연장 시작시간',p:/연장.*시작/i},
- {k:'ee',   n:'개별연장 종료시간',p:/연장.*(종료|마감)/i},
- {k:'em',   n:'개별연장시간(분)',p:/연장.*분|연장.*시간/i},
+ {k:'es',   n:'개별연장 시작시간',p:/연장.*시작/i, ex:/심야|야간/},
+ {k:'ee',   n:'개별연장 종료시간',p:/연장.*(종료|마감)/i, ex:/심야|야간/},
+ {k:'em',   n:'개별연장시간(분)',p:/연장.*(분|시간)/i, ex:/심야|야간|시작|종료|마감/},
 ];
 function mapAUI(){
   const used=new Set();
   $('#mapA').innerHTML=AFIELDS.map(f=>{
-    let g=-1; A.headers.forEach((h,i)=>{ if(g<0&&!used.has(i)&&f.p.test(norm(h))) g=i; });
+    let g=-1; A.headers.forEach((h,i)=>{ const hh=norm(h);
+      if(g<0&&!used.has(i)&&f.p.test(hh)&&!(f.ex&&f.ex.test(hh))) g=i; });
     if(g>=0) used.add(g);
     return `<div class="f"><label>${f.n}${f.req?' *':''}</label><select data-a="${f.k}">
       <option value="-1">— 없음 —</option>${A.headers.map((h,i)=>`<option value="${i}"${i===g?' selected':''}>${h}</option>`).join('')}
@@ -1236,8 +1399,43 @@ function mapAUI(){
 }
 const MA=()=>{ const m={}; $$('#mapA select').forEach(s=>m[s.dataset.a]=+s.value); return m; };
 $('#vYear').oninput=()=>{ A.yearTouched=true; runA(); };
+/* ① 대상 인원 명단 */
+$('#rosBtn').onclick=()=>$('#rosFile').click();
+$('#rosClear').onclick=()=>{ A.roster=null; $('#rosInfo').innerHTML='명단을 넣으면 <b>근태가 빠진 인원</b>과 <b>명단에 없는 사번</b>을 찾아줍니다.'; runA(); };
+$('#rosFile').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
+  readTable(f,{id:/사번|사원번호|직번|emp/i, name:/성명|이름|name/i}, (rowsR)=>{
+    const m=new Map();
+    rowsR.forEach(r=>{ const id=norm(r.id); if(id) m.set(id, norm(r.name)); });
+    A.roster=m;
+    $('#rosInfo').innerHTML = m.size? `<b>${f.name}</b> · 명단 <b>${m.size}명</b> 인식` : `<span style="color:#b91c1c">사번 열을 찾지 못했습니다. 첫 시트에 '사번' 머리글이 있는지 확인하세요.</span>`;
+    runA();
+  });
+  e.target.value=''; };
+/* ② 시급 */
+$('#wgBtn').onclick=()=>$('#wgFile').click();
+$('#wgFile').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
+  readTable(f,{id:/사번|사원번호|직번|emp/i, w:/시급|단가|시간당|rate/i}, (rowsW)=>{
+    const lines=[];
+    rowsW.forEach(r=>{ const id=norm(r.id), w=num(r.w); if(id && isFinite(w) && w>0) lines.push(id+'\t'+w); });
+    if(!lines.length){ alert('사번·시급 열을 찾지 못했습니다. 머리글에 "사번"과 "시급"이 있는지 확인하세요.'); return; }
+    $('#wgTable').value=lines.join('\n'); runA();
+  });
+  e.target.value=''; };
+['wgTable','aOtRate'].forEach(id=>{ const el=$('#'+id); if(el) el.oninput=runA; });
+/* 검수기용 시급표 */
+function wageMapA(){
+  const m=new Map();
+  ($('#wgTable')?.value||'').split(/\r?\n/).forEach(line=>{
+    const t=line.trim(); if(!t) return;
+    const q=t.split(/[\t,;]+|\s{1,}/).filter(Boolean);
+    if(q.length<2) return;
+    const id=norm(q[0]), w=num(q[q.length-1]);
+    if(id && isFinite(w) && w>0) m.set(id,w);
+  });
+  return m;
+}
 $('#vHolReload').onclick=()=>{ $('#vHolList').value=holDefaults(+$('#vYear').value||new Date().getFullYear()); runA(); };
-['vLeave','vHol','vEarly','vWd','vHd','vStd','vBreak','vTol','vWrap','vOff','vOffWk','vPartWk','vHolQuota','vHolList'].forEach(id=>{
+['vLeave','vHol','vEarly','vWd','vHd','vStd','vBreak','vTol','vOtUnit','vOtMode','vWrap','vOff','vOffWk','vPartWk','vHolQuota','vHolList'].forEach(id=>{
   const el=$('#'+id); if(el) el[el.type==='checkbox'?'onchange':'oninput']=runA; });
 
 /* ---- 규칙 표 ---- */
@@ -1246,7 +1444,7 @@ function renderRules(cnt){
     <th style="width:330px">규칙</th><th>판정 기준</th><th class="num" style="width:78px">이상</th></tr></thead><tbody>`+
     RULES.map(r=>`<tr><td><input type="checkbox" data-r="${r.id}" ${RON[r.id]?'checked':''}></td>
       <td class="mono"><b>${r.id}</b></td><td>${r.n}</td><td class="d">${r.d}</td>
-      <td class="num ${cnt&&cnt[r.id]?'bad-cell':''}">${cnt?(cnt[r.id]||0):'-'}</td></tr>`).join('')+'</tbody>';
+      <td class="num ${cnt&&cnt[r.id]?'bad-cell':''}">${A.skip&&A.skip[r.id]?'<span class="tag y" title="'+A.skip[r.id].join(', ')+' 열 미연결">열 미연결</span>':(cnt?(cnt[r.id]||0):'-')}</td></tr>`).join('')+'</tbody>';
   $$('#ruleTbl [data-r]').forEach(c=>c.onchange=()=>{ RON[c.dataset.r]=c.checked; runA(); });
 }
 
@@ -1278,9 +1476,17 @@ function runA(){
   const wk={};        // 사번|ISO주 → {n, off, first, min, max}
   const emp={};       // 사번 → {hol, first, min, max}
   let fMin=null, fMax=null;   // 파일 전체 데이터 기간
+  // 연결 안 된 열에 의존하는 규칙은 오판을 막기 위해 건너뛴다
+  const LBL={ws:'근무시작시간',we:'근무종료시간',tin:'출근(센싱)시간',tout:'퇴근(센싱)시간',
+             es:'개별연장 시작시간',ee:'개별연장 종료시간',em:'개별연장시간(분)',date:'일자'};
+  A.skip={}; A.missing=new Set();
+  RULES.forEach(rr=>{ if(!rr.dep) return;
+    const miss=rr.dep.filter(k=>!(m[k]>=0));
+    if(miss.length){ A.skip[rr.id]=miss.map(k=>LBL[k]); miss.forEach(k=>A.missing.add(LBL[k])); }
+  });
   const F=[], rows=[];
   const CR=(col,rn)=> (col>=0&&rn)? XLSX.utils.encode_col(col)+rn : '';
-  const add=(id,r,detail,extra,fix,cell,dateLabel)=>{ if(!RON[id]) return;
+  const add=(id,r,detail,extra,fix,cell,dateLabel)=>{ if(!RON[id]||A.skip[id]) return;
     F.push({rule:id,ruleName:RULES.find(x=>x.id===id).n,empId:r.empId,name:r.name,date:dateLabel||r.date,
             code:r.code,pay:r.pay,detail,extra:extra||'',fix:fix||'',
             excelRow:r.excelRow,cell:cell||'',row:r}); };
@@ -1326,8 +1532,8 @@ function runA(){
       const d=durOf(r.ws,r.we,WRAP)-BRK; r.dur=d;
       if(d!==STD) add('R6',r,`근무시간 ${shm(d)} (기준 ${hm(STD)}, ${d<STD?'미달':'초과'} ${shm(Math.abs(d-STD))})`,
         `${hm(r.ws)}~${hm(r.we)}`,
-        d<STD?`근무시작/종료 시각 확인. 조퇴·지각이면 해당 근태 항목을 넣고, 오입력이면 종료를 ${hm((r.ws+STD+BRK)%1440)}로 수정`
-             :`근무시작/종료 시각 확인. 연장근무라면 근무종료는 ${hm((r.ws+STD+BRK)%1440)}로 두고 초과분은 개별연장으로 처리`,
+        d<STD?`근무시작/종료 시각 확인. 조퇴·지각이면 해당 근태 항목을 넣고, 오입력이면 근무종료를 ${hm((r.ws+STD+BRK)%1440)}로 수정`
+             :`근무종료에 실제 퇴근시각을 넣은 오류로 보입니다. 근무종료는 <근무시작 + ${hm(STD)}> 인 ${hm((r.ws+STD+BRK)%1440)}로 두고, 그 이후 ${hm(d-STD)}은 개별연장으로 처리하세요`,
         `${CR(m.ws,excelRow)}, ${CR(m.we,excelRow)}`);
     }
     if(r.es!=null&&r.we!=null){ const d=delta(r.es,r.we,WRAP); r.d7=d;
@@ -1338,28 +1544,42 @@ function runA(){
         `개별연장 종료시간을 퇴근(센싱)과 같은 ${hm(r.tout)}로 수정`,CR(m.ee,excelRow)); }
     if(r.we!=null&&r.tout!=null){
       const d=delta(r.we,r.tout,WRAP); r.d9=d; const em=r.em??0;
-      if(d>=0 && em!==0) add('R9',r,
+      const over=-d;                 // 퇴근(센싱)이 근무종료보다 늦은 분
+      const want=otRound(over);      // 절사 규칙 적용 후 인정 분
+      r.otWant=want;
+      if(over<=0 && em!==0) add('R9',r,
         `근무종료 − 퇴근(센싱) = ${shm(d)} (0 이상) 인데 개별연장 ${em}분`,
         `${hm(r.we)} vs ${hm(r.tout)}`,
         `연장이 발생하지 않은 날이므로 개별연장시간(분)을 0으로 수정. 실제 연장했다면 퇴근(센싱) 시각을 확인`,CR(m.em,excelRow));
-      if(d<0 && em===0) add('R10',r,
-        `근무종료 − 퇴근(센싱) = ${shm(d)} (0 미만) 인데 개별연장 ${r.rem===''?'(빈칸)':em+'분'}`,
+      const UNIT=Math.max(1,+($('#vOtUnit')?.value)||10);
+      if(over>0 && em<UNIT) r._r10=true;
+      if(over>0 && em<UNIT) add('R10',r,
+        `근무종료 − 퇴근(센싱) = ${shm(d)} (0 미만) 인데 개별연장 ${r.rem===''?'(빈칸)':em+'분'} (${UNIT}분 이상이어야 함)`,
         `${hm(r.we)} vs ${hm(r.tout)}`,
-        `연장이 발생한 날이므로 개별연장시간(분)에 ${-d}분을 넣거나 승인 내역을 확인`,CR(m.em,excelRow));
+        `연장이 발생한 날이므로 개별연장시간(분)에 ${want}분을 넣거나 승인 내역을 확인 (초과 ${over}분 → ${want}분)`,CR(m.em,excelRow));
+
     }
+    // R12 : 근무시작 + 소정시간 을 기준으로 초과분을 계산해 개별연장(분) 금액 검증
+    if(r.ws!=null && r.tout!=null && r.em!=null){
+      const stdEnd=(r.ws+STD+BRK)%1440;
+      const over2=delta(r.tout, stdEnd, WRAP);
+      const want2=otRound(over2); r.otWant2=want2; r.stdEnd=stdEnd;
+      if(over2>0 && r.em!==want2 && !r._r10) add('R12',r,
+        `개별연장 ${r.em}분 — 기준 ${want2}분 (근무시작 ${hm(r.ws)} + ${hm(STD)} = ${hm(stdEnd)} → 퇴근 ${hm(r.tout)}, 초과 ${over2}분)`,
+        `${hm(stdEnd)} → ${hm(r.tout)}`,
+        `개별연장시간(분)을 ${want2}분으로 수정하세요. 근무종료가 ${hm(stdEnd)}가 아니면 그것도 함께 확인`,CR(m.em,excelRow));
+    }
+
     if(r.rout==='' && (r.em??0)!==0) add('R16',r,
-      `퇴근(센싱)시간이 비어 있는데 개별연장 ${r.em}분`,
+      `퇴근(센싱)이 비어 있는데 개별연장 ${r.em}분 — 수기 입력으로 보임`,
       `근무종료 ${hm(r.we)} · 퇴근(센싱) (빈칸)`,
-      `퇴근(센싱) 시각이 누락됐는지 먼저 확인. 실제 연장이 없었다면 개별연장시간(분)을 0으로 수정`,
+      `센싱 없이 수기로 넣은 연장입니다. 실제 연장 여부와 승인 내역을 확인하세요. 정시 퇴근이었다면 개별연장시간(분)을 0으로 수정`,
       `${CR(m.tout,excelRow)}, ${CR(m.em,excelRow)}`);
     if(r.ws!=null&&r.tin!=null){ const d=delta(r.ws,r.tin,WRAP); r.d11=d;
       if(Math.abs(d)>TOL) add('R11',r,`근무시작 − 출근(센싱) = ${shm(d)} (허용 ${TOL}분 초과)`,`${hm(r.ws)} vs ${hm(r.tin)}`,
         d>0?`출근 센싱이 근무시작보다 ${d}분 빠릅니다. 조기출근 사유 확인 또는 센싱 기록 확인`
            :`출근 센싱이 근무시작보다 ${-d}분 늦습니다. 지각 처리 여부 확인 또는 센싱 기록 확인`,
         `${CR(m.ws,excelRow)}, ${CR(m.tin,excelRow)}`); }
-    if(r.es!=null&&r.ee!=null&&r.em!=null){ const d=durOf(r.es,r.ee,WRAP);
-      if(d!==r.em) add('R12',r,`종료−시작 ${d}분 ≠ 개별연장 ${r.em}분`,`${hm(r.es)}~${hm(r.ee)}`,
-        `개별연장시간(분)을 ${d}분으로 수정하거나 시작·종료 시각을 확인`,CR(m.em,excelRow)); }
 
     // ── R13 / R14 준비 : 주별 정일, 인원별 법일 ──
     if(r.dt){
@@ -1379,7 +1599,7 @@ function runA(){
   }
 
   // ── R13 : 한 주(월~일) 정일 일수 ──
-  if(RON.R13 && OFFWK>0 && OFFSET.size){
+  if(RON.R13 && !A.skip.R13 && OFFWK>0 && OFFSET.size){
     for(const key of Object.keys(wk)){
       const w=wk[key];
       const mon0=new Date(w.min); mon0.setDate(mon0.getDate()-((mon0.getDay()+6)%7));
@@ -1400,7 +1620,7 @@ function runA(){
     }
   }
   // ── R14 : 이 달 법일 일수 ──
-  if(RON.R14){
+  if(RON.R14 && !A.skip.R14){
     const manual=$('#vHolQuota').value.trim();
     const holList=[...HOLDAYS].map(k=>pDate(k,YEAR)).filter(Boolean);
     for(const id of Object.keys(emp)){
@@ -1423,6 +1643,50 @@ function runA(){
     }
   }
 
+  // ── R18 / R19 : 대상 인원 명단 대조 ──
+  if(A.roster && A.roster.size){
+    const seen=new Set(rows.map(r=>r.empId));
+    if(RON.R18) for(const [id,nm] of A.roster){
+      if(seen.has(id)) continue;
+      F.push({rule:'R18',ruleName:RULES.find(x=>x.id==='R18').n,empId:id,name:nm||'',date:'-',
+        code:'',pay:'',detail:'명단에 있으나 이 근태 파일에 기록이 없음',extra:'',
+        fix:'근태 미등록·입력 누락인지, 아니면 퇴사·휴직으로 대상이 아닌지 확인',
+        excelRow:'',cell:'',row:{empId:id,name:nm||'',date:'-',code:'',pay:'',rws:'',rwe:'',rin:'',rout:'',res:'',ree:'',rem:''}});
+    }
+    if(RON.R19) for(const id of new Set(rows.map(r=>r.empId))){
+      if(A.roster.has(id)) continue;
+      const r0=rows.find(x=>x.empId===id);
+      add('R19',r0,'근태에는 있으나 대상 인원 명단에 없음','',
+        '퇴사자이거나 사번이 잘못 입력된 것은 아닌지 확인',CR(m.empId,r0.excelRow),'-');
+    }
+  }
+
+  // ── 급여 영향액 ──
+  const WM=wageMapA(), OTR=+($('#aOtRate')?.value)||1.5;
+  if(WM.size){
+    F.forEach(f=>{
+      const w=WM.get(f.empId); if(!w) return;
+      const r=f.row; let mins=0, mult=0;
+      if(f.rule==='R10'){ mins=r.otWant||0;                     mult=OTR; }   // 못 받은 연장
+      else if(f.rule==='R12'){ mins=(r.otWant2||0)-(r.em??0);   mult=OTR; }   // 차액
+      else if(f.rule==='R9'){  mins=-(r.em??0);                 mult=OTR; }   // 과지급
+      else if(f.rule==='R6' && r.dur!=null){ const STD2=pTime($('#vStd').value)??480;
+        mins=-(r.dur-STD2); mult=1; }                                          // 근무시간 과다 입력 = 과지급
+      else return;
+      if(!mins) return;
+      f.won = Math.round(mins/60*w*mult);
+    });
+  }
+  A.wageMap=WM;
+  if($('#wgInfo')){
+    const ids=new Set(rows.map(r=>r.empId));
+    let hit=0; ids.forEach(i=>{ if(WM.has(i)) hit++; });
+    $('#wgInfo').innerHTML = WM.size===0
+      ? '<span style="color:#8b93a1">시급을 넣으면 이상 건마다 급여 영향액이 계산됩니다.</span>'
+      : `시급 <b>${WM.size}명</b> 인식 · 이번 파일 ${ids.size}명 중 <b>${hit}명</b> 매칭` +
+        (hit<ids.size? ` · <span style="color:#b45309">${ids.size-hit}명은 시급 없음 (금액 계산 제외)</span>`:'');
+  }
+
   A.rows=rows; A.find=F;
   if(A.prev&&A.prev.items){
     const pk=new Set(A.prev.items.map(x=>x.k));
@@ -1432,7 +1696,7 @@ function runA(){
   } else { F.forEach(f=>f.status=''); A.resolved=null; }
   const cnt={}; F.forEach(f=>cnt[f.rule]=(cnt[f.rule]||0)+1);
   renderRules(cnt);
-  $('#v4').classList.remove('off'); $('#v5').classList.remove('off');
+  $('#v4').classList.remove('off'); $('#v45').classList.remove('off'); $('#v5').classList.remove('off');
   renderA(cnt);
 }
 
@@ -1440,7 +1704,7 @@ function runA(){
 const kOf=f=>`${f.empId}|${f.date}|${f.rule}`;
 const dlJSON=(obj,name)=>{ const b=new Blob([JSON.stringify(obj,null,1)],{type:'application/json'});
   const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=name; a.click(); };
-const CFGIDS=['vLeave','vHol','vEarly','vWd','vHd','vStd','vBreak','vTol','vOff','vOffWk','vHolQuota','vHolList'];
+const CFGIDS=['vLeave','vHol','vEarly','vWd','vHd','vStd','vBreak','vTol','vOtUnit','vOtMode','vOff','vOffWk','vHolQuota','vHolList'];
 
 $('#aCfgSave').onclick=()=>{
   const map={}; $$('#mapA select').forEach(sel=>{ const i=+sel.value; map[sel.dataset.a]= i>=0? A.headers[i] : null; });
@@ -1490,12 +1754,35 @@ $('#aCmpFile').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
 $('#aCmpClear').onclick=()=>{ A.prev=null; A.resolved=null; $('#aCmpClear').hidden=true; runA(); };
 
 /* ---- 결과 렌더 ---- */
+function floodWarnHTML(cnt){
+  if(!A.rows||!A.rows.length||!cnt) return '';
+  const hot=Object.entries(cnt).filter(([id,n])=>n>=Math.max(20, A.rows.length*0.4))
+    .map(([id,n])=>`${id} ${n.toLocaleString()}건`);
+  if(!hot.length) return '';
+  return `<div class="note w"><b>⚠️ 특정 규칙이 지나치게 많이 걸렸습니다 — ${hot.join(' · ')}</b><br>
+    검수 행수 ${A.rows.length.toLocaleString()}건 중 상당수라 <b>실제 오류라기보다 설정 문제</b>일 가능성이 큽니다.
+    3단계 <b>열 연결</b>이 맞는지, 4단계 기준값(소정 근무시간·정일·법일 값)이 회사 기준과 맞는지 먼저 확인하세요.
+    결과 표의 <b>원본 위치</b>에 셀 주소(예: M37)가 안 보이면 그 열이 연결되지 않은 것입니다.</div>`;
+}
+function mapWarnHTML(){
+  if(!A.missing || !A.missing.size) return '';
+  const rs=Object.keys(A.skip||{});
+  return `<div class="note b"><b>⚠️ 연결되지 않은 열이 있습니다 — ${[...A.missing].join(', ')}</b><br>
+    이 열을 쓰는 규칙 <b>${rs.join(', ')}</b> 은(는) <b>판정하지 않고 건너뛰었습니다.</b>
+    위 3단계 <b>열 연결</b>에서 해당 열을 골라주세요. 파일에 그 열이 정말 없다면 그대로 두셔도 됩니다.</div>`;
+}
 function renderA(cnt){
+  if($('#mapWarn')) $('#mapWarn').innerHTML=mapWarnHTML();
   const people=new Set(A.rows.map(r=>r.empId)).size;
   const badP=new Set(A.find.map(f=>f.empId)).size;
   const K=[['검수 행수',A.rows.length.toLocaleString(),'건'],['대상 인원',people,'명'],
     ['이상 건수',A.find.length.toLocaleString(),'건'],['이상 인원',badP,'명'],
     ['정상 비율',A.rows.length?((1-Math.min(1,A.find.length/A.rows.length))*100).toFixed(1):'-','%']];
+  if(A.wageMap&&A.wageMap.size){
+    const plus=A.find.filter(f=>f.won>0).reduce((s,f)=>s+f.won,0);
+    const minus=A.find.filter(f=>f.won<0).reduce((s,f)=>s+f.won,0);
+    K.push(['미지급 추정',plus.toLocaleString(),'원'],['과지급 추정',Math.abs(minus).toLocaleString(),'원']);
+  }
   if(A.prev){
     const nw=A.find.filter(f=>f.status==='신규').length;
     K.push(['✔ 해결됨',(A.resolved||[]).length,'건'],['남음',A.find.length-nw,'건'],['신규',nw,'건']);
@@ -1505,10 +1792,10 @@ function renderA(cnt){
   $('#pdBox').innerHTML = S.usePD
     ? `<b>급여일수를 파일의 「급여요일」 열에서 직접 셉니다.</b> 평일 = "${$('#pdWd').value}", 법일 = "${$('#pdHd').value}" 로 집계했습니다. 아래 공휴일 목록은 사용하지 않습니다.`
     : `<b>파일에 급여요일 열이 없어 달력으로 추정합니다.</b> 평일(월~금) + 아래 법정공휴일 목록 기준입니다. 파일에 급여요일 열이 있으면 3단계에서 연결해 주세요 — 그쪽이 정확합니다.`;
-  $('#cmpBox').innerHTML = !A.prev ? '' :
+  $('#cmpBox').innerHTML = mapWarnHTML() + floodWarnHTML(cnt) + (!A.prev ? '' :
     `<div class="note i"><b>이전 검수(${A.prev.저장시각||'저장 시각 미상'}, 이상 ${A.prev.이상건수}건)와 비교 중</b> —
      해결 ${(A.resolved||[]).length}건 · 남음 ${A.find.filter(f=>f.status==='남음').length}건 · 신규 ${A.find.filter(f=>f.status==='신규').length}건.
-     ${(A.resolved||[]).length?`해결된 항목은 엑셀 내보내기의 <b>해결목록</b> 시트에 들어갑니다.`:''}</div>`;
+     ${(A.resolved||[]).length?`해결된 항목은 엑셀 내보내기의 <b>해결목록</b> 시트에 들어갑니다.`:''}</div>`);
   $('#ruleCards').innerHTML='<div class="rc">'+RULES.filter(r=>RON[r.id]).map(r=>{
     const n=cnt[r.id]||0;
     return `<div class="rcx ${A.filter===r.id?'on':''} ${n?'':'zero'}" data-rf="${r.id}">
@@ -1529,14 +1816,15 @@ function findA(){
 }
 function tableA(){
   const rs=findA();
-  const showSt=!!A.prev;
-  $('#outA').innerHTML=`<thead><tr>${showSt?'<th>상태</th>':''}<th>규칙</th><th>사번</th><th>성명</th><th>일자</th><th>근태</th><th>급여요일</th><th>문제 내용</th><th>원본 위치</th><th>권장 조치</th></tr></thead><tbody>`+
+  const showSt=!!A.prev, showWon=!!(A.wageMap&&A.wageMap.size);
+  $('#outA').innerHTML=`<thead><tr>${showSt?'<th>상태</th>':''}<th>규칙</th><th>사번</th><th>성명</th><th>일자</th><th>근태</th><th>급여요일</th><th>문제 내용</th><th>원본 위치</th>${showWon?'<th class="num">급여 영향</th>':''}<th>권장 조치</th></tr></thead><tbody>`+
     rs.slice(0,4000).map((f,i)=>`<tr data-i="${i}" style="cursor:pointer">
       ${showSt?`<td><span class="tag ${f.status==='신규'?'r':'y'}">${f.status}</span></td>`:''}
       <td class="mono"><b>${f.rule}</b></td><td>${f.empId}</td><td>${f.name}</td><td>${f.date}</td>
       <td>${f.code||'<span class="muted">(빈칸)</span>'}</td><td>${f.pay}</td>
       <td>${f.detail}</td>
       <td class="mono muted">${f.excelRow?`${f.excelRow}행`:''}${f.cell?` · ${f.cell}`:''}</td>
+      ${showWon?`<td class="num" style="${f.won>0?'color:#b91c1c;font-weight:700':(f.won<0?'color:#1d4ed8;font-weight:700':'')}">${f.won==null?'-':(f.won>0?'+':'')+f.won.toLocaleString()}</td>`:''}
       <td class="muted">${f.fix||''}</td></tr>`).join('')+'</tbody>';
   if(rs.length>4000) $('#outA').insertAdjacentHTML('beforeend',
     `<tfoot><tr><td colspan="8" class="muted">표에는 앞 4,000건만 표시했습니다. 전체 ${rs.length.toLocaleString()}건은 엑셀로 내보내면 모두 들어갑니다.</td></tr></tfoot>`);
@@ -1572,7 +1860,8 @@ $('#expA').onclick=()=>{
   const wb=XLSX.utils.book_new();
   const all=A.find.map(f=>({...(A.prev?{상태:f.status}:{}),규칙:f.rule,규칙명:f.ruleName,
     사번:f.empId,성명:f.name,일자:f.date,근태:f.code,급여요일:f.pay,
-    '문제 내용':f.detail,'관련 값':f.extra,'원본 행':f.excelRow,'원본 셀':f.cell,'권장 조치':f.fix}));
+    '문제 내용':f.detail,'관련 값':f.extra,'원본 행':f.excelRow,'원본 셀':f.cell,
+    ...(A.wageMap&&A.wageMap.size?{'급여 영향(원)':f.won ?? ''}:{}),'권장 조치':f.fix}));
   XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(all.length?all:[{결과:'이상 없음'}]),'이상목록');
 
   // 수정 체크리스트 — 담당자가 채워가며 쓰는 시트
@@ -1624,6 +1913,7 @@ $('#expA').onclick=()=>{
     ['기준 연도',$('#vYear').value],
     ['이 달 법일 기준 일수', ($('#vHolQuota').value.trim()||`자동 ${A.holQuota??'-'}일`)+' (공휴일 목록 중 평일 수)'],
     ['법일 판정 방식','날짜 고정이 아니라 그 달 안의 개수로 판정 — 법일은 아무 날에나 지정 가능'],
+    ['연장 절사', `${$('#vOtUnit').value}분 단위 · ${$('#vOtMode').selectedOptions[0].text}`],
     ['적용 법정공휴일',[...holSetA()].sort().join(', ')],
     ['검수 행수',A.rows.length],['이상 건수',A.find.length],
     ['이전 검수와 비교',A.prev?`${A.prev.저장시각||''} (이상 ${A.prev.이상건수}건) 대비 · 해결 ${(A.resolved||[]).length}건 / 남음 ${A.find.filter(f=>f.status==='남음').length}건 / 신규 ${A.find.filter(f=>f.status==='신규').length}건`:'미사용'],
@@ -1633,7 +1923,7 @@ $('#expA').onclick=()=>{
   XLSX.writeFile(wb,`${A.fname||'근태'}_검수결과.xlsx`);
 };
 renderRules(null);
-go('home');
+go(hashView(), false);
 
 </script>
 </body>
