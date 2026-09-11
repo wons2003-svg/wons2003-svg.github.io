@@ -66,6 +66,8 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 .kpi .l{font-size:11.5px;color:var(--ink3);font-weight:600}
 .kpi .v{font-size:21px;font-weight:750;letter-spacing:-.02em;margin-top:2px;font-variant-numeric:tabular-nums}
 .kpi .u{font-size:12px;font-weight:600;color:var(--ink3);margin-left:2px}
+.kpi .v.v-bad{color:var(--bad)}
+.kpi .v.v-ok{color:var(--ok)}
 .note{border-radius:10px;padding:11px 13px;font-size:12.5px;margin:10px 0;border:1px solid}
 .note.w{background:var(--warn-w);border-color:#fed7aa;color:#92400e}
 .note.i{background:var(--pri-w);border-color:#bfdbfe;color:#1e40af}
@@ -126,6 +128,154 @@ dialog::backdrop{background:rgba(15,23,42,.45)}
 .bad-cell{background:#fef2f2;color:#b91c1c;font-weight:700}
 footer{margin-top:26px;color:var(--ink3);font-size:11.5px;line-height:1.7}
 kbd{background:#f1f5f9;border:1px solid var(--line);border-radius:4px;padding:1px 5px;font-size:11px;font-family:ui-monospace,monospace}
+
+/* ===== 검수기 대시보드 ===== */
+.tbar{position:sticky;top:0;z-index:40;background:#fff;border:1px solid var(--line);border-radius:12px;
+  padding:9px 12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px;
+  box-shadow:0 2px 12px rgba(15,23,42,.06)}
+.tb-file{display:flex;flex-direction:column;line-height:1.35;min-width:150px;max-width:340px}
+.tb-file b{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tb-act{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
+.pill{display:inline-block;border-radius:99px;padding:0 7px;font-size:10.5px;font-weight:800;margin-left:5px;
+  background:#eef2f7;color:#4b5563;vertical-align:1px}
+.pill.bad{background:#fdeaea;color:#b91c1c}
+.pill.ok{background:#e7f6ed;color:#0f7a45}
+
+.dgrid{display:grid;grid-template-columns:252px minmax(0,1fr) 292px;gap:12px;margin-bottom:12px;align-items:start}
+@media(max-width:1240px){.dgrid{grid-template-columns:240px minmax(0,1fr)}}
+
+@media(max-width:900px){.dgrid{grid-template-columns:1fr}}
+.dpane{background:#fff;border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column;overflow:hidden}
+.dpane .ph{display:flex;align-items:center;gap:7px;padding:8px 11px;border-bottom:1px solid var(--line);
+  font-size:12.5px;font-weight:700;background:#fafbfd;flex-wrap:wrap;min-height:40px}
+.dpane .pb{padding:10px 11px}
+.dpane .pb.nopad{padding:0}
+.scrolly{overflow:auto}
+.dgrid .scrolly{height:calc(100vh - 300px);min-height:300px}
+.empty{color:var(--ink3);font-size:12.5px;text-align:center;padding:40px 10px;line-height:1.8}
+
+/* 규칙 신호등 */
+.sig{display:flex;flex-direction:column;gap:5px}
+.sg{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-left:4px solid #cfd6e0;
+  border-radius:9px;padding:6px 9px;cursor:pointer;background:#fff;transition:.1s}
+.sg:hover{background:#f7f9fc;border-color:#c3cede}
+.sg.on{border-color:var(--pri);background:var(--pri-w);box-shadow:0 0 0 2px var(--pri-w)}
+.sg.bad{border-left-color:var(--bad)}
+.sg .sid{font-size:10.5px;font-weight:800;color:var(--ink3);width:26px;flex:none;font-family:ui-monospace,monospace}
+.sg .snm{font-size:11.8px;line-height:1.32;flex:1;font-weight:600}
+.sg .sct{font-size:17px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--bad)}
+.okwrap{margin-top:9px;border-top:1px dashed var(--line);padding-top:8px}
+.okwrap .oh{font-size:11px;color:var(--ink3);font-weight:700;margin-bottom:5px;display:flex;align-items:center;gap:5px}
+.okrow{display:flex;flex-wrap:wrap;gap:4px}
+.okchip{border:1px solid var(--line);border-radius:99px;padding:1px 7px;font-size:10.5px;color:#6b7280;
+  cursor:pointer;background:#fff;font-family:ui-monospace,monospace;font-weight:700}
+.okchip:hover{border-color:var(--pri);color:var(--pri)}
+.dot{width:8px;height:8px;border-radius:50%;flex:none;display:inline-block}
+.dot.g{background:var(--ok)}.dot.r{background:var(--bad)}.dot.y{background:var(--warn)}
+
+/* 목록 */
+#outA tbody tr.sel{background:var(--pri-w) !important;box-shadow:inset 3px 0 0 var(--pri)}
+#outA td{white-space:normal}
+#outA td.nw{white-space:nowrap}
+
+/* 상세 패널 */
+.sd h4{margin:0 0 6px;font-size:12px;color:var(--ink3);font-weight:700;letter-spacing:.02em}
+.sd table{font-size:12px;white-space:normal}
+.sd table td{padding:4px 7px}
+.sd .kv td:first-child{color:var(--ink3);width:44%}
+.sd .hit{border:1px solid #fecaca;background:var(--bad-w);border-radius:9px;padding:9px 10px;margin-bottom:11px}
+.sd .hit .hl{font-size:11.5px;font-weight:800;color:#991b1b;margin-bottom:5px}
+.sd .hit .hi{font-size:12px;margin-bottom:7px;line-height:1.45}
+.sd .cellbox{background:#111827;color:#fff;border-radius:7px;padding:7px 9px;font-family:ui-monospace,monospace;
+  font-size:12.5px;font-weight:700;display:flex;align-items:center;gap:8px;margin:6px 0}
+.sd .cellbox span{opacity:.6;font-size:10.5px;font-weight:600}
+
+/* 히트맵 */
+.hmt{border-collapse:separate;border-spacing:0;font-size:10.5px;white-space:nowrap}
+.hmt th{position:sticky;top:0;background:#fafbfd;z-index:3;padding:3px 0;text-align:center;font-size:10px;
+  color:var(--ink3);border-bottom:1px solid var(--line);font-weight:700}
+.hmt th.nm{left:0;z-index:5;text-align:left;padding:3px 6px;min-width:84px}
+.hmt td.nm{position:sticky;left:0;background:#fff;z-index:2;padding:2px 9px;font-size:11px;font-weight:600;
+  border-right:1px solid var(--line2);min-width:84px}
+.hmt td{padding:0;border:0}
+.hmt th.sun,.hmt td.sun{background:#fbfbfd}
+.hc{width:15px;height:15px;border-radius:3px;background:#f0f2f6;display:block;margin:0 auto;cursor:pointer;
+  font-size:9px;line-height:15px;text-align:center;color:#fff;font-weight:800}
+.hc.z{cursor:default}
+.hc.l1{background:#fca5a5}.hc.l2{background:#f26d6d}.hc.l3{background:#dc2626}.hc.l4{background:#991b1b}
+.hc:hover:not(.z){outline:2px solid var(--pri);outline-offset:1px}
+.hlg{display:flex;gap:5px;align-items:center;font-size:11px;color:var(--ink3);padding:7px 11px}
+.hlg .hc{display:inline-block;margin:0;cursor:default}
+
+/* 검수기 컴팩트 */
+#viewAudit .cards{grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:8px;margin-bottom:10px}
+#viewAudit .kpi{padding:7px 11px;border-radius:10px}
+#viewAudit .kpi .l{font-size:10.5px}
+#viewAudit .kpi .v{font-size:18px;margin-top:0}
+body.audit header.top{padding:14px 0 12px;margin-bottom:14px}
+body.audit header.top h1{font-size:17px}
+body.audit header.top p{display:none}
+body.audit #nav{margin-top:9px}
+.ptabs{display:flex;gap:3px;background:#eef1f6;border-radius:8px;padding:2px}
+.ptabs button{border:0;background:none;padding:5px 10px;font-size:12px;border-radius:6px;color:var(--ink2);font-weight:700}
+.ptabs button.on{background:#fff;color:var(--pri);box-shadow:0 1px 3px rgba(15,23,42,.10)}
+.hbar{display:flex;gap:12px;align-items:center;padding:6px 10px;border-bottom:1px solid var(--line2);flex-wrap:wrap}
+.dgrid .scrolly{height:calc(100vh - 268px);min-height:320px}
+@media(max-width:1240px){.dgrid .dpane .scrolly{height:calc(100vh - 300px)}}
+@media(max-width:900px){.dgrid .dpane .scrolly{height:auto;max-height:52vh;min-height:0}}
+/* 좌측 요약 타일 */
+.sumt{display:flex;flex-direction:column;gap:5px;margin-bottom:9px}
+.st{display:flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:9px;padding:6px 9px;background:#fbfcfe;cursor:pointer}
+.st:hover{border-color:var(--pri)}
+.st .stn{font-size:11.5px;font-weight:700;flex:1;line-height:1.3}
+.st .stv{font-size:11.5px;font-weight:800}
+.st.ok .stv{color:var(--ok)} .st.bad{background:var(--bad-w);border-color:#fecaca} .st.bad .stv{color:var(--bad)}
+
+.slots{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.slot{border:2px dashed #c3cede;border-radius:12px;padding:14px 15px;background:#fbfcfe;cursor:pointer;transition:.15s}
+.slot:hover,.slot.on{border-color:var(--pri);background:var(--pri-w)}
+.slot.done{border-style:solid;border-color:#a7e0bf;background:#f3fbf6}
+.sl-h{font-size:13.5px;font-weight:700;display:flex;align-items:center;gap:7px;margin-bottom:6px}
+.sl-n{background:var(--pri);color:#fff;border-radius:6px;padding:1px 7px;font-size:11px}
+.slot.done .sl-n{background:var(--ok)}
+.sl-d{font-size:12.5px;color:var(--ink2);line-height:1.5;margin-bottom:8px}
+.sl-w{font-size:11.5px;color:var(--ink3);line-height:1.5;border-top:1px solid var(--line);padding-top:7px}
+.sl-ex{font-family:ui-monospace,monospace;font-size:11px;color:#475569;background:#fff;border:1px solid var(--line);
+  border-radius:7px;padding:6px 9px;margin-bottom:8px;line-height:1.6}
+.sl-s{margin-top:8px;font-size:12px;font-weight:700;color:var(--ink3)}
+.slot.done .sl-s{color:var(--ok)}
+.addbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--pri-w);border:1px solid #bfdbfe;
+  border-radius:10px;padding:9px 12px;margin-bottom:10px;font-size:12.5px;color:#1e40af}
+
+#outA tr.grp{background:#f4f7fb;cursor:pointer}
+#outA tr.grp:hover{background:#eaf1fb}
+#outA tr.grp td{padding:7px 10px;border-bottom:1px solid var(--line);border-top:1px solid var(--line);white-space:normal}
+#outA tr.grp .gcar{color:var(--ink3);font-size:11px;margin-right:5px}
+#outA tr.grp .grk{display:inline-block;min-width:18px;height:18px;line-height:18px;text-align:center;border-radius:5px;
+  background:#dde5f0;color:#475569;font-size:10.5px;font-weight:800;margin-right:7px;font-family:ui-monospace,monospace}
+#outA tr.grp .gnm{font-size:14px;letter-spacing:-.01em}
+#outA tr.grp .gid{margin-left:5px;font-size:11.5px}
+#outA tr.grp .gcnt{margin-left:9px;background:var(--bad);color:#fff;border-radius:99px;padding:1px 8px;font-size:11.5px;font-weight:800}
+#outA tr.grp .gday{margin-left:6px;font-size:11px}
+#outA tr.grp .gtags{margin-left:9px}
+#outA tr.grp .gtags .tag{margin-right:3px}
+#outA tr.grp .gwon{float:right;font-size:12px;font-weight:800;font-variant-numeric:tabular-nums}
+#outA tr.sub td:first-child{padding-left:34px}
+#outA tr.sub .dow{color:var(--ink3);font-size:10px;margin-left:3px;font-weight:600}
+#outA tr.sub .dcell{color:var(--ink2);font-weight:700}
+#outA tr.sub.nd td{border-top:1px solid var(--line2)}
+#outA tr.sub .ditto{color:#cbd5e1;font-weight:600}
+
+.fbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:7px 10px;border-bottom:1px solid var(--line);background:#fcfdff}
+.fbar .fl{font-size:11px;font-weight:800;color:var(--ink3)}
+.fch{display:inline-flex;align-items:center;gap:5px;background:var(--pri-w);border:1px solid #bfdbfe;color:#1e40af;
+  border-radius:99px;padding:2px 9px;font-size:11.5px;font-weight:600;cursor:pointer;max-width:290px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fch:hover{background:#dbeafe}
+.fch i{font-style:normal;opacity:.6;font-weight:800}
+#outA tr.grp .gopen{float:right;font-size:11px;color:var(--pri);font-weight:700;margin-left:8px}
+#outA tr.grp.op{background:#eaf1fb}
+#outA tr.grp.op td{border-bottom:1px solid #c9d9f0}
 @media (max-width:640px){.wrap{padding:0 12px 60px}.kpi .v{font-size:18px}}
 </style>
 </head>
@@ -137,7 +287,7 @@ kbd{background:#f1f5f9;border:1px solid var(--line);border-radius:4px;padding:1p
     <button data-v="home" class="on">홈</button>
     <button data-v="analyze">근태 분석기</button>
     <button data-v="audit">근태 검수기</button>
-    <span style="margin-left:auto;align-self:center;font-size:11.5px;opacity:.7">v1.0 · 2026-08</span>
+    <span style="margin-left:auto;align-self:center;font-size:11.5px;opacity:.7">v4.6 · 2026-09</span>
   </nav>
 </div></header>
 
@@ -212,6 +362,14 @@ kbd{background:#f1f5f9;border:1px solid var(--line);border-radius:4px;padding:1p
   <h2><span class="n">3</span>열 연결</h2>
   <p class="hint">사번·성명·부서는 자동으로 찾아 넣었습니다. 다르면 바꿔주세요. 시간 열이 파일에 있으면 그 값을 우선 사용합니다.</p>
   <div class="row" id="mapRow"></div>
+  <div class="row" style="margin-top:12px">
+    <div class="f"><label>시간 열의 단위</label><select id="hUnit">
+      <option value="auto">자동 감지 — 열 이름에 '(분)'이 있으면 분, 없으면 시간</option>
+      <option value="h">모두 시간(h)으로 읽기</option>
+      <option value="m">모두 분(min)으로 읽기</option>
+    </select></div>
+  </div>
+  <div id="unitInfo" class="note i" style="display:none"></div>
   <div id="wideOpt" style="margin-top:12px">
     <div class="row">
       <div class="f"><label>일자 열 시작</label><select id="dayFrom"></select></div>
@@ -239,6 +397,7 @@ kbd{background:#f1f5f9;border:1px solid var(--line);border-radius:4px;padding:1p
     <button class="sm" id="loadCfgBtn">규칙 불러오기</button>
     <input type="file" id="loadCfg" accept=".json" hidden>
     <button class="sm" id="resetCfg">기본값으로</button>
+    <label class="muted"><input type="checkbox" id="blankWork" checked> 근태 항목이 <b>비어 있는 날은 정상근무</b>로 계산</label>
     <span class="grow"></span>
     <label class="muted"><input type="checkbox" id="onlyUsed" checked> 파일에 실제로 나온 코드만 보기</label>
   </div>
@@ -253,7 +412,10 @@ kbd{background:#f1f5f9;border:1px solid var(--line);border-radius:4px;padding:1p
 <div class="card off" id="c45">
   <h2><span class="n">5</span>급여일수 · 주휴(일요일) 기준</h2>
   <p class="hint">급여일수 = 평일(공휴일 제외) + 법정공휴일. 일요일 수는 그 주(월~일)에 결근이 있으면 1개 차감합니다.</p>
+  <div id="pdBox" class="note i" style="display:none"></div>
   <div class="row" style="margin-bottom:12px">
+    <div class="f"><label>평일 표기</label><input type="text" id="pdWd" value="평일" style="width:110px"></div>
+    <div class="f"><label>법일 표기</label><input type="text" id="pdHd" value="법일" style="width:110px"></div>
     <div class="f"><label>주휴 기준 요일</label><select id="sunDow">
       <option value="0" selected>일요일</option><option value="6">토요일</option>
       <option value="5">금요일</option><option value="1">월요일</option>
@@ -276,6 +438,29 @@ kbd{background:#f1f5f9;border:1px solid var(--line);border-radius:4px;padding:1p
 </div>
 
 <!-- 5 -->
+<!-- 5-2 급여 계산 -->
+<div class="card off" id="c46">
+  <h2><span class="n">6</span>급여 계산 (선택 · 참고용)</h2>
+  <p class="hint">시급을 넣으면 기본급과 연장수당을 함께 뽑아줍니다. 비워두면 이 단계는 건너뜁니다.</p>
+  <div class="row" style="margin-bottom:12px">
+    <div class="f"><label>1일 휴게시간(시간)</label><input type="number" id="wBreak" value="1" step="0.5" style="width:140px"></div>
+    <div class="f"><label>연장 배율</label><input type="number" id="wOtRate" value="1.5" step="0.1" style="width:110px"></div>
+    <div class="f"><label>기본 시급 (표에 없는 인원용)</label><input type="number" id="wDefault" placeholder="비우면 계산 제외" style="width:190px"></div>
+  </div>
+  <div class="split">
+    <b style="font-size:13px">사번별 시급표</b>
+    <span class="muted">엑셀에서 <b>사번·시급 두 열</b>을 선택해 복사한 뒤 아래에 붙여넣으세요 (Ctrl+V)</span>
+  </div>
+  <textarea id="wTable" placeholder="2019101&#9;10400&#10;2020102&#9;10800&#10;2021103&#9;11200" style="width:100%;height:120px;font-family:ui-monospace,monospace;font-size:12px;border:1px solid var(--line);border-radius:8px;padding:9px"></textarea>
+  <div id="wInfo" class="muted" style="margin-top:8px"></div>
+  <div class="note w" style="margin-top:10px">
+    <b>⚠️ 이 금액은 참고용입니다. 실제 지급액은 급여 시스템과 반드시 대조하세요.</b><br>
+    계산에 <b>포함된 것</b> — 기본급(실근로 기본시간 − 휴게), 연장수당(연장시간 × 배율).<br>
+    계산에 <b>포함되지 않은 것</b> — 주휴수당, 연차·유급휴가 수당, 심야 가산, 휴일근로 가산, 각종 수당·공제.
+    해당 시간은 다른 탭에 그대로 있으니 필요하면 직접 반영하세요.
+  </div>
+</div>
+
 <div class="card off" id="c5">
   <h2><span class="n">6</span>분석 결과</h2>
   <p class="hint">행을 클릭하면 그 사람의 일자별 근태가 달력으로 열립니다.</p>
@@ -290,6 +475,7 @@ kbd{background:#f1f5f9;border:1px solid var(--line);border-radius:4px;padding:1p
   <div class="tabs">
     <button class="on" data-t="pay">급여기준 집계</button>
     <button data-t="sum">사번별 요약</button>
+    <button data-t="wage">급여 계산</button>
     <button data-t="piv">코드별 일수</button>
     <button data-t="wk">주차별 근로시간</button>
     <button data-t="raw">정규화 원본</button>
@@ -298,9 +484,9 @@ kbd{background:#f1f5f9;border:1px solid var(--line);border-radius:4px;padding:1p
 </div>
 
 <footer>
-  <b>근태 도구 v1.0 (2026-08 빌드)</b> · 문의는 이 파일을 배포한 담당자에게<br>
+  <b>근태 도구 v4.6 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
   ⓘ 이 도구는 업로드한 파일을 브라우저 메모리에서만 계산합니다. 네트워크 전송·서버 저장이 없습니다.<br>
-  ⓘ 총근로시간 = 기본(소정) + 연장 + 휴일근로. <b>야간시간은 가산수당 산정용으로 따로 표시</b>하며 총합에 중복 더하지 않습니다.<br>
+  ⓘ 총근로시간 = 기본(소정) + 연장 + 휴일근로. <b>야간·심야는 가산수당 산정용으로 따로 표시</b>하며 총합에 중복 더하지 않습니다 — 심야 연장은 이미 연장시간에 포함돼 있는 경우가 많아 더하면 이중 계산이 됩니다.<br>
   ⓘ 급여일수 = 평일(월~금, 법정공휴일 제외) + 법정공휴일. 인정 일요일수 = 데이터상 일요일 수 − 결근이 있는 주(월~일)의 일요일 수.<br>
   ⓘ 월 경계에 걸친 주는 그 주의 일요일이 파일 밖(다음 달)에 있으면 차감이 일어나지 않습니다. 앞뒤 달을 함께 올리면 정확해집니다.<br>
   ⓘ 주 52시간·주 12시간 표시는 <b>참고용</b>입니다. 실제 법정 한도 판정은 유연근로제 도입 여부, 정산기간, 근로계약 형태에 따라 달라지므로 노무 담당자 확인이 필요합니다.
@@ -309,51 +495,183 @@ kbd{background:#f1f5f9;border:1px solid var(--line);border-radius:4px;padding:1p
 
 <!-- ================= 검수기 ================= -->
 <div class="view" id="viewAudit" hidden>
-<!-- V1 -->
-<div class="card" id="v1">
-  <h2><span class="n">1</span>검수할 근태 파일 올리기</h2>
-  <p class="hint">사번·성명·일자·근태·급여요일과 시간 열이 들어 있는 파일을 올리세요.</p>
+
+<!-- ── 파일 업로드 (파일 올리기 전 화면) ───────────────────────── -->
+<div class="card" id="vUp">
+  <h2><span class="n">1</span>검수할 근태 파일 <span style="color:var(--bad);font-size:12px">필수</span></h2>
+  <p class="hint">사번·성명·일자·근태·급여요일과 시간 열이 들어 있는 파일을 올리세요. 열 이름은 자동으로 맞춥니다.</p>
   <div id="dropA">
     <div class="big">여기에 엑셀 파일을 놓으세요</div>
     <div class="sub">또는 클릭해서 선택 · 사내 데이터는 서버로 전송되지 않습니다</div>
   </div>
   <input type="file" id="fileA" accept=".xlsx,.xlsm,.xls,.csv" hidden>
   <div id="fileInfoA" class="muted" style="margin-top:10px"></div>
+
+  <h2 style="margin-top:22px"><span class="n">2</span>대상 인원 명단 · 시급 <span class="muted" style="font-size:12px;font-weight:600">선택 · 나중에 넣어도 됩니다</span></h2>
+  <p class="hint">근태 파일만으로도 검수는 됩니다. 이 두 개를 넣으면 <b>명단 대조</b>와 <b>이상 건별 급여 영향액</b>이 더해집니다.</p>
+  <div class="slots">
+    <div class="slot" id="dropRos">
+      <div class="sl-h"><span class="sl-n">한 파일</span> 급여 대상자 명단 <span class="muted" style="font-size:11px;font-weight:600">사번 · 성명 · 시급</span></div>
+      <div class="sl-d">엑셀/CSV · <b>사번</b> 열만 있으면 됩니다. <b>성명·시급이 같은 파일</b>에 있으면 한 번에 인식합니다.<br>
+        <span class="muted">여기에 파일을 놓거나 클릭해서 선택</span></div>
+      <div class="sl-ex">사번 &nbsp;|&nbsp; 성명 &nbsp;|&nbsp; 시급<br>521563 &nbsp;|&nbsp; 정규연 &nbsp;|&nbsp; 10,400</div>
+      <div class="sl-w">넣으면 → <b>명단에 있는데 근태가 없는 인원</b> · <b>명단에 없는 사번</b> · 이상 건별 <b>미지급·과지급 금액</b></div>
+      <div class="sl-s" id="rosInfo2">아직 넣지 않음</div>
+    </div>
+    <div class="slot" id="dropWg">
+      <div class="sl-h"><span class="sl-n">선택</span> 시급만 따로 있을 때</div>
+      <div class="sl-d">시급을 <b>별도 파일</b>로 관리할 때만 쓰세요. 위에 시급이 같이 들어 있으면 <b>이 칸은 비워두면 됩니다.</b><br>
+        <span class="muted">엑셀/CSV · 사번 + 시급 두 열</span></div>
+      <div class="sl-w">여기에 넣으면 위 파일의 시급을 <b>덮어씁니다</b> · 엑셀에서 두 열을 복사해 「＋ 명단·시급 넣기」 안에 붙여넣어도 됩니다</div>
+      <div class="sl-s" id="wgInfo2">아직 넣지 않음</div>
+    </div>
+  </div>
+  <p class="muted" style="margin-top:10px">※ 머리글 이름은 <b>사번 / 성명 / 시급</b>이면 자동으로 찾습니다 (사원번호·직번, 이름, 단가·시간당·임률도 인식). 열 순서는 상관없고, 다른 열이 섞여 있어도 됩니다.<br>
+  ※ 근태 파일 안에 사번·성명 시트가 있으면 <b>근태 파일을 그대로 넣어도</b> 명단으로 인식합니다.</p>
 </div>
 
-<!-- V2 -->
-<div class="card off" id="v2">
-  <h2><span class="n">2</span>시트 · 머리글 확인</h2>
-  <p class="hint">머리글 행을 자동으로 잡습니다. 미리보기를 보고 틀렸으면 직접 바꾸세요.</p>
-  <div class="row" style="margin-bottom:12px">
+<!-- ── 대시보드 ────────────────────────────────────────────────── -->
+<div id="dash" hidden>
+
+  <div class="tbar">
+    <div class="tb-file">
+      <b id="tbName">—</b>
+      <span class="muted" id="tbMeta"></span>
+    </div>
+    <div class="tb-act">
+      <button class="sm" data-open="dgMap">열 연결<span class="pill" id="pillMap"></span></button>
+      <button class="sm" data-open="dgStd">검수 기준</button>
+      <button class="sm" data-open="dgRos">＋ 명단·시급 넣기<span class="pill" id="pillRos"></span></button>
+      <button class="sm" id="aSnapSave">결과 저장</button>
+      <button class="sm" id="aCmpBtn">이전과 비교</button>
+      <input type="file" id="aCmpFile" accept=".json" hidden>
+      <button class="sm" id="aCmpClear" hidden>비교 해제</button>
+      <button class="sm pri" id="expA">엑셀 내보내기</button>
+      <button class="sm" id="aNew">새 파일</button>
+    </div>
+  </div>
+
+  <div class="cards" id="kpiA"></div>
+  <div id="addBox"></div>
+  <div id="cmpBox"></div>
+
+  <div class="dgrid">
+    <section class="dpane">
+      <div class="ph">검수 항목<span class="grow"></span><span class="muted" id="rcSum"></span></div>
+      <div class="pb scrolly" id="paneRulesBody">
+        <div id="offBox"></div>
+        <div id="ruleCards"></div>
+      </div>
+    </section>
+
+    <section class="dpane">
+      <div class="ph" style="gap:4px;padding:5px 8px">
+        <div class="ptabs">
+          <button class="on" data-tab="list">이상 목록</button>
+          <button data-tab="heat">인원 × 일자 분포</button>
+          <button data-tab="rank">인원별 순위</button>
+        </div>
+        <span class="grow"></span>
+        <input type="text" id="qA" placeholder="사번 · 이름 · 일자" style="width:130px;padding:5px 8px;font-size:12px">
+        <select id="ruleF" style="min-width:120px;padding:5px 8px;font-size:12px"></select>
+        <select id="sortA" style="width:94px;padding:5px 8px;font-size:12px">
+          <option value="emp">인원별</option><option value="flat">발생순</option></select>
+        <span class="muted" id="listSum"></span>
+      </div>
+      <div id="fbar"></div>
+      <div class="pb nopad scrolly" id="tabList"><table id="outA"></table></div>
+      <div class="pb nopad scrolly" id="tabHeat" hidden>
+        <div class="hbar"><label class="muted"><input type="checkbox" id="heatAll"> 이상 없는 인원도 표시</label>
+          <span class="muted">칸을 클릭하면 그 사람·그 날짜만 봅니다</span></div>
+        <div id="heat"></div>
+      </div>
+      <div class="pb nopad scrolly" id="tabRank" hidden><table id="rankT"></table></div>
+    </section>
+
+    <section class="dpane">
+      <div class="ph">원본 값 · 고칠 곳<span class="grow"></span><span class="muted" id="sideNav"></span></div>
+      <div class="pb scrolly" id="sideA">
+        <div class="empty">가운데 목록에서 <b>행을 클릭</b>하면<br>원본 값과 고쳐야 할 셀 주소가<br>여기에 표시됩니다.</div>
+      </div>
+    </section>
+  </div>
+
+
+
+  <div class="note i" style="margin-bottom:20px">
+    검수 결과는 <b>입력값 정합성</b>만 봅니다. 실제 근무 사실 여부, 승인 여부, 급여 반영 여부는 담당자 확인이 필요합니다.
+  </div>
+</div>
+
+<!-- ── 설정 모달 ──────────────────────────────────────────────── -->
+<dialog id="dgMap">
+  <div class="dlg-h"><h3>시트 · 머리글 · 열 연결</h3><button class="sm" data-close>닫기</button></div>
+  <div class="dlg-b">
+    <p class="hint" style="margin:0 0 12px">머리글 행을 자동으로 잡습니다. 미리보기를 보고 틀렸으면 직접 바꾸세요.</p>
+    <div id="v2"><div class="row" style="margin-bottom:12px">
     <div class="f"><label>시트</label><select id="sheetA"></select></div>
     <div class="f"><label>머리글 행 (1부터)</label><input type="number" id="hrowA" min="1" value="1" style="width:110px"></div>
   </div>
-  <div class="tblwrap" style="max-height:210px"><table class="prev" id="prevA"></table></div>
-</div>
+  <div class="tblwrap" style="max-height:210px"><table class="prev" id="prevA"></table></div></div>
+    <h4 style="margin:18px 0 4px;font-size:13.5px">열 연결</h4>
+    <p class="hint" style="margin:0 0 12px">이름이 비슷한 열을 자동으로 찾아 넣었습니다. 다르면 바꿔주세요. <b>사번·근태·급여요일</b>은 필수입니다.</p>
+    <div id="v3"><div class="row" id="mapA"></div>
+  <div id="mapWarn"></div></div>
+  </div>
+</dialog>
 
-<!-- V3 -->
-<div class="card off" id="v3">
-  <h2><span class="n">3</span>열 연결</h2>
-  <p class="hint">이름이 비슷한 열을 자동으로 찾아 넣었습니다. 다르면 바꿔주세요. <b>사번·근태·급여요일</b>은 필수입니다.</p>
-  <div class="row" id="mapA"></div>
-</div>
-
-<!-- V4 -->
-<div class="card off" id="v4">
-  <h2><span class="n">4</span>검수 기준</h2>
-  <p class="hint">회사 표기에 맞게 값을 고치면 결과가 바로 다시 계산됩니다.</p>
-  <div class="row" style="margin-bottom:14px">
-    <div class="f"><label>휴가류 근태값 (쉼표 구분)</label><input type="text" id="vLeave" value="연중휴가, 연차휴가, 예비군" style="min-width:260px"></div>
+<dialog id="dgStd">
+  <div class="dlg-h"><h3>검수 기준</h3><button class="sm" data-close>닫기</button></div>
+  <div class="dlg-b">
+    <p class="hint" style="margin:0 0 12px">회사 표기에 맞게 값을 고치면 결과가 바로 다시 계산됩니다.</p>
+    <div id="v4"><div class="row" style="margin-bottom:14px">
+    <div class="f"><label>휴가류 근태값 (쉼표 구분)</label><input type="text" id="vLeave" value="연중휴가, 연차휴가, 예비군, 조의, 건강검진휴가, 공가, 경조휴가" style="min-width:300px"></div>
     <div class="f"><label>법일 근태값</label><input type="text" id="vHol" value="법일" style="min-width:120px"></div>
-    <div class="f"><label>조퇴·미입력 근태값</label><input type="text" id="vEarly" value="조퇴, (빈칸)" style="min-width:170px"></div>
+    <div class="f"><label>조퇴·지각 근태값 (시간 입력 허용)</label><input type="text" id="vEarly" value="조퇴, 지각, (빈칸)" style="min-width:210px"></div>
+    <div class="f"><label>결근 근태값 (쉼표 구분)</label><input type="text" id="vAbs" value="결근, 무단결근" style="min-width:180px"></div>
   </div>
   <div class="row" style="margin-bottom:14px">
     <div class="f"><label>급여요일 · 평일 표기</label><input type="text" id="vWd" value="평일" style="width:120px"></div>
     <div class="f"><label>급여요일 · 법일 표기</label><input type="text" id="vHd" value="법일" style="width:120px"></div>
+    <div class="f"><label>급여요일 · 휴무 표기</label><input type="text" id="vOd" value="정일" style="width:120px"></div>
     <div class="f"><label>소정 근무시간 기준</label><input type="text" id="vStd" value="08:00" style="width:100px"></div>
     <div class="f"><label>휴게시간 차감(분)</label><input type="number" id="vBreak" value="0" step="5" style="width:110px"></div>
     <div class="f"><label>출근센싱 허용 오차(분)</label><input type="number" id="vTol" value="29" style="width:130px"></div>
+    <div class="f"><label>연장 절사 단위(분)</label><input type="number" id="vOtUnit" value="10" style="width:130px"></div>
+    <div class="f"><label>절사 방식</label><select id="vOtMode">
+      <option value="ceil" selected>올림 — 1분만 넘어도 한 단위 인정</option>
+      <option value="floor">내림 — 단위 미만은 버림</option>
+      <option value="round">반올림</option>
+    </select></div>
+  </div>
+  <div class="row" style="margin-bottom:14px">
+    <div class="f"><label>휴무(정일) 근태값 (쉼표 구분)</label><input type="text" id="vOff" value="정일" style="min-width:230px"></div>
+    <div class="f"><label>주(월~일)당 휴무 일수</label><input type="number" id="vOffWk" value="2" style="width:140px"></div>
+    <div class="f"><label>기준 연도</label><input type="number" id="vYear" style="width:100px"></div>
+    <div class="f" style="justify-content:flex-end"><label>&nbsp;</label>
+      <label class="muted"><input type="checkbox" id="vPartWk"> 파일 앞뒤가 <b>잘린 주</b>도 검사 (앞뒤 달을 함께 올릴 때만 권장)</label></div>
+    <div class="f"><label>이 달 법일 일수 (비우면 자동)</label><input type="number" id="vHolQuota" placeholder="자동" style="width:170px"></div>
+  </div>
+  <div class="split" style="margin-top:6px">
+    <b style="font-size:13px">근태코드 → 급여요일 기준표 (R1 판정 기준)</b>
+    <span class="muted">한 줄에 하나 · <kbd>연차휴가 = 평일</kbd> 형식 · 근태가 비어 있는 날은 <kbd>(빈칸)</kbd></span>
+  </div>
+  <textarea id="vMap" style="width:100%;height:150px;font-family:ui-monospace,monospace;font-size:12px;border:1px solid var(--line);border-radius:8px;padding:9px;margin-bottom:6px"></textarea>
+  <div class="note i" style="margin-bottom:14px">
+    근태코드마다 <b>급여요일이 무엇이어야 하는지</b>를 여기서 정합니다. 표에 없는 근태코드가 파일에 나오면 <b>R26</b>으로 알려주니,
+    새 코드가 생기면 이 표에 한 줄만 추가하면 됩니다. 표기가 회사와 다르면(예: 정일 → 휴무) 오른쪽 값만 바꾸세요.
+  </div>
+
+  <div class="split">
+    <b style="font-size:13px">법정공휴일 목록 (R14 판정 기준)</b>
+    <button class="sm" id="vHolReload">해당 연도 기본값 불러오기</button>
+    <span class="muted">한 줄에 하나 · <kbd>2026-08-15 광복절</kbd> 또는 <kbd>8/15</kbd> 형식</span>
+  </div>
+  <textarea id="vHolList" style="width:100%;height:110px;font-family:ui-monospace,monospace;font-size:12px;border:1px solid var(--line);border-radius:8px;padding:9px;margin-bottom:12px"></textarea>
+  <div class="note w" style="margin-bottom:12px">
+    <b>⚠️ 공휴일 날짜는 반드시 확인하세요.</b> 설날·추석·부처님오신날은 음력이라 해마다 바뀌고, 대체공휴일·임시공휴일·선거일은 정부가 그때그때 지정합니다.
+    R14는 <b>날짜를 맞추는 게 아니라 그 달의 법일 개수</b>를 봅니다. 기준 개수는 이 목록에서 <b>평일에 해당하는 날 수</b>로 자동 계산되므로,
+    <b>대체공휴일 날짜가 목록에 들어 있어야</b> 정확합니다. 회사 확정 달력과 대조해 주세요.
   </div>
   <label class="muted" style="display:block;margin-bottom:10px">
     <input type="checkbox" id="vWrap" checked> 자정을 넘는 근무(야간) 자동 보정 — 종료가 시작보다 빠르면 다음 날로 계산
@@ -364,34 +682,40 @@ kbd{background:#f1f5f9;border:1px solid var(--line);border-radius:4px;padding:1p
     <input type="file" id="aCfgFile" accept=".json" hidden>
     <span class="muted">열 연결·기준값·규칙 on/off를 저장해 다음 달에 그대로 불러옵니다. 열 연결은 <b>열 이름</b>으로 저장되어 순서가 바뀌어도 맞춰집니다.</span>
   </div>
-  <div class="tblwrap"><table id="ruleTbl"></table></div>
-</div>
+  <div class="tblwrap"><table id="ruleTbl"></table></div></div>
+  </div>
+</dialog>
 
-<!-- V5 -->
-<div class="card off" id="v5">
-  <h2><span class="n">5</span>검수 결과</h2>
-  <p class="hint">규칙 카드를 클릭하면 그 규칙의 이상 건만 봅니다. 행을 클릭하면 원본 값이 열립니다.</p>
-  <div class="cards" id="kpiA"></div>
+<dialog id="dgRos">
+  <div class="dlg-h"><h3>대상 인원 · 시급 (선택)</h3><button class="sm" data-close>닫기</button></div>
+  <div class="dlg-b">
+    <p class="hint" style="margin:0 0 12px">넣지 않아도 검수는 됩니다. 넣으면 <b>명단 대조</b>와 <b>이상 건별 급여 영향액</b>이 추가됩니다. <b>사번·성명·시급을 한 파일</b>로 올리면 ①만 쓰면 됩니다.</p>
+    <div id="v45"><div class="split">
+    <b style="font-size:13px">① 급여 대상자 명단 (사번 · 성명 · 시급)</b>
+    <button class="sm" id="rosBtn">파일 선택 (.xlsx/.csv)</button>
+    <input type="file" id="rosFile" accept=".xlsx,.xlsm,.xls,.csv" hidden>
+    <button class="sm" id="rosClear">지우기</button>
+    <span class="muted">사번 열 필수 · 성명 열이 있으면 함께 표시합니다</span>
+  </div>
+  <div id="rosInfo" class="muted" style="margin-bottom:16px">사번·성명·시급이 <b>한 파일</b>에 있으면 한 번에 인식합니다. 사번 열만 있어도 명단 대조는 됩니다.</div>
+
   <div class="split">
-    <button class="sm" id="aSnapSave">이번 검수 결과 저장(.json)</button>
-    <button class="sm" id="aCmpBtn">이전 검수 결과와 비교</button>
-    <input type="file" id="aCmpFile" accept=".json" hidden>
-    <button class="sm" id="aCmpClear" hidden>비교 해제</button>
-    <span class="muted" id="aCmpInfo">수정 전 결과를 저장해 두면, 고친 뒤 다시 검수했을 때 <b>해결됨 · 남음 · 신규</b>로 구분해서 보여줍니다.</span>
+    <b style="font-size:13px">② 시급만 따로 있을 때 (선택)</b>
+    <button class="sm" id="wgBtn">시급 파일 선택 (.xlsx/.csv)</button>
+    <input type="file" id="wgFile" accept=".xlsx,.xlsm,.xls,.csv" hidden>
+    <div class="f" style="margin-left:auto"><label style="font-size:11px">연장 배율</label>
+      <input type="number" id="aOtRate" value="1.5" step="0.1" style="width:90px;padding:4px 8px"></div>
   </div>
-  <div id="cmpBox"></div>
-  <div id="ruleCards"></div>
-  <div class="split" style="margin-top:12px">
-    <input type="text" id="qA" placeholder="사번 · 이름 · 일자 검색" style="min-width:230px">
-    <select id="ruleF"><option value="">전체 규칙</option></select>
-    <span class="grow"></span>
-    <button class="pri" id="expA">엑셀로 내보내기</button>
+  <textarea id="wgTable" placeholder="엑셀에서 사번·시급 두 열을 복사해 붙여넣어도 됩니다&#10;521900&#9;10400&#10;521901&#9;10800" style="width:100%;height:96px;font-family:ui-monospace,monospace;font-size:12px;border:1px solid var(--line);border-radius:8px;padding:9px"></textarea>
+  <div id="wgInfo" class="muted" style="margin-top:8px"></div>
+
+  <div class="note w" style="margin-top:12px">
+    <b>급여 영향액은 참고용입니다.</b> 연장 관련 이상(R9·R10·R12)은 <b>시급 × 배율 × 시간</b>, 근무시간 이상(R6)은 <b>시급 × 시간</b>으로 환산합니다.
+    금액이 <b>+</b>면 지급이 모자란 쪽, <b>−</b>면 과다 지급 쪽입니다. 실제 정산은 급여 시스템에서 확인하세요.
+  </div></div>
   </div>
-  <div class="tblwrap" style="max-height:560px"><table id="outA"></table></div>
-  <div class="note i" style="margin-top:12px">
-    검수 결과는 <b>입력값 정합성</b>만 봅니다. 실제 근무 사실 여부, 승인 여부, 급여 반영 여부는 담당자 확인이 필요합니다.
-  </div>
-</div>
+</dialog>
+
 </div><!-- /viewAudit -->
 
 <dialog id="dlg">
@@ -399,7 +723,7 @@ kbd{background:#f1f5f9;border:1px solid var(--line);border-radius:4px;padding:1p
   <div class="dlg-b" id="dlgB"></div>
 </dialog>
 
-<script>/*! SheetJS xlsx 0.18.5 | Apache-2.0 */
+<script>
 /*! xlsx.js (C) 2013-present SheetJS -- http://sheetjs.com */
 var DO_NOT_EXPORT_CODEPAGE=true;var cptable={version:"1.15.0"};cptable[437]=function(){var e="\0\b\t\n\x0B\f\r !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜ¢£¥₧ƒáíóúñÑªº¿⌐¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αßΓπΣσµτΦΘΩδ∞φε∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■ ",r=[],t={};for(var a=0;a!=e.length;++a){if(e.charCodeAt(a)!==65533)t[e.charAt(a)]=a;r[a]=e.charAt(a)}return{enc:t,dec:r}}();cptable[620]=function(){var e="\0\b\t\n\x0B\f\r !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ÇüéâäàąçêëèïîćÄĄĘęłôöĆûùŚÖÜ¢Ł¥śƒŹŻóÓńŃźż¿⌐¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αßΓπΣσµτΦΘΩδ∞φε∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■ ",r=[],t={};for(var a=0;a!=e.length;++a){if(e.charCodeAt(a)!==65533)t[e.charAt(a)]=a;r[a]=e.charAt(a)}return{enc:t,dec:r}}();cptable[737]=function(){var e="\0\b\t\n\x0B\f\r !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩαβγδεζηθικλμνξοπρσςτυφχψ░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀ωάέήϊίόύϋώΆΈΉΊΌΎΏ±≥≤ΪΫ÷≈°∙·√ⁿ²■ ",r=[],t={};for(var a=0;a!=e.length;++a){if(e.charCodeAt(a)!==65533)t[e.charAt(a)]=a;r[a]=e.charAt(a)}return{enc:t,dec:r}}();cptable[850]=function(){var e="\0\b\t\n\x0B\f\r !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜø£Ø×ƒáíóúñÑªº¿®¬½¼¡«»░▒▓│┤ÁÂÀ©╣║╗╝¢¥┐└┴┬├─┼ãÃ╚╔╩╦╠═╬¤ðÐÊËÈıÍÎÏ┘┌█▄¦Ì▀ÓßÔÒõÕµþÞÚÛÙýÝ¯´­±‗¾¶§÷¸°¨·¹³²■ ",r=[],t={};for(var a=0;a!=e.length;++a){if(e.charCodeAt(a)!==65533)t[e.charAt(a)]=a;r[a]=e.charAt(a)}return{enc:t,dec:r}}();cptable[852]=function(){var e="\0\b\t\n\x0B\f\r !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ÇüéâäůćçłëŐőîŹÄĆÉĹĺôöĽľŚśÖÜŤťŁ×čáíóúĄąŽžĘę¬źČş«»░▒▓│┤ÁÂĚŞ╣║╗╝Żż┐└┴┬├─┼Ăă╚╔╩╦╠═╬¤đĐĎËďŇÍÎě┘┌█▄ŢŮ▀ÓßÔŃńňŠšŔÚŕŰýÝţ´­˝˛ˇ˘§÷¸°¨˙űŘř■ ",r=[],t={};for(var a=0;a!=e.length;++a){if(e.charCodeAt(a)!==65533)t[e.charAt(a)]=a;r[a]=e.charAt(a)}return{enc:t,dec:r}}();cptable[857]=function(){var e="\0\b\t\n\x0B\f\r !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ÇüéâäàåçêëèïîıÄÅÉæÆôöòûùİÖÜø£ØŞşáíóúñÑĞğ¿®¬½¼¡«»░▒▓│┤ÁÂÀ©╣║╗╝¢¥┐└┴┬├─┼ãÃ╚╔╩╦╠═╬¤ºªÊËÈ�ÍÎÏ┘┌█▄¦Ì▀ÓßÔÒõÕµ�×ÚÛÙìÿ¯´­±�¾¶§÷¸°¨·¹³²■ ",r=[],t={};for(var a=0;a!=e.length;++a){if(e.charCodeAt(a)!==65533)t[e.charAt(a)]=a;r[a]=e.charAt(a)}return{enc:t,dec:r}}();cptable[861]=function(){var e="\0\b\t\n\x0B\f\r !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ÇüéâäàåçêëèÐðÞÄÅÉæÆôöþûÝýÖÜø£Ø₧ƒáíóúÁÍÓÚ¿⌐¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αßΓπΣσµτΦΘΩδ∞φε∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■ ",r=[],t={};for(var a=0;a!=e.length;++a){if(e.charCodeAt(a)!==65533)t[e.charAt(a)]=a;r[a]=e.charAt(a)}return{enc:t,dec:r}}();cptable[865]=function(){var e="\0\b\t\n\x0B\f\r !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜø£Ø₧ƒáíóúñÑªº¿⌐¬½¼¡«¤░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αßΓπΣσµτΦΘΩδ∞φε∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■ ",r=[],t={};for(var a=0;a!=e.length;++a){if(e.charCodeAt(a)!==65533)t[e.charAt(a)]=a;r[a]=e.charAt(a)}return{enc:t,dec:r}}();cptable[866]=function(){var e="\0\b\t\n\x0B\f\r !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдежзийклмноп░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀рстуфхцчшщъыьэюяЁёЄєЇїЎў°∙·√№¤■ ",r=[],t={};for(var a=0;a!=e.length;++a){if(e.charCodeAt(a)!==65533)t[e.charAt(a)]=a;r[a]=e.charAt(a)}return{enc:t,dec:r}}();cptable[874]=function(){var e="\0\b\t\n\x0B\f\r !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~€����…�����������‘’“”•–—�������� กขฃคฅฆงจฉชซฌญฎฏฐฑฒณดตถทธนบปผฝพฟภมยรฤลฦวศษสหฬอฮฯะัาำิีึืฺุู����฿เแโใไๅๆ็่้๊๋์ํ๎๏๐๑๒๓๔๕๖๗๘๙๚๛����",r=[],t={};for(var a=0;a!=e.length;++a){if(e.charCodeAt(a)!==65533)t[e.charAt(a)]=a;r[a]=e.charAt(a)}return{enc:t,dec:r}}();cptable[895]=function(){var e="\0\b\t\n\x0B\f\r !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ČüéďäĎŤčěĚĹÍľǪÄÁÉžŽôöÓůÚýÖÜŠĽÝŘťáíóúňŇŮÔšřŕŔ¼§«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αßΓπΣσµτΦΘΩδ∞φε∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■ ",r=[],t={};for(var a=0;a!=e.length;++a){if(e.charCodeAt(a)!==65533)t[e.charAt(a)]=a;r[a]=e.charAt(a)}return{enc:t,dec:r}}();cptable[932]=function(){var e=[],r={},t=[],a;t[0]="\0\b\t\n\x0B\f\r !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~���������������������������������｡｢｣､･ｦｧｨｩｪｫｬｭｮｯｰｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝﾞﾟ��������������������������������".split("");for(a=0;a!=t[0].length;++a)if(t[0][a].charCodeAt(0)!==65533){r[t[0][a]]=0+a;e[0+a]=t[0][a]}t[129]="����������������������������������������������������������������　、。，．・：；？！゛゜´｀¨＾￣＿ヽヾゝゞ〃仝々〆〇ー―‐／＼～∥｜…‥‘’“”（）〔〕［］｛｝〈〉《》「」『』【】＋－±×�÷＝≠＜＞≦≧∞∴♂♀°′″℃￥＄￠￡％＃＆＊＠§☆★○●◎◇◆□■△▲▽▼※〒→←↑↓〓�����������∈∋⊆⊇⊂⊃∪∩��������∧∨￢⇒⇔∀∃�����������∠⊥⌒∂∇≡≒≪≫√∽∝∵∫∬�������Å‰♯♭♪†‡¶����◯���".split("");for(a=0;a!=t[129].length;++a)if(t[129][a].charCodeAt(0)!==65533){r[t[129][a]]=33024+a;e[33024+a]=t[129][a]}t[130]="�������������������������������������������������������������������������������０１２３４５６７８９�������ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ�������ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ����ぁあぃいぅうぇえぉおかがきぎくぐけげこごさざしじすずせぜそぞただちぢっつづてでとどなにぬねのはばぱひびぴふぶぷへべぺほぼぽまみむめもゃやゅゆょよらりるれろゎわゐゑをん��������������".split("");for(a=0;a!=t[130].length;++a)if(t[130][a].charCodeAt(0)!==65533){r[t[130][a]]=33280+a;e[33280+a]=t[130][a]}t[131]="����������������������������������������������������������������ァアィイゥウェエォオカガキギクグケゲコゴサザシジスズセゼソゾタダチヂッツヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミ�ムメモャヤュユョヨラリルレロヮワヰヱヲンヴヵヶ��������ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ��������αβγδεζηθικλμνξοπρστυφχψω�����������������������������������������".split("");for(a=0;a!=t[131].length;++a)if(t[131][a].charCodeAt(0)!==65533){r[t[131][a]]=33536+a;e[33536+a]=t[131][a]}t[132]="����������������������������������������������������������������АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ���������������абвгдеёжзийклмн�опрстуфхцчшщъыьэюя�������������─│┌┐┘└├┬┤┴┼━┃┏┓┛┗┣┳┫┻╋┠┯┨┷┿┝┰┥┸╂�����������������������������������������������������������������".split("");for(a=0;a!=t[132].length;++a)if(t[132][a].charCodeAt(0)!==65533){r[t[132][a]]=33792+a;e[33792+a]=t[132][a]}t[135]="����������������������������������������������������������������①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ�㍉㌔㌢㍍㌘㌧㌃㌶㍑㍗㌍㌦㌣㌫㍊㌻㎜㎝㎞㎎㎏㏄㎡��������㍻�〝〟№㏍℡㊤㊥㊦㊧㊨㈱㈲㈹㍾㍽㍼≒≡∫∮∑√⊥∠∟⊿∵∩∪���������������������������������������������������������������������������������������������������".split("");for(a=0;a!=t[135].length;++a)if(t[135][a].charCodeAt(0)!==65533){r[t[135][a]]=34560+a;e[34560+a]=t[135][a]}t[136]="���������������������������������������������������������������������������������������������������������������������������������������������������������������亜唖娃阿哀愛挨姶逢葵茜穐悪握渥旭葦芦鯵梓圧斡扱宛姐虻飴絢綾鮎或粟袷安庵按暗案闇鞍杏以伊位依偉囲夷委威尉惟意慰易椅為畏異移維緯胃萎衣謂違遺医井亥域育郁磯一壱溢逸稲茨芋鰯允印咽員因姻引飲淫胤蔭���".split("");for(a=0;a!=t[136].length;++a)if(t[136][a].charCodeAt(0)!==65533){r[t[136][a]]=34816+a;e[34816+a]=t[136][a]}t[137]="����������������������������������������������������������������院陰隠韻吋右宇烏羽迂雨卯鵜窺丑碓臼渦嘘唄欝蔚鰻姥厩浦瓜閏噂云運雲荏餌叡営嬰影映曳栄永泳洩瑛盈穎頴英衛詠鋭液疫益駅悦謁越閲榎厭円�園堰奄宴延怨掩援沿演炎焔煙燕猿縁艶苑薗遠鉛鴛塩於汚甥凹央奥往応押旺横欧殴王翁襖鴬鴎黄岡沖荻億屋憶臆桶牡乙俺卸恩温穏音下化仮何伽価佳加可嘉夏嫁家寡科暇果架歌河火珂禍禾稼箇花苛茄荷華菓蝦課嘩貨迦過霞蚊俄峨我牙画臥芽蛾賀雅餓駕介会解回塊壊廻快怪悔恢懐戒拐改���".split("");for(a=0;a!=t[137].length;++a)if(t[137][a].charCodeAt(0)!==65533){r[t[137][a]]=35072+a;e[35072+a]=t[137][a]}t[138]="����������������������������������������������������������������魁晦械海灰界皆絵芥蟹開階貝凱劾外咳害崖慨概涯碍蓋街該鎧骸浬馨蛙垣柿蛎鈎劃嚇各廓拡撹格核殻獲確穫覚角赫較郭閣隔革学岳楽額顎掛笠樫�橿梶鰍潟割喝恰括活渇滑葛褐轄且鰹叶椛樺鞄株兜竃蒲釜鎌噛鴨栢茅萱粥刈苅瓦乾侃冠寒刊勘勧巻喚堪姦完官寛干幹患感慣憾換敢柑桓棺款歓汗漢澗潅環甘監看竿管簡緩缶翰肝艦莞観諌貫還鑑間閑関陥韓館舘丸含岸巌玩癌眼岩翫贋雁頑顔願企伎危喜器基奇嬉寄岐希幾忌揮机旗既期棋棄���".split("");for(a=0;a!=t[138].length;++a)if(t[138][a].charCodeAt(0)!==65533){r[t[138][a]]=35328+a;e[35328+a]=t[138][a]}t[139]="����������������������������������������������������������������機帰毅気汽畿祈季稀紀徽規記貴起軌輝飢騎鬼亀偽儀妓宜戯技擬欺犠疑祇義蟻誼議掬菊鞠吉吃喫桔橘詰砧杵黍却客脚虐逆丘久仇休及吸宮弓急救�朽求汲泣灸球究窮笈級糾給旧牛去居巨拒拠挙渠虚許距鋸漁禦魚亨享京供侠僑兇競共凶協匡卿叫喬境峡強彊怯恐恭挟教橋況狂狭矯胸脅興蕎郷鏡響饗驚仰凝尭暁業局曲極玉桐粁僅勤均巾錦斤欣欽琴禁禽筋緊芹菌衿襟謹近金吟銀九倶句区狗玖矩苦躯駆駈駒具愚虞喰空偶寓遇隅串櫛釧屑屈���".split("");for(a=0;a!=t[139].length;++a)if(t[139][a].charCodeAt(0)!==65533){r[t[139][a]]=35584+a;e[35584+a]=t[139][a]}t[140]="����������������������������������������������������������������掘窟沓靴轡窪熊隈粂栗繰桑鍬勲君薫訓群軍郡卦袈祁係傾刑兄啓圭珪型契形径恵慶慧憩掲携敬景桂渓畦稽系経継繋罫茎荊蛍計詣警軽頚鶏芸迎鯨�劇戟撃激隙桁傑欠決潔穴結血訣月件倹倦健兼券剣喧圏堅嫌建憲懸拳捲検権牽犬献研硯絹県肩見謙賢軒遣鍵険顕験鹸元原厳幻弦減源玄現絃舷言諺限乎個古呼固姑孤己庫弧戸故枯湖狐糊袴股胡菰虎誇跨鈷雇顧鼓五互伍午呉吾娯後御悟梧檎瑚碁語誤護醐乞鯉交佼侯候倖光公功効勾厚口向���".split("");for(a=0;a!=t[140].length;++a)if(t[140][a].charCodeAt(0)!==65533){r[t[140][a]]=35840+a;e[35840+a]=t[140][a]}t[141]="����������������������������������������������������������������后喉坑垢好孔孝宏工巧巷幸広庚康弘恒慌抗拘控攻昂晃更杭校梗構江洪浩港溝甲皇硬稿糠紅紘絞綱耕考肯肱腔膏航荒行衡講貢購郊酵鉱砿鋼閤降�項香高鴻剛劫号合壕拷濠豪轟麹克刻告国穀酷鵠黒獄漉腰甑忽惚骨狛込此頃今困坤墾婚恨懇昏昆根梱混痕紺艮魂些佐叉唆嵯左差査沙瑳砂詐鎖裟坐座挫債催再最哉塞妻宰彩才採栽歳済災采犀砕砦祭斎細菜裁載際剤在材罪財冴坂阪堺榊肴咲崎埼碕鷺作削咋搾昨朔柵窄策索錯桜鮭笹匙冊刷���".split("");for(a=0;a!=t[141].length;++a)if(t[141][a].charCodeAt(0)!==65533){r[t[141][a]]=36096+a;e[36096+a]=t[141][a]}t[142]="����������������������������������������������������������������察拶撮擦札殺薩雑皐鯖捌錆鮫皿晒三傘参山惨撒散桟燦珊産算纂蚕讃賛酸餐斬暫残仕仔伺使刺司史嗣四士始姉姿子屍市師志思指支孜斯施旨枝止�死氏獅祉私糸紙紫肢脂至視詞詩試誌諮資賜雌飼歯事似侍児字寺慈持時次滋治爾璽痔磁示而耳自蒔辞汐鹿式識鴫竺軸宍雫七叱執失嫉室悉湿漆疾質実蔀篠偲柴芝屡蕊縞舎写射捨赦斜煮社紗者謝車遮蛇邪借勺尺杓灼爵酌釈錫若寂弱惹主取守手朱殊狩珠種腫趣酒首儒受呪寿授樹綬需囚収周���".split("");for(a=0;a!=t[142].length;++a)if(t[142][a].charCodeAt(0)!==65533){r[t[142][a]]=36352+a;e[36352+a]=t[142][a]}t[143]="����������������������������������������������������������������宗就州修愁拾洲秀秋終繍習臭舟蒐衆襲讐蹴輯週酋酬集醜什住充十従戎柔汁渋獣縦重銃叔夙宿淑祝縮粛塾熟出術述俊峻春瞬竣舜駿准循旬楯殉淳�準潤盾純巡遵醇順処初所暑曙渚庶緒署書薯藷諸助叙女序徐恕鋤除傷償勝匠升召哨商唱嘗奨妾娼宵将小少尚庄床廠彰承抄招掌捷昇昌昭晶松梢樟樵沼消渉湘焼焦照症省硝礁祥称章笑粧紹肖菖蒋蕉衝裳訟証詔詳象賞醤鉦鍾鐘障鞘上丈丞乗冗剰城場壌嬢常情擾条杖浄状畳穣蒸譲醸錠嘱埴飾���".split("");for(a=0;a!=t[143].length;++a)if(t[143][a].charCodeAt(0)!==65533){r[t[143][a]]=36608+a;e[36608+a]=t[143][a]}t[144]="����������������������������������������������������������������拭植殖燭織職色触食蝕辱尻伸信侵唇娠寝審心慎振新晋森榛浸深申疹真神秦紳臣芯薪親診身辛進針震人仁刃塵壬尋甚尽腎訊迅陣靭笥諏須酢図厨�逗吹垂帥推水炊睡粋翠衰遂酔錐錘随瑞髄崇嵩数枢趨雛据杉椙菅頗雀裾澄摺寸世瀬畝是凄制勢姓征性成政整星晴棲栖正清牲生盛精聖声製西誠誓請逝醒青静斉税脆隻席惜戚斥昔析石積籍績脊責赤跡蹟碩切拙接摂折設窃節説雪絶舌蝉仙先千占宣専尖川戦扇撰栓栴泉浅洗染潜煎煽旋穿箭線���".split("");for(a=0;a!=t[144].length;++a)if(t[144][a].charCodeAt(0)!==65533){r[t[144][a]]=36864+a;e[36864+a]=t[144][a]}t[145]="����������������������������������������������������������������繊羨腺舛船薦詮賎践選遷銭銑閃鮮前善漸然全禅繕膳糎噌塑岨措曾曽楚狙疏疎礎祖租粗素組蘇訴阻遡鼠僧創双叢倉喪壮奏爽宋層匝惣想捜掃挿掻�操早曹巣槍槽漕燥争痩相窓糟総綜聡草荘葬蒼藻装走送遭鎗霜騒像増憎臓蔵贈造促側則即息捉束測足速俗属賊族続卒袖其揃存孫尊損村遜他多太汰詑唾堕妥惰打柁舵楕陀駄騨体堆対耐岱帯待怠態戴替泰滞胎腿苔袋貸退逮隊黛鯛代台大第醍題鷹滝瀧卓啄宅托択拓沢濯琢託鐸濁諾茸凧蛸只���".split("");for(a=0;a!=t[145].length;++a)if(t[145][a].charCodeAt(0)!==65533){r[t[145][a]]=37120+a;e[37120+a]=t[145][a]}t[146]="����������������������������������������������������������������叩但達辰奪脱巽竪辿棚谷狸鱈樽誰丹単嘆坦担探旦歎淡湛炭短端箪綻耽胆蛋誕鍛団壇弾断暖檀段男談値知地弛恥智池痴稚置致蜘遅馳築畜竹筑蓄�逐秩窒茶嫡着中仲宙忠抽昼柱注虫衷註酎鋳駐樗瀦猪苧著貯丁兆凋喋寵帖帳庁弔張彫徴懲挑暢朝潮牒町眺聴脹腸蝶調諜超跳銚長頂鳥勅捗直朕沈珍賃鎮陳津墜椎槌追鎚痛通塚栂掴槻佃漬柘辻蔦綴鍔椿潰坪壷嬬紬爪吊釣鶴亭低停偵剃貞呈堤定帝底庭廷弟悌抵挺提梯汀碇禎程締艇訂諦蹄逓���".split("");for(a=0;a!=t[146].length;++a)if(t[146][a].charCodeAt(0)!==65533){r[t[146][a]]=37376+a;e[37376+a]=t[146][a]}t[147]="����������������������������������������������������������������邸鄭釘鼎泥摘擢敵滴的笛適鏑溺哲徹撤轍迭鉄典填天展店添纏甜貼転顛点伝殿澱田電兎吐堵塗妬屠徒斗杜渡登菟賭途都鍍砥砺努度土奴怒倒党冬�凍刀唐塔塘套宕島嶋悼投搭東桃梼棟盗淘湯涛灯燈当痘祷等答筒糖統到董蕩藤討謄豆踏逃透鐙陶頭騰闘働動同堂導憧撞洞瞳童胴萄道銅峠鴇匿得徳涜特督禿篤毒独読栃橡凸突椴届鳶苫寅酉瀞噸屯惇敦沌豚遁頓呑曇鈍奈那内乍凪薙謎灘捺鍋楢馴縄畷南楠軟難汝二尼弐迩匂賑肉虹廿日乳入���".split("");for(a=0;a!=t[147].length;++a)if(t[147][a].charCodeAt(0)!==65533){r[t[147][a]]=37632+a;e[37632+a]=t[147][a]}t[148]="����������������������������������������������������������������如尿韮任妊忍認濡禰祢寧葱猫熱年念捻撚燃粘乃廼之埜嚢悩濃納能脳膿農覗蚤巴把播覇杷波派琶破婆罵芭馬俳廃拝排敗杯盃牌背肺輩配倍培媒梅�楳煤狽買売賠陪這蝿秤矧萩伯剥博拍柏泊白箔粕舶薄迫曝漠爆縛莫駁麦函箱硲箸肇筈櫨幡肌畑畠八鉢溌発醗髪伐罰抜筏閥鳩噺塙蛤隼伴判半反叛帆搬斑板氾汎版犯班畔繁般藩販範釆煩頒飯挽晩番盤磐蕃蛮匪卑否妃庇彼悲扉批披斐比泌疲皮碑秘緋罷肥被誹費避非飛樋簸備尾微枇毘琵眉美���".split("");for(a=0;a!=t[148].length;++a)if(t[148][a].charCodeAt(0)!==65533){r[t[148][a]]=37888+a;e[37888+a]=t[148][a]}t[149]="����������������������������������������������������������������鼻柊稗匹疋髭彦膝菱肘弼必畢筆逼桧姫媛紐百謬俵彪標氷漂瓢票表評豹廟描病秒苗錨鋲蒜蛭鰭品彬斌浜瀕貧賓頻敏瓶不付埠夫婦富冨布府怖扶敷�斧普浮父符腐膚芙譜負賦赴阜附侮撫武舞葡蕪部封楓風葺蕗伏副復幅服福腹複覆淵弗払沸仏物鮒分吻噴墳憤扮焚奮粉糞紛雰文聞丙併兵塀幣平弊柄並蔽閉陛米頁僻壁癖碧別瞥蔑箆偏変片篇編辺返遍便勉娩弁鞭保舗鋪圃捕歩甫補輔穂募墓慕戊暮母簿菩倣俸包呆報奉宝峰峯崩庖抱捧放方朋���".split("");for(a=0;a!=t[149].length;++a)if(t[149][a].charCodeAt(0)!==65533){r[t[149][a]]=38144+a;e[38144+a]=t[149][a]}t[150]="����������������������������������������������������������������法泡烹砲縫胞芳萌蓬蜂褒訪豊邦鋒飽鳳鵬乏亡傍剖坊妨帽忘忙房暴望某棒冒紡肪膨謀貌貿鉾防吠頬北僕卜墨撲朴牧睦穆釦勃没殆堀幌奔本翻凡盆�摩磨魔麻埋妹昧枚毎哩槙幕膜枕鮪柾鱒桝亦俣又抹末沫迄侭繭麿万慢満漫蔓味未魅巳箕岬密蜜湊蓑稔脈妙粍民眠務夢無牟矛霧鵡椋婿娘冥名命明盟迷銘鳴姪牝滅免棉綿緬面麺摸模茂妄孟毛猛盲網耗蒙儲木黙目杢勿餅尤戻籾貰問悶紋門匁也冶夜爺耶野弥矢厄役約薬訳躍靖柳薮鑓愉愈油癒���".split("");for(a=0;a!=t[150].length;++a)if(t[150][a].charCodeAt(0)!==65533){r[t[150][a]]=38400+a;e[38400+a]=t[150][a]}t[151]="����������������������������������������������������������������諭輸唯佑優勇友宥幽悠憂揖有柚湧涌猶猷由祐裕誘遊邑郵雄融夕予余与誉輿預傭幼妖容庸揚揺擁曜楊様洋溶熔用窯羊耀葉蓉要謡踊遥陽養慾抑欲�沃浴翌翼淀羅螺裸来莱頼雷洛絡落酪乱卵嵐欄濫藍蘭覧利吏履李梨理璃痢裏裡里離陸律率立葎掠略劉流溜琉留硫粒隆竜龍侶慮旅虜了亮僚両凌寮料梁涼猟療瞭稜糧良諒遼量陵領力緑倫厘林淋燐琳臨輪隣鱗麟瑠塁涙累類令伶例冷励嶺怜玲礼苓鈴隷零霊麗齢暦歴列劣烈裂廉恋憐漣煉簾練聯���".split("");for(a=0;a!=t[151].length;++a)if(t[151][a].charCodeAt(0)!==65533){r[t[151][a]]=38656+a;e[38656+a]=t[151][a]}t[152]="����������������������������������������������������������������蓮連錬呂魯櫓炉賂路露労婁廊弄朗楼榔浪漏牢狼篭老聾蝋郎六麓禄肋録論倭和話歪賄脇惑枠鷲亙亘鰐詫藁蕨椀湾碗腕��������������������������������������������弌丐丕个丱丶丼丿乂乖乘亂亅豫亊舒弍于亞亟亠亢亰亳亶从仍仄仆仂仗仞仭仟价伉佚估佛佝佗佇佶侈侏侘佻佩佰侑佯來侖儘俔俟俎俘俛俑俚俐俤俥倚倨倔倪倥倅伜俶倡倩倬俾俯們倆偃假會偕偐偈做偖偬偸傀傚傅傴傲���".split("");for(a=0;a!=t[152].length;++a)if(t[152][a].charCodeAt(0)!==65533){r[t[152][a]]=38912+a;e[38912+a]=t[152][a]}t[153]="����������������������������������������������������������������僉僊傳僂僖僞僥僭僣僮價僵儉儁儂儖儕儔儚儡儺儷儼儻儿兀兒兌兔兢竸兩兪兮冀冂囘册冉冏冑冓冕冖冤冦冢冩冪冫决冱冲冰况冽凅凉凛几處凩凭�凰凵凾刄刋刔刎刧刪刮刳刹剏剄剋剌剞剔剪剴剩剳剿剽劍劔劒剱劈劑辨辧劬劭劼劵勁勍勗勞勣勦飭勠勳勵勸勹匆匈甸匍匐匏匕匚匣匯匱匳匸區卆卅丗卉卍凖卞卩卮夘卻卷厂厖厠厦厥厮厰厶參簒雙叟曼燮叮叨叭叺吁吽呀听吭吼吮吶吩吝呎咏呵咎呟呱呷呰咒呻咀呶咄咐咆哇咢咸咥咬哄哈咨���".split("");for(a=0;a!=t[153].length;++a)if(t[153][a].charCodeAt(0)!==65533){r[t[153][a]]=39168+a;e[39168+a]=t[153][a]}t[154]="����������������������������������������������������������������咫哂咤咾咼哘哥哦唏唔哽哮哭哺哢唹啀啣啌售啜啅啖啗唸唳啝喙喀咯喊喟啻啾喘喞單啼喃喩喇喨嗚嗅嗟嗄嗜嗤嗔嘔嗷嘖嗾嗽嘛嗹噎噐營嘴嘶嘲嘸�噫噤嘯噬噪嚆嚀嚊嚠嚔嚏嚥嚮嚶嚴囂嚼囁囃囀囈囎囑囓囗囮囹圀囿圄圉圈國圍圓團圖嗇圜圦圷圸坎圻址坏坩埀垈坡坿垉垓垠垳垤垪垰埃埆埔埒埓堊埖埣堋堙堝塲堡塢塋塰毀塒堽塹墅墹墟墫墺壞墻墸墮壅壓壑壗壙壘壥壜壤壟壯壺壹壻壼壽夂夊夐夛梦夥夬夭夲夸夾竒奕奐奎奚奘奢奠奧奬奩���".split("");for(a=0;a!=t[154].length;++a)if(t[154][a].charCodeAt(0)!==65533){r[t[154][a]]=39424+a;e[39424+a]=t[154][a]}t[155]="����������������������������������������������������������������奸妁妝佞侫妣妲姆姨姜妍姙姚娥娟娑娜娉娚婀婬婉娵娶婢婪媚媼媾嫋嫂媽嫣嫗嫦嫩嫖嫺嫻嬌嬋嬖嬲嫐嬪嬶嬾孃孅孀孑孕孚孛孥孩孰孳孵學斈孺宀�它宦宸寃寇寉寔寐寤實寢寞寥寫寰寶寳尅將專對尓尠尢尨尸尹屁屆屎屓屐屏孱屬屮乢屶屹岌岑岔妛岫岻岶岼岷峅岾峇峙峩峽峺峭嶌峪崋崕崗嵜崟崛崑崔崢崚崙崘嵌嵒嵎嵋嵬嵳嵶嶇嶄嶂嶢嶝嶬嶮嶽嶐嶷嶼巉巍巓巒巖巛巫已巵帋帚帙帑帛帶帷幄幃幀幎幗幔幟幢幤幇幵并幺麼广庠廁廂廈廐廏���".split("");for(a=0;a!=t[155].length;++a)if(t[155][a].charCodeAt(0)!==65533){r[t[155][a]]=39680+a;e[39680+a]=t[155][a]}t[156]="����������������������������������������������������������������廖廣廝廚廛廢廡廨廩廬廱廳廰廴廸廾弃弉彝彜弋弑弖弩弭弸彁彈彌彎弯彑彖彗彙彡彭彳彷徃徂彿徊很徑徇從徙徘徠徨徭徼忖忻忤忸忱忝悳忿怡恠�怙怐怩怎怱怛怕怫怦怏怺恚恁恪恷恟恊恆恍恣恃恤恂恬恫恙悁悍惧悃悚悄悛悖悗悒悧悋惡悸惠惓悴忰悽惆悵惘慍愕愆惶惷愀惴惺愃愡惻惱愍愎慇愾愨愧慊愿愼愬愴愽慂慄慳慷慘慙慚慫慴慯慥慱慟慝慓慵憙憖憇憬憔憚憊憑憫憮懌懊應懷懈懃懆憺懋罹懍懦懣懶懺懴懿懽懼懾戀戈戉戍戌戔戛���".split("");for(a=0;a!=t[156].length;++a)if(t[156][a].charCodeAt(0)!==65533){r[t[156][a]]=39936+a;e[39936+a]=t[156][a]}t[157]="����������������������������������������������������������������戞戡截戮戰戲戳扁扎扞扣扛扠扨扼抂抉找抒抓抖拔抃抔拗拑抻拏拿拆擔拈拜拌拊拂拇抛拉挌拮拱挧挂挈拯拵捐挾捍搜捏掖掎掀掫捶掣掏掉掟掵捫�捩掾揩揀揆揣揉插揶揄搖搴搆搓搦搶攝搗搨搏摧摯摶摎攪撕撓撥撩撈撼據擒擅擇撻擘擂擱擧舉擠擡抬擣擯攬擶擴擲擺攀擽攘攜攅攤攣攫攴攵攷收攸畋效敖敕敍敘敞敝敲數斂斃變斛斟斫斷旃旆旁旄旌旒旛旙无旡旱杲昊昃旻杳昵昶昴昜晏晄晉晁晞晝晤晧晨晟晢晰暃暈暎暉暄暘暝曁暹曉暾暼���".split("");for(a=0;a!=t[157].length;++a)if(t[157][a].charCodeAt(0)!==65533){r[t[157][a]]=40192+a;e[40192+a]=t[157][a]}t[158]="����������������������������������������������������������������曄暸曖曚曠昿曦曩曰曵曷朏朖朞朦朧霸朮朿朶杁朸朷杆杞杠杙杣杤枉杰枩杼杪枌枋枦枡枅枷柯枴柬枳柩枸柤柞柝柢柮枹柎柆柧檜栞框栩桀桍栲桎�梳栫桙档桷桿梟梏梭梔條梛梃檮梹桴梵梠梺椏梍桾椁棊椈棘椢椦棡椌棍棔棧棕椶椒椄棗棣椥棹棠棯椨椪椚椣椡棆楹楷楜楸楫楔楾楮椹楴椽楙椰楡楞楝榁楪榲榮槐榿槁槓榾槎寨槊槝榻槃榧樮榑榠榜榕榴槞槨樂樛槿權槹槲槧樅榱樞槭樔槫樊樒櫁樣樓橄樌橲樶橸橇橢橙橦橈樸樢檐檍檠檄檢檣���".split("");for(a=0;a!=t[158].length;++a)if(t[158][a].charCodeAt(0)!==65533){r[t[158][a]]=40448+a;e[40448+a]=t[158][a]}t[159]="����������������������������������������������������������������檗蘗檻櫃櫂檸檳檬櫞櫑櫟檪櫚櫪櫻欅蘖櫺欒欖鬱欟欸欷盜欹飮歇歃歉歐歙歔歛歟歡歸歹歿殀殄殃殍殘殕殞殤殪殫殯殲殱殳殷殼毆毋毓毟毬毫毳毯�麾氈氓气氛氤氣汞汕汢汪沂沍沚沁沛汾汨汳沒沐泄泱泓沽泗泅泝沮沱沾沺泛泯泙泪洟衍洶洫洽洸洙洵洳洒洌浣涓浤浚浹浙涎涕濤涅淹渕渊涵淇淦涸淆淬淞淌淨淒淅淺淙淤淕淪淮渭湮渮渙湲湟渾渣湫渫湶湍渟湃渺湎渤滿渝游溂溪溘滉溷滓溽溯滄溲滔滕溏溥滂溟潁漑灌滬滸滾漿滲漱滯漲滌���".split("");for(a=0;a!=t[159].length;++a)if(t[159][a].charCodeAt(0)!==65533){r[t[159][a]]=40704+a;e[40704+a]=t[159][a]}t[224]="����������������������������������������������������������������漾漓滷澆潺潸澁澀潯潛濳潭澂潼潘澎澑濂潦澳澣澡澤澹濆澪濟濕濬濔濘濱濮濛瀉瀋濺瀑瀁瀏濾瀛瀚潴瀝瀘瀟瀰瀾瀲灑灣炙炒炯烱炬炸炳炮烟烋烝�烙焉烽焜焙煥煕熈煦煢煌煖煬熏燻熄熕熨熬燗熹熾燒燉燔燎燠燬燧燵燼燹燿爍爐爛爨爭爬爰爲爻爼爿牀牆牋牘牴牾犂犁犇犒犖犢犧犹犲狃狆狄狎狒狢狠狡狹狷倏猗猊猜猖猝猴猯猩猥猾獎獏默獗獪獨獰獸獵獻獺珈玳珎玻珀珥珮珞璢琅瑯琥珸琲琺瑕琿瑟瑙瑁瑜瑩瑰瑣瑪瑶瑾璋璞璧瓊瓏瓔珱���".split("");for(a=0;a!=t[224].length;++a)if(t[224][a].charCodeAt(0)!==65533){r[t[224][a]]=57344+a;e[57344+a]=t[224][a]}t[225]="����������������������������������������������������������������瓠瓣瓧瓩瓮瓲瓰瓱瓸瓷甄甃甅甌甎甍甕甓甞甦甬甼畄畍畊畉畛畆畚畩畤畧畫畭畸當疆疇畴疊疉疂疔疚疝疥疣痂疳痃疵疽疸疼疱痍痊痒痙痣痞痾痿�痼瘁痰痺痲痳瘋瘍瘉瘟瘧瘠瘡瘢瘤瘴瘰瘻癇癈癆癜癘癡癢癨癩癪癧癬癰癲癶癸發皀皃皈皋皎皖皓皙皚皰皴皸皹皺盂盍盖盒盞盡盥盧盪蘯盻眈眇眄眩眤眞眥眦眛眷眸睇睚睨睫睛睥睿睾睹瞎瞋瞑瞠瞞瞰瞶瞹瞿瞼瞽瞻矇矍矗矚矜矣矮矼砌砒礦砠礪硅碎硴碆硼碚碌碣碵碪碯磑磆磋磔碾碼磅磊磬���".split("");for(a=0;a!=t[225].length;++a)if(t[225][a].charCodeAt(0)!==65533){r[t[225][a]]=57600+a;e[57600+a]=t[225][a]}t[226]="����������������������������������������������������������������磧磚磽磴礇礒礑礙礬礫祀祠祗祟祚祕祓祺祿禊禝禧齋禪禮禳禹禺秉秕秧秬秡秣稈稍稘稙稠稟禀稱稻稾稷穃穗穉穡穢穩龝穰穹穽窈窗窕窘窖窩竈窰�窶竅竄窿邃竇竊竍竏竕竓站竚竝竡竢竦竭竰笂笏笊笆笳笘笙笞笵笨笶筐筺笄筍笋筌筅筵筥筴筧筰筱筬筮箝箘箟箍箜箚箋箒箏筝箙篋篁篌篏箴篆篝篩簑簔篦篥籠簀簇簓篳篷簗簍篶簣簧簪簟簷簫簽籌籃籔籏籀籐籘籟籤籖籥籬籵粃粐粤粭粢粫粡粨粳粲粱粮粹粽糀糅糂糘糒糜糢鬻糯糲糴糶糺紆���".split("");for(a=0;a!=t[226].length;++a)if(t[226][a].charCodeAt(0)!==65533){r[t[226][a]]=57856+a;e[57856+a]=t[226][a]}t[227]="����������������������������������������������������������������紂紜紕紊絅絋紮紲紿紵絆絳絖絎絲絨絮絏絣經綉絛綏絽綛綺綮綣綵緇綽綫總綢綯緜綸綟綰緘緝緤緞緻緲緡縅縊縣縡縒縱縟縉縋縢繆繦縻縵縹繃縷�縲縺繧繝繖繞繙繚繹繪繩繼繻纃緕繽辮繿纈纉續纒纐纓纔纖纎纛纜缸缺罅罌罍罎罐网罕罔罘罟罠罨罩罧罸羂羆羃羈羇羌羔羞羝羚羣羯羲羹羮羶羸譱翅翆翊翕翔翡翦翩翳翹飜耆耄耋耒耘耙耜耡耨耿耻聊聆聒聘聚聟聢聨聳聲聰聶聹聽聿肄肆肅肛肓肚肭冐肬胛胥胙胝胄胚胖脉胯胱脛脩脣脯腋���".split("");for(a=0;a!=t[227].length;++a)if(t[227][a].charCodeAt(0)!==65533){r[t[227][a]]=58112+a;e[58112+a]=t[227][a]}t[228]="����������������������������������������������������������������隋腆脾腓腑胼腱腮腥腦腴膃膈膊膀膂膠膕膤膣腟膓膩膰膵膾膸膽臀臂膺臉臍臑臙臘臈臚臟臠臧臺臻臾舁舂舅與舊舍舐舖舩舫舸舳艀艙艘艝艚艟艤�艢艨艪艫舮艱艷艸艾芍芒芫芟芻芬苡苣苟苒苴苳苺莓范苻苹苞茆苜茉苙茵茴茖茲茱荀茹荐荅茯茫茗茘莅莚莪莟莢莖茣莎莇莊荼莵荳荵莠莉莨菴萓菫菎菽萃菘萋菁菷萇菠菲萍萢萠莽萸蔆菻葭萪萼蕚蒄葷葫蒭葮蒂葩葆萬葯葹萵蓊葢蒹蒿蒟蓙蓍蒻蓚蓐蓁蓆蓖蒡蔡蓿蓴蔗蔘蔬蔟蔕蔔蓼蕀蕣蕘蕈���".split("");for(a=0;a!=t[228].length;++a)if(t[228][a].charCodeAt(0)!==65533){r[t[228][a]]=58368+a;e[58368+a]=t[228][a]}t[229]="����������������������������������������������������������������蕁蘂蕋蕕薀薤薈薑薊薨蕭薔薛藪薇薜蕷蕾薐藉薺藏薹藐藕藝藥藜藹蘊蘓蘋藾藺蘆蘢蘚蘰蘿虍乕虔號虧虱蚓蚣蚩蚪蚋蚌蚶蚯蛄蛆蚰蛉蠣蚫蛔蛞蛩蛬�蛟蛛蛯蜒蜆蜈蜀蜃蛻蜑蜉蜍蛹蜊蜴蜿蜷蜻蜥蜩蜚蝠蝟蝸蝌蝎蝴蝗蝨蝮蝙蝓蝣蝪蠅螢螟螂螯蟋螽蟀蟐雖螫蟄螳蟇蟆螻蟯蟲蟠蠏蠍蟾蟶蟷蠎蟒蠑蠖蠕蠢蠡蠱蠶蠹蠧蠻衄衂衒衙衞衢衫袁衾袞衵衽袵衲袂袗袒袮袙袢袍袤袰袿袱裃裄裔裘裙裝裹褂裼裴裨裲褄褌褊褓襃褞褥褪褫襁襄褻褶褸襌褝襠襞���".split("");for(a=0;a!=t[229].length;++a)if(t[229][a].charCodeAt(0)!==65533){r[t[229][a]]=58624+a;e[58624+a]=t[229][a]}t[230]="����������������������������������������������������������������襦襤襭襪襯襴襷襾覃覈覊覓覘覡覩覦覬覯覲覺覽覿觀觚觜觝觧觴觸訃訖訐訌訛訝訥訶詁詛詒詆詈詼詭詬詢誅誂誄誨誡誑誥誦誚誣諄諍諂諚諫諳諧�諤諱謔諠諢諷諞諛謌謇謚諡謖謐謗謠謳鞫謦謫謾謨譁譌譏譎證譖譛譚譫譟譬譯譴譽讀讌讎讒讓讖讙讚谺豁谿豈豌豎豐豕豢豬豸豺貂貉貅貊貍貎貔豼貘戝貭貪貽貲貳貮貶賈賁賤賣賚賽賺賻贄贅贊贇贏贍贐齎贓賍贔贖赧赭赱赳趁趙跂趾趺跏跚跖跌跛跋跪跫跟跣跼踈踉跿踝踞踐踟蹂踵踰踴蹊���".split("");for(a=0;a!=t[230].length;++a)if(t[230][a].charCodeAt(0)!==65533){r[t[230][a]]=58880+a;e[58880+a]=t[230][a]}t[231]="����������������������������������������������������������������蹇蹉蹌蹐蹈蹙蹤蹠踪蹣蹕蹶蹲蹼躁躇躅躄躋躊躓躑躔躙躪躡躬躰軆躱躾軅軈軋軛軣軼軻軫軾輊輅輕輒輙輓輜輟輛輌輦輳輻輹轅轂輾轌轉轆轎轗轜�轢轣轤辜辟辣辭辯辷迚迥迢迪迯邇迴逅迹迺逑逕逡逍逞逖逋逧逶逵逹迸遏遐遑遒逎遉逾遖遘遞遨遯遶隨遲邂遽邁邀邊邉邏邨邯邱邵郢郤扈郛鄂鄒鄙鄲鄰酊酖酘酣酥酩酳酲醋醉醂醢醫醯醪醵醴醺釀釁釉釋釐釖釟釡釛釼釵釶鈞釿鈔鈬鈕鈑鉞鉗鉅鉉鉤鉈銕鈿鉋鉐銜銖銓銛鉚鋏銹銷鋩錏鋺鍄錮���".split("");for(a=0;a!=t[231].length;++a)if(t[231][a].charCodeAt(0)!==65533){r[t[231][a]]=59136+a;e[59136+a]=t[231][a]}t[232]="����������������������������������������������������������������錙錢錚錣錺錵錻鍜鍠鍼鍮鍖鎰鎬鎭鎔鎹鏖鏗鏨鏥鏘鏃鏝鏐鏈鏤鐚鐔鐓鐃鐇鐐鐶鐫鐵鐡鐺鑁鑒鑄鑛鑠鑢鑞鑪鈩鑰鑵鑷鑽鑚鑼鑾钁鑿閂閇閊閔閖閘閙�閠閨閧閭閼閻閹閾闊濶闃闍闌闕闔闖關闡闥闢阡阨阮阯陂陌陏陋陷陜陞陝陟陦陲陬隍隘隕隗險隧隱隲隰隴隶隸隹雎雋雉雍襍雜霍雕雹霄霆霈霓霎霑霏霖霙霤霪霰霹霽霾靄靆靈靂靉靜靠靤靦靨勒靫靱靹鞅靼鞁靺鞆鞋鞏鞐鞜鞨鞦鞣鞳鞴韃韆韈韋韜韭齏韲竟韶韵頏頌頸頤頡頷頽顆顏顋顫顯顰���".split("");for(a=0;a!=t[232].length;++a)if(t[232][a].charCodeAt(0)!==65533){r[t[232][a]]=59392+a;e[59392+a]=t[232][a]}t[233]="����������������������������������������������������������������顱顴顳颪颯颱颶飄飃飆飩飫餃餉餒餔餘餡餝餞餤餠餬餮餽餾饂饉饅饐饋饑饒饌饕馗馘馥馭馮馼駟駛駝駘駑駭駮駱駲駻駸騁騏騅駢騙騫騷驅驂驀驃�騾驕驍驛驗驟驢驥驤驩驫驪骭骰骼髀髏髑髓體髞髟髢髣髦髯髫髮髴髱髷髻鬆鬘鬚鬟鬢鬣鬥鬧鬨鬩鬪鬮鬯鬲魄魃魏魍魎魑魘魴鮓鮃鮑鮖鮗鮟鮠鮨鮴鯀鯊鮹鯆鯏鯑鯒鯣鯢鯤鯔鯡鰺鯲鯱鯰鰕鰔鰉鰓鰌鰆鰈鰒鰊鰄鰮鰛鰥鰤鰡鰰鱇鰲鱆鰾鱚鱠鱧鱶鱸鳧鳬鳰鴉鴈鳫鴃鴆鴪鴦鶯鴣鴟鵄鴕鴒鵁鴿鴾鵆鵈���".split("");for(a=0;a!=t[233].length;++a)if(t[233][a].charCodeAt(0)!==65533){r[t[233][a]]=59648+a;e[59648+a]=t[233][a]}t[234]="����������������������������������������������������������������鵝鵞鵤鵑鵐鵙鵲鶉鶇鶫鵯鵺鶚鶤鶩鶲鷄鷁鶻鶸鶺鷆鷏鷂鷙鷓鷸鷦鷭鷯鷽鸚鸛鸞鹵鹹鹽麁麈麋麌麒麕麑麝麥麩麸麪麭靡黌黎黏黐黔黜點黝黠黥黨黯�黴黶黷黹黻黼黽鼇鼈皷鼕鼡鼬鼾齊齒齔齣齟齠齡齦齧齬齪齷齲齶龕龜龠堯槇遙瑤凜熙�������������������������������������������������������������������������������������������".split("");for(a=0;a!=t[234].length;++a)if(t[234][a].charCodeAt(0)!==65533){r[t[234][a]]=59904+a;e[59904+a]=t[234][a]}t[237]="����������������������������������������������������������������纊褜鍈銈蓜俉炻昱棈鋹曻彅丨仡仼伀伃伹佖侒侊侚侔俍偀倢俿倞偆偰偂傔僴僘兊兤冝冾凬刕劜劦勀勛匀匇匤卲厓厲叝﨎咜咊咩哿喆坙坥垬埈埇﨏�塚增墲夋奓奛奝奣妤妺孖寀甯寘寬尞岦岺峵崧嵓﨑嵂嵭嶸嶹巐弡弴彧德忞恝悅悊惞惕愠惲愑愷愰憘戓抦揵摠撝擎敎昀昕昻昉昮昞昤晥晗晙晴晳暙暠暲暿曺朎朗杦枻桒柀栁桄棏﨓楨﨔榘槢樰橫橆橳橾櫢櫤毖氿汜沆汯泚洄涇浯涖涬淏淸淲淼渹湜渧渼溿澈澵濵瀅瀇瀨炅炫焏焄煜煆煇凞燁燾犱���".split("");for(a=0;a!=t[237].length;++a)if(t[237][a].charCodeAt(0)!==65533){r[t[237][a]]=60672+a;e[60672+a]=t[237][a]}t[238]="����������������������������������������������������������������犾猤猪獷玽珉珖珣珒琇珵琦琪琩琮瑢璉璟甁畯皂皜皞皛皦益睆劯砡硎硤硺礰礼神祥禔福禛竑竧靖竫箞精絈絜綷綠緖繒罇羡羽茁荢荿菇菶葈蒴蕓蕙�蕫﨟薰蘒﨡蠇裵訒訷詹誧誾諟諸諶譓譿賰賴贒赶﨣軏﨤逸遧郞都鄕鄧釚釗釞釭釮釤釥鈆鈐鈊鈺鉀鈼鉎鉙鉑鈹鉧銧鉷鉸鋧鋗鋙鋐﨧鋕鋠鋓錥錡鋻﨨錞鋿錝錂鍰鍗鎤鏆鏞鏸鐱鑅鑈閒隆﨩隝隯霳霻靃靍靏靑靕顗顥飯飼餧館馞驎髙髜魵魲鮏鮱鮻鰀鵰鵫鶴鸙黑��ⅰⅱⅲⅳⅴⅵⅶⅷⅸⅹ￢￤＇＂���".split("");for(a=0;a!=t[238].length;++a)if(t[238][a].charCodeAt(0)!==65533){r[t[238][a]]=60928+a;e[60928+a]=t[238][a]}t[250]="����������������������������������������������������������������ⅰⅱⅲⅳⅴⅵⅶⅷⅸⅹⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ￢￤＇＂㈱№℡∵纊褜鍈銈蓜俉炻昱棈鋹曻彅丨仡仼伀伃伹佖侒侊侚侔俍偀倢俿倞偆偰偂傔僴僘兊�兤冝冾凬刕劜劦勀勛匀匇匤卲厓厲叝﨎咜咊咩哿喆坙坥垬埈埇﨏塚增墲夋奓奛奝奣妤妺孖寀甯寘寬尞岦岺峵崧嵓﨑嵂嵭嶸嶹巐弡弴彧德忞恝悅悊惞惕愠惲愑愷愰憘戓抦揵摠撝擎敎昀昕昻昉昮昞昤晥晗晙晴晳暙暠暲暿曺朎朗杦枻桒柀栁桄棏﨓楨﨔榘槢樰橫橆橳橾櫢櫤毖氿汜沆汯泚洄涇浯���".split("");for(a=0;a!=t[250].length;++a)if(t[250][a].charCodeAt(0)!==65533){r[t[250][a]]=64e3+a;e[64e3+a]=t[250][a]}t[251]="����������������������������������������������������������������涖涬淏淸淲淼渹湜渧渼溿澈澵濵瀅瀇瀨炅炫焏焄煜煆煇凞燁燾犱犾猤猪獷玽珉珖珣珒琇珵琦琪琩琮瑢璉璟甁畯皂皜皞皛皦益睆劯砡硎硤硺礰礼神�祥禔福禛竑竧靖竫箞精絈絜綷綠緖繒罇羡羽茁荢荿菇菶葈蒴蕓蕙蕫﨟薰蘒﨡蠇裵訒訷詹誧誾諟諸諶譓譿賰賴贒赶﨣軏﨤逸遧郞都鄕鄧釚釗釞釭釮釤釥鈆鈐鈊鈺鉀鈼鉎鉙鉑鈹鉧銧鉷鉸鋧鋗鋙鋐﨧鋕鋠鋓錥錡鋻﨨錞鋿錝錂鍰鍗鎤鏆鏞鏸鐱鑅鑈閒隆﨩隝隯霳霻靃靍靏靑靕顗顥飯飼餧館馞驎髙���".split("");for(a=0;a!=t[251].length;++a)if(t[251][a].charCodeAt(0)!==65533){r[t[251][a]]=64256+a;e[64256+a]=t[251][a]}t[252]="����������������������������������������������������������������髜魵魲鮏鮱鮻鰀鵰鵫鶴鸙黑������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������".split("");for(a=0;a!=t[252].length;++a)if(t[252][a].charCodeAt(0)!==65533){r[t[252][a]]=64512+a;e[64512+a]=t[252][a]}return{enc:r,dec:e}}();cptable[936]=function(){var e=[],r={},t=[],a;t[0]="\0\b\t\n\x0B\f\r !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~€�������������������������������������������������������������������������������������������������������������������������������".split("");for(a=0;a!=t[0].length;++a)if(t[0][a].charCodeAt(0)!==65533){r[t[0][a]]=0+a;e[0+a]=t[0][a]}t[129]="����������������������������������������������������������������丂丄丅丆丏丒丗丟丠両丣並丩丮丯丱丳丵丷丼乀乁乂乄乆乊乑乕乗乚乛乢乣乤乥乧乨乪乫乬乭乮乯乲乴乵乶乷乸乹乺乻乼乽乿亀亁亂亃亄亅亇亊�亐亖亗亙亜亝亞亣亪亯亰亱亴亶亷亸亹亼亽亾仈仌仏仐仒仚仛仜仠仢仦仧仩仭仮仯仱仴仸仹仺仼仾伀伂伃伄伅伆伇伈伋伌伒伓伔伕伖伜伝伡伣伨伩伬伭伮伱伳伵伷伹伻伾伿佀佁佂佄佅佇佈佉佊佋佌佒佔佖佡佢佦佨佪佫佭佮佱佲併佷佸佹佺佽侀侁侂侅來侇侊侌侎侐侒侓侕侖侘侙侚侜侞侟価侢�".split("");for(a=0;a!=t[129].length;++a)if(t[129][a].charCodeAt(0)!==65533){r[t[129][a]]=33024+a;e[33024+a]=t[129][a]}t[130]="����������������������������������������������������������������侤侫侭侰侱侲侳侴侶侷侸侹侺侻侼侽侾俀俁係俆俇俈俉俋俌俍俒俓俔俕俖俙俛俠俢俤俥俧俫俬俰俲俴俵俶俷俹俻俼俽俿倀倁倂倃倄倅倆倇倈倉倊�個倎倐們倓倕倖倗倛倝倞倠倢倣値倧倫倯倰倱倲倳倴倵倶倷倸倹倻倽倿偀偁偂偄偅偆偉偊偋偍偐偑偒偓偔偖偗偘偙偛偝偞偟偠偡偢偣偤偦偧偨偩偪偫偭偮偯偰偱偲偳側偵偸偹偺偼偽傁傂傃傄傆傇傉傊傋傌傎傏傐傑傒傓傔傕傖傗傘備傚傛傜傝傞傟傠傡傢傤傦傪傫傭傮傯傰傱傳傴債傶傷傸傹傼�".split("");for(a=0;a!=t[130].length;++a)if(t[130][a].charCodeAt(0)!==65533){r[t[130][a]]=33280+a;e[33280+a]=t[130][a]}t[131]="����������������������������������������������������������������傽傾傿僀僁僂僃僄僅僆僇僈僉僊僋僌働僎僐僑僒僓僔僕僗僘僙僛僜僝僞僟僠僡僢僣僤僥僨僩僪僫僯僰僱僲僴僶僷僸價僺僼僽僾僿儀儁儂儃億儅儈�儉儊儌儍儎儏儐儑儓儔儕儖儗儘儙儚儛儜儝儞償儠儢儣儤儥儦儧儨儩優儫儬儭儮儯儰儱儲儳儴儵儶儷儸儹儺儻儼儽儾兂兇兊兌兎兏児兒兓兗兘兙兛兝兞兟兠兡兣兤兦內兩兪兯兲兺兾兿冃冄円冇冊冋冎冏冐冑冓冔冘冚冝冞冟冡冣冦冧冨冩冪冭冮冴冸冹冺冾冿凁凂凃凅凈凊凍凎凐凒凓凔凕凖凗�".split("");for(a=0;a!=t[131].length;++a)if(t[131][a].charCodeAt(0)!==65533){r[t[131][a]]=33536+a;e[33536+a]=t[131][a]}t[132]="����������������������������������������������������������������凘凙凚凜凞凟凢凣凥処凧凨凩凪凬凮凱凲凴凷凾刄刅刉刋刌刏刐刓刔刕刜刞刟刡刢刣別刦刧刪刬刯刱刲刴刵刼刾剄剅剆則剈剉剋剎剏剒剓剕剗剘�剙剚剛剝剟剠剢剣剤剦剨剫剬剭剮剰剱剳剴創剶剷剸剹剺剻剼剾劀劃劄劅劆劇劉劊劋劌劍劎劏劑劒劔劕劖劗劘劙劚劜劤劥劦劧劮劯劰労劵劶劷劸効劺劻劼劽勀勁勂勄勅勆勈勊勌勍勎勏勑勓勔動勗務勚勛勜勝勞勠勡勢勣勥勦勧勨勩勪勫勬勭勮勯勱勲勳勴勵勶勷勸勻勼勽匁匂匃匄匇匉匊匋匌匎�".split("");for(a=0;a!=t[132].length;++a)if(t[132][a].charCodeAt(0)!==65533){r[t[132][a]]=33792+a;e[33792+a]=t[132][a]}t[133]="����������������������������������������������������������������匑匒匓匔匘匛匜匞匟匢匤匥匧匨匩匫匬匭匯匰匱匲匳匴匵匶匷匸匼匽區卂卄卆卋卌卍卐協単卙卛卝卥卨卪卬卭卲卶卹卻卼卽卾厀厁厃厇厈厊厎厏�厐厑厒厓厔厖厗厙厛厜厞厠厡厤厧厪厫厬厭厯厰厱厲厳厴厵厷厸厹厺厼厽厾叀參叄叅叆叇収叏叐叒叓叕叚叜叝叞叡叢叧叴叺叾叿吀吂吅吇吋吔吘吙吚吜吢吤吥吪吰吳吶吷吺吽吿呁呂呄呅呇呉呌呍呎呏呑呚呝呞呟呠呡呣呥呧呩呪呫呬呭呮呯呰呴呹呺呾呿咁咃咅咇咈咉咊咍咑咓咗咘咜咞咟咠咡�".split("");for(a=0;a!=t[133].length;++a)if(t[133][a].charCodeAt(0)!==65533){r[t[133][a]]=34048+a;e[34048+a]=t[133][a]}t[134]="����������������������������������������������������������������咢咥咮咰咲咵咶咷咹咺咼咾哃哅哊哋哖哘哛哠員哢哣哤哫哬哯哰哱哴哵哶哷哸哹哻哾唀唂唃唄唅唈唊唋唌唍唎唒唓唕唖唗唘唙唚唜唝唞唟唡唥唦�唨唩唫唭唲唴唵唶唸唹唺唻唽啀啂啅啇啈啋啌啍啎問啑啒啓啔啗啘啙啚啛啝啞啟啠啢啣啨啩啫啯啰啱啲啳啴啹啺啽啿喅喆喌喍喎喐喒喓喕喖喗喚喛喞喠喡喢喣喤喥喦喨喩喪喫喬喭單喯喰喲喴営喸喺喼喿嗀嗁嗂嗃嗆嗇嗈嗊嗋嗎嗏嗐嗕嗗嗘嗙嗚嗛嗞嗠嗢嗧嗩嗭嗮嗰嗱嗴嗶嗸嗹嗺嗻嗼嗿嘂嘃嘄嘅�".split("");for(a=0;a!=t[134].length;++a)if(t[134][a].charCodeAt(0)!==65533){r[t[134][a]]=34304+a;e[34304+a]=t[134][a]}t[135]="����������������������������������������������������������������嘆嘇嘊嘋嘍嘐嘑嘒嘓嘔嘕嘖嘗嘙嘚嘜嘝嘠嘡嘢嘥嘦嘨嘩嘪嘫嘮嘯嘰嘳嘵嘷嘸嘺嘼嘽嘾噀噁噂噃噄噅噆噇噈噉噊噋噏噐噑噒噓噕噖噚噛噝噞噟噠噡�噣噥噦噧噭噮噯噰噲噳噴噵噷噸噹噺噽噾噿嚀嚁嚂嚃嚄嚇嚈嚉嚊嚋嚌嚍嚐嚑嚒嚔嚕嚖嚗嚘嚙嚚嚛嚜嚝嚞嚟嚠嚡嚢嚤嚥嚦嚧嚨嚩嚪嚫嚬嚭嚮嚰嚱嚲嚳嚴嚵嚶嚸嚹嚺嚻嚽嚾嚿囀囁囂囃囄囅囆囇囈囉囋囌囍囎囏囐囑囒囓囕囖囘囙囜団囥囦囧囨囩囪囬囮囯囲図囶囷囸囻囼圀圁圂圅圇國圌圍圎圏圐圑�".split("");for(a=0;a!=t[135].length;++a)if(t[135][a].charCodeAt(0)!==65533){r[t[135][a]]=34560+a;e[34560+a]=t[135][a]}t[136]="����������������������������������������������������������������園圓圔圕圖圗團圙圚圛圝圞圠圡圢圤圥圦圧圫圱圲圴圵圶圷圸圼圽圿坁坃坄坅坆坈坉坋坒坓坔坕坖坘坙坢坣坥坧坬坮坰坱坲坴坵坸坹坺坽坾坿垀�垁垇垈垉垊垍垎垏垐垑垔垕垖垗垘垙垚垜垝垞垟垥垨垪垬垯垰垱垳垵垶垷垹垺垻垼垽垾垿埀埁埄埅埆埇埈埉埊埌埍埐埑埓埖埗埛埜埞埡埢埣埥埦埧埨埩埪埫埬埮埰埱埲埳埵埶執埻埼埾埿堁堃堄堅堈堉堊堌堎堏堐堒堓堔堖堗堘堚堛堜堝堟堢堣堥堦堧堨堩堫堬堭堮堯報堲堳場堶堷堸堹堺堻堼堽�".split("");for(a=0;a!=t[136].length;++a)if(t[136][a].charCodeAt(0)!==65533){r[t[136][a]]=34816+a;e[34816+a]=t[136][a]}t[137]="����������������������������������������������������������������堾堿塀塁塂塃塅塆塇塈塉塊塋塎塏塐塒塓塕塖塗塙塚塛塜塝塟塠塡塢塣塤塦塧塨塩塪塭塮塯塰塱塲塳塴塵塶塷塸塹塺塻塼塽塿墂墄墆墇墈墊墋墌�墍墎墏墐墑墔墕墖増墘墛墜墝墠墡墢墣墤墥墦墧墪墫墬墭墮墯墰墱墲墳墴墵墶墷墸墹墺墻墽墾墿壀壂壃壄壆壇壈壉壊壋壌壍壎壏壐壒壓壔壖壗壘壙壚壛壜壝壞壟壠壡壢壣壥壦壧壨壩壪壭壯壱売壴壵壷壸壺壻壼壽壾壿夀夁夃夅夆夈変夊夋夌夎夐夑夒夓夗夘夛夝夞夠夡夢夣夦夨夬夰夲夳夵夶夻�".split("");for(a=0;a!=t[137].length;++a)if(t[137][a].charCodeAt(0)!==65533){r[t[137][a]]=35072+a;e[35072+a]=t[137][a]}t[138]="����������������������������������������������������������������夽夾夿奀奃奅奆奊奌奍奐奒奓奙奛奜奝奞奟奡奣奤奦奧奨奩奪奫奬奭奮奯奰奱奲奵奷奺奻奼奾奿妀妅妉妋妌妎妏妐妑妔妕妘妚妛妜妝妟妠妡妢妦�妧妬妭妰妱妳妴妵妶妷妸妺妼妽妿姀姁姂姃姄姅姇姈姉姌姍姎姏姕姖姙姛姞姟姠姡姢姤姦姧姩姪姫姭姮姯姰姱姲姳姴姵姶姷姸姺姼姽姾娀娂娊娋娍娎娏娐娒娔娕娖娗娙娚娛娝娞娡娢娤娦娧娨娪娫娬娭娮娯娰娳娵娷娸娹娺娻娽娾娿婁婂婃婄婅婇婈婋婌婍婎婏婐婑婒婓婔婖婗婘婙婛婜婝婞婟婠�".split("");for(a=0;a!=t[138].length;++a)if(t[138][a].charCodeAt(0)!==65533){r[t[138][a]]=35328+a;e[35328+a]=t[138][a]}t[139]="����������������������������������������������������������������婡婣婤婥婦婨婩婫婬婭婮婯婰婱婲婳婸婹婻婼婽婾媀媁媂媃媄媅媆媇媈媉媊媋媌媍媎媏媐媑媓媔媕媖媗媘媙媜媝媞媟媠媡媢媣媤媥媦媧媨媩媫媬�媭媮媯媰媱媴媶媷媹媺媻媼媽媿嫀嫃嫄嫅嫆嫇嫈嫊嫋嫍嫎嫏嫐嫑嫓嫕嫗嫙嫚嫛嫝嫞嫟嫢嫤嫥嫧嫨嫪嫬嫭嫮嫯嫰嫲嫳嫴嫵嫶嫷嫸嫹嫺嫻嫼嫽嫾嫿嬀嬁嬂嬃嬄嬅嬆嬇嬈嬊嬋嬌嬍嬎嬏嬐嬑嬒嬓嬔嬕嬘嬙嬚嬛嬜嬝嬞嬟嬠嬡嬢嬣嬤嬥嬦嬧嬨嬩嬪嬫嬬嬭嬮嬯嬰嬱嬳嬵嬶嬸嬹嬺嬻嬼嬽嬾嬿孁孂孃孄孅孆孇�".split("");for(a=0;a!=t[139].length;++a)if(t[139][a].charCodeAt(0)!==65533){r[t[139][a]]=35584+a;e[35584+a]=t[139][a]}t[140]="����������������������������������������������������������������孈孉孊孋孌孍孎孏孒孖孞孠孡孧孨孫孭孮孯孲孴孶孷學孹孻孼孾孿宂宆宊宍宎宐宑宒宔宖実宧宨宩宬宭宮宯宱宲宷宺宻宼寀寁寃寈寉寊寋寍寎寏�寑寔寕寖寗寘寙寚寛寜寠寢寣實寧審寪寫寬寭寯寱寲寳寴寵寶寷寽対尀専尃尅將專尋尌對導尐尒尓尗尙尛尞尟尠尡尣尦尨尩尪尫尭尮尯尰尲尳尵尶尷屃屄屆屇屌屍屒屓屔屖屗屘屚屛屜屝屟屢層屧屨屩屪屫屬屭屰屲屳屴屵屶屷屸屻屼屽屾岀岃岄岅岆岇岉岊岋岎岏岒岓岕岝岞岟岠岡岤岥岦岧岨�".split("");for(a=0;a!=t[140].length;++a)if(t[140][a].charCodeAt(0)!==65533){r[t[140][a]]=35840+a;e[35840+a]=t[140][a]}t[141]="����������������������������������������������������������������岪岮岯岰岲岴岶岹岺岻岼岾峀峂峃峅峆峇峈峉峊峌峍峎峏峐峑峓峔峕峖峗峘峚峛峜峝峞峟峠峢峣峧峩峫峬峮峯峱峲峳峴峵島峷峸峹峺峼峽峾峿崀�崁崄崅崈崉崊崋崌崍崏崐崑崒崓崕崗崘崙崚崜崝崟崠崡崢崣崥崨崪崫崬崯崰崱崲崳崵崶崷崸崹崺崻崼崿嵀嵁嵂嵃嵄嵅嵆嵈嵉嵍嵎嵏嵐嵑嵒嵓嵔嵕嵖嵗嵙嵚嵜嵞嵟嵠嵡嵢嵣嵤嵥嵦嵧嵨嵪嵭嵮嵰嵱嵲嵳嵵嵶嵷嵸嵹嵺嵻嵼嵽嵾嵿嶀嶁嶃嶄嶅嶆嶇嶈嶉嶊嶋嶌嶍嶎嶏嶐嶑嶒嶓嶔嶕嶖嶗嶘嶚嶛嶜嶞嶟嶠�".split("");for(a=0;a!=t[141].length;++a)if(t[141][a].charCodeAt(0)!==65533){r[t[141][a]]=36096+a;e[36096+a]=t[141][a]}t[142]="����������������������������������������������������������������嶡嶢嶣嶤嶥嶦嶧嶨嶩嶪嶫嶬嶭嶮嶯嶰嶱嶲嶳嶴嶵嶶嶸嶹嶺嶻嶼嶽嶾嶿巀巁巂巃巄巆巇巈巉巊巋巌巎巏巐巑巒巓巔巕巖巗巘巙巚巜巟巠巣巤巪巬巭�巰巵巶巸巹巺巻巼巿帀帄帇帉帊帋帍帎帒帓帗帞帟帠帡帢帣帤帥帨帩帪師帬帯帰帲帳帴帵帶帹帺帾帿幀幁幃幆幇幈幉幊幋幍幎幏幐幑幒幓幖幗幘幙幚幜幝幟幠幣幤幥幦幧幨幩幪幫幬幭幮幯幰幱幵幷幹幾庁庂広庅庈庉庌庍庎庒庘庛庝庡庢庣庤庨庩庪庫庬庮庯庰庱庲庴庺庻庼庽庿廀廁廂廃廄廅�".split("");for(a=0;a!=t[142].length;++a)if(t[142][a].charCodeAt(0)!==65533){r[t[142][a]]=36352+a;e[36352+a]=t[142][a]}t[143]="����������������������������������������������������������������廆廇廈廋廌廍廎廏廐廔廕廗廘廙廚廜廝廞廟廠廡廢廣廤廥廦廧廩廫廬廭廮廯廰廱廲廳廵廸廹廻廼廽弅弆弇弉弌弍弎弐弒弔弖弙弚弜弝弞弡弢弣弤�弨弫弬弮弰弲弳弴張弶強弸弻弽弾弿彁彂彃彄彅彆彇彈彉彊彋彌彍彎彏彑彔彙彚彛彜彞彟彠彣彥彧彨彫彮彯彲彴彵彶彸彺彽彾彿徃徆徍徎徏徑従徔徖徚徛徝從徟徠徢徣徤徥徦徧復徫徬徯徰徱徲徳徴徶徸徹徺徻徾徿忀忁忂忇忈忊忋忎忓忔忕忚忛応忞忟忢忣忥忦忨忩忬忯忰忲忳忴忶忷忹忺忼怇�".split("");for(a=0;a!=t[143].length;++a)if(t[143][a].charCodeAt(0)!==65533){r[t[143][a]]=36608+a;e[36608+a]=t[143][a]}t[144]="����������������������������������������������������������������怈怉怋怌怐怑怓怗怘怚怞怟怢怣怤怬怭怮怰怱怲怳怴怶怷怸怹怺怽怾恀恄恅恆恇恈恉恊恌恎恏恑恓恔恖恗恘恛恜恞恟恠恡恥恦恮恱恲恴恵恷恾悀�悁悂悅悆悇悈悊悋悎悏悐悑悓悕悗悘悙悜悞悡悢悤悥悧悩悪悮悰悳悵悶悷悹悺悽悾悿惀惁惂惃惄惇惈惉惌惍惎惏惐惒惓惔惖惗惙惛惞惡惢惣惤惥惪惱惲惵惷惸惻惼惽惾惿愂愃愄愅愇愊愋愌愐愑愒愓愔愖愗愘愙愛愜愝愞愡愢愥愨愩愪愬愭愮愯愰愱愲愳愴愵愶愷愸愹愺愻愼愽愾慀慁慂慃慄慅慆�".split("");for(a=0;a!=t[144].length;++a)if(t[144][a].charCodeAt(0)!==65533){r[t[144][a]]=36864+a;e[36864+a]=t[144][a]}t[145]="����������������������������������������������������������������慇慉態慍慏慐慒慓慔慖慗慘慙慚慛慜慞慟慠慡慣慤慥慦慩慪慫慬慭慮慯慱慲慳慴慶慸慹慺慻慼慽慾慿憀憁憂憃憄憅憆憇憈憉憊憌憍憏憐憑憒憓憕�憖憗憘憙憚憛憜憞憟憠憡憢憣憤憥憦憪憫憭憮憯憰憱憲憳憴憵憶憸憹憺憻憼憽憿懀懁懃懄懅懆懇應懌懍懎懏懐懓懕懖懗懘懙懚懛懜懝懞懟懠懡懢懣懤懥懧懨懩懪懫懬懭懮懯懰懱懲懳懴懶懷懸懹懺懻懼懽懾戀戁戂戃戄戅戇戉戓戔戙戜戝戞戠戣戦戧戨戩戫戭戯戰戱戲戵戶戸戹戺戻戼扂扄扅扆扊�".split("");for(a=0;a!=t[145].length;++a)if(t[145][a].charCodeAt(0)!==65533){r[t[145][a]]=37120+a;e[37120+a]=t[145][a]}t[146]="����������������������������������������������������������������扏扐払扖扗扙扚扜扝扞扟扠扡扢扤扥扨扱扲扴扵扷扸扺扻扽抁抂抃抅抆抇抈抋抌抍抎抏抐抔抙抜抝択抣抦抧抩抪抭抮抯抰抲抳抴抶抷抸抺抾拀拁�拃拋拏拑拕拝拞拠拡拤拪拫拰拲拵拸拹拺拻挀挃挄挅挆挊挋挌挍挏挐挒挓挔挕挗挘挙挜挦挧挩挬挭挮挰挱挳挴挵挶挷挸挻挼挾挿捀捁捄捇捈捊捑捒捓捔捖捗捘捙捚捛捜捝捠捤捥捦捨捪捫捬捯捰捲捳捴捵捸捹捼捽捾捿掁掃掄掅掆掋掍掑掓掔掕掗掙掚掛掜掝掞掟採掤掦掫掯掱掲掵掶掹掻掽掿揀�".split("");for(a=0;a!=t[146].length;++a)if(t[146][a].charCodeAt(0)!==65533){r[t[146][a]]=37376+a;e[37376+a]=t[146][a]}t[147]="����������������������������������������������������������������揁揂揃揅揇揈揊揋揌揑揓揔揕揗揘揙揚換揜揝揟揢揤揥揦揧揨揫揬揮揯揰揱揳揵揷揹揺揻揼揾搃搄搆搇搈搉搊損搎搑搒搕搖搗搘搙搚搝搟搢搣搤�搥搧搨搩搫搮搯搰搱搲搳搵搶搷搸搹搻搼搾摀摂摃摉摋摌摍摎摏摐摑摓摕摖摗摙摚摛摜摝摟摠摡摢摣摤摥摦摨摪摫摬摮摯摰摱摲摳摴摵摶摷摻摼摽摾摿撀撁撃撆撈撉撊撋撌撍撎撏撐撓撔撗撘撚撛撜撝撟撠撡撢撣撥撦撧撨撪撫撯撱撲撳撴撶撹撻撽撾撿擁擃擄擆擇擈擉擊擋擌擏擑擓擔擕擖擙據�".split("");for(a=0;a!=t[147].length;++a)if(t[147][a].charCodeAt(0)!==65533){r[t[147][a]]=37632+a;e[37632+a]=t[147][a]}t[148]="����������������������������������������������������������������擛擜擝擟擠擡擣擥擧擨擩擪擫擬擭擮擯擰擱擲擳擴擵擶擷擸擹擺擻擼擽擾擿攁攂攃攄攅攆攇攈攊攋攌攍攎攏攐攑攓攔攕攖攗攙攚攛攜攝攞攟攠攡�攢攣攤攦攧攨攩攪攬攭攰攱攲攳攷攺攼攽敀敁敂敃敄敆敇敊敋敍敎敐敒敓敔敗敘敚敜敟敠敡敤敥敧敨敩敪敭敮敯敱敳敵敶數敹敺敻敼敽敾敿斀斁斂斃斄斅斆斈斉斊斍斎斏斒斔斕斖斘斚斝斞斠斢斣斦斨斪斬斮斱斲斳斴斵斶斷斸斺斻斾斿旀旂旇旈旉旊旍旐旑旓旔旕旘旙旚旛旜旝旞旟旡旣旤旪旫�".split("");for(a=0;a!=t[148].length;++a)if(t[148][a].charCodeAt(0)!==65533){r[t[148][a]]=37888+a;e[37888+a]=t[148][a]}t[149]="����������������������������������������������������������������旲旳旴旵旸旹旻旼旽旾旿昁昄昅昇昈昉昋昍昐昑昒昖昗昘昚昛昜昞昡昢昣昤昦昩昪昫昬昮昰昲昳昷昸昹昺昻昽昿晀時晄晅晆晇晈晉晊晍晎晐晑晘�晙晛晜晝晞晠晢晣晥晧晩晪晫晬晭晱晲晳晵晸晹晻晼晽晿暀暁暃暅暆暈暉暊暋暍暎暏暐暒暓暔暕暘暙暚暛暜暞暟暠暡暢暣暤暥暦暩暪暫暬暭暯暰暱暲暳暵暶暷暸暺暻暼暽暿曀曁曂曃曄曅曆曇曈曉曊曋曌曍曎曏曐曑曒曓曔曕曖曗曘曚曞曟曠曡曢曣曤曥曧曨曪曫曬曭曮曯曱曵曶書曺曻曽朁朂會�".split("");for(a=0;a!=t[149].length;++a)if(t[149][a].charCodeAt(0)!==65533){r[t[149][a]]=38144+a;e[38144+a]=t[149][a]}t[150]="����������������������������������������������������������������朄朅朆朇朌朎朏朑朒朓朖朘朙朚朜朞朠朡朢朣朤朥朧朩朮朰朲朳朶朷朸朹朻朼朾朿杁杄杅杇杊杋杍杒杔杕杗杘杙杚杛杝杢杣杤杦杧杫杬杮東杴杶�杸杹杺杻杽枀枂枃枅枆枈枊枌枍枎枏枑枒枓枔枖枙枛枟枠枡枤枦枩枬枮枱枲枴枹枺枻枼枽枾枿柀柂柅柆柇柈柉柊柋柌柍柎柕柖柗柛柟柡柣柤柦柧柨柪柫柭柮柲柵柶柷柸柹柺査柼柾栁栂栃栄栆栍栐栒栔栕栘栙栚栛栜栞栟栠栢栣栤栥栦栧栨栫栬栭栮栯栰栱栴栵栶栺栻栿桇桋桍桏桒桖桗桘桙桚桛�".split("");for(a=0;a!=t[150].length;++a)if(t[150][a].charCodeAt(0)!==65533){r[t[150][a]]=38400+a;e[38400+a]=t[150][a]}t[151]="����������������������������������������������������������������桜桝桞桟桪桬桭桮桯桰桱桲桳桵桸桹桺桻桼桽桾桿梀梂梄梇梈梉梊梋梌梍梎梐梑梒梔梕梖梘梙梚梛梜條梞梟梠梡梣梤梥梩梪梫梬梮梱梲梴梶梷梸�梹梺梻梼梽梾梿棁棃棄棅棆棇棈棊棌棎棏棐棑棓棔棖棗棙棛棜棝棞棟棡棢棤棥棦棧棨棩棪棫棬棭棯棲棳棴棶棷棸棻棽棾棿椀椂椃椄椆椇椈椉椊椌椏椑椓椔椕椖椗椘椙椚椛検椝椞椡椢椣椥椦椧椨椩椪椫椬椮椯椱椲椳椵椶椷椸椺椻椼椾楀楁楃楄楅楆楇楈楉楊楋楌楍楎楏楐楑楒楓楕楖楘楙楛楜楟�".split("");for(a=0;a!=t[151].length;++a)if(t[151][a].charCodeAt(0)!==65533){r[t[151][a]]=38656+a;e[38656+a]=t[151][a]}t[152]="����������������������������������������������������������������楡楢楤楥楧楨楩楪楬業楯楰楲楳楴極楶楺楻楽楾楿榁榃榅榊榋榌榎榏榐榑榒榓榖榗榙榚榝榞榟榠榡榢榣榤榥榦榩榪榬榮榯榰榲榳榵榶榸榹榺榼榽�榾榿槀槂槃槄槅槆槇槈槉構槍槏槑槒槓槕槖槗様槙槚槜槝槞槡槢槣槤槥槦槧槨槩槪槫槬槮槯槰槱槳槴槵槶槷槸槹槺槻槼槾樀樁樂樃樄樅樆樇樈樉樋樌樍樎樏樐樑樒樓樔樕樖標樚樛樜樝樞樠樢樣樤樥樦樧権樫樬樭樮樰樲樳樴樶樷樸樹樺樻樼樿橀橁橂橃橅橆橈橉橊橋橌橍橎橏橑橒橓橔橕橖橗橚�".split("");for(a=0;a!=t[152].length;++a)if(t[152][a].charCodeAt(0)!==65533){r[t[152][a]]=38912+a;e[38912+a]=t[152][a];
 }t[153]="����������������������������������������������������������������橜橝橞機橠橢橣橤橦橧橨橩橪橫橬橭橮橯橰橲橳橴橵橶橷橸橺橻橽橾橿檁檂檃檅檆檇檈檉檊檋檌檍檏檒檓檔檕檖檘檙檚檛檜檝檞檟檡檢檣檤檥檦�檧檨檪檭檮檯檰檱檲檳檴檵檶檷檸檹檺檻檼檽檾檿櫀櫁櫂櫃櫄櫅櫆櫇櫈櫉櫊櫋櫌櫍櫎櫏櫐櫑櫒櫓櫔櫕櫖櫗櫘櫙櫚櫛櫜櫝櫞櫟櫠櫡櫢櫣櫤櫥櫦櫧櫨櫩櫪櫫櫬櫭櫮櫯櫰櫱櫲櫳櫴櫵櫶櫷櫸櫹櫺櫻櫼櫽櫾櫿欀欁欂欃欄欅欆欇欈欉權欋欌欍欎欏欐欑欒欓欔欕欖欗欘欙欚欛欜欝欞欟欥欦欨欩欪欫欬欭欮�".split("");for(a=0;a!=t[153].length;++a)if(t[153][a].charCodeAt(0)!==65533){r[t[153][a]]=39168+a;e[39168+a]=t[153][a]}t[154]="����������������������������������������������������������������欯欰欱欳欴欵欶欸欻欼欽欿歀歁歂歄歅歈歊歋歍歎歏歐歑歒歓歔歕歖歗歘歚歛歜歝歞歟歠歡歨歩歫歬歭歮歯歰歱歲歳歴歵歶歷歸歺歽歾歿殀殅殈�殌殎殏殐殑殔殕殗殘殙殜殝殞殟殠殢殣殤殥殦殧殨殩殫殬殭殮殯殰殱殲殶殸殹殺殻殼殽殾毀毃毄毆毇毈毉毊毌毎毐毑毘毚毜毝毞毟毠毢毣毤毥毦毧毨毩毬毭毮毰毱毲毴毶毷毸毺毻毼毾毿氀氁氂氃氄氈氉氊氋氌氎氒気氜氝氞氠氣氥氫氬氭氱氳氶氷氹氺氻氼氾氿汃汄汅汈汋汌汍汎汏汑汒汓汖汘�".split("");for(a=0;a!=t[154].length;++a)if(t[154][a].charCodeAt(0)!==65533){r[t[154][a]]=39424+a;e[39424+a]=t[154][a]}t[155]="����������������������������������������������������������������汙汚汢汣汥汦汧汫汬汭汮汯汱汳汵汷汸決汻汼汿沀沄沇沊沋沍沎沑沒沕沖沗沘沚沜沝沞沠沢沨沬沯沰沴沵沶沷沺泀況泂泃泆泇泈泋泍泎泏泑泒泘�泙泚泜泝泟泤泦泧泩泬泭泲泴泹泿洀洂洃洅洆洈洉洊洍洏洐洑洓洔洕洖洘洜洝洟洠洡洢洣洤洦洨洩洬洭洯洰洴洶洷洸洺洿浀浂浄浉浌浐浕浖浗浘浛浝浟浡浢浤浥浧浨浫浬浭浰浱浲浳浵浶浹浺浻浽浾浿涀涁涃涄涆涇涊涋涍涏涐涒涖涗涘涙涚涜涢涥涬涭涰涱涳涴涶涷涹涺涻涼涽涾淁淂淃淈淉淊�".split("");for(a=0;a!=t[155].length;++a)if(t[155][a].charCodeAt(0)!==65533){r[t[155][a]]=39680+a;e[39680+a]=t[155][a]}t[156]="����������������������������������������������������������������淍淎淏淐淒淓淔淕淗淚淛淜淟淢淣淥淧淨淩淪淭淯淰淲淴淵淶淸淺淽淾淿渀渁渂渃渄渆渇済渉渋渏渒渓渕渘渙減渜渞渟渢渦渧渨渪測渮渰渱渳渵�渶渷渹渻渼渽渾渿湀湁湂湅湆湇湈湉湊湋湌湏湐湑湒湕湗湙湚湜湝湞湠湡湢湣湤湥湦湧湨湩湪湬湭湯湰湱湲湳湴湵湶湷湸湹湺湻湼湽満溁溂溄溇溈溊溋溌溍溎溑溒溓溔溕準溗溙溚溛溝溞溠溡溣溤溦溨溩溫溬溭溮溰溳溵溸溹溼溾溿滀滃滄滅滆滈滉滊滌滍滎滐滒滖滘滙滛滜滝滣滧滪滫滬滭滮滯�".split("");for(a=0;a!=t[156].length;++a)if(t[156][a].charCodeAt(0)!==65533){r[t[156][a]]=39936+a;e[39936+a]=t[156][a]}t[157]="����������������������������������������������������������������滰滱滲滳滵滶滷滸滺滻滼滽滾滿漀漁漃漄漅漇漈漊漋漌漍漎漐漑漒漖漗漘漙漚漛漜漝漞漟漡漢漣漥漦漧漨漬漮漰漲漴漵漷漸漹漺漻漼漽漿潀潁潂�潃潄潅潈潉潊潌潎潏潐潑潒潓潔潕潖潗潙潚潛潝潟潠潡潣潤潥潧潨潩潪潫潬潯潰潱潳潵潶潷潹潻潽潾潿澀澁澂澃澅澆澇澊澋澏澐澑澒澓澔澕澖澗澘澙澚澛澝澞澟澠澢澣澤澥澦澨澩澪澫澬澭澮澯澰澱澲澴澵澷澸澺澻澼澽澾澿濁濃濄濅濆濇濈濊濋濌濍濎濏濐濓濔濕濖濗濘濙濚濛濜濝濟濢濣濤濥�".split("");for(a=0;a!=t[157].length;++a)if(t[157][a].charCodeAt(0)!==65533){r[t[157][a]]=40192+a;e[40192+a]=t[157][a]}t[158]="����������������������������������������������������������������濦濧濨濩濪濫濬濭濰濱濲濳濴濵濶濷濸濹濺濻濼濽濾濿瀀瀁瀂瀃瀄瀅瀆瀇瀈瀉瀊瀋瀌瀍瀎瀏瀐瀒瀓瀔瀕瀖瀗瀘瀙瀜瀝瀞瀟瀠瀡瀢瀤瀥瀦瀧瀨瀩瀪�瀫瀬瀭瀮瀯瀰瀱瀲瀳瀴瀶瀷瀸瀺瀻瀼瀽瀾瀿灀灁灂灃灄灅灆灇灈灉灊灋灍灎灐灑灒灓灔灕灖灗灘灙灚灛灜灝灟灠灡灢灣灤灥灦灧灨灩灪灮灱灲灳灴灷灹灺灻災炁炂炃炄炆炇炈炋炌炍炏炐炑炓炗炘炚炛炞炟炠炡炢炣炤炥炦炧炨炩炪炰炲炴炵炶為炾炿烄烅烆烇烉烋烌烍烎烏烐烑烒烓烔烕烖烗烚�".split("");for(a=0;a!=t[158].length;++a)if(t[158][a].charCodeAt(0)!==65533){r[t[158][a]]=40448+a;e[40448+a]=t[158][a]}t[159]="����������������������������������������������������������������烜烝烞烠烡烢烣烥烪烮烰烱烲烳烴烵烶烸烺烻烼烾烿焀焁焂焃焄焅焆焇焈焋焌焍焎焏焑焒焔焗焛焜焝焞焟焠無焢焣焤焥焧焨焩焪焫焬焭焮焲焳焴�焵焷焸焹焺焻焼焽焾焿煀煁煂煃煄煆煇煈煉煋煍煏煐煑煒煓煔煕煖煗煘煙煚煛煝煟煠煡煢煣煥煩煪煫煬煭煯煰煱煴煵煶煷煹煻煼煾煿熀熁熂熃熅熆熇熈熉熋熌熍熎熐熑熒熓熕熖熗熚熛熜熝熞熡熢熣熤熥熦熧熩熪熫熭熮熯熰熱熲熴熶熷熸熺熻熼熽熾熿燀燁燂燄燅燆燇燈燉燊燋燌燍燏燐燑燒燓�".split("");for(a=0;a!=t[159].length;++a)if(t[159][a].charCodeAt(0)!==65533){r[t[159][a]]=40704+a;e[40704+a]=t[159][a]}t[160]="����������������������������������������������������������������燖燗燘燙燚燛燜燝燞營燡燢燣燤燦燨燩燪燫燬燭燯燰燱燲燳燴燵燶燷燸燺燻燼燽燾燿爀爁爂爃爄爅爇爈爉爊爋爌爍爎爏爐爑爒爓爔爕爖爗爘爙爚�爛爜爞爟爠爡爢爣爤爥爦爧爩爫爭爮爯爲爳爴爺爼爾牀牁牂牃牄牅牆牉牊牋牎牏牐牑牓牔牕牗牘牚牜牞牠牣牤牥牨牪牫牬牭牰牱牳牴牶牷牸牻牼牽犂犃犅犆犇犈犉犌犎犐犑犓犔犕犖犗犘犙犚犛犜犝犞犠犡犢犣犤犥犦犧犨犩犪犫犮犱犲犳犵犺犻犼犽犾犿狀狅狆狇狉狊狋狌狏狑狓狔狕狖狘狚狛�".split("");for(a=0;a!=t[160].length;++a)if(t[160][a].charCodeAt(0)!==65533){r[t[160][a]]=40960+a;e[40960+a]=t[160][a]}t[161]="�����������������������������������������������������������������������������������������������������������������������������������������������������������������　、。·ˉˇ¨〃々—～‖…‘’“”〔〕〈〉《》「」『』〖〗【】±×÷∶∧∨∑∏∪∩∈∷√⊥∥∠⌒⊙∫∮≡≌≈∽∝≠≮≯≤≥∞∵∴♂♀°′″℃＄¤￠￡‰§№☆★○●◎◇◆□■△▲※→←↑↓〓�".split("");for(a=0;a!=t[161].length;++a)if(t[161][a].charCodeAt(0)!==65533){r[t[161][a]]=41216+a;e[41216+a]=t[161][a]}t[162]="�����������������������������������������������������������������������������������������������������������������������������������������������������������������ⅰⅱⅲⅳⅴⅵⅶⅷⅸⅹ������⒈⒉⒊⒋⒌⒍⒎⒏⒐⒑⒒⒓⒔⒕⒖⒗⒘⒙⒚⒛⑴⑵⑶⑷⑸⑹⑺⑻⑼⑽⑾⑿⒀⒁⒂⒃⒄⒅⒆⒇①②③④⑤⑥⑦⑧⑨⑩��㈠㈡㈢㈣㈤㈥㈦㈧㈨㈩��ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩⅪⅫ���".split("");for(a=0;a!=t[162].length;++a)if(t[162][a].charCodeAt(0)!==65533){r[t[162][a]]=41472+a;e[41472+a]=t[162][a]}t[163]="�����������������������������������������������������������������������������������������������������������������������������������������������������������������！＂＃￥％＆＇（）＊＋，－．／０１２３４５６７８９：；＜＝＞？＠ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ［＼］＾＿｀ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ｛｜｝￣�".split("");for(a=0;a!=t[163].length;++a)if(t[163][a].charCodeAt(0)!==65533){r[t[163][a]]=41728+a;e[41728+a]=t[163][a]}t[164]="�����������������������������������������������������������������������������������������������������������������������������������������������������������������ぁあぃいぅうぇえぉおかがきぎくぐけげこごさざしじすずせぜそぞただちぢっつづてでとどなにぬねのはばぱひびぴふぶぷへべぺほぼぽまみむめもゃやゅゆょよらりるれろゎわゐゑをん������������".split("");for(a=0;a!=t[164].length;++a)if(t[164][a].charCodeAt(0)!==65533){r[t[164][a]]=41984+a;e[41984+a]=t[164][a]}t[165]="�����������������������������������������������������������������������������������������������������������������������������������������������������������������ァアィイゥウェエォオカガキギクグケゲコゴサザシジスズセゼソゾタダチヂッツヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミムメモャヤュユョヨラリルレロヮワヰヱヲンヴヵヶ���������".split("");for(a=0;a!=t[165].length;++a)if(t[165][a].charCodeAt(0)!==65533){r[t[165][a]]=42240+a;e[42240+a]=t[165][a]}t[166]="�����������������������������������������������������������������������������������������������������������������������������������������������������������������ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ��������αβγδεζηθικλμνξοπρστυφχψω�������︵︶︹︺︿﹀︽︾﹁﹂﹃﹄��︻︼︷︸︱�︳︴����������".split("");for(a=0;a!=t[166].length;++a)if(t[166][a].charCodeAt(0)!==65533){r[t[166][a]]=42496+a;e[42496+a]=t[166][a]}t[167]="�����������������������������������������������������������������������������������������������������������������������������������������������������������������АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ���������������абвгдеёжзийклмнопрстуфхцчшщъыьэюя��������������".split("");for(a=0;a!=t[167].length;++a)if(t[167][a].charCodeAt(0)!==65533){r[t[167][a]]=42752+a;e[42752+a]=t[167][a]}t[168]="����������������������������������������������������������������ˊˋ˙–―‥‵℅℉↖↗↘↙∕∟∣≒≦≧⊿═║╒╓╔╕╖╗╘╙╚╛╜╝╞╟╠╡╢╣╤╥╦╧╨╩╪╫╬╭╮╯╰╱╲╳▁▂▃▄▅▆▇�█▉▊▋▌▍▎▏▓▔▕▼▽◢◣◤◥☉⊕〒〝〞�����������āáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜüêɑ�ńň�ɡ����ㄅㄆㄇㄈㄉㄊㄋㄌㄍㄎㄏㄐㄑㄒㄓㄔㄕㄖㄗㄘㄙㄚㄛㄜㄝㄞㄟㄠㄡㄢㄣㄤㄥㄦㄧㄨㄩ����������������������".split("");for(a=0;a!=t[168].length;++a)if(t[168][a].charCodeAt(0)!==65533){r[t[168][a]]=43008+a;e[43008+a]=t[168][a]}t[169]="����������������������������������������������������������������〡〢〣〤〥〦〧〨〩㊣㎎㎏㎜㎝㎞㎡㏄㏎㏑㏒㏕︰￢￤�℡㈱�‐���ー゛゜ヽヾ〆ゝゞ﹉﹊﹋﹌﹍﹎﹏﹐﹑﹒﹔﹕﹖﹗﹙﹚﹛﹜﹝﹞﹟﹠﹡�﹢﹣﹤﹥﹦﹨﹩﹪﹫�������������〇�������������─━│┃┄┅┆┇┈┉┊┋┌┍┎┏┐┑┒┓└┕┖┗┘┙┚┛├┝┞┟┠┡┢┣┤┥┦┧┨┩┪┫┬┭┮┯┰┱┲┳┴┵┶┷┸┹┺┻┼┽┾┿╀╁╂╃╄╅╆╇╈╉╊╋����������������".split("");for(a=0;a!=t[169].length;++a)if(t[169][a].charCodeAt(0)!==65533){r[t[169][a]]=43264+a;e[43264+a]=t[169][a]}t[170]="����������������������������������������������������������������狜狝狟狢狣狤狥狦狧狪狫狵狶狹狽狾狿猀猂猄猅猆猇猈猉猋猌猍猏猐猑猒猔猘猙猚猟猠猣猤猦猧猨猭猯猰猲猳猵猶猺猻猼猽獀獁獂獃獄獅獆獇獈�獉獊獋獌獎獏獑獓獔獕獖獘獙獚獛獜獝獞獟獡獢獣獤獥獦獧獨獩獪獫獮獰獱�����������������������������������������������������������������������������������������������".split("");for(a=0;a!=t[170].length;++a)if(t[170][a].charCodeAt(0)!==65533){r[t[170][a]]=43520+a;e[43520+a]=t[170][a]}t[171]="����������������������������������������������������������������獲獳獴獵獶獷獸獹獺獻獼獽獿玀玁玂玃玅玆玈玊玌玍玏玐玒玓玔玕玗玘玙玚玜玝玞玠玡玣玤玥玦玧玨玪玬玭玱玴玵玶玸玹玼玽玾玿珁珃珄珅珆珇�珋珌珎珒珓珔珕珖珗珘珚珛珜珝珟珡珢珣珤珦珨珪珫珬珮珯珰珱珳珴珵珶珷�����������������������������������������������������������������������������������������������".split("");for(a=0;a!=t[171].length;++a)if(t[171][a].charCodeAt(0)!==65533){r[t[171][a]]=43776+a;e[43776+a]=t[171][a]}t[172]="����������������������������������������������������������������珸珹珺珻珼珽現珿琀琁琂琄琇琈琋琌琍琎琑琒琓琔琕琖琗琘琙琜琝琞琟琠琡琣琤琧琩琫琭琯琱琲琷琸琹琺琻琽琾琿瑀瑂瑃瑄瑅瑆瑇瑈瑉瑊瑋瑌瑍�瑎瑏瑐瑑瑒瑓瑔瑖瑘瑝瑠瑡瑢瑣瑤瑥瑦瑧瑨瑩瑪瑫瑬瑮瑯瑱瑲瑳瑴瑵瑸瑹瑺�����������������������������������������������������������������������������������������������".split("");for(a=0;a!=t[172].length;++a)if(t[172][a].charCodeAt(0)!==65533){r[t[172][a]]=44032+a;e[44032+a]=t[172][a]}t[173]="����������������������������������������������������������������瑻瑼瑽瑿璂璄璅璆璈璉璊璌璍璏璑璒璓璔璕璖璗璘璙璚璛璝璟璠璡璢璣璤璥璦璪璫璬璭璮璯環璱璲璳璴璵璶璷璸璹璻璼璽璾璿瓀瓁瓂瓃瓄瓅瓆瓇�瓈瓉瓊瓋瓌瓍瓎瓏瓐瓑瓓瓔瓕瓖瓗瓘瓙瓚瓛瓝瓟瓡瓥瓧瓨瓩瓪瓫瓬瓭瓰瓱瓲�����������������������������������������������������������������������������������������������".split("");for(a=0;a!=t[173].length;++a)if(t[173][a].charCodeAt(0)!==65533){r[t[173][a]]=44288+a;e[44288+a]=t[173][a]}t[174]="����������������������������������������������������������������瓳瓵瓸瓹瓺瓻瓼瓽瓾甀甁甂甃甅甆甇甈甉甊甋甌甎甐甒甔甕甖甗甛甝甞甠甡產産甤甦甧甪甮甴甶甹甼甽甿畁畂畃畄畆畇畉畊畍畐畑畒畓畕畖畗畘�畝畞畟畠畡畢畣畤畧畨畩畫畬畭畮畯異畱畳畵當畷畺畻畼畽畾疀疁疂疄疅疇�����������������������������������������������������������������������������������������������".split("");for(a=0;a!=t[174].length;++a)if(t[174][a].charCodeAt(0)!==65533){r[t[174][a]]=44544+a;e[44544+a]=t[174][a]}t[175]="����������������������������������������������������������������疈疉疊疌疍疎疐疓疕疘疛疜疞疢疦疧疨疩疪疭疶疷疺疻疿痀痁痆痋痌痎痏痐痑痓痗痙痚痜痝痟痠痡痥痩痬痭痮痯痲痳痵痶痷痸痺痻痽痾瘂瘄瘆瘇�瘈瘉瘋瘍瘎瘏瘑瘒瘓瘔瘖瘚瘜瘝瘞瘡瘣瘧瘨瘬瘮瘯瘱瘲瘶瘷瘹瘺瘻瘽癁療癄�����������������������������������������������������������������������������������������������".split("");for(a=0;a!=t[175].length;++a)if(t[175][a].charCodeAt(0)!==65533){r[t[175][a]]=44800+a;e[44800+a]=t[175][a]}t[176]="����������������������������������������������������������������癅癆癇癈癉癊癋癎癏癐癑癒癓癕癗癘癙癚癛癝癟癠癡癢癤癥癦癧癨癩癪癬癭癮癰癱癲癳癴癵癶癷癹発發癿皀皁皃皅皉皊皌皍皏皐皒皔皕皗皘皚皛�皜皝皞皟皠皡皢皣皥皦皧皨皩皪皫皬皭皯皰皳皵皶皷皸皹皺皻皼皽皾盀盁盃啊阿埃挨哎唉哀皑癌蔼矮艾碍爱隘鞍氨安俺按暗岸胺案肮昂盎凹敖熬翱袄傲奥懊澳芭捌扒叭吧笆八疤巴拔跋靶把耙坝霸罢爸白柏百摆佰败拜稗斑班搬扳般颁板版扮拌伴瓣半办绊邦帮梆榜膀绑棒磅蚌镑傍谤苞胞包褒剥�".split("");for(a=0;a!=t[176].length;++a)if(t[176][a].charCodeAt(0)!==65533){r[t[176][a]]=45056+a;e[45056+a]=t[176][a]}t[177]="����������������������������������������������������������������盄盇盉盋盌盓盕盙盚盜盝盞盠盡盢監盤盦盧盨盩盪盫盬盭盰盳盵盶盷盺盻盽盿眀眂眃眅眆眊県眎眏眐眑眒眓眔眕眖眗眘眛眜眝眞眡眣眤眥眧眪眫�眬眮眰眱眲眳眴眹眻眽眾眿睂睄睅睆睈睉睊睋睌睍睎睏睒睓睔睕睖睗睘睙睜薄雹保堡饱宝抱报暴豹鲍爆杯碑悲卑北辈背贝钡倍狈备惫焙被奔苯本笨崩绷甭泵蹦迸逼鼻比鄙笔彼碧蓖蔽毕毙毖币庇痹闭敝弊必辟壁臂避陛鞭边编贬扁便变卞辨辩辫遍标彪膘表鳖憋别瘪彬斌濒滨宾摈兵冰柄丙秉饼炳�".split("");for(a=0;a!=t[177].length;++a)if(t[177][a].charCodeAt(0)!==65533){r[t[177][a]]=45312+a;e[45312+a]=t[177][a]}t[178]="����������������������������������������������������������������睝睞睟睠睤睧睩睪睭睮睯睰睱睲睳睴睵睶睷睸睺睻睼瞁瞂瞃瞆瞇瞈瞉瞊瞋瞏瞐瞓瞔瞕瞖瞗瞘瞙瞚瞛瞜瞝瞞瞡瞣瞤瞦瞨瞫瞭瞮瞯瞱瞲瞴瞶瞷瞸瞹瞺�瞼瞾矀矁矂矃矄矅矆矇矈矉矊矋矌矎矏矐矑矒矓矔矕矖矘矙矚矝矞矟矠矡矤病并玻菠播拨钵波博勃搏铂箔伯帛舶脖膊渤泊驳捕卜哺补埠不布步簿部怖擦猜裁材才财睬踩采彩菜蔡餐参蚕残惭惨灿苍舱仓沧藏操糙槽曹草厕策侧册测层蹭插叉茬茶查碴搽察岔差诧拆柴豺搀掺蝉馋谗缠铲产阐颤昌猖�".split("");for(a=0;a!=t[178].length;++a)if(t[178][a].charCodeAt(0)!==65533){r[t[178][a]]=45568+a;e[45568+a]=t[178][a]}t[179]="����������������������������������������������������������������矦矨矪矯矰矱矲矴矵矷矹矺矻矼砃砄砅砆砇砈砊砋砎砏砐砓砕砙砛砞砠砡砢砤砨砪砫砮砯砱砲砳砵砶砽砿硁硂硃硄硆硈硉硊硋硍硏硑硓硔硘硙硚�硛硜硞硟硠硡硢硣硤硥硦硧硨硩硯硰硱硲硳硴硵硶硸硹硺硻硽硾硿碀碁碂碃场尝常长偿肠厂敞畅唱倡超抄钞朝嘲潮巢吵炒车扯撤掣彻澈郴臣辰尘晨忱沉陈趁衬撑称城橙成呈乘程惩澄诚承逞骋秤吃痴持匙池迟弛驰耻齿侈尺赤翅斥炽充冲虫崇宠抽酬畴踌稠愁筹仇绸瞅丑臭初出橱厨躇锄雏滁除楚�".split("");for(a=0;a!=t[179].length;++a)if(t[179][a].charCodeAt(0)!==65533){r[t[179][a]]=45824+a;e[45824+a]=t[179][a]}t[180]="����������������������������������������������������������������碄碅碆碈碊碋碏碐碒碔碕碖碙碝碞碠碢碤碦碨碩碪碫碬碭碮碯碵碶碷碸確碻碼碽碿磀磂磃磄磆磇磈磌磍磎磏磑磒磓磖磗磘磚磛磜磝磞磟磠磡磢磣�磤磥磦磧磩磪磫磭磮磯磰磱磳磵磶磸磹磻磼磽磾磿礀礂礃礄礆礇礈礉礊礋礌础储矗搐触处揣川穿椽传船喘串疮窗幢床闯创吹炊捶锤垂春椿醇唇淳纯蠢戳绰疵茨磁雌辞慈瓷词此刺赐次聪葱囱匆从丛凑粗醋簇促蹿篡窜摧崔催脆瘁粹淬翠村存寸磋撮搓措挫错搭达答瘩打大呆歹傣戴带殆代贷袋待逮�".split("");for(a=0;a!=t[180].length;++a)if(t[180][a].charCodeAt(0)!==65533){r[t[180][a]]=46080+a;e[46080+a]=t[180][a]}t[181]="����������������������������������������������������������������礍礎礏礐礑礒礔礕礖礗礘礙礚礛礜礝礟礠礡礢礣礥礦礧礨礩礪礫礬礭礮礯礰礱礲礳礵礶礷礸礹礽礿祂祃祄祅祇祊祋祌祍祎祏祐祑祒祔祕祘祙祡祣�祤祦祩祪祫祬祮祰祱祲祳祴祵祶祹祻祼祽祾祿禂禃禆禇禈禉禋禌禍禎禐禑禒怠耽担丹单郸掸胆旦氮但惮淡诞弹蛋当挡党荡档刀捣蹈倒岛祷导到稻悼道盗德得的蹬灯登等瞪凳邓堤低滴迪敌笛狄涤翟嫡抵底地蒂第帝弟递缔颠掂滇碘点典靛垫电佃甸店惦奠淀殿碉叼雕凋刁掉吊钓调跌爹碟蝶迭谍叠�".split("");for(a=0;a!=t[181].length;++a)if(t[181][a].charCodeAt(0)!==65533){r[t[181][a]]=46336+a;e[46336+a]=t[181][a]}t[182]="����������������������������������������������������������������禓禔禕禖禗禘禙禛禜禝禞禟禠禡禢禣禤禥禦禨禩禪禫禬禭禮禯禰禱禲禴禵禶禷禸禼禿秂秄秅秇秈秊秌秎秏秐秓秔秖秗秙秚秛秜秝秞秠秡秢秥秨秪�秬秮秱秲秳秴秵秶秷秹秺秼秾秿稁稄稅稇稈稉稊稌稏稐稑稒稓稕稖稘稙稛稜丁盯叮钉顶鼎锭定订丢东冬董懂动栋侗恫冻洞兜抖斗陡豆逗痘都督毒犊独读堵睹赌杜镀肚度渡妒端短锻段断缎堆兑队对墩吨蹲敦顿囤钝盾遁掇哆多夺垛躲朵跺舵剁惰堕蛾峨鹅俄额讹娥恶厄扼遏鄂饿恩而儿耳尔饵洱二�".split("");for(a=0;a!=t[182].length;++a)if(t[182][a].charCodeAt(0)!==65533){r[t[182][a]]=46592+a;e[46592+a]=t[182][a]}t[183]="����������������������������������������������������������������稝稟稡稢稤稥稦稧稨稩稪稫稬稭種稯稰稱稲稴稵稶稸稺稾穀穁穂穃穄穅穇穈穉穊穋穌積穎穏穐穒穓穔穕穖穘穙穚穛穜穝穞穟穠穡穢穣穤穥穦穧穨�穩穪穫穬穭穮穯穱穲穳穵穻穼穽穾窂窅窇窉窊窋窌窎窏窐窓窔窙窚窛窞窡窢贰发罚筏伐乏阀法珐藩帆番翻樊矾钒繁凡烦反返范贩犯饭泛坊芳方肪房防妨仿访纺放菲非啡飞肥匪诽吠肺废沸费芬酚吩氛分纷坟焚汾粉奋份忿愤粪丰封枫蜂峰锋风疯烽逢冯缝讽奉凤佛否夫敷肤孵扶拂辐幅氟符伏俘服�".split("");for(a=0;a!=t[183].length;++a)if(t[183][a].charCodeAt(0)!==65533){r[t[183][a]]=46848+a;e[46848+a]=t[183][a]}t[184]="����������������������������������������������������������������窣窤窧窩窪窫窮窯窰窱窲窴窵窶窷窸窹窺窻窼窽窾竀竁竂竃竄竅竆竇竈竉竊竌竍竎竏竐竑竒竓竔竕竗竘竚竛竜竝竡竢竤竧竨竩竪竫竬竮竰竱竲竳�竴竵競竷竸竻竼竾笀笁笂笅笇笉笌笍笎笐笒笓笖笗笘笚笜笝笟笡笢笣笧笩笭浮涪福袱弗甫抚辅俯釜斧脯腑府腐赴副覆赋复傅付阜父腹负富讣附妇缚咐噶嘎该改概钙盖溉干甘杆柑竿肝赶感秆敢赣冈刚钢缸肛纲岗港杠篙皋高膏羔糕搞镐稿告哥歌搁戈鸽胳疙割革葛格蛤阁隔铬个各给根跟耕更庚羹�".split("");for(a=0;a!=t[184].length;++a)if(t[184][a].charCodeAt(0)!==65533){r[t[184][a]]=47104+a;e[47104+a]=t[184][a]}t[185]="����������������������������������������������������������������笯笰笲笴笵笶笷笹笻笽笿筀筁筂筃筄筆筈筊筍筎筓筕筗筙筜筞筟筡筣筤筥筦筧筨筩筪筫筬筭筯筰筳筴筶筸筺筼筽筿箁箂箃箄箆箇箈箉箊箋箌箎箏�箑箒箓箖箘箙箚箛箞箟箠箣箤箥箮箯箰箲箳箵箶箷箹箺箻箼箽箾箿節篂篃範埂耿梗工攻功恭龚供躬公宫弓巩汞拱贡共钩勾沟苟狗垢构购够辜菇咕箍估沽孤姑鼓古蛊骨谷股故顾固雇刮瓜剐寡挂褂乖拐怪棺关官冠观管馆罐惯灌贯光广逛瑰规圭硅归龟闺轨鬼诡癸桂柜跪贵刽辊滚棍锅郭国果裹过哈�".split("");for(a=0;a!=t[185].length;++a)if(t[185][a].charCodeAt(0)!==65533){r[t[185][a]]=47360+a;e[47360+a]=t[185][a]}t[186]="����������������������������������������������������������������篅篈築篊篋篍篎篏篐篒篔篕篖篗篘篛篜篞篟篠篢篣篤篧篨篩篫篬篭篯篰篲篳篴篵篶篸篹篺篻篽篿簀簁簂簃簄簅簆簈簉簊簍簎簐簑簒簓簔簕簗簘簙�簚簛簜簝簞簠簡簢簣簤簥簨簩簫簬簭簮簯簰簱簲簳簴簵簶簷簹簺簻簼簽簾籂骸孩海氦亥害骇酣憨邯韩含涵寒函喊罕翰撼捍旱憾悍焊汗汉夯杭航壕嚎豪毫郝好耗号浩呵喝荷菏核禾和何合盒貉阂河涸赫褐鹤贺嘿黑痕很狠恨哼亨横衡恒轰哄烘虹鸿洪宏弘红喉侯猴吼厚候后呼乎忽瑚壶葫胡蝴狐糊湖�".split("");for(a=0;a!=t[186].length;++a)if(t[186][a].charCodeAt(0)!==65533){r[t[186][a]]=47616+a;e[47616+a]=t[186][a]}t[187]="����������������������������������������������������������������籃籄籅籆籇籈籉籊籋籌籎籏籐籑籒籓籔籕籖籗籘籙籚籛籜籝籞籟籠籡籢籣籤籥籦籧籨籩籪籫籬籭籮籯籰籱籲籵籶籷籸籹籺籾籿粀粁粂粃粄粅粆粇�粈粊粋粌粍粎粏粐粓粔粖粙粚粛粠粡粣粦粧粨粩粫粬粭粯粰粴粵粶粷粸粺粻弧虎唬护互沪户花哗华猾滑画划化话槐徊怀淮坏欢环桓还缓换患唤痪豢焕涣宦幻荒慌黄磺蝗簧皇凰惶煌晃幌恍谎灰挥辉徽恢蛔回毁悔慧卉惠晦贿秽会烩汇讳诲绘荤昏婚魂浑混豁活伙火获或惑霍货祸击圾基机畸稽积箕�".split("");for(a=0;a!=t[187].length;++a)if(t[187][a].charCodeAt(0)!==65533){r[t[187][a]]=47872+a;e[47872+a]=t[187][a]}t[188]="����������������������������������������������������������������粿糀糂糃糄糆糉糋糎糏糐糑糒糓糔糘糚糛糝糞糡糢糣糤糥糦糧糩糪糫糬糭糮糰糱糲糳糴糵糶糷糹糺糼糽糾糿紀紁紂紃約紅紆紇紈紉紋紌納紎紏紐�紑紒紓純紕紖紗紘紙級紛紜紝紞紟紡紣紤紥紦紨紩紪紬紭紮細紱紲紳紴紵紶肌饥迹激讥鸡姬绩缉吉极棘辑籍集及急疾汲即嫉级挤几脊己蓟技冀季伎祭剂悸济寄寂计记既忌际妓继纪嘉枷夹佳家加荚颊贾甲钾假稼价架驾嫁歼监坚尖笺间煎兼肩艰奸缄茧检柬碱硷拣捡简俭剪减荐槛鉴践贱见键箭件�".split("");for(a=0;a!=t[188].length;++a)if(t[188][a].charCodeAt(0)!==65533){r[t[188][a]]=48128+a;e[48128+a]=t[188][a]}t[189]="����������������������������������������������������������������紷紸紹紺紻紼紽紾紿絀絁終絃組絅絆絇絈絉絊絋経絍絎絏結絑絒絓絔絕絖絗絘絙絚絛絜絝絞絟絠絡絢絣絤絥給絧絨絩絪絫絬絭絯絰統絲絳絴絵絶�絸絹絺絻絼絽絾絿綀綁綂綃綄綅綆綇綈綉綊綋綌綍綎綏綐綑綒經綔綕綖綗綘健舰剑饯渐溅涧建僵姜将浆江疆蒋桨奖讲匠酱降蕉椒礁焦胶交郊浇骄娇嚼搅铰矫侥脚狡角饺缴绞剿教酵轿较叫窖揭接皆秸街阶截劫节桔杰捷睫竭洁结解姐戒藉芥界借介疥诫届巾筋斤金今津襟紧锦仅谨进靳晋禁近烬浸�".split("");for(a=0;a!=t[189].length;++a)if(t[189][a].charCodeAt(0)!==65533){r[t[189][a]]=48384+a;e[48384+a]=t[189][a]}t[190]="����������������������������������������������������������������継続綛綜綝綞綟綠綡綢綣綤綥綧綨綩綪綫綬維綯綰綱網綳綴綵綶綷綸綹綺綻綼綽綾綿緀緁緂緃緄緅緆緇緈緉緊緋緌緍緎総緐緑緒緓緔緕緖緗緘緙�線緛緜緝緞緟締緡緢緣緤緥緦緧編緩緪緫緬緭緮緯緰緱緲緳練緵緶緷緸緹緺尽劲荆兢茎睛晶鲸京惊精粳经井警景颈静境敬镜径痉靖竟竞净炯窘揪究纠玖韭久灸九酒厩救旧臼舅咎就疚鞠拘狙疽居驹菊局咀矩举沮聚拒据巨具距踞锯俱句惧炬剧捐鹃娟倦眷卷绢撅攫抉掘倔爵觉决诀绝均菌钧军君峻�".split("");for(a=0;a!=t[190].length;++a)if(t[190][a].charCodeAt(0)!==65533){r[t[190][a]]=48640+a;e[48640+a]=t[190][a]}t[191]="����������������������������������������������������������������緻緼緽緾緿縀縁縂縃縄縅縆縇縈縉縊縋縌縍縎縏縐縑縒縓縔縕縖縗縘縙縚縛縜縝縞縟縠縡縢縣縤縥縦縧縨縩縪縫縬縭縮縯縰縱縲縳縴縵縶縷縸縹�縺縼總績縿繀繂繃繄繅繆繈繉繊繋繌繍繎繏繐繑繒繓織繕繖繗繘繙繚繛繜繝俊竣浚郡骏喀咖卡咯开揩楷凯慨刊堪勘坎砍看康慷糠扛抗亢炕考拷烤靠坷苛柯棵磕颗科壳咳可渴克刻客课肯啃垦恳坑吭空恐孔控抠口扣寇枯哭窟苦酷库裤夸垮挎跨胯块筷侩快宽款匡筐狂框矿眶旷况亏盔岿窥葵奎魁傀�".split("");for(a=0;a!=t[191].length;++a)if(t[191][a].charCodeAt(0)!==65533){r[t[191][a]]=48896+a;e[48896+a]=t[191][a]}t[192]="����������������������������������������������������������������繞繟繠繡繢繣繤繥繦繧繨繩繪繫繬繭繮繯繰繱繲繳繴繵繶繷繸繹繺繻繼繽繾繿纀纁纃纄纅纆纇纈纉纊纋續纍纎纏纐纑纒纓纔纕纖纗纘纙纚纜纝纞�纮纴纻纼绖绤绬绹缊缐缞缷缹缻缼缽缾缿罀罁罃罆罇罈罉罊罋罌罍罎罏罒罓馈愧溃坤昆捆困括扩廓阔垃拉喇蜡腊辣啦莱来赖蓝婪栏拦篮阑兰澜谰揽览懒缆烂滥琅榔狼廊郎朗浪捞劳牢老佬姥酪烙涝勒乐雷镭蕾磊累儡垒擂肋类泪棱楞冷厘梨犁黎篱狸离漓理李里鲤礼莉荔吏栗丽厉励砾历利傈例俐�".split("");for(a=0;a!=t[192].length;++a)if(t[192][a].charCodeAt(0)!==65533){r[t[192][a]]=49152+a;e[49152+a]=t[192][a]}t[193]="����������������������������������������������������������������罖罙罛罜罝罞罠罣罤罥罦罧罫罬罭罯罰罳罵罶罷罸罺罻罼罽罿羀羂羃羄羅羆羇羈羉羋羍羏羐羑羒羓羕羖羗羘羙羛羜羠羢羣羥羦羨義羪羫羬羭羮羱�羳羴羵羶羷羺羻羾翀翂翃翄翆翇翈翉翋翍翏翐翑習翓翖翗翙翚翛翜翝翞翢翣痢立粒沥隶力璃哩俩联莲连镰廉怜涟帘敛脸链恋炼练粮凉梁粱良两辆量晾亮谅撩聊僚疗燎寥辽潦了撂镣廖料列裂烈劣猎琳林磷霖临邻鳞淋凛赁吝拎玲菱零龄铃伶羚凌灵陵岭领另令溜琉榴硫馏留刘瘤流柳六龙聋咙笼窿�".split("");for(a=0;a!=t[193].length;++a)if(t[193][a].charCodeAt(0)!==65533){r[t[193][a]]=49408+a;e[49408+a]=t[193][a]}t[194]="����������������������������������������������������������������翤翧翨翪翫翬翭翯翲翴翵翶翷翸翹翺翽翾翿耂耇耈耉耊耎耏耑耓耚耛耝耞耟耡耣耤耫耬耭耮耯耰耲耴耹耺耼耾聀聁聄聅聇聈聉聎聏聐聑聓聕聖聗�聙聛聜聝聞聟聠聡聢聣聤聥聦聧聨聫聬聭聮聯聰聲聳聴聵聶職聸聹聺聻聼聽隆垄拢陇楼娄搂篓漏陋芦卢颅庐炉掳卤虏鲁麓碌露路赂鹿潞禄录陆戮驴吕铝侣旅履屡缕虑氯律率滤绿峦挛孪滦卵乱掠略抡轮伦仑沦纶论萝螺罗逻锣箩骡裸落洛骆络妈麻玛码蚂马骂嘛吗埋买麦卖迈脉瞒馒蛮满蔓曼慢漫�".split("");for(a=0;a!=t[194].length;++a)if(t[194][a].charCodeAt(0)!==65533){r[t[194][a]]=49664+a;e[49664+a]=t[194][a]}t[195]="����������������������������������������������������������������聾肁肂肅肈肊肍肎肏肐肑肒肔肕肗肙肞肣肦肧肨肬肰肳肵肶肸肹肻胅胇胈胉胊胋胏胐胑胒胓胔胕胘胟胠胢胣胦胮胵胷胹胻胾胿脀脁脃脄脅脇脈脋�脌脕脗脙脛脜脝脟脠脡脢脣脤脥脦脧脨脩脪脫脭脮脰脳脴脵脷脹脺脻脼脽脿谩芒茫盲氓忙莽猫茅锚毛矛铆卯茂冒帽貌贸么玫枚梅酶霉煤没眉媒镁每美昧寐妹媚门闷们萌蒙檬盟锰猛梦孟眯醚靡糜迷谜弥米秘觅泌蜜密幂棉眠绵冕免勉娩缅面苗描瞄藐秒渺庙妙蔑灭民抿皿敏悯闽明螟鸣铭名命谬摸�".split("");for(a=0;a!=t[195].length;++a)if(t[195][a].charCodeAt(0)!==65533){r[t[195][a]]=49920+a;e[49920+a]=t[195][a]}t[196]="����������������������������������������������������������������腀腁腂腃腄腅腇腉腍腎腏腒腖腗腘腛腜腝腞腟腡腢腣腤腦腨腪腫腬腯腲腳腵腶腷腸膁膃膄膅膆膇膉膋膌膍膎膐膒膓膔膕膖膗膙膚膞膟膠膡膢膤膥�膧膩膫膬膭膮膯膰膱膲膴膵膶膷膸膹膼膽膾膿臄臅臇臈臉臋臍臎臏臐臑臒臓摹蘑模膜磨摩魔抹末莫墨默沫漠寞陌谋牟某拇牡亩姆母墓暮幕募慕木目睦牧穆拿哪呐钠那娜纳氖乃奶耐奈南男难囊挠脑恼闹淖呢馁内嫩能妮霓倪泥尼拟你匿腻逆溺蔫拈年碾撵捻念娘酿鸟尿捏聂孽啮镊镍涅您柠狞凝宁�".split("");for(a=0;a!=t[196].length;++a)if(t[196][a].charCodeAt(0)!==65533){r[t[196][a]]=50176+a;e[50176+a]=t[196][a]}t[197]="����������������������������������������������������������������臔臕臖臗臘臙臚臛臜臝臞臟臠臡臢臤臥臦臨臩臫臮臯臰臱臲臵臶臷臸臹臺臽臿舃與興舉舊舋舎舏舑舓舕舖舗舘舙舚舝舠舤舥舦舧舩舮舲舺舼舽舿�艀艁艂艃艅艆艈艊艌艍艎艐艑艒艓艔艕艖艗艙艛艜艝艞艠艡艢艣艤艥艦艧艩拧泞牛扭钮纽脓浓农弄奴努怒女暖虐疟挪懦糯诺哦欧鸥殴藕呕偶沤啪趴爬帕怕琶拍排牌徘湃派攀潘盘磐盼畔判叛乓庞旁耪胖抛咆刨炮袍跑泡呸胚培裴赔陪配佩沛喷盆砰抨烹澎彭蓬棚硼篷膨朋鹏捧碰坯砒霹批披劈琵毗�".split("");for(a=0;a!=t[197].length;++a)if(t[197][a].charCodeAt(0)!==65533){r[t[197][a]]=50432+a;e[50432+a]=t[197][a]}t[198]="����������������������������������������������������������������艪艫艬艭艱艵艶艷艸艻艼芀芁芃芅芆芇芉芌芐芓芔芕芖芚芛芞芠芢芣芧芲芵芶芺芻芼芿苀苂苃苅苆苉苐苖苙苚苝苢苧苨苩苪苬苭苮苰苲苳苵苶苸�苺苼苽苾苿茀茊茋茍茐茒茓茖茘茙茝茞茟茠茡茢茣茤茥茦茩茪茮茰茲茷茻茽啤脾疲皮匹痞僻屁譬篇偏片骗飘漂瓢票撇瞥拼频贫品聘乒坪苹萍平凭瓶评屏坡泼颇婆破魄迫粕剖扑铺仆莆葡菩蒲埔朴圃普浦谱曝瀑期欺栖戚妻七凄漆柒沏其棋奇歧畦崎脐齐旗祈祁骑起岂乞企启契砌器气迄弃汽泣讫掐�".split("");for(a=0;a!=t[198].length;++a)if(t[198][a].charCodeAt(0)!==65533){r[t[198][a]]=50688+a;e[50688+a]=t[198][a]}t[199]="����������������������������������������������������������������茾茿荁荂荄荅荈荊荋荌荍荎荓荕荖荗荘荙荝荢荰荱荲荳荴荵荶荹荺荾荿莀莁莂莃莄莇莈莊莋莌莍莏莐莑莔莕莖莗莙莚莝莟莡莢莣莤莥莦莧莬莭莮�莯莵莻莾莿菂菃菄菆菈菉菋菍菎菐菑菒菓菕菗菙菚菛菞菢菣菤菦菧菨菫菬菭恰洽牵扦钎铅千迁签仟谦乾黔钱钳前潜遣浅谴堑嵌欠歉枪呛腔羌墙蔷强抢橇锹敲悄桥瞧乔侨巧鞘撬翘峭俏窍切茄且怯窃钦侵亲秦琴勤芹擒禽寝沁青轻氢倾卿清擎晴氰情顷请庆琼穷秋丘邱球求囚酋泅趋区蛆曲躯屈驱渠�".split("");for(a=0;a!=t[199].length;++a)if(t[199][a].charCodeAt(0)!==65533){r[t[199][a]]=50944+a;e[50944+a]=t[199][a]}t[200]="����������������������������������������������������������������菮華菳菴菵菶菷菺菻菼菾菿萀萂萅萇萈萉萊萐萒萓萔萕萖萗萙萚萛萞萟萠萡萢萣萩萪萫萬萭萮萯萰萲萳萴萵萶萷萹萺萻萾萿葀葁葂葃葄葅葇葈葉�葊葋葌葍葎葏葐葒葓葔葕葖葘葝葞葟葠葢葤葥葦葧葨葪葮葯葰葲葴葷葹葻葼取娶龋趣去圈颧权醛泉全痊拳犬券劝缺炔瘸却鹊榷确雀裙群然燃冉染瓤壤攘嚷让饶扰绕惹热壬仁人忍韧任认刃妊纫扔仍日戎茸蓉荣融熔溶容绒冗揉柔肉茹蠕儒孺如辱乳汝入褥软阮蕊瑞锐闰润若弱撒洒萨腮鳃塞赛三叁�".split("");for(a=0;a!=t[200].length;++a)if(t[200][a].charCodeAt(0)!==65533){r[t[200][a]]=51200+a;e[51200+a]=t[200][a]}t[201]="����������������������������������������������������������������葽葾葿蒀蒁蒃蒄蒅蒆蒊蒍蒏蒐蒑蒒蒓蒔蒕蒖蒘蒚蒛蒝蒞蒟蒠蒢蒣蒤蒥蒦蒧蒨蒩蒪蒫蒬蒭蒮蒰蒱蒳蒵蒶蒷蒻蒼蒾蓀蓂蓃蓅蓆蓇蓈蓋蓌蓎蓏蓒蓔蓕蓗�蓘蓙蓚蓛蓜蓞蓡蓢蓤蓧蓨蓩蓪蓫蓭蓮蓯蓱蓲蓳蓴蓵蓶蓷蓸蓹蓺蓻蓽蓾蔀蔁蔂伞散桑嗓丧搔骚扫嫂瑟色涩森僧莎砂杀刹沙纱傻啥煞筛晒珊苫杉山删煽衫闪陕擅赡膳善汕扇缮墒伤商赏晌上尚裳梢捎稍烧芍勺韶少哨邵绍奢赊蛇舌舍赦摄射慑涉社设砷申呻伸身深娠绅神沈审婶甚肾慎渗声生甥牲升绳�".split("");for(a=0;a!=t[201].length;++a)if(t[201][a].charCodeAt(0)!==65533){r[t[201][a]]=51456+a;e[51456+a]=t[201][a]}t[202]="����������������������������������������������������������������蔃蔄蔅蔆蔇蔈蔉蔊蔋蔍蔎蔏蔐蔒蔔蔕蔖蔘蔙蔛蔜蔝蔞蔠蔢蔣蔤蔥蔦蔧蔨蔩蔪蔭蔮蔯蔰蔱蔲蔳蔴蔵蔶蔾蔿蕀蕁蕂蕄蕅蕆蕇蕋蕌蕍蕎蕏蕐蕑蕒蕓蕔蕕�蕗蕘蕚蕛蕜蕝蕟蕠蕡蕢蕣蕥蕦蕧蕩蕪蕫蕬蕭蕮蕯蕰蕱蕳蕵蕶蕷蕸蕼蕽蕿薀薁省盛剩胜圣师失狮施湿诗尸虱十石拾时什食蚀实识史矢使屎驶始式示士世柿事拭誓逝势是嗜噬适仕侍释饰氏市恃室视试收手首守寿授售受瘦兽蔬枢梳殊抒输叔舒淑疏书赎孰熟薯暑曙署蜀黍鼠属术述树束戍竖墅庶数漱�".split("");for(a=0;a!=t[202].length;++a)if(t[202][a].charCodeAt(0)!==65533){r[t[202][a]]=51712+a;e[51712+a]=t[202][a]}t[203]="����������������������������������������������������������������薂薃薆薈薉薊薋薌薍薎薐薑薒薓薔薕薖薗薘薙薚薝薞薟薠薡薢薣薥薦薧薩薫薬薭薱薲薳薴薵薶薸薺薻薼薽薾薿藀藂藃藄藅藆藇藈藊藋藌藍藎藑藒�藔藖藗藘藙藚藛藝藞藟藠藡藢藣藥藦藧藨藪藫藬藭藮藯藰藱藲藳藴藵藶藷藸恕刷耍摔衰甩帅栓拴霜双爽谁水睡税吮瞬顺舜说硕朔烁斯撕嘶思私司丝死肆寺嗣四伺似饲巳松耸怂颂送宋讼诵搜艘擞嗽苏酥俗素速粟僳塑溯宿诉肃酸蒜算虽隋随绥髓碎岁穗遂隧祟孙损笋蓑梭唆缩琐索锁所塌他它她塔�".split("");for(a=0;a!=t[203].length;++a)if(t[203][a].charCodeAt(0)!==65533){r[t[203][a]]=51968+a;e[51968+a]=t[203][a]}t[204]="����������������������������������������������������������������藹藺藼藽藾蘀蘁蘂蘃蘄蘆蘇蘈蘉蘊蘋蘌蘍蘎蘏蘐蘒蘓蘔蘕蘗蘘蘙蘚蘛蘜蘝蘞蘟蘠蘡蘢蘣蘤蘥蘦蘨蘪蘫蘬蘭蘮蘯蘰蘱蘲蘳蘴蘵蘶蘷蘹蘺蘻蘽蘾蘿虀�虁虂虃虄虅虆虇虈虉虊虋虌虒虓處虖虗虘虙虛虜虝號虠虡虣虤虥虦虧虨虩虪獭挞蹋踏胎苔抬台泰酞太态汰坍摊贪瘫滩坛檀痰潭谭谈坦毯袒碳探叹炭汤塘搪堂棠膛唐糖倘躺淌趟烫掏涛滔绦萄桃逃淘陶讨套特藤腾疼誊梯剔踢锑提题蹄啼体替嚏惕涕剃屉天添填田甜恬舔腆挑条迢眺跳贴铁帖厅听烃�".split("");for(a=0;a!=t[204].length;++a)if(t[204][a].charCodeAt(0)!==65533){r[t[204][a]]=52224+a;e[52224+a]=t[204][a]}t[205]="����������������������������������������������������������������虭虯虰虲虳虴虵虶虷虸蚃蚄蚅蚆蚇蚈蚉蚎蚏蚐蚑蚒蚔蚖蚗蚘蚙蚚蚛蚞蚟蚠蚡蚢蚥蚦蚫蚭蚮蚲蚳蚷蚸蚹蚻蚼蚽蚾蚿蛁蛂蛃蛅蛈蛌蛍蛒蛓蛕蛖蛗蛚蛜�蛝蛠蛡蛢蛣蛥蛦蛧蛨蛪蛫蛬蛯蛵蛶蛷蛺蛻蛼蛽蛿蜁蜄蜅蜆蜋蜌蜎蜏蜐蜑蜔蜖汀廷停亭庭挺艇通桐酮瞳同铜彤童桶捅筒统痛偷投头透凸秃突图徒途涂屠土吐兔湍团推颓腿蜕褪退吞屯臀拖托脱鸵陀驮驼椭妥拓唾挖哇蛙洼娃瓦袜歪外豌弯湾玩顽丸烷完碗挽晚皖惋宛婉万腕汪王亡枉网往旺望忘妄威�".split("");for(a=0;a!=t[205].length;++a)if(t[205][a].charCodeAt(0)!==65533){r[t[205][a]]=52480+a;e[52480+a]=t[205][a]}t[206]="����������������������������������������������������������������蜙蜛蜝蜟蜠蜤蜦蜧蜨蜪蜫蜬蜭蜯蜰蜲蜳蜵蜶蜸蜹蜺蜼蜽蝀蝁蝂蝃蝄蝅蝆蝊蝋蝍蝏蝐蝑蝒蝔蝕蝖蝘蝚蝛蝜蝝蝞蝟蝡蝢蝦蝧蝨蝩蝪蝫蝬蝭蝯蝱蝲蝳蝵�蝷蝸蝹蝺蝿螀螁螄螆螇螉螊螌螎螏螐螑螒螔螕螖螘螙螚螛螜螝螞螠螡螢螣螤巍微危韦违桅围唯惟为潍维苇萎委伟伪尾纬未蔚味畏胃喂魏位渭谓尉慰卫瘟温蚊文闻纹吻稳紊问嗡翁瓮挝蜗涡窝我斡卧握沃巫呜钨乌污诬屋无芜梧吾吴毋武五捂午舞伍侮坞戊雾晤物勿务悟误昔熙析西硒矽晰嘻吸锡牺�".split("");for(a=0;a!=t[206].length;++a)if(t[206][a].charCodeAt(0)!==65533){r[t[206][a]]=52736+a;e[52736+a]=t[206][a]}t[207]="����������������������������������������������������������������螥螦螧螩螪螮螰螱螲螴螶螷螸螹螻螼螾螿蟁蟂蟃蟄蟅蟇蟈蟉蟌蟍蟎蟏蟐蟔蟕蟖蟗蟘蟙蟚蟜蟝蟞蟟蟡蟢蟣蟤蟦蟧蟨蟩蟫蟬蟭蟯蟰蟱蟲蟳蟴蟵蟶蟷蟸�蟺蟻蟼蟽蟿蠀蠁蠂蠄蠅蠆蠇蠈蠉蠋蠌蠍蠎蠏蠐蠑蠒蠔蠗蠘蠙蠚蠜蠝蠞蠟蠠蠣稀息希悉膝夕惜熄烯溪汐犀檄袭席习媳喜铣洗系隙戏细瞎虾匣霞辖暇峡侠狭下厦夏吓掀锨先仙鲜纤咸贤衔舷闲涎弦嫌显险现献县腺馅羡宪陷限线相厢镶香箱襄湘乡翔祥详想响享项巷橡像向象萧硝霄削哮嚣销消宵淆晓�".split("");for(a=0;a!=t[207].length;++a)if(t[207][a].charCodeAt(0)!==65533){r[t[207][a]]=52992+a;e[52992+a]=t[207][a]}t[208]="����������������������������������������������������������������蠤蠥蠦蠧蠨蠩蠪蠫蠬蠭蠮蠯蠰蠱蠳蠴蠵蠶蠷蠸蠺蠻蠽蠾蠿衁衂衃衆衇衈衉衊衋衎衏衐衑衒術衕衖衘衚衛衜衝衞衟衠衦衧衪衭衯衱衳衴衵衶衸衹衺�衻衼袀袃袆袇袉袊袌袎袏袐袑袓袔袕袗袘袙袚袛袝袞袟袠袡袣袥袦袧袨袩袪小孝校肖啸笑效楔些歇蝎鞋协挟携邪斜胁谐写械卸蟹懈泄泻谢屑薪芯锌欣辛新忻心信衅星腥猩惺兴刑型形邢行醒幸杏性姓兄凶胸匈汹雄熊休修羞朽嗅锈秀袖绣墟戌需虚嘘须徐许蓄酗叙旭序畜恤絮婿绪续轩喧宣悬旋玄�".split("");for(a=0;a!=t[208].length;++a)if(t[208][a].charCodeAt(0)!==65533){r[t[208][a]]=53248+a;e[53248+a]=t[208][a]}t[209]="����������������������������������������������������������������袬袮袯袰袲袳袴袵袶袸袹袺袻袽袾袿裀裃裄裇裈裊裋裌裍裏裐裑裓裖裗裚裛補裝裞裠裡裦裧裩裪裫裬裭裮裯裲裵裶裷裺裻製裿褀褁褃褄褅褆複褈�褉褋褌褍褎褏褑褔褕褖褗褘褜褝褞褟褠褢褣褤褦褧褨褩褬褭褮褯褱褲褳褵褷选癣眩绚靴薛学穴雪血勋熏循旬询寻驯巡殉汛训讯逊迅压押鸦鸭呀丫芽牙蚜崖衙涯雅哑亚讶焉咽阉烟淹盐严研蜒岩延言颜阎炎沿奄掩眼衍演艳堰燕厌砚雁唁彦焰宴谚验殃央鸯秧杨扬佯疡羊洋阳氧仰痒养样漾邀腰妖瑶�".split("");for(a=0;a!=t[209].length;++a)if(t[209][a].charCodeAt(0)!==65533){r[t[209][a]]=53504+a;e[53504+a]=t[209][a]}t[210]="����������������������������������������������������������������褸褹褺褻褼褽褾褿襀襂襃襅襆襇襈襉襊襋襌襍襎襏襐襑襒襓襔襕襖襗襘襙襚襛襜襝襠襡襢襣襤襥襧襨襩襪襫襬襭襮襯襰襱襲襳襴襵襶襷襸襹襺襼�襽襾覀覂覄覅覇覈覉覊見覌覍覎規覐覑覒覓覔覕視覗覘覙覚覛覜覝覞覟覠覡摇尧遥窑谣姚咬舀药要耀椰噎耶爷野冶也页掖业叶曳腋夜液一壹医揖铱依伊衣颐夷遗移仪胰疑沂宜姨彝椅蚁倚已乙矣以艺抑易邑屹亿役臆逸肄疫亦裔意毅忆义益溢诣议谊译异翼翌绎茵荫因殷音阴姻吟银淫寅饮尹引隐�".split("");for(a=0;a!=t[210].length;++a)if(t[210][a].charCodeAt(0)!==65533){r[t[210][a]]=53760+a;e[53760+a]=t[210][a]}t[211]="����������������������������������������������������������������覢覣覤覥覦覧覨覩親覫覬覭覮覯覰覱覲観覴覵覶覷覸覹覺覻覼覽覾覿觀觃觍觓觔觕觗觘觙觛觝觟觠觡觢觤觧觨觩觪觬觭觮觰觱觲觴觵觶觷觸觹觺�觻觼觽觾觿訁訂訃訄訅訆計訉訊訋訌訍討訏訐訑訒訓訔訕訖託記訙訚訛訜訝印英樱婴鹰应缨莹萤营荧蝇迎赢盈影颖硬映哟拥佣臃痈庸雍踊蛹咏泳涌永恿勇用幽优悠忧尤由邮铀犹油游酉有友右佑釉诱又幼迂淤于盂榆虞愚舆余俞逾鱼愉渝渔隅予娱雨与屿禹宇语羽玉域芋郁吁遇喻峪御愈欲狱育誉�".split("");for(a=0;a!=t[211].length;++a)if(t[211][a].charCodeAt(0)!==65533){r[t[211][a]]=54016+a;e[54016+a]=t[211][a]}t[212]="����������������������������������������������������������������訞訟訠訡訢訣訤訥訦訧訨訩訪訫訬設訮訯訰許訲訳訴訵訶訷訸訹診註証訽訿詀詁詂詃詄詅詆詇詉詊詋詌詍詎詏詐詑詒詓詔評詖詗詘詙詚詛詜詝詞�詟詠詡詢詣詤詥試詧詨詩詪詫詬詭詮詯詰話該詳詴詵詶詷詸詺詻詼詽詾詿誀浴寓裕预豫驭鸳渊冤元垣袁原援辕园员圆猿源缘远苑愿怨院曰约越跃钥岳粤月悦阅耘云郧匀陨允运蕴酝晕韵孕匝砸杂栽哉灾宰载再在咱攒暂赞赃脏葬遭糟凿藻枣早澡蚤躁噪造皂灶燥责择则泽贼怎增憎曾赠扎喳渣札轧�".split("");for(a=0;a!=t[212].length;++a)if(t[212][a].charCodeAt(0)!==65533){r[t[212][a]]=54272+a;e[54272+a]=t[212][a]}t[213]="����������������������������������������������������������������誁誂誃誄誅誆誇誈誋誌認誎誏誐誑誒誔誕誖誗誘誙誚誛誜誝語誟誠誡誢誣誤誥誦誧誨誩說誫説読誮誯誰誱課誳誴誵誶誷誸誹誺誻誼誽誾調諀諁諂�諃諄諅諆談諈諉諊請諌諍諎諏諐諑諒諓諔諕論諗諘諙諚諛諜諝諞諟諠諡諢諣铡闸眨栅榨咋乍炸诈摘斋宅窄债寨瞻毡詹粘沾盏斩辗崭展蘸栈占战站湛绽樟章彰漳张掌涨杖丈帐账仗胀瘴障招昭找沼赵照罩兆肇召遮折哲蛰辙者锗蔗这浙珍斟真甄砧臻贞针侦枕疹诊震振镇阵蒸挣睁征狰争怔整拯正政�".split("");for(a=0;a!=t[213].length;++a)if(t[213][a].charCodeAt(0)!==65533){r[t[213][a]]=54528+a;e[54528+a]=t[213][a]}t[214]="����������������������������������������������������������������諤諥諦諧諨諩諪諫諬諭諮諯諰諱諲諳諴諵諶諷諸諹諺諻諼諽諾諿謀謁謂謃謄謅謆謈謉謊謋謌謍謎謏謐謑謒謓謔謕謖謗謘謙謚講謜謝謞謟謠謡謢謣�謤謥謧謨謩謪謫謬謭謮謯謰謱謲謳謴謵謶謷謸謹謺謻謼謽謾謿譀譁譂譃譄譅帧症郑证芝枝支吱蜘知肢脂汁之织职直植殖执值侄址指止趾只旨纸志挚掷至致置帜峙制智秩稚质炙痔滞治窒中盅忠钟衷终种肿重仲众舟周州洲诌粥轴肘帚咒皱宙昼骤珠株蛛朱猪诸诛逐竹烛煮拄瞩嘱主著柱助蛀贮铸筑�".split("");for(a=0;a!=t[214].length;++a)if(t[214][a].charCodeAt(0)!==65533){r[t[214][a]]=54784+a;e[54784+a]=t[214][a]}t[215]="����������������������������������������������������������������譆譇譈證譊譋譌譍譎譏譐譑譒譓譔譕譖譗識譙譚譛譜譝譞譟譠譡譢譣譤譥譧譨譩譪譫譭譮譯議譱譲譳譴譵譶護譸譹譺譻譼譽譾譿讀讁讂讃讄讅讆�讇讈讉變讋讌讍讎讏讐讑讒讓讔讕讖讗讘讙讚讛讜讝讞讟讬讱讻诇诐诪谉谞住注祝驻抓爪拽专砖转撰赚篆桩庄装妆撞壮状椎锥追赘坠缀谆准捉拙卓桌琢茁酌啄着灼浊兹咨资姿滋淄孜紫仔籽滓子自渍字鬃棕踪宗综总纵邹走奏揍租足卒族祖诅阻组钻纂嘴醉最罪尊遵昨左佐柞做作坐座������".split("");for(a=0;a!=t[215].length;++a)if(t[215][a].charCodeAt(0)!==65533){r[t[215][a]]=55040+a;e[55040+a]=t[215][a]}t[216]="����������������������������������������������������������������谸谹谺谻谼谽谾谿豀豂豃豄豅豈豊豋豍豎豏豐豑豒豓豔豖豗豘豙豛豜豝豞豟豠豣豤豥豦豧豨豩豬豭豮豯豰豱豲豴豵豶豷豻豼豽豾豿貀貁貃貄貆貇�貈貋貍貎貏貐貑貒貓貕貖貗貙貚貛貜貝貞貟負財貢貣貤貥貦貧貨販貪貫責貭亍丌兀丐廿卅丕亘丞鬲孬噩丨禺丿匕乇夭爻卮氐囟胤馗毓睾鼗丶亟鼐乜乩亓芈孛啬嘏仄厍厝厣厥厮靥赝匚叵匦匮匾赜卦卣刂刈刎刭刳刿剀剌剞剡剜蒯剽劂劁劐劓冂罔亻仃仉仂仨仡仫仞伛仳伢佤仵伥伧伉伫佞佧攸佚佝�".split("");for(a=0;a!=t[216].length;++a)if(t[216][a].charCodeAt(0)!==65533){r[t[216][a]]=55296+a;e[55296+a]=t[216][a]}t[217]="����������������������������������������������������������������貮貯貰貱貲貳貴貵貶買貸貹貺費貼貽貾貿賀賁賂賃賄賅賆資賈賉賊賋賌賍賎賏賐賑賒賓賔賕賖賗賘賙賚賛賜賝賞賟賠賡賢賣賤賥賦賧賨賩質賫賬�賭賮賯賰賱賲賳賴賵賶賷賸賹賺賻購賽賾賿贀贁贂贃贄贅贆贇贈贉贊贋贌贍佟佗伲伽佶佴侑侉侃侏佾佻侪佼侬侔俦俨俪俅俚俣俜俑俟俸倩偌俳倬倏倮倭俾倜倌倥倨偾偃偕偈偎偬偻傥傧傩傺僖儆僭僬僦僮儇儋仝氽佘佥俎龠汆籴兮巽黉馘冁夔勹匍訇匐凫夙兕亠兖亳衮袤亵脔裒禀嬴蠃羸冫冱冽冼�".split("");for(a=0;a!=t[217].length;++a)if(t[217][a].charCodeAt(0)!==65533){r[t[217][a]]=55552+a;e[55552+a]=t[217][a]}t[218]="����������������������������������������������������������������贎贏贐贑贒贓贔贕贖贗贘贙贚贛贜贠赑赒赗赟赥赨赩赪赬赮赯赱赲赸赹赺赻赼赽赾赿趀趂趃趆趇趈趉趌趍趎趏趐趒趓趕趖趗趘趙趚趛趜趝趞趠趡�趢趤趥趦趧趨趩趪趫趬趭趮趯趰趲趶趷趹趻趽跀跁跂跅跇跈跉跊跍跐跒跓跔凇冖冢冥讠讦讧讪讴讵讷诂诃诋诏诎诒诓诔诖诘诙诜诟诠诤诨诩诮诰诳诶诹诼诿谀谂谄谇谌谏谑谒谔谕谖谙谛谘谝谟谠谡谥谧谪谫谮谯谲谳谵谶卩卺阝阢阡阱阪阽阼陂陉陔陟陧陬陲陴隈隍隗隰邗邛邝邙邬邡邴邳邶邺�".split("");for(a=0;a!=t[218].length;++a)if(t[218][a].charCodeAt(0)!==65533){r[t[218][a]]=55808+a;e[55808+a]=t[218][a]}t[219]="����������������������������������������������������������������跕跘跙跜跠跡跢跥跦跧跩跭跮跰跱跲跴跶跼跾跿踀踁踂踃踄踆踇踈踋踍踎踐踑踒踓踕踖踗踘踙踚踛踜踠踡踤踥踦踧踨踫踭踰踲踳踴踶踷踸踻踼踾�踿蹃蹅蹆蹌蹍蹎蹏蹐蹓蹔蹕蹖蹗蹘蹚蹛蹜蹝蹞蹟蹠蹡蹢蹣蹤蹥蹧蹨蹪蹫蹮蹱邸邰郏郅邾郐郄郇郓郦郢郜郗郛郫郯郾鄄鄢鄞鄣鄱鄯鄹酃酆刍奂劢劬劭劾哿勐勖勰叟燮矍廴凵凼鬯厶弁畚巯坌垩垡塾墼壅壑圩圬圪圳圹圮圯坜圻坂坩垅坫垆坼坻坨坭坶坳垭垤垌垲埏垧垴垓垠埕埘埚埙埒垸埴埯埸埤埝�".split("");for(a=0;a!=t[219].length;++a)if(t[219][a].charCodeAt(0)!==65533){r[t[219][a]]=56064+a;e[56064+a]=t[219][a]}t[220]="����������������������������������������������������������������蹳蹵蹷蹸蹹蹺蹻蹽蹾躀躂躃躄躆躈躉躊躋躌躍躎躑躒躓躕躖躗躘躙躚躛躝躟躠躡躢躣躤躥躦躧躨躩躪躭躮躰躱躳躴躵躶躷躸躹躻躼躽躾躿軀軁軂�軃軄軅軆軇軈軉車軋軌軍軏軐軑軒軓軔軕軖軗軘軙軚軛軜軝軞軟軠軡転軣軤堋堍埽埭堀堞堙塄堠塥塬墁墉墚墀馨鼙懿艹艽艿芏芊芨芄芎芑芗芙芫芸芾芰苈苊苣芘芷芮苋苌苁芩芴芡芪芟苄苎芤苡茉苷苤茏茇苜苴苒苘茌苻苓茑茚茆茔茕苠苕茜荑荛荜茈莒茼茴茱莛荞茯荏荇荃荟荀茗荠茭茺茳荦荥�".split("");for(a=0;a!=t[220].length;++a)if(t[220][a].charCodeAt(0)!==65533){r[t[220][a]]=56320+a;e[56320+a]=t[220][a]}t[221]="����������������������������������������������������������������軥軦軧軨軩軪軫軬軭軮軯軰軱軲軳軴軵軶軷軸軹軺軻軼軽軾軿輀輁輂較輄輅輆輇輈載輊輋輌輍輎輏輐輑輒輓輔輕輖輗輘輙輚輛輜輝輞輟輠輡輢輣�輤輥輦輧輨輩輪輫輬輭輮輯輰輱輲輳輴輵輶輷輸輹輺輻輼輽輾輿轀轁轂轃轄荨茛荩荬荪荭荮莰荸莳莴莠莪莓莜莅荼莶莩荽莸荻莘莞莨莺莼菁萁菥菘堇萘萋菝菽菖萜萸萑萆菔菟萏萃菸菹菪菅菀萦菰菡葜葑葚葙葳蒇蒈葺蒉葸萼葆葩葶蒌蒎萱葭蓁蓍蓐蓦蒽蓓蓊蒿蒺蓠蒡蒹蒴蒗蓥蓣蔌甍蔸蓰蔹蔟蔺�".split("");for(a=0;a!=t[221].length;++a)if(t[221][a].charCodeAt(0)!==65533){r[t[221][a]]=56576+a;e[56576+a]=t[221][a]}t[222]="����������������������������������������������������������������轅轆轇轈轉轊轋轌轍轎轏轐轑轒轓轔轕轖轗轘轙轚轛轜轝轞轟轠轡轢轣轤轥轪辀辌辒辝辠辡辢辤辥辦辧辪辬辭辮辯農辳辴辵辷辸辺辻込辿迀迃迆�迉迊迋迌迍迏迒迖迗迚迠迡迣迧迬迯迱迲迴迵迶迺迻迼迾迿逇逈逌逎逓逕逘蕖蔻蓿蓼蕙蕈蕨蕤蕞蕺瞢蕃蕲蕻薤薨薇薏蕹薮薜薅薹薷薰藓藁藜藿蘧蘅蘩蘖蘼廾弈夼奁耷奕奚奘匏尢尥尬尴扌扪抟抻拊拚拗拮挢拶挹捋捃掭揶捱捺掎掴捭掬掊捩掮掼揲揸揠揿揄揞揎摒揆掾摅摁搋搛搠搌搦搡摞撄摭撖�".split("");for(a=0;a!=t[222].length;++a)if(t[222][a].charCodeAt(0)!==65533){r[t[222][a]]=56832+a;e[56832+a]=t[222][a]}t[223]="����������������������������������������������������������������這逜連逤逥逧逨逩逪逫逬逰週進逳逴逷逹逺逽逿遀遃遅遆遈遉遊運遌過達違遖遙遚遜遝遞遟遠遡遤遦遧適遪遫遬遯遰遱遲遳遶遷選遹遺遻遼遾邁�還邅邆邇邉邊邌邍邎邏邐邒邔邖邘邚邜邞邟邠邤邥邧邨邩邫邭邲邷邼邽邿郀摺撷撸撙撺擀擐擗擤擢攉攥攮弋忒甙弑卟叱叽叩叨叻吒吖吆呋呒呓呔呖呃吡呗呙吣吲咂咔呷呱呤咚咛咄呶呦咝哐咭哂咴哒咧咦哓哔呲咣哕咻咿哌哙哚哜咩咪咤哝哏哞唛哧唠哽唔哳唢唣唏唑唧唪啧喏喵啉啭啁啕唿啐唼�".split("");for(a=0;a!=t[223].length;++a)if(t[223][a].charCodeAt(0)!==65533){r[t[223][a]]=57088+a;e[57088+a]=t[223][a]}t[224]="����������������������������������������������������������������郂郃郆郈郉郋郌郍郒郔郕郖郘郙郚郞郟郠郣郤郥郩郪郬郮郰郱郲郳郵郶郷郹郺郻郼郿鄀鄁鄃鄅鄆鄇鄈鄉鄊鄋鄌鄍鄎鄏鄐鄑鄒鄓鄔鄕鄖鄗鄘鄚鄛鄜�鄝鄟鄠鄡鄤鄥鄦鄧鄨鄩鄪鄫鄬鄭鄮鄰鄲鄳鄴鄵鄶鄷鄸鄺鄻鄼鄽鄾鄿酀酁酂酄唷啖啵啶啷唳唰啜喋嗒喃喱喹喈喁喟啾嗖喑啻嗟喽喾喔喙嗪嗷嗉嘟嗑嗫嗬嗔嗦嗝嗄嗯嗥嗲嗳嗌嗍嗨嗵嗤辔嘞嘈嘌嘁嘤嘣嗾嘀嘧嘭噘嘹噗嘬噍噢噙噜噌噔嚆噤噱噫噻噼嚅嚓嚯囔囗囝囡囵囫囹囿圄圊圉圜帏帙帔帑帱帻帼�".split("");for(a=0;a!=t[224].length;++a)if(t[224][a].charCodeAt(0)!==65533){r[t[224][a]]=57344+a;e[57344+a]=t[224][a]}t[225]="����������������������������������������������������������������酅酇酈酑酓酔酕酖酘酙酛酜酟酠酦酧酨酫酭酳酺酻酼醀醁醂醃醄醆醈醊醎醏醓醔醕醖醗醘醙醜醝醞醟醠醡醤醥醦醧醨醩醫醬醰醱醲醳醶醷醸醹醻�醼醽醾醿釀釁釂釃釄釅釆釈釋釐釒釓釔釕釖釗釘釙釚釛針釞釟釠釡釢釣釤釥帷幄幔幛幞幡岌屺岍岐岖岈岘岙岑岚岜岵岢岽岬岫岱岣峁岷峄峒峤峋峥崂崃崧崦崮崤崞崆崛嵘崾崴崽嵬嵛嵯嵝嵫嵋嵊嵩嵴嶂嶙嶝豳嶷巅彳彷徂徇徉後徕徙徜徨徭徵徼衢彡犭犰犴犷犸狃狁狎狍狒狨狯狩狲狴狷猁狳猃狺�".split("");for(a=0;a!=t[225].length;++a)if(t[225][a].charCodeAt(0)!==65533){r[t[225][a]]=57600+a;e[57600+a]=t[225][a]}t[226]="����������������������������������������������������������������釦釧釨釩釪釫釬釭釮釯釰釱釲釳釴釵釶釷釸釹釺釻釼釽釾釿鈀鈁鈂鈃鈄鈅鈆鈇鈈鈉鈊鈋鈌鈍鈎鈏鈐鈑鈒鈓鈔鈕鈖鈗鈘鈙鈚鈛鈜鈝鈞鈟鈠鈡鈢鈣鈤�鈥鈦鈧鈨鈩鈪鈫鈬鈭鈮鈯鈰鈱鈲鈳鈴鈵鈶鈷鈸鈹鈺鈻鈼鈽鈾鈿鉀鉁鉂鉃鉄鉅狻猗猓猡猊猞猝猕猢猹猥猬猸猱獐獍獗獠獬獯獾舛夥飧夤夂饣饧饨饩饪饫饬饴饷饽馀馄馇馊馍馐馑馓馔馕庀庑庋庖庥庠庹庵庾庳赓廒廑廛廨廪膺忄忉忖忏怃忮怄忡忤忾怅怆忪忭忸怙怵怦怛怏怍怩怫怊怿怡恸恹恻恺恂�".split("");for(a=0;a!=t[226].length;++a)if(t[226][a].charCodeAt(0)!==65533){r[t[226][a]]=57856+a;e[57856+a]=t[226][a]}t[227]="����������������������������������������������������������������鉆鉇鉈鉉鉊鉋鉌鉍鉎鉏鉐鉑鉒鉓鉔鉕鉖鉗鉘鉙鉚鉛鉜鉝鉞鉟鉠鉡鉢鉣鉤鉥鉦鉧鉨鉩鉪鉫鉬鉭鉮鉯鉰鉱鉲鉳鉵鉶鉷鉸鉹鉺鉻鉼鉽鉾鉿銀銁銂銃銄銅�銆銇銈銉銊銋銌銍銏銐銑銒銓銔銕銖銗銘銙銚銛銜銝銞銟銠銡銢銣銤銥銦銧恪恽悖悚悭悝悃悒悌悛惬悻悱惝惘惆惚悴愠愦愕愣惴愀愎愫慊慵憬憔憧憷懔懵忝隳闩闫闱闳闵闶闼闾阃阄阆阈阊阋阌阍阏阒阕阖阗阙阚丬爿戕氵汔汜汊沣沅沐沔沌汨汩汴汶沆沩泐泔沭泷泸泱泗沲泠泖泺泫泮沱泓泯泾�".split("");for(a=0;a!=t[227].length;++a)if(t[227][a].charCodeAt(0)!==65533){r[t[227][a]]=58112+a;e[58112+a]=t[227][a]}t[228]="����������������������������������������������������������������銨銩銪銫銬銭銯銰銱銲銳銴銵銶銷銸銹銺銻銼銽銾銿鋀鋁鋂鋃鋄鋅鋆鋇鋉鋊鋋鋌鋍鋎鋏鋐鋑鋒鋓鋔鋕鋖鋗鋘鋙鋚鋛鋜鋝鋞鋟鋠鋡鋢鋣鋤鋥鋦鋧鋨�鋩鋪鋫鋬鋭鋮鋯鋰鋱鋲鋳鋴鋵鋶鋷鋸鋹鋺鋻鋼鋽鋾鋿錀錁錂錃錄錅錆錇錈錉洹洧洌浃浈洇洄洙洎洫浍洮洵洚浏浒浔洳涑浯涞涠浞涓涔浜浠浼浣渚淇淅淞渎涿淠渑淦淝淙渖涫渌涮渫湮湎湫溲湟溆湓湔渲渥湄滟溱溘滠漭滢溥溧溽溻溷滗溴滏溏滂溟潢潆潇漤漕滹漯漶潋潴漪漉漩澉澍澌潸潲潼潺濑�".split("");for(a=0;a!=t[228].length;++a)if(t[228][a].charCodeAt(0)!==65533){r[t[228][a]]=58368+a;e[58368+a]=t[228][a]}t[229]="����������������������������������������������������������������錊錋錌錍錎錏錐錑錒錓錔錕錖錗錘錙錚錛錜錝錞錟錠錡錢錣錤錥錦錧錨錩錪錫錬錭錮錯錰錱録錳錴錵錶錷錸錹錺錻錼錽錿鍀鍁鍂鍃鍄鍅鍆鍇鍈鍉�鍊鍋鍌鍍鍎鍏鍐鍑鍒鍓鍔鍕鍖鍗鍘鍙鍚鍛鍜鍝鍞鍟鍠鍡鍢鍣鍤鍥鍦鍧鍨鍩鍫濉澧澹澶濂濡濮濞濠濯瀚瀣瀛瀹瀵灏灞宀宄宕宓宥宸甯骞搴寤寮褰寰蹇謇辶迓迕迥迮迤迩迦迳迨逅逄逋逦逑逍逖逡逵逶逭逯遄遑遒遐遨遘遢遛暹遴遽邂邈邃邋彐彗彖彘尻咫屐屙孱屣屦羼弪弩弭艴弼鬻屮妁妃妍妩妪妣�".split("");for(a=0;a!=t[229].length;++a)if(t[229][a].charCodeAt(0)!==65533){r[t[229][a]]=58624+a;e[58624+a]=t[229][a]}t[230]="����������������������������������������������������������������鍬鍭鍮鍯鍰鍱鍲鍳鍴鍵鍶鍷鍸鍹鍺鍻鍼鍽鍾鍿鎀鎁鎂鎃鎄鎅鎆鎇鎈鎉鎊鎋鎌鎍鎎鎐鎑鎒鎓鎔鎕鎖鎗鎘鎙鎚鎛鎜鎝鎞鎟鎠鎡鎢鎣鎤鎥鎦鎧鎨鎩鎪鎫�鎬鎭鎮鎯鎰鎱鎲鎳鎴鎵鎶鎷鎸鎹鎺鎻鎼鎽鎾鎿鏀鏁鏂鏃鏄鏅鏆鏇鏈鏉鏋鏌鏍妗姊妫妞妤姒妲妯姗妾娅娆姝娈姣姘姹娌娉娲娴娑娣娓婀婧婊婕娼婢婵胬媪媛婷婺媾嫫媲嫒嫔媸嫠嫣嫱嫖嫦嫘嫜嬉嬗嬖嬲嬷孀尕尜孚孥孳孑孓孢驵驷驸驺驿驽骀骁骅骈骊骐骒骓骖骘骛骜骝骟骠骢骣骥骧纟纡纣纥纨纩�".split("");for(a=0;a!=t[230].length;++a)if(t[230][a].charCodeAt(0)!==65533){r[t[230][a]]=58880+a;e[58880+a]=t[230][a]}t[231]="����������������������������������������������������������������鏎鏏鏐鏑鏒鏓鏔鏕鏗鏘鏙鏚鏛鏜鏝鏞鏟鏠鏡鏢鏣鏤鏥鏦鏧鏨鏩鏪鏫鏬鏭鏮鏯鏰鏱鏲鏳鏴鏵鏶鏷鏸鏹鏺鏻鏼鏽鏾鏿鐀鐁鐂鐃鐄鐅鐆鐇鐈鐉鐊鐋鐌鐍�鐎鐏鐐鐑鐒鐓鐔鐕鐖鐗鐘鐙鐚鐛鐜鐝鐞鐟鐠鐡鐢鐣鐤鐥鐦鐧鐨鐩鐪鐫鐬鐭鐮纭纰纾绀绁绂绉绋绌绐绔绗绛绠绡绨绫绮绯绱绲缍绶绺绻绾缁缂缃缇缈缋缌缏缑缒缗缙缜缛缟缡缢缣缤缥缦缧缪缫缬缭缯缰缱缲缳缵幺畿巛甾邕玎玑玮玢玟珏珂珑玷玳珀珉珈珥珙顼琊珩珧珞玺珲琏琪瑛琦琥琨琰琮琬�".split("");for(a=0;a!=t[231].length;++a)if(t[231][a].charCodeAt(0)!==65533){r[t[231][a]]=59136+a;e[59136+a]=t[231][a]}t[232]="����������������������������������������������������������������鐯鐰鐱鐲鐳鐴鐵鐶鐷鐸鐹鐺鐻鐼鐽鐿鑀鑁鑂鑃鑄鑅鑆鑇鑈鑉鑊鑋鑌鑍鑎鑏鑐鑑鑒鑓鑔鑕鑖鑗鑘鑙鑚鑛鑜鑝鑞鑟鑠鑡鑢鑣鑤鑥鑦鑧鑨鑩鑪鑬鑭鑮鑯�鑰鑱鑲鑳鑴鑵鑶鑷鑸鑹鑺鑻鑼鑽鑾鑿钀钁钂钃钄钑钖钘铇铏铓铔铚铦铻锜锠琛琚瑁瑜瑗瑕瑙瑷瑭瑾璜璎璀璁璇璋璞璨璩璐璧瓒璺韪韫韬杌杓杞杈杩枥枇杪杳枘枧杵枨枞枭枋杷杼柰栉柘栊柩枰栌柙枵柚枳柝栀柃枸柢栎柁柽栲栳桠桡桎桢桄桤梃栝桕桦桁桧桀栾桊桉栩梵梏桴桷梓桫棂楮棼椟椠棹�".split("");for(a=0;a!=t[232].length;++a)if(t[232][a].charCodeAt(0)!==65533){r[t[232][a]]=59392+a;e[59392+a]=t[232][a]}t[233]="����������������������������������������������������������������锧锳锽镃镈镋镕镚镠镮镴镵長镸镹镺镻镼镽镾門閁閂閃閄閅閆閇閈閉閊開閌閍閎閏閐閑閒間閔閕閖閗閘閙閚閛閜閝閞閟閠閡関閣閤閥閦閧閨閩閪�閫閬閭閮閯閰閱閲閳閴閵閶閷閸閹閺閻閼閽閾閿闀闁闂闃闄闅闆闇闈闉闊闋椤棰椋椁楗棣椐楱椹楠楂楝榄楫榀榘楸椴槌榇榈槎榉楦楣楹榛榧榻榫榭槔榱槁槊槟榕槠榍槿樯槭樗樘橥槲橄樾檠橐橛樵檎橹樽樨橘橼檑檐檩檗檫猷獒殁殂殇殄殒殓殍殚殛殡殪轫轭轱轲轳轵轶轸轷轹轺轼轾辁辂辄辇辋�".split("");for(a=0;a!=t[233].length;++a)if(t[233][a].charCodeAt(0)!==65533){r[t[233][a]]=59648+a;e[59648+a]=t[233][a]}t[234]="����������������������������������������������������������������闌闍闎闏闐闑闒闓闔闕闖闗闘闙闚闛關闝闞闟闠闡闢闣闤闥闦闧闬闿阇阓阘阛阞阠阣阤阥阦阧阨阩阫阬阭阯阰阷阸阹阺阾陁陃陊陎陏陑陒陓陖陗�陘陙陚陜陝陞陠陣陥陦陫陭陮陯陰陱陳陸陹険陻陼陽陾陿隀隁隂隃隄隇隉隊辍辎辏辘辚軎戋戗戛戟戢戡戥戤戬臧瓯瓴瓿甏甑甓攴旮旯旰昊昙杲昃昕昀炅曷昝昴昱昶昵耆晟晔晁晏晖晡晗晷暄暌暧暝暾曛曜曦曩贲贳贶贻贽赀赅赆赈赉赇赍赕赙觇觊觋觌觎觏觐觑牮犟牝牦牯牾牿犄犋犍犏犒挈挲掰�".split("");for(a=0;a!=t[234].length;++a)if(t[234][a].charCodeAt(0)!==65533){r[t[234][a]]=59904+a;e[59904+a]=t[234][a]}t[235]="����������������������������������������������������������������隌階隑隒隓隕隖隚際隝隞隟隠隡隢隣隤隥隦隨隩險隫隬隭隮隯隱隲隴隵隷隸隺隻隿雂雃雈雊雋雐雑雓雔雖雗雘雙雚雛雜雝雞雟雡離難雤雥雦雧雫�雬雭雮雰雱雲雴雵雸雺電雼雽雿霂霃霅霊霋霌霐霑霒霔霕霗霘霙霚霛霝霟霠搿擘耄毪毳毽毵毹氅氇氆氍氕氘氙氚氡氩氤氪氲攵敕敫牍牒牖爰虢刖肟肜肓肼朊肽肱肫肭肴肷胧胨胩胪胛胂胄胙胍胗朐胝胫胱胴胭脍脎胲胼朕脒豚脶脞脬脘脲腈腌腓腴腙腚腱腠腩腼腽腭腧塍媵膈膂膑滕膣膪臌朦臊膻�".split("");for(a=0;a!=t[235].length;++a)if(t[235][a].charCodeAt(0)!==65533){r[t[235][a]]=60160+a;e[60160+a]=t[235][a]}t[236]="����������������������������������������������������������������霡霢霣霤霥霦霧霨霩霫霬霮霯霱霳霴霵霶霷霺霻霼霽霿靀靁靂靃靄靅靆靇靈靉靊靋靌靍靎靏靐靑靔靕靗靘靚靜靝靟靣靤靦靧靨靪靫靬靭靮靯靰靱�靲靵靷靸靹靺靻靽靾靿鞀鞁鞂鞃鞄鞆鞇鞈鞉鞊鞌鞎鞏鞐鞓鞕鞖鞗鞙鞚鞛鞜鞝臁膦欤欷欹歃歆歙飑飒飓飕飙飚殳彀毂觳斐齑斓於旆旄旃旌旎旒旖炀炜炖炝炻烀炷炫炱烨烊焐焓焖焯焱煳煜煨煅煲煊煸煺熘熳熵熨熠燠燔燧燹爝爨灬焘煦熹戾戽扃扈扉礻祀祆祉祛祜祓祚祢祗祠祯祧祺禅禊禚禧禳忑忐�".split("");
@@ -448,12 +772,19 @@ const DEFAULT_DICT = [
   ['휴일근무','휴일근무','휴일근무',1,8,8,0], ['H','휴일근무','휴일근무',1,8,8,0],
   ['출장','출장','출장/교육',1,8,8,0], ['교육','교육','출장/교육',1,8,8,0],
   ['파견','파견','출장/교육',1,8,8,0],
+  ['정일','정일(휴무)','휴무',1,0,0,0],
   ['휴','휴무','휴무',1,0,0,0],       ['휴무','휴무','휴무',1,0,0,0],
   ['OFF','휴무','휴무',1,0,0,0],      ['비번','비번','휴무',1,0,0,0],
   ['주휴','주휴일(유급)','휴무',1,0,8,0], ['공휴','약정/법정휴일','휴무',1,0,8,0],
   ['휴일','휴일','휴무',1,0,8,0],
   ['연차','연차휴가','유급휴가',1,0,8,1], ['연','연차휴가','유급휴가',1,0,8,1],
+  ['연차휴가','연차휴가','유급휴가',1,0,8,1], ['연중휴가','연중휴가','유급휴가',1,0,8,1],
+  ['예비군','예비군훈련','유급휴가',1,0,8,0], ['민방위','민방위훈련','유급휴가',1,0,8,0],
+  ['법일','법정공휴일','휴무',1,0,8,0], ['대체휴무','대체휴무','휴무',1,0,0,0],
   ['공가','공가','유급휴가',1,0,8,0], ['경조','경조휴가','유급휴가',1,0,8,0],
+  ['조의','조의(경조)','유급휴가',1,0,8,0], ['경조휴가','경조휴가','유급휴가',1,0,8,0],
+  ['건강검진휴가','건강검진휴가','유급휴가',1,0,8,0], ['건강검진','건강검진','유급휴가',1,0,8,0],
+  ['보건휴가','보건휴가','유급휴가',1,0,0,0], ['가족돌봄','가족돌봄휴가','무급/결근',1,0,0,0],
   ['특휴','특별휴가','유급휴가',1,0,8,0], ['보건','보건휴가','유급휴가',1,0,0,0],
   ['결근','결근','무급/결근',1,0,0,0], ['무단','무단결근','무급/결근',1,0,0,0],
   ['X','결근','무급/결근',1,0,0,0],   ['병가','병가','무급/결근',1,0,0,0],
@@ -497,10 +828,26 @@ function holSet(){
   return out;
 }
 
-const norm = v => (v===null||v===undefined) ? '' : String(v).trim();
+const norm = v => (v===null||v===undefined) ? '' : String(v).replace(/[\s\u00a0\u3000]+/g,' ').trim();
 const key  = c => norm(c).toUpperCase().replace(/\s+/g,'');
 const num  = v => { const n = parseFloat(String(v).replace(/[^\d.\-]/g,'')); return isNaN(n)?0:n; };
 const r2   = n => Math.round(n*100)/100;
+/* 시간 열 값 → '시간(h)' 단위로 변환.
+   - 엑셀 시간서식(Date) → 지속시간으로 해석 (01:30 → 1.5h)
+   - "1:30" 같은 문자열 → 1.5h
+   - 숫자 → 열 단위(자동/시간/분)에 따라 환산 */
+const isMinCol = i => { const h=norm(S.headers?.[i]||''); return /\(\s*분\s*\)|분\s*$|\bmin\b|minute/i.test(h); };
+function unitFactor(i){ const md=$('#hUnit')?.value||'auto';
+  if(md==='h') return 1; if(md==='m') return 1/60; return isMinCol(i)? 1/60 : 1; }
+function hrs(v,i){
+  if(v===null||v===undefined) return null;
+  if(v instanceof Date) return (v.getHours()*60+v.getMinutes()+v.getSeconds()/60)/60;
+  const s=String(v).trim(); if(s==='') return null;
+  const cm=s.match(/^(-?\d{1,4}):(\d{1,2})(?::(\d{1,2}))?$/);
+  if(cm) return (+cm[1]) + (+cm[2])/60 + (cm[3]?+cm[3]:0)/3600;
+  const n=num(s); if(!isFinite(n)) return null;
+  return n*unitFactor(i);
+}
 
 /* ---------- 1. 파일 읽기 ---------- */
 const drop = $('#drop');
@@ -548,6 +895,9 @@ $('#sheet').onchange = loadSheet;
 $('#holReload').onclick = () => { $('#holList').value = holDefaults(+$('#yy').value); S.holTouched=false; recalc(); };
 $('#holList').oninput = () => { S.holTouched=true; recalc(); };
 $('#sunDow').onchange = $('#holFromCode').onchange = recalc;
+$('#pdWd').oninput = $('#pdHd').oninput = recalc;
+['wTable','wBreak','wOtRate','wDefault'].forEach(id=>{ const el=$('#'+id);
+  if(el) el.oninput=()=>{ calcWage(); if(S.tab==='wage') renderTable(); }; });
 function syncHolidays(){ if(!S.holTouched) $('#holList').value = holDefaults(+$('#yy').value||new Date().getFullYear()); }
 $('#hrow').oninput = () => applyHeader(true);
 $('#mode').onchange = () => { renderMap(); recalc(); };
@@ -592,20 +942,28 @@ const FIELDS = [
   {k:'name',  n:'성명',        pat:/성명|이름|성 명|name/i},
   {k:'dept',  n:'부서',        pat:/부서|소속|팀|dept|조직/i},
   {k:'date',  n:'일자',        pat:/일자|날짜|근무일|date/i, only:'long'},
-  {k:'code',  n:'근태코드',    pat:/근태|코드|구분|유형|code/i, only:'long'},
-  {k:'baseH', n:'기본시간(선택)', pat:/기본.*시간|소정|정상.*시간|base/i, only:'long'},
-  {k:'otH',   n:'연장시간(선택)', pat:/연장|잔업|초과|o\.?t/i, only:'long'},
-  {k:'nightH',n:'야간시간(선택)', pat:/야간.*시간|심야/i, only:'long'},
-  {k:'holH',  n:'휴일근로(선택)', pat:/휴일.*(근로|근무|시간)|특근.*시간/i, only:'long'},
+  {k:'code',  n:'근태코드',    pat:/근태/i, ex:/시작|종료|시각/, only:'long'},
+  {k:'payday',n:'급여요일(선택)', pat:/급여.?요일|급여구분/i, only:'long'},
+  {k:'baseH', n:'기본시간(선택)', pat:/기본.*시간|소정|정상.*시간|base/i, ex:/시작|종료|시각|개시|마감/, dur:1, only:'long'},
+  {k:'otH',   n:'연장시간(선택)', pat:/연장|잔업|초과|o\.?t/i, ex:/시작|종료|시각|개시|마감|심야|야간|휴일|여부|비고/, dur:1, only:'long'},
+  {k:'nightH',n:'야간·심야(선택)', pat:/심야|야간/i, ex:/시작|종료|시각|개시|마감|여부|비고/, dur:1, only:'long'},
+  {k:'holH',  n:'휴일근로(선택)', pat:/휴일.*(근로|근무|시간)|특근.*시간/i, ex:/시작|종료|시각|개시|마감|여부|비고/, dur:1, only:'long'},
 ];
 function renderMap(){
   const mode=$('#mode').value;
   const opts = i0 => `<option value="-1">— 없음 —</option>`+S.headers.map((h,i)=>`<option value="${i}"${i===i0?' selected':''}>${h}</option>`).join('');
+  const used=new Set();
   $('#mapRow').innerHTML = FIELDS.filter(f=>!f.only||f.only===mode).map(f=>{
-    let g=-1; S.headers.forEach((h,i)=>{ if(g<0 && f.pat.test(norm(h))) g=i; });
+    const ok=(hh,i)=>!used.has(i) && f.pat.test(hh) && !(f.ex && f.ex.test(hh));
+    let g=-1;
+    if(f.dur) S.headers.forEach((h,i)=>{ const hh=norm(h);   // 1차: '(분)'·'시간' 이 붙은 수량 열 우선
+      if(g<0 && ok(hh,i) && /\(\s*분\s*\)|분\s*$|시간/.test(hh)) g=i; });
+    if(g<0) S.headers.forEach((h,i)=>{ const hh=norm(h); if(g<0 && ok(hh,i)) g=i; });
+    if(g>=0) used.add(g);
     return `<div class="f"><label>${f.n}</label><select data-m="${f.k}">${opts(g)}</select></div>`;
   }).join('');
   $$('#mapRow select').forEach(s=>s.onchange=recalc);
+  $('#hUnit').onchange=recalc;
   $('#wideOpt').style.display = mode==='wide' ? '' : 'none';
   if(mode==='wide'){
     const dayIdx = S.headers.map((h,i)=>isDayHeader(h)?i:-1).filter(i=>i>=0);
@@ -650,6 +1008,7 @@ function renderDict(){
 }
 $('#addCode').onclick = () => { dict().unshift({code:'새코드',label:'',cat:'근무',days:1,workH:8,paidH:8,leave:0}); $('#onlyUsed').checked=false; recalc(); };
 $('#onlyUsed').onchange = renderDict;
+$('#blankWork').onchange = recalc;
 $('#resetCfg').onclick = () => { S.dict=null; recalc(); };
 $('#saveCfg').onclick = () => {
   const blob=new Blob([JSON.stringify({version:1,dict:dict()},null,1)],{type:'application/json'});
@@ -706,14 +1065,15 @@ function normalize(){
       const code = m.code>=0 ? norm(r[m.code]) : '';
       if(!code && m.baseH<0 && m.otH<0) continue;
       out.push({empId:id, name:m.name>=0?norm(r[m.name]):'', dept:m.dept>=0?norm(r[m.dept]):'',
-        dateKey:dk, dt, code,
-        baseH: m.baseH>=0? num(r[m.baseH]) : null,
-        otH:   m.otH  >=0? num(r[m.otH])   : 0,
-        nightH:m.nightH>=0?num(r[m.nightH]): 0,
-        holH:  m.holH >=0? num(r[m.holH])  : null});
+        dateKey:dk, dt, code, payday: m.payday>=0? norm(r[m.payday]) : '',
+        baseH: m.baseH>=0? hrs(r[m.baseH],m.baseH) : null,
+        otH:   m.otH  >=0? (hrs(r[m.otH],m.otH)||0) : 0,
+        nightH:m.nightH>=0?(hrs(r[m.nightH],m.nightH)||0): 0,
+        holH:  m.holH >=0? hrs(r[m.holH],m.holH) : null});
     }
   } else {
     const a=+$('#dayFrom').value, b=+$('#dayTo').value, how=$('#cellNum').value;
+    const UF = ($('#hUnit')?.value==='m') ? 1/60 : 1;
     for(const r of body){
       let id=norm(r[m.empId]);
       if(!id && carry) id=lastId;
@@ -728,7 +1088,7 @@ function normalize(){
         const dt=toDate(Y,MO,dnum);
         out.push({empId:id, name:lastName, dept:lastDept,
           dateKey: dt?`${Y}-${String(MO).padStart(2,'0')}-${String(dnum).padStart(2,'0')}`:hs, dt,
-          code:p.code||'', baseH: p.hours ?? null, otH:p.ot||0, nightH:0, holH:null});
+          code:p.code||'', baseH: p.hours!=null? p.hours*UF : null, otH:(p.ot||0)*UF, nightH:0, holH:null});
       }
     }
   }
@@ -739,10 +1099,14 @@ function normalize(){
 function aggregate(){
   const dm=dmap(), byEmp=new Map(), codeCount={}, unknown=new Set();
   const HOL=holSet(), SUN=+($('#sunDow')?.value ?? 0), useCodeHol=$('#holFromCode')?.checked;
+  const blankWork=$('#blankWork')?.checked;
+  const usePD=S.records.some(r=>r.payday), PDW=norm($('#pdWd')?.value||'평일'), PDH=norm($('#pdHd')?.value||'법일');
+  S.usePD=usePD;
   for(const r of S.records){
     const k=key(r.code);
     codeCount[k]=(codeCount[k]||0)+1;
-    const d = dm.get(k);
+    let d = dm.get(k), asBlank=false;
+    if(!r.code && blankWork){ d = dm.get(key('정상')); asBlank = !!d; }
     if(r.code && !d) unknown.add(r.code);
     const cat = d? d.cat : (r.code? '미분류':'기타');
     let e=byEmp.get(r.empId);
@@ -753,7 +1117,7 @@ function aggregate(){
     if(!e.name && r.name) e.name=r.name;
     if(!e.dept && r.dept) e.dept=r.dept;
     const days = d? d.days : 1;
-    if(r.code) e.대상일수++;
+    if(r.code||asBlank) e.대상일수++;
     if(cat==='근무') e.근무일수+=days;
     else if(cat==='휴일근무'){ e.근무일수+=days; e.휴일근무+=days; }
     else if(cat==='출장/교육'){ e.근무일수+=days; e.출장교육+=days; }
@@ -771,11 +1135,13 @@ function aggregate(){
     e.기본시간+=base; e.연장시간+=ot; e.야간시간+=ni; e.휴일근로+=hol;
     e.유급시간 += (d? d.paidH : 0);
     if(r.code) e.codes[r.code]=(e.codes[r.code]||0)+1;
+    else if(asBlank) e.codes['(빈칸=정상)']=(e.codes['(빈칸=정상)']||0)+1;
     e.days.push({...r, cat, base, hol, ot, ni, label:d?d.label:''});
     if(r.dt){ const w=isoWeek(r.dt); (e.weeks[w] ||= {base:0,ot:0,hol:0}); e.weeks[w].base+=base; e.weeks[w].ot+=ot; e.weeks[w].hol+=hol; }
     if(r.dateKey){
       let dd=e._d.get(r.dateKey);
-      if(!dd){ dd={dt:r.dt, absent:false, hol:false}; e._d.set(r.dateKey,dd); }
+      if(!dd){ dd={dt:r.dt, absent:false, hol:false, pd:''}; e._d.set(r.dateKey,dd); }
+      if(r.payday && !dd.pd) dd.pd=r.payday;
       if(cat==='무급/결근') dd.absent=true;
       if(useCodeHol && cat==='휴무'){
         const t=(r.code+' '+(d?.label||''));
@@ -792,9 +1158,12 @@ function aggregate(){
     for(const [dk,dd] of e._d){
       if(!dd.dt) continue;
       const dow=dd.dt.getDay();
-      const isHol = HOL.has(dk) || dd.hol;
-      const isWeekday = dow>=1 && dow<=5;
-      if(isHol) e.공휴일수++; else if(isWeekday) e.평일수++;
+      if(usePD){                                   // 파일의 급여요일 열을 그대로 사용
+        if(dd.pd===PDH) e.공휴일수++; else if(dd.pd===PDW) e.평일수++;
+      } else {                                     // 없으면 달력 + 공휴일 목록으로 추정
+        const isHol = HOL.has(dk) || dd.hol;
+        if(isHol) e.공휴일수++; else if(dow>=1&&dow<=5) e.평일수++;
+      }
       if(dow===SUN) e.일요일수++;
       const w=isoWeek(dd.dt);
       (pw[w] ||= {sun:0,absent:false});
@@ -809,8 +1178,10 @@ function aggregate(){
     e.총유급일수 = e.급여일수 + e.인정일요일;
     delete e._d;
     e.총근로 = r2(e.기본시간+e.연장시간+e.휴일근로);
-    e.연장분 = Math.round(e.연장시간*60);
-    e.연장HM = `${Math.floor(e.연장분/60)}:${String(e.연장분%60).padStart(2,'0')}`;
+    const toHM=n=>`${Math.floor(n/60)}:${String(n%60).padStart(2,'0')}`;
+    e.연장분 = Math.round(e.연장시간*60);   e.연장HM = toHM(e.연장분);
+    e.심야분 = Math.round(e.야간시간*60);   e.심야HM = toHM(e.심야분);
+    e.휴일분 = Math.round(e.휴일근로*60);   e.휴일HM = toHM(e.휴일분);
     e.출근일수 = 0; // 아래에서 근무일수와 동기화
     ['근무일수','휴일근무','출장교육','휴무일수','휴가일수','결근일수','미분류','연차차감','기본시간','연장시간','야간시간','휴일근로','유급시간'].forEach(k=>e[k]=r2(e[k]));
     const wk=Object.entries(e.weeks).map(([w,v])=>({w,tot:r2(v.base+v.ot+v.hol),ot:r2(v.ot+v.hol)}));
@@ -830,12 +1201,30 @@ function aggregate(){
 }
 
 /* ---------- 렌더 ---------- */
+function showUnits(){
+  const box=$('#unitInfo'); if(!box) return;
+  if($('#mode').value!=='long'){ box.style.display='none'; return; }
+  const m=M(), lab={baseH:'기본시간',otH:'연장시간',nightH:'야간·심야',holH:'휴일근로'};
+  const items=Object.keys(lab).filter(k=>m[k]>=0)
+    .map(k=>`<b>${lab[k]}</b> = 「${S.headers[m[k]]}」 → <b>${unitFactor(m[k])===1?'시간(h)':'분(min)'}</b>으로 읽음`);
+  if(!items.length){ box.style.display='none'; return; }
+  box.style.display='';
+  box.innerHTML=`시간 열 단위 인식 결과 — ${items.join(' · ')}<br>
+    <span style="opacity:.85">숫자가 60배 크거나 작게 나오면 이 단위가 원인입니다. 위 <b>시간 열의 단위</b>에서 직접 바꾸세요.</span>`;
+}
 function recalc(){
   if(!S.wb) return;
   S.records = normalize();
+  showUnits();
   S.sum = aggregate();
   renderDict();
-  $('#c4').classList.remove('off'); $('#c45').classList.remove('off'); $('#c5').classList.remove('off');
+  $('#c4').classList.remove('off'); $('#c45').classList.remove('off');
+  $('#c46').classList.remove('off'); $('#c5').classList.remove('off');
+  calcWage();
+  $('#pdBox').style.display='';
+  $('#pdBox').innerHTML = S.usePD
+    ? `<b>급여일수를 파일의 「급여요일」 열에서 직접 셉니다.</b> 평일 = "${$('#pdWd').value}", 법일 = "${$('#pdHd').value}" 로 집계했습니다. 아래 공휴일 목록은 사용하지 않습니다.`
+    : `<b>파일에 급여요일 열이 없어 달력으로 추정합니다.</b> 평일(월~금) + 아래 법정공휴일 목록 기준입니다. 파일에 급여요일 열이 있으면 3단계에서 연결해 주세요 — 그쪽이 정확합니다.`;
   renderUnknown(); renderKpi(); renderDeptFilter(); renderTable();
 }
 function renderUnknown(){
@@ -854,7 +1243,7 @@ function renderKpi(){
   const issue=S.sum.filter(e=>e.이슈.length).length;
   const k=[['인원',S.sum.length,'명'],['총 출근일수',t('근무일수'),'일'],
     ['총 급여일수',t('급여일수'),'일'],['총 인정 일요일',t('인정일요일'),'일'],
-    ['총 연장시간(분)',t('연장분').toLocaleString(),'분'],['총 연장시간',t('연장시간'),'h'],
+    ['총 연장시간(분)',t('연장분').toLocaleString(),'분'],['총 심야(분)',t('심야분').toLocaleString(),'분'],
     ['총 기본(소정)시간',t('기본시간'),'h'],['총 휴일근로',t('휴일근로'),'h'],
     ['확인 필요 인원',issue,'명']];
   $('#kpi').innerHTML=k.map(([l,v,u])=>`<div class="kpi"><div class="l">${l}</div><div class="v">${v}<span class="u">${u}</span></div></div>`).join('');
@@ -874,10 +1263,54 @@ function filtered(){
   return S.sum.filter(e=>(!d||e.dept===d) &&
     (!q || (e.empId+' '+e.name+' '+e.dept).toLowerCase().includes(q)));
 }
+/* 사번별 시급표 파싱: "사번<탭|쉼표|공백>시급" */
+function wageMap(){
+  const m=new Map();
+  ($('#wTable')?.value||'').split(/\r?\n/).forEach(line=>{
+    const t=line.trim(); if(!t) return;
+    const p=t.split(/[\t,;]+|\s{1,}/).filter(Boolean);
+    if(p.length<2) return;
+    const id=norm(p[0]), w=num(p[p.length-1]);
+    if(id && isFinite(w) && w>0) m.set(id, w);
+  });
+  return m;
+}
+/* 인원별 급여 계산 (참고용) */
+function calcWage(){
+  const wm=wageMap();
+  const br=+($('#wBreak')?.value)||0, rate=+($('#wOtRate')?.value)||1.5;
+  const dft=$('#wDefault')?.value.trim()===''? null : (+$('#wDefault').value||0);
+  let matched=0;
+  const list=S.sum.map(e=>{
+    const wage = wm.has(e.empId) ? wm.get(e.empId) : dft;
+    if(wm.has(e.empId)) matched++;
+    const cut  = r2(e.근무일수*br);                 // 휴게 차감 시간
+    const paidH= r2(Math.max(0, e.기본시간 - cut)); // 유급 기본시간
+    const otH  = e.연장시간;
+    const base = wage==null? null : Math.round(paidH*wage);
+    const otPay= wage==null? null : Math.round(otH*wage*rate);
+    return {...e, 시급:wage, 휴게차감:cut, 유급시간:paidH, 기본급:base,
+            연장수당:otPay, 지급합계: (base==null?null:base+otPay)};
+  });
+  S.wage=list; S.wageMatched=matched; S.wageTotal=wm.size;
+  if($('#wInfo')) $('#wInfo').innerHTML = wm.size===0
+    ? '<span style="color:#8b93a1">시급표가 비어 있습니다. 위에 붙여넣으면 급여 계산 탭이 채워집니다.</span>'
+    : `시급표 <b>${wm.size}명</b> 인식 · 이번 파일 인원 ${S.sum.length}명 중 <b>${matched}명</b> 매칭` +
+      (matched<S.sum.length ? ` · <span style="color:#b45309">${S.sum.length-matched}명은 시급 없음${dft!=null?` (기본 시급 ${dft.toLocaleString()}원 적용)`:' (금액 계산 제외)'}</span>` : '');
+  return list;
+}
+const WAGECOLS=[['사번','empId'],['성명','name'],['부서','dept'],['근무일수','근무일수',1],
+  ['기본시간','기본시간',1],['휴게차감','휴게차감',1],['유급시간','유급시간',1],
+  ['시급','시급',1,'won'],['기본급','기본급',1,'won'],
+  ['연장(분)','연장분',1],['연장시간','연장시간',1],['연장수당','연장수당',1,'won'],
+  ['지급합계','지급합계',1,'won']];
 const PAYCOLS=[['사번','empId'],['성명','name'],['부서','dept'],
   ['출근일수','출근일수',1],['평일수','평일수',1],['법정공휴일수','공휴일수',1],['급여일수','급여일수',1],
   ['일요일수','일요일수',1],['결근 주','결근주',1],['차감 일요일','차감일요일',1],['인정 일요일수','인정일요일',1],
-  ['총유급일수','총유급일수',1],['연장(분)','연장분',1],['연장(시:분)','연장HM'],['연장(h)','연장시간',1]];
+  ['총유급일수','총유급일수',1],
+  ['연장(분)','연장분',1],['연장(시:분)','연장HM'],
+  ['심야(분)','심야분',1],['심야(시:분)','심야HM'],
+  ['휴일근로(분)','휴일분',1],['연장(h)','연장시간',1]];
 function renderTable(){
   const rows=filtered();
   if(S.tab==='pay'){
@@ -893,11 +1326,26 @@ function renderTable(){
       `</tr></tfoot>`;
     $$('#out tbody tr').forEach(tr=>tr.onclick=()=>detail(tr.dataset.id));
   }
+  else if(S.tab==='wage'){
+    const W=calcWage();
+    const ids=new Set(rows.map(r=>r.empId));
+    const rs=W.filter(e=>ids.has(e.empId));
+    const fmt=(v,w)=> v==null? '<span class="muted">-</span>' : (w==='won'? v.toLocaleString()+'원' : v);
+    const tot={}; WAGECOLS.forEach(c=>{ if(c[2]) tot[c[1]]=rs.reduce((s,e)=>s+(e[c[1]]||0),0); });
+    $('#out').innerHTML=`<thead><tr>${WAGECOLS.map(c=>`<th class="${c[2]?'num':''}">${c[0]}</th>`).join('')}</tr></thead><tbody>`+
+      rs.map(e=>`<tr data-id="${e.empId}" style="cursor:pointer">${WAGECOLS.map(c=>
+        `<td class="${c[2]?'num':''}">${fmt(e[c[1]],c[3])}</td>`).join('')}</tr>`).join('')+
+      `</tbody><tfoot><tr style="background:#f7f9fc;font-weight:700;position:sticky;bottom:0">
+        <td>합계</td><td>${rs.length}명</td><td></td>`+
+      WAGECOLS.slice(3).map(c=>`<td class="num">${c[3]==='won'? (tot[c[1]]||0).toLocaleString()+'원' : r2(tot[c[1]]||0)}</td>`).join('')+
+      `</tr></tfoot>`;
+    $$('#out tbody tr').forEach(tr=>tr.onclick=()=>detail(tr.dataset.id));
+  }
   else if(S.tab==='sum'){
     const cols=[['사번','empId'],['성명','name'],['부서','dept'],['대상일수','대상일수',1],['근무일수','근무일수',1],
       ['휴일근무','휴일근무',1],['출장/교육','출장교육',1],['휴무','휴무일수',1],['휴가','휴가일수',1],
       ['연차차감','연차차감',1],['결근','결근일수',1],['미분류','미분류',1],
-      ['기본시간','기본시간',1],['연장시간','연장시간',1],['연장(분)','연장분',1],['야간시간','야간시간',1],['휴일근로','휴일근로',1],['총근로','총근로',1],
+      ['기본시간','기본시간',1],['연장시간','연장시간',1],['연장(분)','연장분',1],['야간시간','야간시간',1],['심야(분)','심야분',1],['휴일근로','휴일근로',1],['총근로','총근로',1],
       ['주평균연장','평균주연장',1]];
     $('#out').innerHTML=`<thead><tr>${cols.map(c=>`<th class="${c[2]?'num':''}">${c[0]}</th>`).join('')}<th>확인</th></tr></thead><tbody>`+
       rows.map(e=>`<tr data-id="${e.empId}" style="cursor:pointer">${cols.map(c=>`<td class="${c[2]?'num':''}">${e[c[1]]}</td>`).join('')}
@@ -943,7 +1391,7 @@ function detail(id){
   $('#dlgB').innerHTML=`
    <div class="cards">
      ${[['출근일수',e.출근일수,'일'],['급여일수',e.급여일수,'일'],['인정 일요일',e.인정일요일,'일'],
-        ['연장(분)',(e.연장분||0).toLocaleString(),'분'],['연장(시:분)',e.연장HM,''],['총근로',e.총근로,'h']]
+        ['연장(분)',(e.연장분||0).toLocaleString(),'분'],['심야(분)',(e.심야분||0).toLocaleString(),'분'],['총근로',e.총근로,'h']]
        .map(([l,v,u])=>`<div class="kpi"><div class="l">${l}</div><div class="v">${v}<span class="u">${u}</span></div></div>`).join('')}
    </div>
    <p class="muted" style="margin:6px 0">평일 ${e.평일수}일 · 법정공휴일 ${e.공휴일수}일 · 일요일 ${e.일요일수}일 (결근 주 ${e.결근주}개 → ${e.차감일요일}일 차감 → 인정 ${e.인정일요일}일)</p>
@@ -957,14 +1405,25 @@ $('#exp').onclick=()=>{
   const wb=XLSX.utils.book_new();
   const sum=filtered().map(e=>({사번:e.empId,성명:e.name,부서:e.dept,대상일수:e.대상일수,근무일수:e.근무일수,
     휴일근무일:e.휴일근무,'출장/교육일':e.출장교육,휴무일수:e.휴무일수,휴가일수:e.휴가일수,연차차감:e.연차차감,
-    결근일수:e.결근일수,미분류:e.미분류,'기본(소정)시간':e.기본시간,연장시간:e.연장시간,야간시간:e.야간시간,
+    결근일수:e.결근일수,미분류:e.미분류,'기본(소정)시간':e.기본시간,연장시간:e.연장시간,'연장(분)':e.연장분,야간시간:e.야간시간,'심야(분)':e.심야분,
     휴일근로시간:e.휴일근로,총근로시간:e.총근로,주평균연장:e.평균주연장,'주52h초과주수':e.주52초과,확인사항:e.이슈.join(', ')}));
   XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(sum),'사번별요약');
   const pay=filtered().map(e=>({사번:e.empId,성명:e.name,부서:e.dept,출근일수:e.출근일수,
     평일수:e.평일수,법정공휴일수:e.공휴일수,'급여일수(평일+공휴일)':e.급여일수,
     일요일수:e.일요일수,'결근발생 주':e.결근주,'차감 일요일':e.차감일요일,'인정 일요일수':e.인정일요일,
-    '총유급일수':e.총유급일수,'연장시간(분)':e.연장분,'연장시간(시:분)':e.연장HM,'연장시간(h)':e.연장시간}));
+    '총유급일수':e.총유급일수,
+    '연장시간(분)':e.연장분,'연장시간(시:분)':e.연장HM,
+    '심야시간(분)':e.심야분,'심야시간(시:분)':e.심야HM,
+    '휴일근로(분)':e.휴일분,'연장시간(h)':e.연장시간}));
   XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(pay),'급여기준집계');
+  const W=(S.wage||[]).filter(e=>filtered().some(f=>f.empId===e.empId));
+  if(W.length && W.some(e=>e.시급!=null)){
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(W.map(e=>({
+      사번:e.empId,성명:e.name,부서:e.dept,근무일수:e.근무일수,'기본시간(h)':e.기본시간,
+      '휴게차감(h)':e.휴게차감,'유급시간(h)':e.유급시간,시급:e.시급,기본급:e.기본급,
+      '연장(분)':e.연장분,'연장시간(h)':e.연장시간,연장수당:e.연장수당,지급합계:e.지급합계,
+      비고:'참고용 — 주휴·유급휴가·심야·휴일근로 수당 미포함'}))),'급여계산(참고)');
+  }
   const codes=[...new Set(S.records.map(r=>r.code).filter(Boolean))].sort();
   XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(filtered().map(e=>
     Object.assign({사번:e.empId,성명:e.name,부서:e.dept},Object.fromEntries(codes.map(c=>[c,e.codes[c]||0]))))),'코드별일수');
@@ -977,9 +1436,11 @@ $('#exp').onclick=()=>{
     ['기준 연월', `${$('#yy').value}-${String($('#mm').value).padStart(2,'0')}`],
     ['주휴 기준 요일', $('#sunDow').selectedOptions[0].text],
     ['결근 판정 주 단위','월요일 ~ 일요일 (ISO)'],
-    ['급여일수 정의','평일(공휴일 제외 월~금) + 법정공휴일'],
+    ['급여일수 정의', S.usePD? `파일의 급여요일 열 기준 — 평일="${$('#pdWd').value}" + 법일="${$('#pdHd').value}"` : '평일(공휴일 제외 월~금) + 법정공휴일 (달력 추정)'],
     ['일요일수 차감 규칙','해당 주(월~일)에 결근이 1건이라도 있으면 그 주의 일요일을 제외'],
     ['총근로시간 정의','기본(소정) + 연장 + 휴일근로 (야간은 중복 제외)'],
+    ['시간 열 단위', $('#hUnit').selectedOptions[0].text],
+    ['연장시간 원본 열', (()=>{const m=M(); return m.otH>=0? `${S.headers[m.otH]} → ${unitFactor(m.otH)===1?'시간(h)':'분(min)'}으로 해석` : '(가로형 셀에서 추출)';})()],
     ['적용 법정공휴일', [...holSet()].sort().join(', ')],
     ['⚠ 확인 필요','공휴일 날짜·소정근로시간·주휴 요건은 회사 규정 및 정부 공고와 대조 후 사용']
   ]),'적용기준');
@@ -995,19 +1456,25 @@ const VTXT={
   analyze:['근태 분석기','사번·성명 기준으로 출근일수 · 급여일수 · 개별 연장시간(분)을 집계합니다.'],
   audit:['근태 검수기','사번·성명 기준으로 근태 입력값의 정합성을 규칙으로 검사합니다.']
 };
-function go(v){
+function go(v,syncHash){
+  if(!VIEWS[v]) v='home';
   Object.entries(VIEWS).forEach(([k,id])=>{ const el=$('#'+id); if(el) el.hidden = (k!==v); });
   $$('#nav button').forEach(b=>b.classList.toggle('on', b.dataset.v===v));
+  document.body.classList.toggle('audit', v==='audit');
   $('#hTitle').textContent=VTXT[v][0]; $('#hSub').textContent=VTXT[v][1];
+  if(syncHash!==false){ try{ history.replaceState(null,'', v==='home'? location.pathname+location.search : '#'+v); }catch(e){} }
   window.scrollTo({top:0,behavior:'instant'});
 }
+const hashView=()=>{ const h=(location.hash||'').replace('#','').toLowerCase();
+  return (h==='audit'||h==='analyze'||h==='home')? h : 'home'; };
+window.addEventListener('hashchange',()=>go(hashView(),false));
 $$('#nav button').forEach(b=>b.onclick=()=>go(b.dataset.v));
 $$('.pcard').forEach(c=>c.onclick=()=>go(c.dataset.go));
 
 /* =========================================================
    검수기
    ========================================================= */
-const A={wb:null,aoa:[],headers:[],hrow:0,rows:[],find:[],fname:'',filter:''};
+const A={wb:null,aoa:[],headers:[],hrow:0,rows:[],find:[],view:[],fname:'',filter:'',pick:null,sel:0,open:null};
 
 /* ---- 시간 파싱 ---- */
 function pTime(v){
@@ -1034,22 +1501,142 @@ function delta(a,b,wrap){ if(a==null||b==null) return null; let d=a-b;
 function durOf(st,en,wrap){ if(st==null||en==null) return null; let d=en-st;
   if(d<=0) d+= wrap?1440:0; return d; }
 const csv=s=>String(s||'').split(/[,;\n]/).map(x=>x.trim()).filter(Boolean);
+/* 검수기: 일자 문자열 → Date / YYYY-MM-DD */
+function pDate(v,Y){
+  if(v instanceof Date) return v;
+  const t=String(v??'').trim(); if(!t) return null;
+  let m=t.match(/(\d{4})\D{1,2}(\d{1,2})\D{1,2}(\d{1,2})/);
+  if(m) return new Date(+m[1],+m[2]-1,+m[3]);
+  m=t.match(/^(\d{1,2})\D{1,2}(\d{1,2})$/);
+  if(m&&Y) return new Date(Y,+m[1]-1,+m[2]);
+  return null;
+}
+const dKey=d=>d? `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}` : '';
+/* 검수기 공휴일 목록 */
+/* 엑셀/CSV 한 장을 읽어 헤더명으로 열을 찾아 객체 배열로 */
+function readTable(file, pats, done, req){
+  const fr=new FileReader();
+  fr.onload=e=>{ try{
+    const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array',cellDates:true});
+    const keys=Object.keys(pats);
+    const need=(req&&req.length)?req:keys;
+    let best=null;
+    // ① 모든 시트를 훑어 '머리글이 있는' 표를 먼저 찾는다 (많이 맞는 시트 우선)
+    for(const sn of wb.SheetNames){
+      const aoa=XLSX.utils.sheet_to_json(wb.Sheets[sn],{header:1,defval:null,blankrows:false,raw:true});
+      if(!aoa.length) continue;
+      let hi=0,bc=-1;
+      aoa.slice(0,10).forEach((r,i)=>{ const c=r.filter(x=>norm(x)!=='').length; if(c>bc){bc=c;hi=i;} });
+      const hdr=(aoa[hi]||[]).map(norm);
+      const col={}; let hit=0;
+      keys.forEach(k=>{ col[k]=hdr.findIndex(h=>pats[k].test(h)); if(col[k]>=0) hit++; });
+      if(col.id>=0 && (!best || hit>best.hit)) best={aoa,hi,hdr,col,hit,sn};
+    }
+    const full = best && need.every(k=>best.col[k]>=0);   // 꼭 필요한 열을 찾았는지
+    // ② 머리글이 없는 표(사번·성명만 든 시트 등)도 받아준다
+    if(!full){
+      const prev=best; best=null;
+      const idish=v=>/^\s*\d{4,10}\s*$/.test(String(v??''));
+      for(const sn of wb.SheetNames){
+        const aoa=XLSX.utils.sheet_to_json(wb.Sheets[sn],{header:1,defval:null,blankrows:false,raw:true});
+        if(aoa.length<2) continue;
+        const w=Math.max(...aoa.map(r=>r.length));
+        for(let ci=0; ci<Math.min(w,6); ci++){
+          const n=aoa.filter(r=>idish(r[ci])).length;
+          if(n < Math.max(2, aoa.length*0.6)) continue;
+          const col={id:ci};
+          if('name' in pats){ // 사번 옆의 글자 열을 이름으로
+            for(let j=ci+1;j<w;j++){ if(aoa.some(r=>String(r[j]??'').trim() && !idish(r[j]))){ col.name=j; break; } }
+          }
+          if('w' in pats){    // 사번 옆의 숫자(임금) 열
+            for(let j=ci+1;j<w;j++){ if(aoa.filter(r=>{const n2=num(r[j]); return isFinite(n2)&&n2>=1000;}).length>=Math.max(2,aoa.length*0.5)){ col.w=j; break; } }
+            if(!(col.w>=0)) continue;
+          }
+          best={aoa,hi:-1,hdr:[],col,hit:keys.length,sn,headless:1}; break;
+        }
+        if(best&&best.headless) break;
+      }
+      if(!best) best=prev;
+    }
+    if(!best){ done([],[],{}); return; }
+    const out=[];
+    best.aoa.slice(best.hi+1).forEach(r=>{ const o={}; let any=false;
+      keys.forEach(k=>{ o[k]= best.col[k]>=0? r[best.col[k]] : null; if(norm(o[k])!=='') any=true; });
+      if(any) out.push(o); });
+    done(out, best.hdr, best.col, best.sn);
+  }catch(err){ alert('파일을 읽지 못했습니다: '+err.message); } };
+  fr.readAsArrayBuffer(file);
+}
+/* 근무종료 이후 초과분(분) → 회사 기준으로 인정되는 개별연장 분 */
+function otRound(mins){
+  if(!(mins>0)) return 0;
+  const u=Math.max(1,+($('#vOtUnit')?.value)||10), md=$('#vOtMode')?.value||'ceil';
+  if(md==='floor') return Math.floor(mins/u)*u;
+  if(md==='round') return Math.round(mins/u)*u;
+  return Math.ceil(mins/u)*u;
+}
+const PAYMAP_DEF = [
+ ['(빈칸)','평일'],['연차휴가','평일'],['연중휴가','평일'],['연차','평일'],['연','평일'],
+ ['예비군','평일'],['민방위','평일'],['건강검진휴가','평일'],['건강검진','평일'],
+ ['조의','평일'],['경조휴가','평일'],['경조','평일'],['공가','평일'],['보건휴가','평일'],
+ ['지각','평일'],['조퇴','평일'],['출장','평일'],['교육','평일'],
+ ['정일','정일'],['법일','법일'],['대체휴무','정일'],
+ ['결근','휴무'],['무단결근','휴무']
+];
+const payMapText = () => PAYMAP_DEF.map(([a,b])=>`${a} = ${b}`).join('\n');
+function payMap(){
+  const m=new Map();
+  ($('#vMap')?.value || payMapText()).split(/[\n;]+/).forEach(line=>{
+    const t=line.trim(); if(!t||t.startsWith('#')) return;
+    const mm=t.split(/\s*[=:\t]\s*/);
+    if(mm.length<2) return;
+    const k=mm[0].trim(), v=mm.slice(1).join(' ').trim();
+    if(!k||!v) return;
+    m.set(/^\(?빈칸\)?$/.test(ncode(k))? '' : ncode(k), v);
+  });
+  return m;
+}
+function holSetA(){
+  const Y=+$('#vYear')?.value||new Date().getFullYear(), out=new Set();
+  ($('#vHolList')?.value||'').split(/[\n,;]+/).forEach(line=>{
+    const t=line.trim(); if(!t) return;
+    let m=t.match(/^(\d{4})\D(\d{1,2})\D(\d{1,2})/);
+    if(m){ out.add(`${m[1]}-${String(+m[2]).padStart(2,'0')}-${String(+m[3]).padStart(2,'0')}`); return; }
+    m=t.match(/^(\d{1,2})\D(\d{1,2})/);
+    if(m) out.add(`${Y}-${String(+m[1]).padStart(2,'0')}-${String(+m[2]).padStart(2,'0')}`);
+  });
+  return out;
+}
 const ncode=s=>String(s??'').trim().replace(/\s+/g,'').toUpperCase();
+/* 엑셀용 : 화면 표시에 쓰인 HTML 태그를 걷어낸다 */
+const tx=v=>String(v??'').replace(/<br\s*\/?>/gi,' ').replace(/<[^>]+>/g,'')
+  .replace(/&nbsp;/g,' ').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&').replace(/\s+/g,' ').trim();
 
 /* ---- 규칙 정의 ---- */
 const RULES=[
- {id:'R1',n:'휴가·예비군 → 급여요일이 평일이 아님',d:'근태가 휴가류(연중휴가·연차휴가·예비군)이면 급여요일은 평일이어야 합니다.'},
+ {id:'R1',n:'근태코드에 맞는 급여요일이 아님',d:'근태코드마다 정해진 급여요일이 있습니다 — <b>연차·연중휴가·예비군·건강검진·조의·지각·조퇴, 그리고 근태가 빈칸인 날은 평일</b>, <b>정일은 정일</b>, <b>법일은 법일</b>, <b>결근은 휴무</b>. 기준표는 위 <b>근태코드 → 급여요일 기준표</b>에서 회사 표기에 맞게 고칠 수 있습니다.'},
+ {id:'R26',n:'기준표에 없는 근태코드',d:'근태코드가 <b>근태코드 → 급여요일 기준표</b>에 없어서 급여요일을 검사하지 못한 행입니다. 새로 생긴 근태코드이거나 오타일 수 있습니다. 코드가 맞다면 기준표에 한 줄 추가해 주세요.'},
  {id:'R2',n:'휴가·예비군인데 근무/센싱 시간이 입력됨',d:'근무시작·근무종료·출근(센싱)·퇴근(센싱)이 모두 비어 있어야 합니다.'},
- {id:'R3',n:'법일 → 급여요일이 법일이 아님',d:'근태가 법일이면 급여요일도 법일이어야 합니다.'},
  {id:'R4',n:'법일인데 근무/센싱 시간이 입력됨',d:'근무시작·근무종료·출근(센싱)·퇴근(센싱)이 모두 비어 있어야 합니다.'},
- {id:'R5',n:'조퇴·미입력 → 급여요일이 평일이 아님',d:'근태가 조퇴이거나 비어 있으면 급여요일은 평일이어야 합니다.'},
- {id:'R6',n:'근무시간이 기준(08:00)과 다름',d:'근무종료 − 근무시작 − 휴게시간 이 기준 시간과 다른 행을 찾습니다.'},
- {id:'R7',n:'개별연장 시작 ≠ 근무종료',d:'개별연장 시작시간 − 근무종료시간 = 0 이어야 합니다.'},
- {id:'R8',n:'개별연장 종료 ≠ 퇴근(센싱)',d:'개별연장 종료시간 − 퇴근(센싱)시간 = 0 이어야 합니다.'},
- {id:'R9',n:'연장 없음(≥0)인데 개별연장(분)이 0이 아님',d:'근무종료 − 퇴근(센싱) ≥ 0 이면 개별연장시간(분)은 0이어야 합니다.'},
- {id:'R10',n:'연장 발생(<0)인데 개별연장(분)이 0',d:'근무종료 − 퇴근(센싱) < 0 이면 개별연장시간(분)은 0이 아니어야 합니다.'},
- {id:'R11',n:'근무시작 ↔ 출근(센싱) 차이가 허용치 초과',d:'두 시각 차이가 허용 오차(기본 29분)를 넘는 행 = 30분 이상 차이나는 행을 찾습니다.'},
- {id:'R12',n:'[추가] 개별연장(분)이 종료−시작과 다름',d:'개별연장 종료 − 개별연장 시작 이 개별연장시간(분)과 맞는지 확인합니다. 기본 꺼짐.',off:1},
+ {id:'R21',n:'휴무(정일)인데 근무/센싱 시간이 입력됨',d:'쉬는 날이므로 근무시작·근무종료·출근(센싱)·퇴근(센싱)이 모두 비어 있어야 합니다. 값이 있으면 실제 근무했는데 근태가 정일로 남아 있는 경우일 수 있습니다.'},
+ {id:'R6',dep:['ws','we'],n:'근무시간이 기준(08:00)과 다름',d:'근무종료 − 근무시작 − 휴게시간 이 기준 시간과 달라야 합니다. <b>근무종료는 「근무시작 + 소정시간」</b>이어야 하며, 실제 퇴근시각을 넣으면 안 됩니다 — 예) 08:00 시작이면 근무종료는 16:00, 18:00까지 있었다면 16:00 이후는 개별연장으로 빠집니다.'},
+ {id:'R7',dep:['es','we'],n:'개별연장 시작 ≠ 근무종료',d:'개별연장 시작시간은 근무종료시간과 무조건 일치해야 합니다 (차이 = 0).'},
+ {id:'R8',dep:['ee','tout'],n:'개별연장 종료 ≠ 퇴근(센싱)',d:'개별연장 종료시간은 퇴근(센싱)시간과 무조건 일치해야 합니다 (차이 = 0).'},
+ {id:'R9',dep:['we','tout','em'],n:'연장 없음(≥0)인데 개별연장(분)이 0이 아님',d:'근무종료 − 퇴근(센싱) 이 0보다 크거나 같으면 개별연장시간(분)은 0이거나 비어 있어야 합니다.'},
+ {id:'R10',dep:['we','tout','em'],n:'연장 발생(<0)인데 개별연장(분)이 기준과 다름',d:'근무종료 − 퇴근(센싱) 이 0보다 작으면 연장이 발생한 것이므로, 개별연장시간(분)이 <b>넘긴 시간을 10분 단위로 올린 값</b>과 정확히 같아야 합니다. 예) 근무종료 18:00 → 퇴근 18:04면 <b>10분</b>, 퇴근 18:14면 <b>20분</b>, 퇴근 18:21면 <b>30분</b>. 빈칸·0·모자란 값·많은 값을 모두 잡습니다.'},
+ {id:'R11',dep:['ws','tin'],n:'근무시작 ↔ 출근(센싱) 차이가 허용치 초과',d:'두 시각 차이가 허용 오차(기본 29분)를 넘는 행 = 30분 이상 차이나는 행을 찾습니다.'},
+ {id:'R12',dep:['ws','tout','em'],n:'개별연장(분) 금액이 절사 기준과 다름',d:'기준은 <b>근무시작 + 소정근무시간(8시간)</b> 입니다. 퇴근(센싱)이 그 시각을 넘으면 넘은 만큼이 연장이고, 절사 단위(기본 10분, 올림)로 인정합니다. 예) 08:00 시작 → 기준 16:00, 퇴근 18:04 → 초과 124분 → <b>130분</b>. 근무종료가 잘못 입력돼 있어도 이 기준은 흔들리지 않습니다.'},
+ {id:'R13',dep:['date'],n:'한 주(월~일) 정일 일수가 기준과 다름',d:'인원별로 월요일~일요일 한 주에 정일이 지정 일수(기본 2일)만큼 있어야 합니다. <b>법일이 있는 주도 정일은 그대로 2일</b>이어야 합니다(정일 2 + 법일 1). 중도 입사·퇴사로 생긴 부분 주도 검사하며, 파일 앞뒤가 잘려서 생긴 주만 제외합니다.'},
+ {id:'R14',dep:['date'],n:'이 달 법일 일수가 기준과 다름',d:'법일은 날짜가 정해져 있지 않고 그 달 안에서 자유롭게 잡을 수 있으므로, <b>인원별 법일 개수</b>가 그 달 기준과 맞는지 봅니다. 기준 = 공휴일 목록 중 평일에 해당하는 날 수 (토·일에 온 공휴일은 법일이 생기지 않고, 대체공휴일이 평일이면 그 몫으로 1개). 위 칸에 숫자를 넣어 직접 지정할 수도 있습니다.'},
+ {id:'R18',n:'명단에 있는데 근태 기록이 없는 인원',d:'대상 인원 명단에는 있는데 이 근태 파일에 한 줄도 없는 사번을 찾습니다. 명단을 넣었을 때만 동작합니다.'},
+ {id:'R19',n:'근태에 있는데 명단에 없는 사번',d:'근태 파일에는 있는데 대상 인원 명단에 없는 사번을 찾습니다. 퇴사자이거나 사번 오입력일 수 있습니다. 명단을 넣었을 때만 동작합니다.'},
+ {id:'R24',dep:['ws','we','tin','tout'],n:'근무시간은 비었는데 센싱에만 값이 있음',
+   d:'<b>근무시작·근무종료가 둘 다 비어 있는데</b> 출근(센싱)이나 퇴근(센싱)에 값이 들어간 행입니다. 네 칸은 <b>같이 있거나 같이 없어야</b> 합니다. 실제 근무한 날이면 근무시작·근무종료를 채우고, 근무한 날이 아니면 센싱 값을 지우고 근태 항목을 맞춰 주세요.'},
+ {id:'R25',dep:['ws','we','tin','tout'],n:'센싱은 비었는데 근무시간에만 값이 있음',
+   d:'<b>출근(센싱)·퇴근(센싱)이 둘 다 비어 있는데</b> 근무시작이나 근무종료에 값이 들어간 행입니다. 센싱 기록을 확인해 채우거나, 센싱이 원래 없는 날이면 근태 항목을 그에 맞게 넣어 주세요. 이 행은 <b>R22·R23에서 중복으로 세지 않습니다.</b>'},
+ {id:'R22',dep:['tin'],n:'근무일인데 출근(센싱) 기록이 없음',d:'출근·퇴근 센싱은 <b>있는 것이 원칙</b>입니다. 근무한 날(휴무·법일·휴가·결근이 아닌 날)인데 출근(센싱)이 비어 있는 행을 찾습니다. 단 <b>센싱이 통째로 없는 행은 R25</b>, <b>근무시간이 통째로 없는 행은 R24</b>에서 따로 보므로 여기서는 빼고 셉니다.'},
+ {id:'R23',dep:['tout'],n:'근무일인데 퇴근(센싱) 기록이 없음',d:'근무한 날인데 퇴근(센싱)이 비어 있는 행을 찾습니다. 한 행이 두 번 잡히지 않도록 <b>출근 센싱도 같이 없는 행은 R22</b>에서, <b>개별연장(분)에 값까지 들어가 있는 행은 R16</b>에서 봅니다 — R23 + R16 + (R22 중 둘 다 없는 행) 이 퇴근 센싱 누락 전체입니다.'},
+ {id:'R16',dep:['tout','em'],n:'퇴근(센싱)이 없는데 개별연장(분)에 값이 있음 — 수기 입력 확인',d:'퇴근(센싱)이 비어 있으면 정시 퇴근으로 보아 개별연장(분)은 0이거나 비어 있는 것이 정상입니다. 그런데 값이 들어가 있으면 <b>수기 입력</b>일 수 있으므로 따로 확인하라고 알려줍니다.'},
 ];
 const RON={}; RULES.forEach(r=>RON[r.id]=!r.off);
 
@@ -1067,7 +1654,9 @@ function readA(f){
       A.wb=XLSX.read(new Uint8Array(e.target.result),{type:'array',cellDates:true});
       $('#fileInfoA').innerHTML=`<b>${f.name}</b> · 시트 ${A.wb.SheetNames.length}개 · ${(f.size/1024).toFixed(0)} KB`;
       $('#sheetA').innerHTML=A.wb.SheetNames.map(n=>`<option>${n}</option>`).join('');
-      $('#v2').classList.remove('off'); loadA();
+      $('#tbName').textContent=f.name; $('#tbName').title=f.name;
+      $('#vUp').hidden=true; $('#dash').hidden=false;
+      loadA();
     }catch(err){ alert('파일을 읽지 못했습니다: '+err.message); } };
   fr.readAsArrayBuffer(f);
 }
@@ -1103,23 +1692,99 @@ const AFIELDS=[
  {k:'we',   n:'근무종료시간',p:/근무.*(종료|마감)/i},
  {k:'tin',  n:'출근(센싱)시간',p:/출근/i},
  {k:'tout', n:'퇴근(센싱)시간',p:/퇴근/i},
- {k:'es',   n:'개별연장 시작시간',p:/연장.*시작/i},
- {k:'ee',   n:'개별연장 종료시간',p:/연장.*(종료|마감)/i},
- {k:'em',   n:'개별연장시간(분)',p:/연장.*분|연장.*시간/i},
+ {k:'es',   n:'개별연장 시작시간',p:/연장.*시작/i, ex:/심야|야간/},
+ {k:'ee',   n:'개별연장 종료시간',p:/연장.*(종료|마감)/i, ex:/심야|야간/},
+ {k:'em',   n:'개별연장시간(분)',p:/연장.*(분|시간)/i, ex:/심야|야간|시작|종료|마감/},
 ];
 function mapAUI(){
   const used=new Set();
   $('#mapA').innerHTML=AFIELDS.map(f=>{
-    let g=-1; A.headers.forEach((h,i)=>{ if(g<0&&!used.has(i)&&f.p.test(norm(h))) g=i; });
+    let g=-1; A.headers.forEach((h,i)=>{ const hh=norm(h);
+      if(g<0&&!used.has(i)&&f.p.test(hh)&&!(f.ex&&f.ex.test(hh))) g=i; });
     if(g>=0) used.add(g);
     return `<div class="f"><label>${f.n}${f.req?' *':''}</label><select data-a="${f.k}">
       <option value="-1">— 없음 —</option>${A.headers.map((h,i)=>`<option value="${i}"${i===g?' selected':''}>${h}</option>`).join('')}
     </select></div>`; }).join('');
   $$('#mapA select').forEach(s=>s.onchange=runA);
-  $('#v3').classList.remove('off');
 }
 const MA=()=>{ const m={}; $$('#mapA select').forEach(s=>m[s.dataset.a]=+s.value); return m; };
-['vLeave','vHol','vEarly','vWd','vHd','vStd','vBreak','vTol','vWrap'].forEach(id=>{
+$('#vYear').oninput=()=>{ A.yearTouched=true; runA(); };
+/* ① 대상 인원 명단 */
+function setInfo2(base,alt,html,done){
+  const a=$('#'+base), b=$('#'+alt);
+  if(a) a.innerHTML=html;
+  if(b){ b.innerHTML=done?('✓ '+done):'아직 넣지 않음'; }
+}
+function slotDone(id,on){ const el=$('#'+id); if(el) el.classList.toggle('done',!!on); }
+/* 슬롯(업로드 화면)에서 바로 올리기 — 클릭 + 드래그 */
+[['dropRos','rosFile'],['dropWg','wgFile']].forEach(([d,f])=>{
+  const el=$('#'+d); if(!el) return;
+  el.onclick=()=>$('#'+f).click();
+  ['dragenter','dragover'].forEach(e=>el.addEventListener(e,ev=>{ev.preventDefault();el.classList.add('on')}));
+  ['dragleave','drop'].forEach(e=>el.addEventListener(e,ev=>{ev.preventDefault();el.classList.remove('on')}));
+  el.addEventListener('drop',ev=>{ const file=ev.dataTransfer.files[0]; if(!file) return;
+    const dt=new DataTransfer(); dt.items.add(file);
+    const inp=$('#'+f); inp.files=dt.files; inp.dispatchEvent(new Event('change')); });
+});
+$('#rosBtn').onclick=()=>$('#rosFile').click();
+$('#rosClear').onclick=()=>{ A.roster=null; A.rosName='';
+  setInfo2('rosInfo','rosInfo2','명단을 넣으면 <b>근태가 빠진 인원</b>과 <b>명단에 없는 사번</b>을 찾아줍니다.',null);
+  slotDone('dropRos',false); runA(); };
+$('#rosFile').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
+  readTable(f,{id:/사번|사원번호|직번|emp/i, name:/성명|이름|name/i,
+               w:/시급|단가|시간당|임률|임율|기본급?시급|rate|wage/i},
+    (rowsR,hdr,col)=>{
+      const m=new Map(); const lines=[];
+      rowsR.forEach(r=>{ const id=norm(r.id); if(!id) return;
+        m.set(id, norm(r.name));
+        if(col.w>=0){ const w=num(r.w); if(isFinite(w)&&w>0) lines.push(id+'\t'+w); } });
+      if(!m.size){
+        setInfo2('rosInfo','rosInfo2',`<span style="color:#b91c1c">사번 열을 찾지 못했습니다. 파일 안에 '사번' 머리글이 있는지 확인하세요.</span>`,null);
+        slotDone('dropRos',false);
+        alert('사번 열을 찾지 못했습니다.\n파일 첫 행에 「사번」 머리글이 있는지 확인해 주세요.');
+        return;
+      }
+      A.roster=m; A.rosName=f.name;
+      const named=[...m.values()].filter(Boolean).length;
+      if(lines.length){ $('#wgTable').value=lines.join('\n'); A.wgName=f.name; slotDone('dropWg',true);
+        const w2=$('#wgInfo2'); if(w2) w2.innerHTML=`✓ 위 파일에서 ${lines.length}명 (따로 안 올려도 됩니다)`; }
+      const parts=[`명단 <b>${m.size}명</b>`];
+      parts.push(named? `성명 ${named}명` : `<span style="color:#b45309">성명 열 없음</span>`);
+      parts.push(lines.length? `시급 <b>${lines.length}명</b>` : `<span style="color:#b45309">시급 열 없음</span>`);
+      setInfo2('rosInfo','rosInfo2', `<b>${f.name}</b> · ${parts.join(' · ')} 인식`,
+        `${m.size}명 인식${lines.length?` · 시급 ${lines.length}명`:''} · ${f.name}`);
+      slotDone('dropRos',true);
+      runA();
+    }, ['id']);
+  e.target.value=''; };
+/* ② 시급 */
+$('#wgBtn').onclick=()=>$('#wgFile').click();
+$('#wgFile').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
+  readTable(f,{id:/사번|사원번호|직번|emp/i, w:/시급|단가|시간당|임률|임율|rate|wage/i}, (rowsW)=>{
+    const lines=[];
+    rowsW.forEach(r=>{ const id=norm(r.id), w=num(r.w); if(id && isFinite(w) && w>0) lines.push(id+'\t'+w); });
+    if(!lines.length){ alert('사번·시급 열을 찾지 못했습니다.\n머리글에 「사번」과 「시급」(또는 단가·시간당)이 있는지 확인해 주세요.'); return; }
+    $('#wgTable').value=lines.join('\n'); A.wgName=f.name;
+    setInfo2('wgInfo','wgInfo2',`<b>${f.name}</b> · 시급 <b>${lines.length}명</b> 인식`,`${lines.length}명 시급 인식 · ${f.name}`);
+    slotDone('dropWg',true);
+    runA();
+  });
+  e.target.value=''; };
+['wgTable','aOtRate'].forEach(id=>{ const el=$('#'+id); if(el) el.oninput=runA; });
+/* 검수기용 시급표 */
+function wageMapA(){
+  const m=new Map();
+  ($('#wgTable')?.value||'').split(/\r?\n/).forEach(line=>{
+    const t=line.trim(); if(!t) return;
+    const q=t.split(/[\t,;]+|\s{1,}/).filter(Boolean);
+    if(q.length<2) return;
+    const id=norm(q[0]), w=num(q[q.length-1]);
+    if(id && isFinite(w) && w>0) m.set(id,w);
+  });
+  return m;
+}
+$('#vHolReload').onclick=()=>{ $('#vHolList').value=holDefaults(+$('#vYear').value||new Date().getFullYear()); runA(); };
+['vLeave','vHol','vEarly','vAbs','vMap','vWd','vHd','vOd','vStd','vBreak','vTol','vOtUnit','vOtMode','vWrap','vOff','vOffWk','vPartWk','vHolQuota','vHolList'].forEach(id=>{
   const el=$('#'+id); if(el) el[el.type==='checkbox'?'onchange':'oninput']=runA; });
 
 /* ---- 규칙 표 ---- */
@@ -1128,7 +1793,7 @@ function renderRules(cnt){
     <th style="width:330px">규칙</th><th>판정 기준</th><th class="num" style="width:78px">이상</th></tr></thead><tbody>`+
     RULES.map(r=>`<tr><td><input type="checkbox" data-r="${r.id}" ${RON[r.id]?'checked':''}></td>
       <td class="mono"><b>${r.id}</b></td><td>${r.n}</td><td class="d">${r.d}</td>
-      <td class="num ${cnt&&cnt[r.id]?'bad-cell':''}">${cnt?(cnt[r.id]||0):'-'}</td></tr>`).join('')+'</tbody>';
+      <td class="num ${cnt&&cnt[r.id]?'bad-cell':''}">${A.skip&&A.skip[r.id]?'<span class="tag y" title="'+A.skip[r.id].join(', ')+' 열 미연결">열 미연결</span>':(cnt?(cnt[r.id]||0):'-')}</td></tr>`).join('')+'</tbody>';
   $$('#ruleTbl [data-r]').forEach(c=>c.onchange=()=>{ RON[c.dataset.r]=c.checked; runA(); });
 }
 
@@ -1140,14 +1805,40 @@ function runA(){
   const HOLI =new Set(csv($('#vHol').value).map(ncode));
   const EARLYraw=csv($('#vEarly').value);
   const EARLY=new Set(EARLYraw.filter(x=>!/^\(?빈칸\)?$/.test(x)).map(ncode));
+  const ABS=new Set(csv($('#vAbs')?.value||'결근').map(ncode));
   const EARLY_BLANK=EARLYraw.some(x=>/^\(?빈칸\)?$/.test(x));
-  const WD=ncode($('#vWd').value), HD=ncode($('#vHd').value);
+  const WD=ncode($('#vWd').value), HD=ncode($('#vHd').value), OD=ncode($('#vOd')?.value||'정일');
+  const PAYMAP=payMap();
   const STD=pTime($('#vStd').value)??480, BRK=+$('#vBreak').value||0;
   const TOL=+$('#vTol').value||0, WRAP=$('#vWrap').checked;
+  const OFFSET=new Set(csv($('#vOff').value).map(ncode)), OFFWK=+$('#vOffWk').value||0;
+  const PARTWK=$('#vPartWk').checked;
+  // 기준 연도 자동 감지 (사용자가 직접 고치기 전까지)
+  if(!A.yearTouched && m.date>=0){
+    for(const raw of A.aoa.slice(A.hrow+1, A.hrow+80)){
+      const v=raw&&raw[m.date]; let y=null;
+      if(v instanceof Date) y=v.getFullYear();
+      else { const mm=norm(v).match(/(20\d{2})/); if(mm) y=+mm[1]; }
+      if(y){ if(+$('#vYear').value!==y){ $('#vYear').value=y; $('#vHolList').value=holDefaults(y); } break; }
+    }
+  }
+  const YEAR=+$('#vYear').value||new Date().getFullYear();
+  const HOLDAYS=holSetA();
+  const wk={};        // 사번|ISO주 → {n, off, first, min, max}
+  const emp={};       // 사번 → {hol, first, min, max}
+  let fMin=null, fMax=null;   // 파일 전체 데이터 기간
+  // 연결 안 된 열에 의존하는 규칙은 오판을 막기 위해 건너뛴다
+  const LBL={ws:'근무시작시간',we:'근무종료시간',tin:'출근(센싱)시간',tout:'퇴근(센싱)시간',
+             es:'개별연장 시작시간',ee:'개별연장 종료시간',em:'개별연장시간(분)',date:'일자'};
+  A.skip={}; A.missing=new Set();
+  RULES.forEach(rr=>{ if(!rr.dep) return;
+    const miss=rr.dep.filter(k=>!(m[k]>=0));
+    if(miss.length){ A.skip[rr.id]=miss.map(k=>LBL[k]); miss.forEach(k=>A.missing.add(LBL[k])); }
+  });
   const F=[], rows=[];
   const CR=(col,rn)=> (col>=0&&rn)? XLSX.utils.encode_col(col)+rn : '';
-  const add=(id,r,detail,extra,fix,cell)=>{ if(!RON[id]) return;
-    F.push({rule:id,ruleName:RULES.find(x=>x.id===id).n,empId:r.empId,name:r.name,date:r.date,
+  const add=(id,r,detail,extra,fix,cell,dateLabel)=>{ if(!RON[id]||A.skip[id]) return;
+    F.push({rule:id,ruleName:RULES.find(x=>x.id===id).n,empId:r.empId,name:r.name,date:dateLabel||r.date,
             code:r.code,pay:r.pay,detail,extra:extra||'',fix:fix||'',
             excelRow:r.excelRow,cell:cell||'',row:r}); };
 
@@ -1161,7 +1852,8 @@ function runA(){
     let dv=g(m.date), ds='';
     if(dv instanceof Date) ds=`${dv.getFullYear()}-${String(dv.getMonth()+1).padStart(2,'0')}-${String(dv.getDate()).padStart(2,'0')}`;
     else ds=norm(dv);
-    const r={empId,excelRow,name:norm(g(m.name)),date:ds,code:norm(g(m.code)),pay:norm(g(m.pay)),
+    const _dt=pDate(m.date>=0?g(m.date):null, YEAR);
+    const r={empId,excelRow,dt:_dt,dk:dKey(_dt),name:norm(g(m.name)),date:ds,code:norm(g(m.code)),pay:norm(g(m.pay)),
       rws:rv(m.ws),rwe:rv(m.we),rin:rv(m.tin),rout:rv(m.tout),
       res:rv(m.es),ree:rv(m.ee),rem:rv(m.em),
       ws:pTime(g(m.ws)),we:pTime(g(m.we)),tin:pTime(g(m.tin)),tout:pTime(g(m.tout)),
@@ -1176,23 +1868,29 @@ function runA(){
     const payCell=CR(m.pay,excelRow);
     const fillCells=()=>filled.map(([,,c])=>CR(c,excelRow)).filter(Boolean).join(', ');
 
-    if(isLeave&&p!==WD) add('R1',r,`급여요일이 "${r.pay||'(빈칸)'}" — "${$('#vWd').value}"이어야 함`,'',
-      `급여요일을 "${$('#vWd').value}"으로 수정. 근태가 "${r.code}"가 맞는지도 함께 확인`,payCell);
+    const want = PAYMAP.get(c);   // 근태가 비어 있는 행은 '' 키로 찾는다
+    if(want===undefined){
+      add('R26',r,`근태 "${r.code||'(빈칸)'}" — 기준표에 없는 코드라 급여요일을 검사하지 못함`,`급여요일 ${r.pay||'(빈칸)'}`,
+        `근태코드가 맞다면 「검수 기준 → 근태코드 → 급여요일 기준표」에 "${r.code||'(빈칸)'} = ${r.pay||'평일'}" 한 줄을 추가하세요. 오타라면 근태 항목을 정정`,
+        CR(m.code,excelRow));
+    } else if(p!==ncode(want)){
+      add('R1',r,`근태 "${r.code||'(빈칸)'}" → 급여요일은 "${want}"이어야 하는데 "${r.pay||'(빈칸)'}"`,'',
+        `급여요일을 "${want}"으로 수정하세요. 근태 항목 "${r.code||'(빈칸)'}"이 맞는지도 함께 확인`,payCell);
+    }
     if(isLeave&&filled.length) add('R2',r,`시간이 입력됨: ${filled.map(([k,v])=>k+'='+v).join(', ')}`,'',
       `휴가·예비군은 근무 기록이 없어야 하므로 해당 시간 칸을 비우거나, 실제 근무했다면 근태 항목을 정정`,fillCells());
-    if(isHoli&&p!==HD) add('R3',r,`급여요일이 "${r.pay||'(빈칸)'}" — "${$('#vHd').value}"이어야 함`,'',
-      `급여요일을 "${$('#vHd').value}"으로 수정`,payCell);
     if(isHoli&&filled.length) add('R4',r,`시간이 입력됨: ${filled.map(([k,v])=>k+'='+v).join(', ')}`,'',
       `법일은 근무 기록이 없어야 하므로 해당 시간 칸을 비우거나, 휴일근무라면 근태 항목을 정정`,fillCells());
-    if(isEarly&&p!==WD) add('R5',r,`급여요일이 "${r.pay||'(빈칸)'}" — "${$('#vWd').value}"이어야 함`,'',
-      `급여요일을 "${$('#vWd').value}"으로 수정`,payCell);
+    const isOff=OFFSET.has(c);
+    if(isOff&&filled.length) add('R21',r,`시간이 입력됨: ${filled.map(([k,v])=>k+'='+v).join(', ')}`,'',
+      `쉬는 날이므로 해당 시간 칸을 비우거나, 실제 근무했다면 근태 항목을 정정(특근·대체휴무 등)`,fillCells());
 
     if(r.ws!=null&&r.we!=null){
       const d=durOf(r.ws,r.we,WRAP)-BRK; r.dur=d;
       if(d!==STD) add('R6',r,`근무시간 ${shm(d)} (기준 ${hm(STD)}, ${d<STD?'미달':'초과'} ${shm(Math.abs(d-STD))})`,
         `${hm(r.ws)}~${hm(r.we)}`,
-        d<STD?`근무시작/종료 시각 확인. 조퇴·지각이면 해당 근태 항목을 넣고, 오입력이면 종료를 ${hm((r.ws+STD+BRK)%1440)}로 수정`
-             :`근무시작/종료 시각 확인. 연장근무라면 근무종료는 ${hm((r.ws+STD+BRK)%1440)}로 두고 초과분은 개별연장으로 처리`,
+        d<STD?`근무시작/종료 시각 확인. 조퇴·지각이면 해당 근태 항목을 넣고, 오입력이면 근무종료를 ${hm((r.ws+STD+BRK)%1440)}로 수정`
+             :`근무종료에 실제 퇴근시각을 넣은 오류로 보입니다. 근무종료는 <근무시작 + ${hm(STD)}> 인 ${hm((r.ws+STD+BRK)%1440)}로 두고, 그 이후 ${hm(d-STD)}은 개별연장으로 처리하세요`,
         `${CR(m.ws,excelRow)}, ${CR(m.we,excelRow)}`);
     }
     if(r.es!=null&&r.we!=null){ const d=delta(r.es,r.we,WRAP); r.d7=d;
@@ -1203,20 +1901,208 @@ function runA(){
         `개별연장 종료시간을 퇴근(센싱)과 같은 ${hm(r.tout)}로 수정`,CR(m.ee,excelRow)); }
     if(r.we!=null&&r.tout!=null){
       const d=delta(r.we,r.tout,WRAP); r.d9=d; const em=r.em??0;
-      if(d>=0&&em!==0) add('R9',r,`근무종료 − 퇴근(센싱) = ${shm(d)} (≥0) 인데 개별연장 ${em}분`,`${hm(r.we)} vs ${hm(r.tout)}`,
+      const over=-d;                 // 퇴근(센싱)이 근무종료보다 늦은 분
+      const want=otRound(over);      // 절사 규칙 적용 후 인정 분
+      r.otWant=want;
+      if(over<=0 && em!==0) add('R9',r,
+        `근무종료 − 퇴근(센싱) = ${shm(d)} (0 이상) 인데 개별연장 ${em}분`,
+        `${hm(r.we)} vs ${hm(r.tout)}`,
         `연장이 발생하지 않은 날이므로 개별연장시간(분)을 0으로 수정. 실제 연장했다면 퇴근(센싱) 시각을 확인`,CR(m.em,excelRow));
-      if(d<0 &&em===0) add('R10',r,`근무종료 − 퇴근(센싱) = ${shm(d)} (<0) 인데 개별연장 ${r.rem===''?'(빈칸)':em+'분'}`,`${hm(r.we)} vs ${hm(r.tout)}`,
-        `연장이 발생한 날이므로 개별연장시간(분)에 ${-d}분을 넣거나 승인 내역을 확인`,CR(m.em,excelRow));
+      const UNIT=Math.max(1,+($('#vOtUnit')?.value)||10);
+      if(over>0 && em!==want){ r._r10=true;
+        add('R10',r,
+        `개별연장 ${r.rem===''?'(빈칸)':em+'분'} — 기준 ${want}분 (근무종료 ${hm(r.we)} → 퇴근 ${hm(r.tout)}, 초과 ${over}분 → ${UNIT}분 올림 ${want}분)`,
+        `${hm(r.we)} vs ${hm(r.tout)}`,
+        `개별연장시간(분)을 ${want}로 수정하세요.${em>want?' 지금 값이 기준보다 많습니다 — 퇴근(센싱) 시각이나 승인 내역을 함께 확인':''}`,CR(m.em,excelRow));
+      }
+
     }
+    // R12 : 근무시작 + 소정시간 을 기준으로 초과분을 계산해 개별연장(분) 금액 검증
+    if(r.ws!=null && r.tout!=null && r.em!=null){
+      const stdEnd=(r.ws+STD+BRK)%1440;
+      const over2=delta(r.tout, stdEnd, WRAP);
+      const want2=otRound(over2); r.otWant2=want2; r.stdEnd=stdEnd;
+      if(over2>0 && r.em!==want2 && !r._r10) add('R12',r,
+        `개별연장 ${r.em}분 — 기준 ${want2}분 (근무시작 ${hm(r.ws)} + ${hm(STD)} = ${hm(stdEnd)} → 퇴근 ${hm(r.tout)}, 초과 ${over2}분)`,
+        `${hm(stdEnd)} → ${hm(r.tout)}`,
+        `개별연장시간(분)을 ${want2}분으로 수정하세요. 근무종료가 ${hm(stdEnd)}가 아니면 그것도 함께 확인`,CR(m.em,excelRow));
+    }
+
+    // ── R24 / R25 : 근무시간 칸 ↔ 센싱 칸 짝 맞추기 ──
+    const isAbs=ABS.has(c);
+    const isWorkDay = !(isLeave||isHoli||isOff||isAbs);
+    const r16hit = (r.rout==='' && (r.em??0)!==0);
+    const noWork = (r.rws==='' && r.rwe===''), noSense = (r.rin==='' && r.rout==='');
+    const someSense = (r.rin!=='' || r.rout!==''), someWork = (r.rws!=='' || r.rwe!=='');
+    const pairA = noWork && someSense;    // 근무시간 없음 + 센싱 있음
+    const pairB = noSense && someWork;    // 센싱 없음 + 근무시간 있음
+    if(pairA) add('R24',r,
+      `근무시작·근무종료가 비어 있는데 ${[r.rin!==''?'출근(센싱) '+r.rin:'',r.rout!==''?'퇴근(센싱) '+r.rout:''].filter(Boolean).join(' · ')} 입력됨`,
+      `근태 ${r.code||'(빈칸)'}`,
+      `실제 근무한 날이면 근무시작·근무종료를 채우고, 근무한 날이 아니면 센싱 값을 지우고 근태 항목을 맞춰 주세요`,
+      [CR(m.ws,excelRow),CR(m.we,excelRow)].filter(Boolean).join(', '));
+    if(pairB) add('R25',r,
+      `출근·퇴근(센싱)이 모두 비어 있는데 근무시간 ${r.rws||'(빈칸)'}~${r.rwe||'(빈칸)'} 입력됨`,
+      `근태 ${r.code||'(빈칸)'}`,
+      `출근·퇴근 센싱을 확인해 채우세요. 센싱이 원래 없는 날(외근·교육 등)이면 근태 항목을 그에 맞게 넣어 주세요`,
+      [CR(m.tin,excelRow),CR(m.tout,excelRow)].filter(Boolean).join(', '));
+
+    // ── R22 / R23 : 한쪽 센싱만 빠진 경우 ──
+    if(isWorkDay && r.rin==='' && !pairA && !pairB){
+      const both = r.rout==='';
+      add('R22',r,`출근(센싱)이 비어 있음${both?' · <b>퇴근(센싱)도 비어 있음</b>':''}`,
+        `근무 ${r.rws||'(빈칸)'}~${r.rwe||'(빈칸)'}`,
+        both?`출근·퇴근 센싱이 모두 없습니다. 기록을 확인해 채우거나, 센싱이 원래 없는 날(외근·교육 등)이면 근태 항목을 그에 맞게 넣어 주세요`
+            :`출근 센싱 기록을 확인해 채우세요. 센싱이 원래 없는 날(외근·교육 등)이면 근태 항목을 그에 맞게 넣어 주세요`,
+        both? [CR(m.tin,excelRow),CR(m.tout,excelRow)].filter(Boolean).join(', ') : CR(m.tin,excelRow));
+    }
+    if(isWorkDay && r.rout==='' && r.rin!=='' && !r16hit && !pairA){
+      add('R23',r,`퇴근(센싱)이 비어 있음`,
+        `근무 ${r.rws||'(빈칸)'}~${r.rwe||'(빈칸)'}`,
+        `퇴근 센싱 기록을 확인해 채우세요. 정시 퇴근이 맞다면 개별연장(분)은 0이거나 비어 있는 것이 정상입니다`,
+        CR(m.tout,excelRow));
+    }
+    if(r.rout==='' && (r.em??0)!==0) add('R16',r,
+      `퇴근(센싱)이 비어 있는데 개별연장 ${r.em}분 — 수기 입력으로 보임`,
+      `근무종료 ${hm(r.we)} · 퇴근(센싱) (빈칸)`,
+      `센싱 없이 수기로 넣은 연장입니다. 실제 연장 여부와 승인 내역을 확인하세요. 정시 퇴근이었다면 개별연장시간(분)을 0으로 수정`,
+      `${CR(m.tout,excelRow)}, ${CR(m.em,excelRow)}`);
     if(r.ws!=null&&r.tin!=null){ const d=delta(r.ws,r.tin,WRAP); r.d11=d;
       if(Math.abs(d)>TOL) add('R11',r,`근무시작 − 출근(센싱) = ${shm(d)} (허용 ${TOL}분 초과)`,`${hm(r.ws)} vs ${hm(r.tin)}`,
         d>0?`출근 센싱이 근무시작보다 ${d}분 빠릅니다. 조기출근 사유 확인 또는 센싱 기록 확인`
            :`출근 센싱이 근무시작보다 ${-d}분 늦습니다. 지각 처리 여부 확인 또는 센싱 기록 확인`,
         `${CR(m.ws,excelRow)}, ${CR(m.tin,excelRow)}`); }
-    if(r.es!=null&&r.ee!=null&&r.em!=null){ const d=durOf(r.es,r.ee,WRAP);
-      if(d!==r.em) add('R12',r,`종료−시작 ${d}분 ≠ 개별연장 ${r.em}분`,`${hm(r.es)}~${hm(r.ee)}`,
-        `개별연장시간(분)을 ${d}분으로 수정하거나 시작·종료 시각을 확인`,CR(m.em,excelRow)); }
+
+    // ── R13 / R14 준비 : 주별 정일, 인원별 법일 ──
+    if(r.dt){
+      const key=r.empId+'|'+isoWeek(r.dt);
+      const w=(wk[key] ||= {n:0,off:0,first:r,min:r.dt,max:r.dt});
+      w.n++; if(OFFSET.has(c)) w.off++; if(HOLI.has(c)) w.hol=(w.hol||0)+1;
+      if(r.dt<w.min) w.min=r.dt;
+      if(r.dt>w.max) w.max=r.dt;
+      if(r.dt<w.first.dt) w.first=r;
+      const pe=(emp[r.empId] ||= {hol:0,first:r,min:r.dt,max:r.dt});
+      if(HOLI.has(c)) pe.hol++;
+      if(r.dt<pe.min){ pe.min=r.dt; pe.first=r; }
+      if(r.dt>pe.max) pe.max=r.dt;
+      if(!fMin||r.dt<fMin) fMin=r.dt;
+      if(!fMax||r.dt>fMax) fMax=r.dt;
+    }
   }
+
+  // ── 휴무·법일 점검표 공통 계산 ─────────────────────────────
+  const holList_=[...HOLDAYS].map(k=>pDate(k,YEAR)).filter(Boolean);
+  const manualQ=$('#vHolQuota').value.trim();
+  const wdHol=(a,b)=>holList_.filter(d=>{const dw=d.getDay(); return dw>=1&&dw<=5&&d>=a&&d<=b;}).length;
+  A.holQuota = manualQ==='' ? (fMin? wdHol(fMin,fMax) : 0) : (+manualQ||0);
+  const monOf=d=>{ const x=new Date(d); x.setDate(x.getDate()-((x.getDay()+6)%7)); return x; };
+  const OFFNM=$('#vOff').value.split(',')[0].trim()||'정일';
+  const HDNM =$('#vHol').value.split(',')[0].trim()||'법일';
+
+  A.wkTable = Object.keys(wk).map(k2=>{
+    const w=wk[k2]; const mon=monOf(w.min), sun=new Date(mon); sun.setDate(sun.getDate()+6);
+    const truncated=(fMin&&mon<fMin)||(fMax&&sun>fMax);
+    const skip = truncated && !PARTWK;
+    return {사번:w.first.empId, 성명:w.first.name, '주(월~일)':`${dKey(mon)} ~ ${dKey(sun)}`,
+      기록일수:w.n, [OFFNM]:w.off, 기준:OFFWK, [HDNM]:w.hol||0,
+      판정: skip ? '검사제외(파일 앞뒤 잘린 주)'
+           : (w.off===OFFWK ? '정상' : (w.off<OFFWK ? `부족 ${OFFWK-w.off}일` : `초과 ${w.off-OFFWK}일`)),
+      _bad: !skip && w.off!==OFFWK, _skip:skip};
+  }).sort((a,b)=> a.사번===b.사번 ? (a['주(월~일)']<b['주(월~일)']?-1:1) : (a.사번<b.사번?-1:1));
+
+  A.holTable = Object.keys(emp).map(id=>{
+    const pe=emp[id];
+    const q = manualQ==='' ? wdHol(pe.min,pe.max) : (+manualQ||0);
+    pe.quota=q;
+    return {사번:id, 성명:pe.first.name, 기간:`${dKey(pe.min)} ~ ${dKey(pe.max)}`,
+      [HDNM]:pe.hol, 기준:q,
+      판정: pe.hol===q ? '정상' : (pe.hol<q ? `부족 ${q-pe.hol}일` : `초과 ${pe.hol-q}일`),
+      _bad: pe.hol!==q};
+  }).sort((a,b)=>a.사번<b.사번?-1:1);
+
+  // ── R13 : 한 주(월~일) 정일 일수 ──
+  if(RON.R13 && !A.skip.R13 && OFFWK>0 && OFFSET.size){
+    for(const key of Object.keys(wk)){
+      const w=wk[key];
+      const mon0=new Date(w.min); mon0.setDate(mon0.getDate()-((mon0.getDay()+6)%7));
+      const sun0=new Date(mon0);  sun0.setDate(sun0.getDate()+6);
+      // 파일 앞뒤가 잘려서 생긴 주만 제외. 중도 입사·퇴사로 생긴 부분 주는 검사한다.
+      const truncated = (fMin && mon0<fMin) || (fMax && sun0>fMax);
+      if(truncated && !PARTWK) continue;
+      if(w.off===OFFWK) continue;
+      const mon=new Date(w.min); mon.setDate(mon.getDate()-((mon.getDay()+6)%7));
+      const sun=new Date(mon);   sun.setDate(sun.getDate()+6);
+      add('R13', w.first,
+        `이 주의 ${$('#vOff').value.split(',')[0].trim()}이 ${w.off}일 (기준 ${OFFWK}일) · 해당 주 기록 ${w.n}일`,
+        `${dKey(mon)} ~ ${dKey(sun)}`,
+        w.off<OFFWK ? `${$('#vOff').value.split(',')[0].trim()}이 ${OFFWK-w.off}일 모자랍니다. 그 주 근태를 확인해 채우거나, 대체휴무·특근 처리 여부를 확인`
+                    : `${$('#vOff').value.split(',')[0].trim()}이 ${w.off-OFFWK}일 많습니다. 실제 근무한 날이 휴무로 잘못 들어갔는지 확인`,
+        CR(m.code,w.first.excelRow),
+        `${dKey(mon)} 주`);
+    }
+  }
+  // ── R14 : 이 달 법일 일수 ──
+  if(RON.R14 && !A.skip.R14){
+    for(const id of Object.keys(emp)){
+      const pe=emp[id];
+      const quota = pe.quota||0;   // 기준 = 공휴일 목록 중 '평일'이면서 그 인원 근무기간에 속하는 날 수
+      if(pe.hol===quota) continue;
+      add('R14', pe.first,
+        `이 기간 법일이 ${pe.hol}일 (기준 ${quota}일)`,
+        `${dKey(pe.min)} ~ ${dKey(pe.max)}`,
+        pe.hol<quota ? `법일이 ${quota-pe.hol}일 모자랍니다. 법일은 그 달 아무 날에나 잡을 수 있으니, 어느 날에 잡혔는지 확인해 채우세요`
+                     : `법일이 ${pe.hol-quota}일 많습니다. 정일이나 다른 근태가 법일로 잘못 들어갔는지 확인하세요`,
+        CR(m.code, pe.first.excelRow),
+        `${dKey(pe.min).slice(0,7)} (월 단위)`);
+    }
+  }
+
+  // ── R18 / R19 : 대상 인원 명단 대조 ──
+  if(A.roster && A.roster.size){
+    const seen=new Set(rows.map(r=>r.empId));
+    if(RON.R18) for(const [id,nm] of A.roster){
+      if(seen.has(id)) continue;
+      F.push({rule:'R18',ruleName:RULES.find(x=>x.id==='R18').n,empId:id,name:nm||'',date:'-',
+        code:'',pay:'',detail:'명단에 있으나 이 근태 파일에 기록이 없음',extra:'',
+        fix:'근태 미등록·입력 누락인지, 아니면 퇴사·휴직으로 대상이 아닌지 확인',
+        excelRow:'',cell:'',row:{empId:id,name:nm||'',date:'-',code:'',pay:'',rws:'',rwe:'',rin:'',rout:'',res:'',ree:'',rem:''}});
+    }
+    if(RON.R19) for(const id of new Set(rows.map(r=>r.empId))){
+      if(A.roster.has(id)) continue;
+      const r0=rows.find(x=>x.empId===id);
+      add('R19',r0,'근태에는 있으나 대상 인원 명단에 없음','',
+        '퇴사자이거나 사번이 잘못 입력된 것은 아닌지 확인',CR(m.empId,r0.excelRow),'-');
+    }
+  }
+
+  // ── 급여 영향액 ──
+  const WM=wageMapA(), OTR=+($('#aOtRate')?.value)||1.5;
+  if(WM.size){
+    F.forEach(f=>{
+      const w=WM.get(f.empId); if(!w) return;
+      const r=f.row; let mins=0, mult=0;
+      if(f.rule==='R10'){ mins=(r.otWant||0)-(r.em||0);         mult=OTR; }   // 기준 − 실제 (모자라면 +, 많으면 −)
+      else if(f.rule==='R12'){ mins=(r.otWant2||0)-(r.em??0);   mult=OTR; }   // 차액
+      else if(f.rule==='R9'){  mins=-(r.em??0);                 mult=OTR; }   // 과지급
+      else if(f.rule==='R6' && r.dur!=null){ const STD2=pTime($('#vStd').value)??480;
+        mins=-(r.dur-STD2); mult=1; }                                          // 근무시간 과다 입력 = 과지급
+      else return;
+      if(!mins) return;
+      f.won = Math.round(mins/60*w*mult);
+    });
+  }
+  A.wageMap=WM;
+  if($('#wgInfo')){
+    const ids=new Set(rows.map(r=>r.empId));
+    let hit=0; ids.forEach(i=>{ if(WM.has(i)) hit++; });
+    setInfo2('wgInfo','wgInfo2', WM.size===0
+      ? '<span style="color:#8b93a1">시급을 넣으면 이상 건마다 급여 영향액이 계산됩니다.</span>'
+      : `시급 <b>${WM.size}명</b> 인식 · 이번 파일 ${ids.size}명 중 <b>${hit}명</b> 매칭` +
+        (hit<ids.size? ` · <span style="color:#b45309">${ids.size-hit}명은 시급 없음 (금액 계산 제외)</span>`:''),
+      WM.size? `${WM.size}명 시급 인식${A.wgName?' · '+A.wgName:''}` : null);
+    slotDone('dropWg', WM.size>0);
+  }
+
   A.rows=rows; A.find=F;
   if(A.prev&&A.prev.items){
     const pk=new Set(A.prev.items.map(x=>x.k));
@@ -1226,7 +2112,6 @@ function runA(){
   } else { F.forEach(f=>f.status=''); A.resolved=null; }
   const cnt={}; F.forEach(f=>cnt[f.rule]=(cnt[f.rule]||0)+1);
   renderRules(cnt);
-  $('#v4').classList.remove('off'); $('#v5').classList.remove('off');
   renderA(cnt);
 }
 
@@ -1234,13 +2119,13 @@ function runA(){
 const kOf=f=>`${f.empId}|${f.date}|${f.rule}`;
 const dlJSON=(obj,name)=>{ const b=new Blob([JSON.stringify(obj,null,1)],{type:'application/json'});
   const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=name; a.click(); };
-const CFGIDS=['vLeave','vHol','vEarly','vWd','vHd','vStd','vBreak','vTol'];
+const CFGIDS=['vLeave','vHol','vEarly','vAbs','vMap','vWd','vHd','vOd','vStd','vBreak','vTol','vOtUnit','vOtMode','vOff','vOffWk','vHolQuota','vHolList'];
 
 $('#aCfgSave').onclick=()=>{
   const map={}; $$('#mapA select').forEach(sel=>{ const i=+sel.value; map[sel.dataset.a]= i>=0? A.headers[i] : null; });
   const std={}; CFGIDS.forEach(id=>std[id]=$('#'+id).value);
   dlJSON({type:'geuntae-audit-config',version:1,열연결:map,기준:std,
-          자정보정:$('#vWrap').checked,규칙:{...RON}},'근태검수_설정.json');
+          자정보정:$('#vWrap').checked,부분주검사:$('#vPartWk').checked,규칙:{...RON}},'근태검수_설정.json');
 };
 $('#aCfgLoadBtn').onclick=()=>$('#aCfgFile').click();
 $('#aCfgFile').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
@@ -1249,6 +2134,8 @@ $('#aCfgFile').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
     if(j.type!=='geuntae-audit-config') { alert('검수 설정 파일이 아닙니다.'); return; }
     if(j.기준) CFGIDS.forEach(id=>{ if(j.기준[id]!==undefined) $('#'+id).value=j.기준[id]; });
     if(j.자정보정!==undefined) $('#vWrap').checked=!!j.자정보정;
+    if(j.부분주검사!==undefined) $('#vPartWk').checked=!!j.부분주검사;
+    if(j.기준 && j.기준.vHolList!==undefined) A.yearTouched=true;
     if(j.규칙) Object.entries(j.규칙).forEach(([k,v])=>{ if(k in RON) RON[k]=!!v; });
     let hit=0, miss=[];
     if(j.열연결) $$('#mapA select').forEach(sel=>{
@@ -1282,103 +2169,422 @@ $('#aCmpFile').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
 $('#aCmpClear').onclick=()=>{ A.prev=null; A.resolved=null; $('#aCmpClear').hidden=true; runA(); };
 
 /* ---- 결과 렌더 ---- */
+function floodWarnHTML(cnt){
+  if(!A.rows||!A.rows.length||!cnt) return '';
+  const hot=Object.entries(cnt).filter(([id,n])=>n>=Math.max(20, A.rows.length*0.4))
+    .map(([id,n])=>`${id} ${n.toLocaleString()}건`);
+  if(!hot.length) return '';
+  return `<div class="note w"><b>⚠️ 특정 규칙이 지나치게 많이 걸렸습니다 — ${hot.join(' · ')}</b><br>
+    검수 행수 ${A.rows.length.toLocaleString()}건 중 상당수라 <b>실제 오류라기보다 설정 문제</b>일 가능성이 큽니다.
+    3단계 <b>열 연결</b>이 맞는지, 4단계 기준값(소정 근무시간·정일·법일 값)이 회사 기준과 맞는지 먼저 확인하세요.
+    결과 표의 <b>원본 위치</b>에 셀 주소(예: M37)가 안 보이면 그 열이 연결되지 않은 것입니다.</div>`;
+}
+function offBoxHTML(){
+  const W=A.wkTable||[], H=A.holTable||[];
+  if(!W.length && !H.length) return '';
+  const OFFNM=$('#vOff').value.split(',')[0].trim()||'정일';
+  const HDNM =$('#vHol').value.split(',')[0].trim()||'법일';
+  const need=+$('#vOffWk').value||0, q=A.holQuota??0;
+  const wOK=W.filter(x=>!x._skip&&!x._bad).length, wBad=W.filter(x=>x._bad).length, wSk=W.filter(x=>x._skip).length;
+  const hOK=H.filter(x=>!x._bad).length, hBad=H.filter(x=>x._bad).length;
+  A._offInfo={OFFNM,HDNM,need,q,wOK,wBad,wSk,hOK,hBad};
+  const t=(cls,nm,v)=>`<div class="st ${cls}" data-off="1"><span class="dot ${cls==='bad'?'r':'g'}"></span>
+     <span class="stn">${nm}</span><span class="stv">${v}</span></div>`;
+  return `<div class="sumt">
+    ${t(wBad?'bad':'ok', `${OFFNM} 주 ${need}일`, wBad?`이상 ${wBad}주`:`${wOK}주 정상`)}
+    ${t(hBad?'bad':'ok', `${HDNM} 월 ${q}일`,  hBad?`이상 ${hBad}명`:`${hOK}명 정상`)}
+    ${q===0?`<div class="st bad" data-off="1"><span class="dot r"></span><span class="stn">${HDNM} 기준이 0일 — 공휴일 목록 확인</span></div>`:''}
+  </div>`;
+}
+function offDetail(){
+  const o=A._offInfo; if(!o) return;
+  $('#dlgT').textContent='휴무 · 법일 점검';
+  $('#dlgB').innerHTML=`
+   <div style="font-size:13px;line-height:1.75">
+    <b>R13 · ${o.OFFNM}은 한 주(월~일)에 ${o.need}일</b><br>
+    검사한 주 <b>${o.wOK+o.wBad}주</b> 중 정상 ${o.wOK}주 / 이상 <b style="color:#dc2626">${o.wBad}주</b>.
+    파일 앞뒤가 잘린 주 ${o.wSk}주는 제외했습니다. <b>${o.HDNM}이 있는 주도 ${o.OFFNM}은 그대로 ${o.need}일</b>이어야 하고,
+    중도 입사·퇴사로 생긴 부분 주도 검사합니다.
+    <br><br>
+    <b>R14 · ${o.HDNM}은 그 달에 ${o.q}일</b><br>
+    인원 <b>${o.hOK+o.hBad}명</b> 중 정상 ${o.hOK}명 / 이상 <b style="color:#dc2626">${o.hBad}명</b>.
+    ${o.HDNM}은 날짜가 고정이 아니라 그 달 아무 날에나 잡을 수 있으므로 <b>개수</b>로만 판정합니다.
+    기준은 공휴일 목록 중 <b>평일</b>에 해당하는 날 수입니다 — 토·일에 온 공휴일은 ${o.HDNM}이 생기지 않고,
+    대체공휴일이 평일이면 그 몫으로 1일. 인원별로 근무 기간이 다르면 기준도 달라집니다.
+   </div>
+   <div class="note ${(o.wBad||o.hBad)?'w':'i'}" style="margin-top:12px">
+     인원 × 주 전체 내역은 <b>엑셀 내보내기</b>의 <b>휴무점검(주별)</b> · <b>${o.HDNM}점검(월별)</b> 시트에서 한 줄씩 확인할 수 있습니다.
+   </div>`;
+  $('#dlg').showModal();
+}
+function mapWarnHTML(){
+  if(!A.missing || !A.missing.size) return '';
+  const rs=Object.keys(A.skip||{});
+  const used=new Set(); $$('#mapA select').forEach(sl=>{ const i=+sl.value; if(i>=0) used.add(i); });
+  const free=A.headers.map((h,i)=>({h,i})).filter(x=>!used.has(x.i) && !/^\(열[A-Z]+\)$/.test(x.h));
+  return `<div class="note b"><b>⚠️ 연결되지 않은 열이 있습니다 — ${[...A.missing].join(', ')}</b><br>
+    이 열을 쓰는 규칙 <b>${rs.join(', ')}</b> 은(는) <b>판정하지 않고 건너뛰었습니다.</b>
+    위 3단계 <b>열 연결</b>에서 해당 항목의 드롭다운을 눌러 맞는 열을 골라주세요.
+    ${free.length? `<br><br><b>아직 연결되지 않은 파일의 열</b> (이 중에 있을 가능성이 큽니다)<br>${
+      free.map(x=>`<span class="chip">${x.h}</span>`).join('')}` :
+      '<br><br>파일의 모든 열이 이미 다른 항목에 연결돼 있습니다. 잘못 연결된 곳이 없는지 확인해 주세요.'}
+    <br><br>파일에 그 열이 정말 없다면 그대로 두셔도 됩니다 — 해당 규칙만 건너뜁니다.</div>`;
+}
 function renderA(cnt){
+  if($('#mapWarn')) $('#mapWarn').innerHTML=mapWarnHTML();
   const people=new Set(A.rows.map(r=>r.empId)).size;
   const badP=new Set(A.find.map(f=>f.empId)).size;
-  const K=[['검수 행수',A.rows.length.toLocaleString(),'건'],['대상 인원',people,'명'],
-    ['이상 건수',A.find.length.toLocaleString(),'건'],['이상 인원',badP,'명'],
-    ['정상 비율',A.rows.length?((1-Math.min(1,A.find.length/A.rows.length))*100).toFixed(1):'-','%']];
+
+  // ── 상단바
+  const ds=A.rows.map(r=>r.date).filter(Boolean).sort();
+  $('#tbMeta').textContent=`${A.rows.length.toLocaleString()}행 · ${people}명`+(ds.length?` · ${ds[0]} ~ ${ds[ds.length-1]}`:'');
+  const m=MA(), miss=AFIELDS.filter(f=>!(m[f.k]>=0));
+  const pm=$('#pillMap'); pm.textContent=`${AFIELDS.length-miss.length}/${AFIELDS.length}`;
+  pm.className='pill '+(miss.length?'bad':'ok');
+  const pr=$('#pillRos'); const hasR=!!(A.roster&&A.roster.size), hasW=!!(A.wageMap&&A.wageMap.size);
+  pr.textContent = hasR||hasW ? [hasR?'명단':'',hasW?'시급':''].filter(Boolean).join('·') : '없음';
+  pr.className='pill '+(hasR||hasW?'ok':'');
+
+  // ── KPI
+  const rate=A.rows.length?((1-Math.min(1,A.find.length/A.rows.length))*100).toFixed(1):'-';
+  const K=[['이상 건수',A.find.length.toLocaleString(),'건','v-bad'],['이상 인원',badP+' / '+people,'명',''],
+    ['정상 비율',rate,'%',+rate>=99?'v-ok':''],['검수 행수',A.rows.length.toLocaleString(),'건','']];
+  if(A.wageMap&&A.wageMap.size){
+    const plus=A.find.filter(f=>f.won>0).reduce((s,f)=>s+f.won,0);
+    const minus=A.find.filter(f=>f.won<0).reduce((s,f)=>s+f.won,0);
+    K.push(['미지급 추정','+'+plus.toLocaleString(),'원','v-bad'],['과지급 추정','−'+Math.abs(minus).toLocaleString(),'원','']);
+  }
   if(A.prev){
     const nw=A.find.filter(f=>f.status==='신규').length;
-    K.push(['✔ 해결됨',(A.resolved||[]).length,'건'],['남음',A.find.length-nw,'건'],['신규',nw,'건']);
+    K.push(['✔ 해결됨',(A.resolved||[]).length,'건','v-ok'],['남음',A.find.length-nw,'건',''],['신규',nw,'건','v-bad']);
   }
-  $('#kpiA').innerHTML=K.map(([l,v,u])=>`<div class="kpi"><div class="l">${l}</div><div class="v">${v}<span class="u">${u}</span></div></div>`).join('');
-  $('#cmpBox').innerHTML = !A.prev ? '' :
+  $('#kpiA').innerHTML=K.map(([l,v,u,c])=>`<div class="kpi"><div class="l">${l}</div>
+    <div class="v ${c}">${v}<span class="u">${u}</span></div></div>`).join('');
+
+  // 명단·시급이 비어 있으면 어디서 넣는지 계속 알려준다
+  const needR=!hasR, needW=!hasW;
+  $('#addBox').innerHTML = (needR||needW)
+    ? `<div class="addbar"><b>${needR&&needW?'대상 인원 명단과 시급':(needR?'대상 인원 명단':'시급')}을 넣으면 검수가 더 정확해집니다</b>
+        <span class="muted">${needR?'명단 → 근태 누락 인원·명단에 없는 사번 검출':''}${needR&&needW?' · ':''}${needW?'시급 → 이상 건별 미지급·과지급 금액':''}</span>
+        <span class="grow"></span>
+        <button class="sm pri" id="addNow">파일 올리기</button></div>` : '';
+  const an=$('#addNow'); if(an) an.onclick=()=>$('#dgRos').showModal();
+
+  $('#offBox').innerHTML = offBoxHTML();
+  $$('[data-off]').forEach(el=>el.onclick=offDetail);
+  $('#cmpBox').innerHTML = mapWarnHTML() + floodWarnHTML(cnt) + (!A.prev ? '' :
     `<div class="note i"><b>이전 검수(${A.prev.저장시각||'저장 시각 미상'}, 이상 ${A.prev.이상건수}건)와 비교 중</b> —
-     해결 ${(A.resolved||[]).length}건 · 남음 ${A.find.filter(f=>f.status==='남음').length}건 · 신규 ${A.find.filter(f=>f.status==='신규').length}건.
-     ${(A.resolved||[]).length?`해결된 항목은 엑셀 내보내기의 <b>해결목록</b> 시트에 들어갑니다.`:''}</div>`;
-  $('#ruleCards').innerHTML='<div class="rc">'+RULES.filter(r=>RON[r.id]).map(r=>{
-    const n=cnt[r.id]||0;
-    return `<div class="rcx ${A.filter===r.id?'on':''} ${n?'':'zero'}" data-rf="${r.id}">
-      <div class="rn"><span class="mono">${r.id}</span> ${r.n}</div>
-      <div class="rv ${n?'bad':'ok'}">${n}</div></div>`; }).join('')+'</div>';
+     해결 ${(A.resolved||[]).length}건 · 남음 ${A.find.filter(f=>f.status==='남음').length}건 · 신규 ${A.find.filter(f=>f.status==='신규').length}건.</div>`);
+
+  // ── 규칙 신호등 : 이상 있는 것만 크게, 0건은 칩으로
+  const on=RULES.filter(r=>RON[r.id]);
+  const hit=on.filter(r=>(cnt[r.id]||0)>0).sort((x,y)=>(cnt[y.id]||0)-(cnt[x.id]||0));
+  const zero=on.filter(r=>!(cnt[r.id]||0));
+  const skipped=Object.keys(A.skip||{});
+  $('#rcSum').innerHTML = hit.length
+    ? `<span class="dot r"></span> 이상 ${hit.length}개 · <span class="dot g"></span> 정상 ${zero.length}개`
+    : `<span class="dot g"></span> ${zero.length}개 항목 모두 정상`;
+  $('#ruleCards').innerHTML =
+    (hit.length? '<div class="sig">'+hit.map(r=>`
+      <div class="sg bad ${A.filter===r.id?'on':''}" data-rf="${r.id}" title="${r.n}">
+        <span class="sid">${r.id}</span><span class="snm">${r.n}</span><span class="sct">${cnt[r.id]}</span>
+      </div>`).join('')+'</div>'
+      : `<div class="note i" style="margin:0"><b>이상 없음</b> — 켜져 있는 ${on.length}개 항목이 전부 통과했습니다.</div>`)
+    + (zero.length? `<div class="okwrap"><div class="oh"><span class="dot g"></span>이상 0건 (${zero.length}개) — 클릭하면 기준을 봅니다</div>
+        <div class="okrow">${zero.map(r=>`<span class="okchip" data-ri="${r.id}" title="${r.n}">${r.id}</span>`).join('')}</div></div>`:'')
+    + (skipped.length? `<div class="okwrap"><div class="oh"><span class="dot y"></span>열이 없어 건너뜀 (${skipped.length}개)</div>
+        <div class="okrow">${skipped.map(id=>`<span class="okchip" data-ri="${id}" style="border-color:#fed7aa;color:#b45309">${id}</span>`).join('')}</div></div>`:'');
+
   $$('[data-rf]').forEach(el=>el.onclick=()=>{ A.filter = A.filter===el.dataset.rf?'':el.dataset.rf;
-    $('#ruleF').value=A.filter; renderA(cnt); });
+    A.pick=null; $('#qA').value=''; A.open=new Set(); A.autoOpen=true; A.sel=0;   // 항목은 '전체에서 이 항목'으로 본다
+    $('#ruleF').value=A.filter; showTab('list'); renderA(cnt); });
+  $$('[data-ri]').forEach(el=>el.onclick=()=>{ const r=RULES.find(x=>x.id===el.dataset.ri); if(!r) return;
+    $('#dlgT').textContent=`${r.id} · ${r.n}`;
+    $('#dlgB').innerHTML=`<div style="font-size:13px;line-height:1.7">${r.d}</div>
+      <div class="note i" style="margin-top:12px">현재 이 항목의 이상 건수는 <b>${cnt[r.id]||0}건</b>입니다.
+      ${A.skip&&A.skip[r.id]?`<br><b style="color:#b45309">연결되지 않은 열이 있어 검사를 건너뛰었습니다: ${A.skip[r.id].join(', ')}</b>`:''}</div>`;
+    $('#dlg').showModal(); });
+
   $('#ruleF').innerHTML='<option value="">전체 규칙</option>'+RULES.map(r=>
     `<option value="${r.id}"${A.filter===r.id?' selected':''}>${r.id} · ${r.n} (${cnt[r.id]||0})</option>`).join('');
   tableA();
+  if(!$('#tabHeat').hidden) renderHeat();
+  if(!$('#tabRank').hidden) renderRank();
 }
+
+/* ── 인원 × 일자 히트맵 ─────────────────────────────────────── */
+function renderHeat(){
+  const days=[...new Set(A.rows.map(r=>r.date).filter(Boolean))].sort();
+  if(!days.length){ $('#heat').innerHTML='<div class="empty">일자 열이 연결되지 않아 분포를 그릴 수 없습니다.</div>'; return; }
+  const dow=d=>{ const x=A.rows.find(r=>r.date===d); return x&&x.dt? (x.dt.getDay()) : -1; };
+  const nm=new Map(); A.rows.forEach(r=>{ if(!nm.has(r.empId)) nm.set(r.empId, r.name||''); });
+  const cell={}; const tot={};
+  A.find.forEach(f=>{ if(!f.date||f.date==='-') return;
+    const k=f.empId+'|'+f.date; (cell[k] ||= []).push(f); tot[f.empId]=(tot[f.empId]||0)+1; });
+  const all=$('#heatAll').checked;
+  let ids=[...nm.keys()].filter(id=>all||tot[id]);
+  ids.sort((x,y)=>(tot[y]||0)-(tot[x]||0) || (x<y?-1:1));
+  if(!ids.length){ $('#heat').innerHTML='<div class="empty">이상이 있는 인원이 없습니다. 👍<br><span class="muted">「이상 없는 인원도 표시」를 켜면 전체 격자를 봅니다.</span></div>'; return; }
+  const WD=['일','월','화','수','목','금','토'];
+  const lv=n=>n>=6?'l4':n>=3?'l3':n>=2?'l2':'l1';
+  const head=`<tr><th class="nm">인원 <span style="font-weight:600;opacity:.7">(${ids.length}명)</span></th>`+
+    days.map(d=>{ const w=dow(d); return `<th class="${w===0?'sun':''}">${d.slice(-2).replace(/^0/,'')}<br><span style="opacity:.6">${w>=0?WD[w]:''}</span></th>`; }).join('')+
+    '<th style="padding:0 8px">계</th></tr>';
+  const body=ids.map(id=>`<tr><td class="nm" title="${id}">${nm.get(id)||''} <span class="muted">${id}</span></td>`+
+    days.map(d=>{ const c=(cell[id+'|'+d]||[]).length;
+      return `<td class="${dow(d)===0?'sun':''}"><span class="hc ${c?lv(c):'z'}" ${c?`data-hx="${id}|${d}" title="${nm.get(id)} · ${d} · 이상 ${c}건 (${[...new Set(cell[id+'|'+d].map(f=>f.rule))].join(', ')})"`:''}>${c||''}</span></td>`; }).join('')+
+    `<td class="num" style="padding:0 8px;font-weight:800;color:${tot[id]?'#dc2626':'#9aa3af'}">${tot[id]||0}</td></tr>`).join('');
+  $('#heat').innerHTML=`<table class="hmt">${head}${body}</table>
+    <div class="hlg">진하기 = 그 날 이상 건수 &nbsp;<span class="hc l1"></span>1 <span class="hc l2"></span>2 <span class="hc l3"></span>3~5 <span class="hc l4"></span>6+</div>`;
+  $$('[data-hx]').forEach(el=>el.onclick=()=>{ const [e,d]=el.dataset.hx.split('|');
+    A.pick={empId:e,date:d}; A.filter=''; $('#ruleF').value=''; $('#qA').value='';
+    A.open=new Set([e]); A.autoOpen=true; A.sel=0;
+    showTab('list'); const c={}; A.find.forEach(f=>c[f.rule]=(c[f.rule]||0)+1); renderA(c); });
+}
+$('#heatAll').onchange=renderHeat;
+
 $('#qA').oninput=()=>tableA();
+$('#sortA').onchange=()=>{A.sel=0;tableA();};
 $('#ruleF').onchange=e=>{ A.filter=e.target.value; const c={}; A.find.forEach(f=>c[f.rule]=(c[f.rule]||0)+1); renderA(c); };
 function findA(){
   const q=$('#qA').value.trim().toLowerCase();
-  return A.find.filter(f=>(!A.filter||f.rule===A.filter)&&
-    (!q||(f.empId+' '+f.name+' '+f.date+' '+f.code).toLowerCase().includes(q)));
+  return A.find.filter(f=>(!A.filter||f.rule===A.filter)
+    && (!A.pick || (f.empId===A.pick.empId && f.date===A.pick.date))
+    && (!q||(f.empId+' '+f.name+' '+f.date+' '+f.code).toLowerCase().includes(q)));
 }
 function tableA(){
   const rs=findA();
-  const showSt=!!A.prev;
-  $('#outA').innerHTML=`<thead><tr>${showSt?'<th>상태</th>':''}<th>규칙</th><th>사번</th><th>성명</th><th>일자</th><th>근태</th><th>급여요일</th><th>문제 내용</th><th>원본 위치</th><th>권장 조치</th></tr></thead><tbody>`+
-    rs.slice(0,4000).map((f,i)=>`<tr data-i="${i}" style="cursor:pointer">
-      ${showSt?`<td><span class="tag ${f.status==='신규'?'r':'y'}">${f.status}</span></td>`:''}
-      <td class="mono"><b>${f.rule}</b></td><td>${f.empId}</td><td>${f.name}</td><td>${f.date}</td>
-      <td>${f.code||'<span class="muted">(빈칸)</span>'}</td><td>${f.pay}</td>
-      <td>${f.detail}</td>
-      <td class="mono muted">${f.excelRow?`${f.excelRow}행`:''}${f.cell?` · ${f.cell}`:''}</td>
-      <td class="muted">${f.fix||''}</td></tr>`).join('')+'</tbody>';
-  if(rs.length>4000) $('#outA').insertAdjacentHTML('beforeend',
-    `<tfoot><tr><td colspan="8" class="muted">표에는 앞 4,000건만 표시했습니다. 전체 ${rs.length.toLocaleString()}건은 엑셀로 내보내면 모두 들어갑니다.</td></tr></tfoot>`);
-  $$('#outA tbody tr').forEach(tr=>tr.onclick=()=>detailA(rs[+tr.dataset.i]));
+  const showWon=!!(A.wageMap&&A.wageMap.size);
+  const mode=$('#sortA')?.value||'emp';
+  const q=$('#qA').value.trim();
+  const people=new Set(rs.map(f=>f.empId)).size;
+
+  /* 지금 걸려 있는 조건을 눈에 보이게 */
+  const chips=[];
+  if(A.filter) chips.push(`<span class="fch" data-clr="rule"><b>${A.filter}</b> ${(RULES.find(r=>r.id===A.filter)||{}).n||''} <i>✕</i></span>`);
+  if(q)        chips.push(`<span class="fch" data-clr="q">검색 "<b>${q}</b>" <i>✕</i></span>`);
+  if(A.pick)   chips.push(`<span class="fch" data-clr="pick"><b>${A.pick.empId}</b> · ${A.pick.date} <i>✕</i></span>`);
+  $('#fbar').innerHTML = chips.length
+    ? `<div class="fbar"><span class="fl">조건</span>${chips.join('')}
+        <button class="sm" id="clrAll">전체 해제</button><span class="grow"></span>
+        ${mode==='emp'?`<button class="sm" id="opAll">모두 펼치기</button><button class="sm" id="clAll">모두 접기</button>`:''}</div>`
+    : (mode==='emp'? `<div class="fbar"><span class="fl">전체</span><span class="muted">인원 줄을 누르면 그 사람 내역이 펼쳐집니다</span>
+        <span class="grow"></span><button class="sm" id="opAll">모두 펼치기</button><button class="sm" id="clAll">모두 접기</button></div>`:'');
+  const bindF=()=>{
+    $$('[data-clr]').forEach(el=>el.onclick=()=>{
+      const k=el.dataset.clr;
+      if(k==='rule'){ A.filter=''; $('#ruleF').value=''; }
+      if(k==='q') $('#qA').value='';
+      if(k==='pick') A.pick=null;
+      A.autoOpen=true; A.open=new Set();
+      const c={}; A.find.forEach(f=>c[f.rule]=(c[f.rule]||0)+1); renderA(c);
+    });
+    const ca=$('#clrAll'); if(ca) ca.onclick=()=>{ A.filter=''; A.pick=null; $('#qA').value=''; $('#ruleF').value='';
+      const c={}; A.find.forEach(f=>c[f.rule]=(c[f.rule]||0)+1); renderA(c); };
+    const oa=$('#opAll'); if(oa) oa.onclick=()=>{ A.open=new Set(rs.map(f=>f.empId)); A.autoOpen=true; tableA(); };
+    const cl=$('#clAll'); if(cl) cl.onclick=()=>{ A.open=new Set(); A.autoOpen=false; A.sel=0;
+      $('#sideNav').textContent='';
+      $('#sideA').innerHTML='<div class="empty">인원 줄을 눌러 펼친 뒤<br>항목을 선택하면 여기에 표시됩니다.</div>'; tableA(); };
+  };
+  bindF();
+
+  $('#listSum').innerHTML =
+    `<b style="color:${rs.length?'#dc2626':'#0f9d58'}">${people}</b>명 · <b style="color:${rs.length?'#dc2626':'#0f9d58'}">${rs.length.toLocaleString()}</b>건`;
+
+  if(!rs.length){
+    A.view=[];
+    const why = (A.filter||q||A.pick)
+      ? `<div class="empty"><b>이 조건에 맞는 건이 없습니다.</b><br>
+          ${A.filter?`항목 <b>${A.filter}</b>`:''}${A.filter&&q?' + ':''}${q?`검색 "<b>${q}</b>"`:''}${(A.filter||q)&&A.pick?' + ':''}${A.pick?`<b>${A.pick.empId}</b> ${A.pick.date}`:''}
+          <br><span class="muted">조건이 겹쳐서 걸려 있을 수 있습니다.</span>
+          <br><br><button class="pri sm" id="clrAll2">조건 전체 해제</button></div>`
+      : `<div class="empty">이상이 발견되지 않았습니다. 👍</div>`;
+    $('#outA').innerHTML=`<tbody><tr><td>${why}</td></tr></tbody>`;
+    const c2=$('#clrAll2'); if(c2) c2.onclick=()=>{ A.filter=''; A.pick=null; $('#qA').value=''; $('#ruleF').value='';
+      const c={}; A.find.forEach(f=>c[f.rule]=(c[f.rule]||0)+1); renderA(c); };
+    $('#sideNav').textContent=''; A.sel=0;
+    $('#sideA').innerHTML='<div class="empty">표시할 이상 건이 없습니다.</div>';
+    return;
+  }
+  const COLS = 3 + (showWon?1:0);
+
+  /* ── 발생순(평면) ─────────────────────────────────── */
+  if(mode==='flat'){
+    A.view=rs;
+    $('#outA').innerHTML=`<thead><tr><th>인원</th><th>일자</th><th>항목</th><th>내용 · 고칠 위치</th>${showWon?'<th class="num">급여</th>':''}</tr></thead><tbody>`+
+      rs.slice(0,3000).map((f,i)=>`<tr data-i="${i}" style="cursor:pointer">
+        <td class="nw"><b>${f.name||''}</b> <span class="muted mono">${f.empId}</span></td>
+        <td class="nw mono">${dshort(f.date)}</td>
+        <td class="nw"><span class="tag r mono">${f.rule}</span></td>
+        <td>${f.detail}${f.excelRow?`<div class="muted mono" style="margin-top:2px">${f.excelRow}행${f.cell?` · ${f.cell}`:''}</div>`:''}</td>
+        ${showWon?wonTd(f):''}</tr>`).join('')+'</tbody>';
+    bindRows(rs.length);
+    return;
+  }
+
+  /* ── 인원별(기본) : 사번·이름이 먼저, 누르면 그 사람 내역 ── */
+  const G=new Map();
+  rs.forEach(f=>{ const g=G.get(f.empId)||{empId:f.empId,name:f.name,items:[]}; if(f.name&&!g.name)g.name=f.name; g.items.push(f); G.set(f.empId,g); });
+  const arr=[...G.values()];
+  arr.forEach(g=>{
+    g.items.sort((x,y)=> (x.date||'')<(y.date||'')?-1:((x.date||'')>(y.date||'')?1:(x.rule<y.rule?-1:1)));
+    g.days=new Set(g.items.map(x=>x.date).filter(d=>d&&d!=='-')).size;
+    g.won=showWon? g.items.reduce((t,x)=>t+(x.won||0),0) : null;
+    const rc={}; g.items.forEach(x=>rc[x.rule]=(rc[x.rule]||0)+1);
+    g.rc=Object.entries(rc).sort((x,y)=>y[1]-x[1]);
+  });
+  arr.sort((x,y)=> y.items.length-x.items.length || (x.empId<y.empId?-1:1));
+
+  /* 기본은 접힘 — 인원이 3명 이하면 모두 펼치고, 아니면 1위만 펼친다 */
+  A.open = A.open || new Set();
+  const ids=new Set(arr.map(g=>g.empId));
+  const anyOpen=[...A.open].some(id=>ids.has(id));
+  if(!anyOpen && arr.length<=3) arr.forEach(g=>A.open.add(g.empId));
+
+  let idx=0, html='', flat=[];
+  arr.forEach((g,gi)=>{
+    const open=A.open.has(g.empId);
+    html+=`<tr class="grp${open?' op':''}" data-g="${g.empId}"><td colspan="${COLS+1}">
+      <span class="gcar">${open?'▾':'▸'}</span>
+      <span class="grk">${gi+1}</span>
+      <b class="gnm">${g.name||''}</b><span class="muted mono gid">${g.empId}</span>
+      <span class="gcnt">${g.items.length}건</span>
+      <span class="muted gday">${g.days}일</span>
+      <span class="gtags">${g.rc.map(([r,c])=>`<span class="tag r mono">${r}<span style="opacity:.65">×${c}</span></span>`).join('')}</span>
+      ${g.won?`<span class="gwon" style="color:${g.won>0?'#b91c1c':'#1d4ed8'}">${g.won>0?'+':''}${g.won.toLocaleString()}원</span>`:''}
+      ${open?'':'<span class="gopen">펼치기</span>'}
+    </td></tr>`;
+    if(!open) return;
+    let prevD=null;
+    g.items.forEach(f=>{
+      flat.push(f);
+      const newD = f.date!==prevD; prevD=f.date;
+      html+=`<tr data-i="${idx++}" class="sub${newD?' nd':''}" style="cursor:pointer">
+        <td class="nw mono dcell">${newD?`${dshort(f.date)}<span class="dow">${dowOf(f.date)}</span>`:'<span class="ditto">〃</span>'}</td>
+        <td class="nw"><span class="tag r mono">${f.rule}</span></td>
+        <td>${f.detail}${f.excelRow?`<div class="muted mono" style="margin-top:2px">${f.excelRow}행${f.cell?` · ${f.cell}`:''}</div>`:''}</td>
+        ${showWon?wonTd(f):''}</tr>`;
+    });
+  });
+  A.view=flat;
+  if(!flat.length){ A.sel=0; $('#sideNav').textContent='';
+    $('#sideA').innerHTML='<div class="empty">인원 줄을 눌러 펼친 뒤<br>항목을 선택하면 원본 값과<br>고칠 셀이 여기에 표시됩니다.</div>'; }
+  $('#outA').innerHTML=`<thead><tr><th style="width:64px">일자</th><th style="width:54px">항목</th><th>내용 · 고칠 위치</th>${showWon?'<th class="num" style="width:74px">급여</th>':''}</tr></thead><tbody>${html}</tbody>`;
+  $$('#outA tr.grp').forEach(tr=>tr.onclick=()=>{
+    const id=tr.dataset.g; if(A.open.has(id)) A.open.delete(id); else A.open.add(id);
+    A.autoOpen = A.open.size>0; A.sel=0; tableA();
+  });
+  bindRows(flat.length);
 }
-function detailA(f){
+function wonTd(f){
+  return `<td class="num nw" style="${f.won>0?'color:#b91c1c;font-weight:700':(f.won<0?'color:#1d4ed8;font-weight:700':'')}">${f.won==null||f.won===0?'-':(f.won>0?'+':'')+f.won.toLocaleString()}</td>`;
+}
+const dshort=d=>(d||'').replace(/^\d{4}[.\-]/,'').replace(/[.\-]/,'.')||'-';
+function dowOf(d){ if(!d||d==='-') return '';
+  const r=(A.rows||[]).find(x=>x.date===d); if(!r||!r.dt) return '';
+  return ['일','월','화','수','목','금','토'][r.dt.getDay()]; }
+function bindRows(n){
+  $$('#outA tbody tr.sub, #outA tbody tr[data-i]').forEach(tr=>{
+    if(tr.classList.contains('grp')) return;
+    tr.onclick=()=>selectA(+tr.dataset.i);
+  });
+  if(n>3000) $('#outA').insertAdjacentHTML('beforeend',
+    `<tfoot><tr><td colspan="5" class="muted">표에는 일부만 표시했습니다. 전체는 엑셀로 내보내면 모두 들어갑니다.</td></tr></tfoot>`);
+  selectA(Math.min(A.sel||0, Math.max(0,n-1)));
+}
+function selectA(i){
+  const rs=A.view||[]; if(!rs[i]) return;
+  A.sel=i;
+  $$('#outA tbody tr').forEach(tr=>tr.classList.toggle('sel', +tr.dataset.i===i));
+  const tr=document.querySelector(`#outA tbody tr[data-i="${i}"]`);
+  if(tr) tr.scrollIntoView({block:'nearest'});
+  $('#sideNav').innerHTML=`${i+1} / ${rs.length}`;
+  sideA(rs[i]);
+}
+document.addEventListener('keydown',e=>{
+  if($('#viewAudit').hidden || !A.view || !A.view.length) return;
+  if(document.activeElement && /INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)) return;
+  if(e.key==='ArrowDown'){ e.preventDefault(); selectA(Math.min(A.view.length-1,(A.sel||0)+1)); }
+  if(e.key==='ArrowUp'){ e.preventDefault(); selectA(Math.max(0,(A.sel||0)-1)); }
+});
+function sideA(f){
   const r=f.row;
-  $('#dlgT').textContent=`${r.name||''} (${r.empId}) · ${r.date}${r.excelRow?`  ·  원본 ${r.excelRow}행`:''}`;
-  const L=[['근태',r.code||'(빈칸)'],['급여요일',r.pay||'(빈칸)'],
-    ['근무시작',r.rws||'(빈칸)'],['근무종료',r.rwe||'(빈칸)'],
-    ['출근(센싱)',r.rin||'(빈칸)'],['퇴근(센싱)',r.rout||'(빈칸)'],
-    ['개별연장 시작',r.res||'(빈칸)'],['개별연장 종료',r.ree||'(빈칸)'],['개별연장(분)',r.rem||'(빈칸)']];
-    const C=[['근무시간(종료−시작−휴게)',r.dur!=null?shm(r.dur):'-'],
-    ['개별연장시작 − 근무종료',r.d7!=null?shm(r.d7):'-'],
-    ['개별연장종료 − 퇴근센싱',r.d8!=null?shm(r.d8):'-'],
-    ['근무종료 − 퇴근센싱',r.d9!=null?shm(r.d9):'-'],
-    ['근무시작 − 출근센싱',r.d11!=null?shm(r.d11)+` (${r.d11}분)`:'-']];
   const mine=A.find.filter(x=>x.row===r);
-  $('#dlgB').innerHTML=`
-    <div class="note b"><b>이 행에서 걸린 규칙 ${mine.length}건</b><br>${mine.map(x=>
-      `<span class="mono">${x.rule}</span> ${x.detail}${x.cell?` <span class="mono">[${x.cell}]</span>`:''}<br>
-       <span style="opacity:.8">→ ${x.fix||''}</span>`).join('<br>')}</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-      <div><b style="font-size:13px">원본 값</b><table style="margin-top:6px">${L.map(([k,v])=>`<tr><td class="muted">${k}</td><td class="mono"><b>${v}</b></td></tr>`).join('')}</table></div>
-      <div><b style="font-size:13px">계산 값</b><table style="margin-top:6px">${C.map(([k,v])=>`<tr><td class="muted">${k}</td><td class="mono"><b>${v}</b></td></tr>`).join('')}</table></div>
-    </div>`;
-  $('#dlg').showModal();
+  const L=[['근태',r.code],['급여요일',r.pay],['근무시작',r.rws],['근무종료',r.rwe],
+    ['출근(센싱)',r.rin],['퇴근(센싱)',r.rout],
+    ['개별연장 시작',r.res],['개별연장 종료',r.ree],['개별연장(분)',r.rem]];
+  const C=[['근무시간(종료−시작)',r.dur!=null?shm(r.dur):null],
+    ['연장시작 − 근무종료',r.d7!=null?shm(r.d7):null],
+    ['연장종료 − 퇴근센싱',r.d8!=null?shm(r.d8):null],
+    ['근무종료 − 퇴근센싱',r.d9!=null?shm(r.d9):null],
+    ['근무시작 − 출근센싱',r.d11!=null?shm(r.d11)+` (${r.d11}분)`:null]];
+  const cells=[...new Set(mine.map(x=>x.cell).filter(Boolean).join(', ').split(/,\s*/))].filter(Boolean);
+  $('#sideA').innerHTML=`<div class="sd">
+    <div style="font-size:14px;font-weight:800;letter-spacing:-.01em">${r.name||''}
+      <span class="muted mono" style="font-weight:600">${r.empId}</span></div>
+    <div class="muted mono" style="margin-bottom:10px">${r.date||''}${r.excelRow?` · 원본 ${r.excelRow}행`:''}</div>
+
+    ${cells.length?`<h4>고칠 셀</h4>
+      ${cells.map(c=>`<div class="cellbox">${c}<span>엑셀 이 칸</span></div>`).join('')}`:''}
+
+    <div class="hit"><div class="hl">이 행에서 걸린 항목 ${mine.length}건</div>
+      ${mine.map(x=>`<div class="hi"><span class="tag r mono">${x.rule}</span> ${x.detail}
+        <div style="margin-top:3px;color:#7f1d1d;opacity:.9">→ ${x.fix||''}</div></div>`).join('')}</div>
+
+    <h4>원본 값</h4>
+    <table class="kv">${L.map(([k,v])=>`<tr><td>${k}</td>
+      <td class="mono"><b style="${v?'':'color:#c3cbd6;font-weight:600'}">${v||'(빈칸)'}</b></td></tr>`).join('')}</table>
+
+    <h4 style="margin-top:12px">계산 값</h4>
+    <table class="kv">${C.map(([k,v])=>`<tr><td>${k}</td><td class="mono"><b>${v||'-'}</b></td></tr>`).join('')}</table>
+
+    ${f.won!=null?`<div class="note ${f.won>0?'b':'i'}" style="margin-top:12px;font-size:12px">
+      급여 영향 추정 <b>${(f.won>0?'+':'')+f.won.toLocaleString()}원</b>
+      ${f.won>0?'(덜 지급된 쪽)':'(더 지급된 쪽)'} · 참고용</div>`:''}
+  </div>`;
 }
+
 
 /* ---- 엑셀 내보내기 ---- */
 $('#expA').onclick=()=>{
   if(!A.find.length&&!A.rows.length){ alert('먼저 파일을 올려주세요.'); return; }
   const wb=XLSX.utils.book_new();
-  const all=A.find.map(f=>({...(A.prev?{상태:f.status}:{}),규칙:f.rule,규칙명:f.ruleName,
-    사번:f.empId,성명:f.name,일자:f.date,근태:f.code,급여요일:f.pay,
-    '문제 내용':f.detail,'관련 값':f.extra,'원본 행':f.excelRow,'원본 셀':f.cell,'권장 조치':f.fix}));
+  // 인원(사번·성명) 우선 정렬 : 이상 많은 사람 → 사번 → 일자 → 규칙
+  const cntBy={}; A.find.forEach(f=>cntBy[f.empId]=(cntBy[f.empId]||0)+1);
+  const ordered=[...A.find].sort((a,b)=>
+      (cntBy[b.empId]-cntBy[a.empId]) || (a.empId<b.empId?-1:a.empId>b.empId?1:0)
+      || ((a.date||'')<(b.date||'')?-1:(a.date||'')>(b.date||'')?1:0)
+      || (a.rule<b.rule?-1:a.rule>b.rule?1:0));
+  const ordNo={}; let pn=0;
+  ordered.forEach(f=>{ if(!(f.empId in ordNo)) ordNo[f.empId]=++pn; });
+  const all=ordered.map(f=>({
+      인원순번:ordNo[f.empId], 사번:f.empId, 성명:f.name, '본인 이상건수':cntBy[f.empId],
+      일자:f.date, 항목:f.rule, 규칙명:f.ruleName,
+      '무엇이 틀렸나':tx(f.detail), '관련 값':tx(f.extra),
+      '원본 행':f.excelRow, '원본 셀':f.cell,
+      ...(A.wageMap&&A.wageMap.size?{'급여 영향(원)':f.won ?? ''}:{}),
+      '권장 조치':tx(f.fix), 근태:f.code, 급여요일:f.pay,
+      ...(A.prev?{상태:f.status}:{})}));
   XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(all.length?all:[{결과:'이상 없음'}]),'이상목록');
 
-  // 수정 체크리스트 — 담당자가 채워가며 쓰는 시트
-  const chk=[...A.find].sort((a,b)=> a.empId===b.empId ? (a.date<b.date?-1:1) : (a.empId<b.empId?-1:1))
-    .map((f,i)=>({No:i+1,사번:f.empId,성명:f.name,일자:f.date,규칙:f.rule,
-      '원본 행':f.excelRow,'원본 셀':f.cell,'무엇이 틀렸나':f.detail,'어떻게 고칠까':f.fix,
+  // 수정 체크리스트 — 담당자가 채워가며 쓰는 시트 (같은 순서)
+  const chk=ordered.map((f,i)=>({
+      No:i+1, 인원순번:ordNo[f.empId], 사번:f.empId, 성명:f.name,
+      '본인 이상건수':cntBy[f.empId],
+      일자:f.date, 항목:f.rule, '원본 행':f.excelRow, '원본 셀':f.cell,
+      '무엇이 틀렸나':tx(f.detail), '어떻게 고칠까':tx(f.fix),
       ...(A.prev?{상태:f.status}:{}),'수정완료(O/X)':'','수정자':'','확인일':'','비고':''}));
   XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(chk.length?chk:[{안내:'이상 없음 — 수정할 항목이 없습니다'}]),'수정체크리스트');
 
   if(A.prev){
     const rv=(A.resolved||[]).map(x=>({사번:x.empId,성명:x.name,일자:x.date,규칙:x.rule,
-      규칙명:x.ruleName,'이전 문제 내용':x.detail,결과:'해결됨'}));
+      규칙명:x.ruleName,'이전 문제 내용':tx(x.detail),결과:'해결됨'}));
     XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rv.length?rv:[{결과:'이전 대비 해결된 항목 없음'}]),'해결목록');
   }
 
   const c={}; A.find.forEach(f=>c[f.rule]=(c[f.rule]||0)+1);
   XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(RULES.map(r=>({
-    규칙:r.id,사용:RON[r.id]?'O':'X',규칙명:r.n,'판정 기준':r.d,이상건수:c[r.id]||0}))),'규칙별요약');
+    규칙:r.id,사용:RON[r.id]?'O':'X',규칙명:r.n,'판정 기준':tx(r.d),이상건수:c[r.id]||0}))),'규칙별요약');
 
   const byP={};
   A.rows.forEach(r=>{ (byP[r.empId] ||= {사번:r.empId,성명:r.name,검수행수:0,이상건수:0,이상일수:new Set()}).검수행수++; });
@@ -1387,6 +2593,13 @@ $('#expA').onclick=()=>{
     RULES.forEach(r=>o[r.id]=A.find.filter(f=>f.empId===e.사번&&f.rule===r.id).length); return o; })
     .sort((a,b)=>b.이상건수-a.이상건수);
   XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(perP),'인원별요약');
+
+  const HDNM2=$('#vHol').value.split(',')[0].trim()||'법일';
+  const strip=o=>{ const x={...o}; delete x._bad; delete x._skip; return x; };
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(
+    (A.wkTable||[]).map(strip).length?(A.wkTable||[]).map(strip):[{안내:'일자 열이 연결되지 않아 주별 점검을 하지 못했습니다'}]),'휴무점검(주별)');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(
+    (A.holTable||[]).map(strip).length?(A.holTable||[]).map(strip):[{안내:'일자 열이 연결되지 않아 월별 점검을 하지 못했습니다'}]),HDNM2+'점검(월별)');
 
   const byD={}; A.find.forEach(f=>{ (byD[f.date] ||= {일자:f.date,이상건수:0,인원:new Set()});
     byD[f.date].이상건수++; byD[f.date].인원.add(f.empId); });
@@ -1403,10 +2616,18 @@ $('#expA').onclick=()=>{
 
   XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([
     ['항목','설정값'],['휴가류 근태값',$('#vLeave').value],['법일 근태값',$('#vHol').value],
-    ['조퇴·미입력 근태값',$('#vEarly').value],['급여요일 평일 표기',$('#vWd').value],
+    ['조퇴·지각 근태값',$('#vEarly').value],['결근 근태값',$('#vAbs').value],
+    ['근태코드 → 급여요일 기준표',($('#vMap').value||'').replace(/\n/g,' / ')],['급여요일 평일 표기',$('#vWd').value],
     ['급여요일 법일 표기',$('#vHd').value],['소정 근무시간 기준',$('#vStd').value],
     ['휴게시간 차감(분)',$('#vBreak').value],['출근센싱 허용 오차(분)',$('#vTol').value+' (초과 시 이상 → 30분 이상 차이 검출)'],
     ['자정 넘김 보정',$('#vWrap').checked?'적용':'미적용'],
+    ['휴무(정일) 근태값',$('#vOff').value],
+    ['주(월~일)당 정일 일수',$('#vOffWk').value+' · 중도 입사·퇴사 주 포함'+(document.querySelector('#vPartWk').checked?' · 파일 잘린 주도 검사':' · 파일 앞뒤 잘린 주 제외')],
+    ['기준 연도',$('#vYear').value],
+    ['이 달 법일 기준 일수', ($('#vHolQuota').value.trim()||`자동 ${A.holQuota??'-'}일`)+' (공휴일 목록 중 평일 수)'],
+    ['법일 판정 방식','날짜 고정이 아니라 그 달 안의 개수로 판정 — 법일은 아무 날에나 지정 가능'],
+    ['연장 절사', `${$('#vOtUnit').value}분 단위 · ${$('#vOtMode').selectedOptions[0].text}`],
+    ['적용 법정공휴일',[...holSetA()].sort().join(', ')],
     ['검수 행수',A.rows.length],['이상 건수',A.find.length],
     ['이전 검수와 비교',A.prev?`${A.prev.저장시각||''} (이상 ${A.prev.이상건수}건) 대비 · 해결 ${(A.resolved||[]).length}건 / 남음 ${A.find.filter(f=>f.status==='남음').length}건 / 신규 ${A.find.filter(f=>f.status==='신규').length}건`:'미사용'],
     ['원본 위치 표기','원본 행 = 엑셀 행번호, 원본 셀 = 고칠 칸 주소 (예: G45)'],
@@ -1414,8 +2635,51 @@ $('#expA').onclick=()=>{
   ]),'검수기준');
   XLSX.writeFile(wb,`${A.fname||'근태'}_검수결과.xlsx`);
 };
+/* ── 탭 ─────────────────────────────────────────────────────── */
+const TABS={list:'tabList',heat:'tabHeat',rank:'tabRank'};
+function showTab(name){
+  $$('.ptabs button').forEach(x=>x.classList.toggle('on',x.dataset.tab===name));
+  Object.entries(TABS).forEach(([k,id])=>$('#'+id).hidden = k!==name);
+  if(name==='heat') renderHeat();
+  if(name==='rank') renderRank();
+}
+$$('.ptabs button').forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
+function renderRank(){
+  const nm=new Map(); A.rows.forEach(r=>{ if(!nm.has(r.empId)) nm.set(r.empId,r.name||''); });
+  const by={}; A.find.forEach(f=>{ const e=(by[f.empId] ||= {n:0,d:new Set(),r:{}});
+    e.n++; if(f.date&&f.date!=='-') e.d.add(f.date); e.r[f.rule]=(e.r[f.rule]||0)+1; });
+  const ids=Object.keys(by).sort((x,y)=>by[y].n-by[x].n);
+  if(!ids.length){ $('#tabRank').innerHTML='<div class="empty">이상이 있는 인원이 없습니다. 👍</div>'; return; }
+  const mx=by[ids[0]].n, won=!!(A.wageMap&&A.wageMap.size);
+  $('#rankT').innerHTML=`<thead><tr><th>순위</th><th>인원</th><th class="num">건수</th><th>구성</th><th style="width:34%">비중</th>${won?'<th class="num">급여 영향</th>':''}</tr></thead><tbody>`+
+    ids.map((id,i)=>{ const e=by[id];
+      const w=won? A.find.filter(f=>f.empId===id).reduce((s,f)=>s+(f.won||0),0):null;
+      return `<tr data-rk="${id}" style="cursor:pointer">
+      <td class="num muted">${i+1}</td>
+      <td class="nw"><b>${nm.get(id)||''}</b> <span class="muted mono">${id}</span>
+        <div class="muted" style="font-size:11px">${e.d.size}일</div></td>
+      <td class="num"><b style="color:#dc2626;font-size:15px">${e.n}</b></td>
+      <td class="nw">${Object.entries(e.r).sort((a,b)=>b[1]-a[1]).map(([r,c])=>
+        `<span class="tag r mono" style="margin-right:3px">${r}·${c}</span>`).join('')}</td>
+      <td><div style="background:#f0f2f6;border-radius:99px;height:9px;overflow:hidden">
+        <div style="background:#dc2626;height:100%;width:${Math.round(e.n/mx*100)}%"></div></div></td>
+      ${won?`<td class="num nw" style="font-weight:700;color:${w>0?'#b91c1c':(w<0?'#1d4ed8':'#8b93a1')}">${w?(w>0?'+':'')+w.toLocaleString():'-'}</td>`:''}
+    </tr>`; }).join('')+'</tbody>';
+  $$('[data-rk]').forEach(tr=>tr.onclick=()=>{ $('#qA').value=tr.dataset.rk; A.pick=null; A.filter='';
+    A.open=new Set([tr.dataset.rk]); A.autoOpen=true; A.sel=0; $('#ruleF').value=''; showTab('list'); tableA(); });
+}
+
+/* ── 대시보드 모달 · 버튼 배선 ─────────────────────────────── */
+$$('[data-open]').forEach(b=>b.onclick=()=>{ const d=$('#'+b.dataset.open); if(d) d.showModal(); });
+$$('[data-close]').forEach(b=>b.onclick=()=>b.closest('dialog').close());
+$$('#viewAudit dialog').forEach(d=>d.addEventListener('click',e=>{ if(e.target===d) d.close(); }));
+$('#aNew').onclick=()=>{ $('#fileA').value=''; $('#dash').hidden=true; $('#vUp').hidden=false;
+  A.wb=null; A.rows=[]; A.find=[]; A.view=[]; A.pick=null; A.filter=''; A.prev=null; A.roster=null;
+  window.scrollTo({top:0,behavior:'smooth'}); };
+
+if($('#vMap') && !$('#vMap').value.trim()) $('#vMap').value = payMapText();
 renderRules(null);
-go('home');
+go(hashView(), false);
 
 </script>
 </body>
