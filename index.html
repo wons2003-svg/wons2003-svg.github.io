@@ -287,7 +287,7 @@ body.audit #nav{margin-top:9px}
     <button data-v="home" class="on">홈</button>
     <button data-v="analyze">근태 분석기</button>
     <button data-v="audit">근태 검수기</button>
-    <span style="margin-left:auto;align-self:center;font-size:11.5px;opacity:.7">v4.7 · 2026-09</span>
+    <span style="margin-left:auto;align-self:center;font-size:11.5px;opacity:.7">v5.0 · 2026-09</span>
   </nav>
 </div></header>
 
@@ -421,6 +421,13 @@ body.audit #nav{margin-top:9px}
       <option value="5">금요일</option><option value="1">월요일</option>
     </select></div>
     <div class="f"><label>결근 판정 주 단위</label><select id="wkBase" disabled><option>월요일 ~ 일요일 (ISO)</option></select></div>
+    <div class="f"><label>주휴 1개 기준 출근일수</label><input type="number" id="whBase" value="5" min="1" max="7" step="1" style="width:150px"></div>
+    <div class="f" style="justify-content:flex-end"><label>&nbsp;</label>
+      <label class="muted"><input type="checkbox" id="whSun" checked> 주휴일(일요일) <b>당일</b>도 출근일수에 포함</label></div>
+    <div class="f"><label>파일 앞뒤가 잘린 주</label><select id="whEdge" style="width:200px">
+      <option value="full" selected>온전한 주로 인정 (재직자)</option>
+      <option value="pro">기록된 일수로 비례 계산</option>
+      <option value="skip">주휴에서 제외</option></select></div>
     <div class="f" style="justify-content:flex-end"><label>&nbsp;</label>
       <label class="muted"><input type="checkbox" id="holFromCode" checked> 근태코드가 <b>공휴·휴일</b> 계열인 날도 법정공휴일로 인정</label></div>
   </div>
@@ -448,8 +455,18 @@ body.audit #nav{margin-top:9px}
     <div class="f"><label>기본 시급 (표에 없는 인원용)</label><input type="number" id="wDefault" placeholder="비우면 계산 제외" style="width:190px"></div>
   </div>
   <div class="split">
+    <b style="font-size:13px">대상자 명단 파일 (사번 · 성명 · 시급 · 입사일 · 퇴사일)</b>
+    <button class="sm" id="rosBtn2">파일 선택 (.xlsx/.csv)</button>
+    <input type="file" id="rosFile2" accept=".xlsx,.xlsm,.xls,.csv" hidden>
+    <button class="sm" id="rosClear2">지우기</button>
+  </div>
+  <div id="rosInfo2A" class="muted" style="margin-bottom:12px">
+    사번만 있어도 되고, <b>시급</b>이 있으면 아래 표가 자동으로 채워집니다.
+    <b>입사일·퇴사일</b>이 있으면 <b>입사·퇴사한 달의 부분 주만 주휴를 비례로</b> 계산합니다.
+  </div>
+  <div class="split">
     <b style="font-size:13px">사번별 시급표</b>
-    <span class="muted">엑셀에서 <b>사번·시급 두 열</b>을 선택해 복사한 뒤 아래에 붙여넣으세요 (Ctrl+V)</span>
+    <span class="muted">직접 붙여넣어도 됩니다 — 엑셀에서 <b>사번·시급 두 열</b> 복사 후 Ctrl+V</span>
   </div>
   <textarea id="wTable" placeholder="2019101&#9;10400&#10;2020102&#9;10800&#10;2021103&#9;11200" style="width:100%;height:120px;font-family:ui-monospace,monospace;font-size:12px;border:1px solid var(--line);border-radius:8px;padding:9px"></textarea>
   <div id="wInfo" class="muted" style="margin-top:8px"></div>
@@ -484,7 +501,7 @@ body.audit #nav{margin-top:9px}
 </div>
 
 <footer>
-  <b>근태 도구 v4.7 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
+  <b>근태 도구 v5.0 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
   ⓘ 이 도구는 업로드한 파일을 브라우저 메모리에서만 계산합니다. 네트워크 전송·서버 저장이 없습니다.<br>
   ⓘ 총근로시간 = 기본(소정) + 연장 + 휴일근로. <b>야간·심야는 가산수당 산정용으로 따로 표시</b>하며 총합에 중복 더하지 않습니다 — 심야 연장은 이미 연장시간에 포함돼 있는 경우가 많아 더하면 이중 계산이 됩니다.<br>
   ⓘ 급여일수 = 평일(월~금, 법정공휴일 제외) + 법정공휴일. 인정 일요일수 = 데이터상 일요일 수 − 결근이 있는 주(월~일)의 일요일 수.<br>
@@ -793,7 +810,7 @@ const DEFAULT_DICT = [
   ['무급','무급휴직','무급/결근',1,0,0,0],
 ].map(a=>({code:a[0],label:a[1],cat:a[2],days:a[3],workH:a[4],paidH:a[5],leave:a[6]}));
 
-const S = {wb:null, aoa:[], headers:[], dict:null, records:[], sum:[], tab:'pay', fname:'', holTouched:false};
+const S = {wb:null, aoa:[], headers:[], dict:null, records:[], sum:[], tab:'pay', fname:'', holTouched:false, roster:null};
 
 /* 관공서 공휴일 규정 + 대체공휴일 원칙에 따라 채운 기본값.
    음력 기준일(설·추석·부처님오신날)과 선거일·임시공휴일은 해마다 달라지므로 반드시 확인 후 사용. */
@@ -897,7 +914,39 @@ $('#sheet').onchange = loadSheet;
 $('#holReload').onclick = () => { $('#holList').value = holDefaults(+$('#yy').value); S.holTouched=false; recalc(); };
 $('#holList').oninput = () => { S.holTouched=true; recalc(); };
 $('#sunDow').onchange = $('#holFromCode').onchange = recalc;
+$('#whBase').oninput = recalc;
+$('#whSun').onchange = $('#whEdge').onchange = recalc;
 $('#pdWd').oninput = $('#pdHd').oninput = recalc;
+/* 분석기 : 대상자 명단(사번·성명·시급·입사일·퇴사일) */
+$('#rosBtn2').onclick=()=>$('#rosFile2').click();
+$('#rosClear2').onclick=()=>{ S.roster=null;
+  $('#rosInfo2A').innerHTML='사번만 있어도 되고, <b>시급</b>이 있으면 아래 표가 자동으로 채워집니다. <b>입사일·퇴사일</b>이 있으면 <b>입사·퇴사한 달의 부분 주만 주휴를 비례로</b> 계산합니다.';
+  recalc(); };
+$('#rosFile2').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
+  readTable(f,{id:/사번|사원번호|직번|emp/i, name:/성명|이름|name/i,
+               w:/시급|단가|시간당|임률|임율|rate|wage/i,
+               hire:/입사|입사일|시작일|hire|join/i,
+               quit:/퇴사|퇴사일|종료일|quit|leave.?date/i},
+    (rowsR,hdr,col)=>{
+      const m=new Map(); const lines=[]; let nh=0,nq=0;
+      rowsR.forEach(r=>{ const id=norm(r.id); if(!id) return;
+        const o={name:norm(r.name), hire:null, quit:null};
+        if(col.hire>=0){ o.hire=pDate(r.hire, +$('#yy').value||new Date().getFullYear()); if(o.hire) nh++; }
+        if(col.quit>=0){ o.quit=pDate(r.quit, +$('#yy').value||new Date().getFullYear()); if(o.quit) nq++; }
+        m.set(id,o);
+        if(col.w>=0){ const w=num(r.w); if(isFinite(w)&&w>0) lines.push(id+'\t'+w); } });
+      if(!m.size){ alert('사번 열을 찾지 못했습니다.\n파일 첫 행에 「사번」 머리글이 있는지 확인해 주세요.'); return; }
+      S.roster=m;
+      if(lines.length) $('#wTable').value=lines.join('\n');
+      const parts=[`명단 <b>${m.size}명</b>`];
+      parts.push(lines.length? `시급 <b>${lines.length}명</b>` : `<span style="color:#b45309">시급 열 없음</span>`);
+      parts.push(nh? `입사일 <b>${nh}명</b>` : `<span style="color:#b45309">입사일 열 없음</span>`);
+      if(nq) parts.push(`퇴사일 <b>${nq}명</b>`);
+      $('#rosInfo2A').innerHTML=`<b>${f.name}</b> · ${parts.join(' · ')} 인식`
+        + (nh? ' — 입사·퇴사한 달의 부분 주는 주휴를 <b>비례</b>로 계산합니다.' : '');
+      recalc();
+    }, ['id']);
+  e.target.value=''; };
 ['wTable','wBreak','wOtRate','wDefault'].forEach(id=>{ const el=$('#'+id);
   if(el) el.oninput=()=>{ calcWage(); if(S.tab==='wage') renderTable(); }; });
 function syncHolidays(){ if(!S.holTouched) $('#holList').value = holDefaults(+$('#yy').value||new Date().getFullYear()); }
@@ -1104,6 +1153,14 @@ function aggregate(){
   const blankWork=$('#blankWork')?.checked;
   const usePD=S.records.some(r=>r.payday), PDW=norm($('#pdWd')?.value||'평일'), PDH=norm($('#pdHd')?.value||'법일');
   S.usePD=usePD;
+  const WHB=Math.max(1,+($('#whBase')?.value)||5), WHSUN=!!$('#whSun')?.checked;
+  // 대상 월 = 파일에서 가장 많이 나온 연·월
+  const mc={}; S.records.forEach(r=>{ if(r.dt){ const k=r.dt.getFullYear()*12+r.dt.getMonth(); mc[k]=(mc[k]||0)+1; } });
+  const TMON = Object.keys(mc).length? +Object.entries(mc).sort((a,b)=>b[1]-a[1])[0][0] : null;
+  S.targetMonth = TMON;
+  const WHEDGE=$('#whEdge')?.value||'full';
+  let FMIN=null,FMAX=null;
+  S.records.forEach(r=>{ if(r.dt){ if(!FMIN||r.dt<FMIN) FMIN=r.dt; if(!FMAX||r.dt>FMAX) FMAX=r.dt; } });
   for(const r of S.records){
     const k=key(r.code);
     codeCount[k]=(codeCount[k]||0)+1;
@@ -1112,7 +1169,7 @@ function aggregate(){
     if(r.code && !d) unknown.add(r.code);
     const cat = d? d.cat : (r.code? '미분류':'기타');
     let e=byEmp.get(r.empId);
-    if(!e){ e={empId:r.empId,name:r.name,dept:r.dept,대상일수:0,근무일수:0,휴일근무:0,출장교육:0,
+    if(!e){ e={empId:r.empId,name:r.name,dept:r.dept,대상일수:0,근무일수:0,실출근일수:0,유급휴무:0,유급휴무상세:{},휴일근무:0,출장교육:0,
                휴무일수:0,휴가일수:0,결근일수:0,미분류:0,연차차감:0,
                기본시간:0,연장시간:0,야간시간:0,휴일근로:0,유급시간:0,codes:{},days:[],weeks:{},_d:new Map()};
       byEmp.set(r.empId,e); }
@@ -1120,11 +1177,18 @@ function aggregate(){
     if(!e.dept && r.dept) e.dept=r.dept;
     const days = d? d.days : 1;
     if(r.code||asBlank) e.대상일수++;
-    if(cat==='근무') e.근무일수+=days;
-    else if(cat==='휴일근무'){ e.근무일수+=days; e.휴일근무+=days; }
-    else if(cat==='출장/교육'){ e.근무일수+=days; e.출장교육+=days; }
-    else if(cat==='휴무') e.휴무일수+=days;
-    else if(cat==='유급휴가') e.휴가일수+=days;
+    const paidOff = !!(d && d.paidH>0);          // 급여가 나오는 날(유급)
+    if(cat==='근무') e.실출근일수+=days;
+    else if(cat==='휴일근무'){ e.실출근일수+=days; e.휴일근무+=days; }
+    else if(cat==='출장/교육'){ e.실출근일수+=days; e.출장교육+=days; }
+    else if(cat==='휴무'){
+      if(paidOff){ e.유급휴무+=days; e.유급휴무상세[r.code||'(빈칸)']=(e.유급휴무상세[r.code||'(빈칸)']||0)+days; }
+      else e.휴무일수+=days;   // 무급 휴무(정일 등)만 여기로
+    }
+    else if(cat==='유급휴가'){
+      if(paidOff){ e.유급휴무+=days; e.유급휴무상세[r.code||'(빈칸)']=(e.유급휴무상세[r.code||'(빈칸)']||0)+days; }
+      else e.휴가일수+=days;   // 무급 성격의 휴가(보건휴가 등)
+    }
     else if(cat==='무급/결근') e.결근일수+=days;
     else if(cat==='미분류') e.미분류+=days;
     e.연차차감 += d? d.leave : 0;
@@ -1142,7 +1206,8 @@ function aggregate(){
     if(r.dt){ const w=isoWeek(r.dt); (e.weeks[w] ||= {base:0,ot:0,hol:0}); e.weeks[w].base+=base; e.weeks[w].ot+=ot; e.weeks[w].hol+=hol; }
     if(r.dateKey){
       let dd=e._d.get(r.dateKey);
-      if(!dd){ dd={dt:r.dt, absent:false, hol:false, pd:''}; e._d.set(r.dateKey,dd); }
+      if(!dd){ dd={dt:r.dt, absent:false, hol:false, pd:'', work:false}; e._d.set(r.dateKey,dd); }
+      if(cat==='근무'||cat==='휴일근무'||cat==='출장/교육'||paidOff) dd.work=true;
       if(r.payday && !dd.pd) dd.pd=r.payday;
       if(cat==='무급/결근') dd.absent=true;
       if(useCodeHol && cat==='휴무'){
@@ -1168,30 +1233,60 @@ function aggregate(){
       }
       if(dow===SUN) e.일요일수++;
       const w=isoWeek(dd.dt);
-      (pw[w] ||= {sun:0,absent:false});
-      if(dow===SUN) pw[w].sun++;
+      (pw[w] ||= {sun:0,absent:false,work:0,days:0,sunDate:null,monDate:null});
+      if(!pw[w].monDate){ const mo=new Date(dd.dt); mo.setDate(mo.getDate()-((mo.getDay()+6)%7)); pw[w].monDate=mo; }
+      if(dow===SUN){ pw[w].sun++; pw[w].sunDate=dd.dt; }
       if(dd.absent) pw[w].absent=true;
+      pw[w].days++;
+      if(dd.work && (WHSUN || dow!==SUN)) pw[w].work++;   // 그 주 출근(유급휴무 포함) 일수
     }
     const wv=Object.values(pw);
     e.급여일수  = e.평일수 + e.공휴일수;
     e.결근주    = wv.filter(x=>x.absent).length;
     e.차감일요일 = wv.filter(x=>x.absent).reduce((s,x)=>s+x.sun,0);
     e.인정일요일 = e.일요일수 - e.차감일요일;
-    e.총유급일수 = e.급여일수 + e.인정일요일;
+    // ── 주휴 : 월~일 주 단위, 그 주 '일요일이 대상 월에 속한 주'만 셈 ──
+    //    한 주 주휴 = min(1, 그 주 출근일수 ÷ 기준 출근일수) · 결근이 1일이라도 있으면 0
+    const ro = S.roster? S.roster.get(e.empId) : null;
+    const HIRE = ro && ro.hire, QUIT = ro && ro.quit;
+    if(ro){ if(!e.name && ro.name) e.name=ro.name; e.입사일=HIRE?dKey(HIRE):''; e.퇴사일=QUIT?dKey(QUIT):''; }
+    e.주휴상세 = Object.entries(pw).map(([w,v])=>{
+      const sd=v.sunDate;
+      const inM = sd && (TMON===null || (sd.getFullYear()*12+sd.getMonth())===TMON);
+      const mon=v.monDate; const sun=new Date(mon); sun.setDate(sun.getDate()+6);
+      const edge = (FMIN && mon<FMIN) || (FMAX && sun>FMAX);   // 파일 앞뒤가 잘려 기록이 없는 주
+      const hireWk = HIRE && HIRE>mon && HIRE<=sun;   // 이 주 안에 입사
+      const quitWk = QUIT && QUIT>=mon && QUIT<sun;   // 이 주 안에 퇴사
+      let ratio=0, note='';
+      if(!inM){ note='이 달 아님'; }
+      else if(v.absent){ ratio=0; note='결근'; }
+      else if(hireWk||quitWk){ ratio=Math.min(1, v.work/WHB); note=(hireWk?'입사 주':'퇴사 주')+' — 비례'; }
+      else if(edge && WHEDGE==='full'){ ratio=1; note='파일 경계(온전한 주로 인정)'; }
+      else if(edge && WHEDGE==='skip'){ ratio=0; note='파일 경계(제외)'; }
+      else ratio=Math.min(1, v.work/WHB);
+      return {주:`${dKey(mon)} ~ ${dKey(sun)}`, 주휴일:sd?dKey(sd):'(이 달 아님)', 대상:!!inM, 출근:v.work, 기록:v.days,
+              결근:v.absent, 비고:note, 주휴:Math.round(ratio*100)/100};
+    }).sort((a,b)=>a.주<b.주?-1:1);
+    e.주휴 = Math.round(e.주휴상세.reduce((s,x)=>s+x.주휴,0)*10)/10;
+    e.주휴대상주 = e.주휴상세.filter(x=>x.대상).length;
+    e.총유급일수 = e.급여일수 + e.주휴;
     delete e._d;
     e.총근로 = r2(e.기본시간+e.연장시간+e.휴일근로);
     const toHM=n=>`${Math.floor(n/60)}:${String(n%60).padStart(2,'0')}`;
     e.연장분 = Math.round(e.연장시간*60);   e.연장HM = toHM(e.연장분);
     e.심야분 = Math.round(e.야간시간*60);   e.심야HM = toHM(e.심야분);
     e.휴일분 = Math.round(e.휴일근로*60);   e.휴일HM = toHM(e.휴일분);
-    e.출근일수 = 0; // 아래에서 근무일수와 동기화
-    ['근무일수','휴일근무','출장교육','휴무일수','휴가일수','결근일수','미분류','연차차감','기본시간','연장시간','야간시간','휴일근로','유급시간'].forEach(k=>e[k]=r2(e[k]));
+    // 근무일수 = 실제 출근일수 + 유급휴무(연차·연중·예비군·경조·건강검진·법일 등)
+    e.근무일수 = r2(e.실출근일수 + e.유급휴무);
+    e.출근일수 = r2(e.실출근일수);
+    ['근무일수','실출근일수','유급휴무','휴일근무','출장교육','휴무일수','휴가일수','결근일수','미분류','연차차감','기본시간','연장시간','야간시간','휴일근로','유급시간'].forEach(k=>e[k]=r2(e[k]));
     const wk=Object.entries(e.weeks).map(([w,v])=>({w,tot:r2(v.base+v.ot+v.hol),ot:r2(v.ot+v.hol)}));
     e.weekList=wk.sort((a,b)=>a.w<b.w?-1:1);
     e.주52초과 = wk.filter(x=>x.tot>52).length;
     e.주12초과 = wk.filter(x=>x.ot>12).length;
     e.평균주연장 = wk.length? r2(wk.reduce((s,x)=>s+x.ot,0)/wk.length) : 0;
-    e.출근일수 = e.근무일수;
+    e.평균주연장분 = Math.round(e.평균주연장*60);
+    e.주연장분목록 = wk.map(x=>Math.round(x.ot*60));
     e.이슈=[]; if(e.미분류>0) e.이슈.push('미분류코드');
     if(e.결근주>0) e.이슈.push(`주휴차감 ${e.차감일요일}일`);
     if(e.주52초과) e.이슈.push(`주52h초과 ${e.주52초과}주`);
@@ -1243,8 +1338,9 @@ function renderUnknown(){
 function renderKpi(){
   const t=(f)=>r2(S.sum.reduce((s,e)=>s+e[f],0));
   const issue=S.sum.filter(e=>e.이슈.length).length;
-  const k=[['인원',S.sum.length,'명'],['총 출근일수',t('근무일수'),'일'],
-    ['총 급여일수',t('급여일수'),'일'],['총 인정 일요일',t('인정일요일'),'일'],
+  const k=[['인원',S.sum.length,'명'],['총 근무일수',t('근무일수'),'일'],
+    ['└ 출근',t('출근일수'),'일'],['└ 유급휴무',t('유급휴무'),'일'],
+    ['총 급여일수',t('급여일수'),'일'],['총 주휴',r2(t('주휴')),'개'],
     ['총 연장시간(분)',t('연장분').toLocaleString(),'분'],['총 심야(분)',t('심야분').toLocaleString(),'분'],
     ['총 기본(소정)시간',t('기본시간'),'h'],['총 휴일근로',t('휴일근로'),'h'],
     ['확인 필요 인원',issue,'명']];
@@ -1307,12 +1403,13 @@ const WAGECOLS=[['사번','empId'],['성명','name'],['부서','dept'],['근무�
   ['연장(분)','연장분',1],['연장시간','연장시간',1],['연장수당','연장수당',1,'won'],
   ['지급합계','지급합계',1,'won']];
 const PAYCOLS=[['사번','empId'],['성명','name'],['부서','dept'],
-  ['출근일수','출근일수',1],['평일수','평일수',1],['법정공휴일수','공휴일수',1],['급여일수','급여일수',1],
-  ['일요일수','일요일수',1],['결근 주','결근주',1],['차감 일요일','차감일요일',1],['인정 일요일수','인정일요일',1],
+  ['근무일수','근무일수',1],['출근일수','출근일수',1],['유급휴무','유급휴무',1],
+  ['평일수','평일수',1],['법정공휴일수','공휴일수',1],['급여일수','급여일수',1],
+  ['입사일','입사일'],['일요일수','일요일수',1],['주휴 대상주','주휴대상주',1],['결근 주','결근주',1],['주휴','주휴',1],
   ['총유급일수','총유급일수',1],
   ['연장(분)','연장분',1],['연장(시:분)','연장HM'],
   ['심야(분)','심야분',1],['심야(시:분)','심야HM'],
-  ['휴일근로(분)','휴일분',1],['연장(h)','연장시간',1]];
+  ['휴일근로(분)','휴일분',1],['주평균연장(분)','평균주연장분',1]];
 function renderTable(){
   const rows=filtered();
   if(S.tab==='pay'){
@@ -1344,11 +1441,12 @@ function renderTable(){
     $$('#out tbody tr').forEach(tr=>tr.onclick=()=>detail(tr.dataset.id));
   }
   else if(S.tab==='sum'){
-    const cols=[['사번','empId'],['성명','name'],['부서','dept'],['대상일수','대상일수',1],['근무일수','근무일수',1],
-      ['휴일근무','휴일근무',1],['출장/교육','출장교육',1],['휴무','휴무일수',1],['휴가','휴가일수',1],
-      ['연차차감','연차차감',1],['결근','결근일수',1],['미분류','미분류',1],
-      ['기본시간','기본시간',1],['연장시간','연장시간',1],['연장(분)','연장분',1],['야간시간','야간시간',1],['심야(분)','심야분',1],['휴일근로','휴일근로',1],['총근로','총근로',1],
-      ['주평균연장','평균주연장',1]];
+    const cols=[['사번','empId'],['성명','name'],['부서','dept'],['대상일수','대상일수',1],
+      ['근무일수','근무일수',1],['출근일수','출근일수',1],['유급휴무','유급휴무',1],
+      ['휴일근무','휴일근무',1],['출장/교육','출장교육',1],['휴무(무급)','휴무일수',1],['무급휴가','휴가일수',1],
+      ['연차차감','연차차감',1],['결근','결근일수',1],['주휴','주휴',1],['미분류','미분류',1],
+      ['기본시간','기본시간',1],['연장(분)','연장분',1],['심야(분)','심야분',1],['휴일근로(분)','휴일분',1],['총근로','총근로',1],
+      ['주평균연장(분)','평균주연장분',1]];
     $('#out').innerHTML=`<thead><tr>${cols.map(c=>`<th class="${c[2]?'num':''}">${c[0]}</th>`).join('')}<th>확인</th></tr></thead><tbody>`+
       rows.map(e=>`<tr data-id="${e.empId}" style="cursor:pointer">${cols.map(c=>`<td class="${c[2]?'num':''}">${e[c[1]]}</td>`).join('')}
       <td>${e.이슈.length? e.이슈.map(t=>`<span class="tag ${t.includes('미분류')?'y':'r'}">${t}</span>`).join(' ') : '<span class="tag g">정상</span>'}</td></tr>`).join('')+'</tbody>';
@@ -1361,10 +1459,13 @@ function renderTable(){
   }
   else if(S.tab==='wk'){
     const ws=[...new Set(S.sum.flatMap(e=>e.weekList.map(w=>w.w)))].sort();
-    $('#out').innerHTML=`<thead><tr><th>사번</th><th>성명</th>${ws.map(w=>`<th class="num">${w.slice(5)}</th>`).join('')}<th class="num">52h초과주</th></tr></thead><tbody>`+
+    $('#out').innerHTML=`<thead><tr><th>사번</th><th>성명</th>${ws.map(w=>`<th class="num">${w.slice(5)}</th>`).join('')}
+      <th class="num">주평균연장(분)</th><th class="num">52h초과주</th></tr></thead><tbody>`+
       rows.map(e=>{const m=Object.fromEntries(e.weekList.map(w=>[w.w,w]));
         return `<tr><td>${e.empId}</td><td>${e.name}</td>${ws.map(w=>{const v=m[w];
-          return `<td class="num" ${v&&v.tot>52?'style="background:#fef2f2;color:#b91c1c;font-weight:700"':''}>${v? v.tot:''}</td>`;}).join('')}
+          return `<td class="num" ${v&&v.tot>52?'style="background:#fef2f2;color:#b91c1c;font-weight:700"':''}
+            title="${v?`총 ${v.tot}h · 연장 ${Math.round(v.ot*60)}분`:''}">${v? Math.round(v.ot*60).toLocaleString():''}</td>`;}).join('')}
+        <td class="num"><b>${(e.평균주연장분||0).toLocaleString()}</b></td>
         <td class="num">${e.주52초과||''}</td></tr>`;}).join('')+'</tbody>';
   }
   else{
@@ -1392,12 +1493,25 @@ function detail(id){
   }).join('');
   $('#dlgB').innerHTML=`
    <div class="cards">
-     ${[['출근일수',e.출근일수,'일'],['급여일수',e.급여일수,'일'],['인정 일요일',e.인정일요일,'일'],
-        ['연장(분)',(e.연장분||0).toLocaleString(),'분'],['심야(분)',(e.심야분||0).toLocaleString(),'분'],['총근로',e.총근로,'h']]
+     ${[['근무일수',e.근무일수,'일'],['└ 출근',e.출근일수,'일'],['└ 유급휴무',e.유급휴무,'일'],
+        ['급여일수',e.급여일수,'일'],['주휴',e.주휴,'개'],
+        ['연장(분)',(e.연장분||0).toLocaleString(),'분'],['주평균연장',(e.평균주연장분||0).toLocaleString(),'분'],
+        ['심야(분)',(e.심야분||0).toLocaleString(),'분']]
        .map(([l,v,u])=>`<div class="kpi"><div class="l">${l}</div><div class="v">${v}<span class="u">${u}</span></div></div>`).join('')}
    </div>
-   <p class="muted" style="margin:6px 0">평일 ${e.평일수}일 · 법정공휴일 ${e.공휴일수}일 · 일요일 ${e.일요일수}일 (결근 주 ${e.결근주}개 → ${e.차감일요일}일 차감 → 인정 ${e.인정일요일}일)</p>
-   ${e.weekList.length?`<p class="muted" style="margin:6px 0">주차별 총근로 : ${e.weekList.map(w=>`${w.w.slice(5)} ${w.tot}h${w.tot>52?' ⚠':''}`).join(' · ')}</p>`:''}
+   <p class="muted" style="margin:6px 0"><b>근무일수 ${e.근무일수}일</b> = 실제 출근 ${e.출근일수}일 + 유급휴무 ${e.유급휴무}일${
+     Object.keys(e.유급휴무상세||{}).length?` (${Object.entries(e.유급휴무상세).map(([k,v])=>`${k} ${v}`).join(' · ')})`:''}</p>
+   <p class="muted" style="margin:6px 0">평일 ${e.평일수}일 · 법정공휴일 ${e.공휴일수}일 · 일요일 ${e.일요일수}일</p>
+   <div style="margin:8px 0">
+     <b style="font-size:13px">주휴 ${e.주휴}개</b> <span class="muted">— 주(월~일)의 일요일이 이 달에 속하는 주만, 한 주당 min(1, 출근일수 ÷ ${$('#whBase').value})</span>
+     <table style="margin-top:6px;font-size:12px"><thead><tr><th>주(월~일)</th><th>주휴일</th><th class="num">출근</th><th>결근</th><th class="num">주휴</th></tr></thead><tbody>
+     ${e.주휴상세.map(w=>`<tr style="${w.대상?'':'opacity:.45'}">
+        <td class="mono">${w.주}</td><td class="mono">${w.주휴일}</td>
+        <td class="num">${w.대상?w.출근:'-'}</td>
+        <td>${w.결근?'<span class="tag r">결근</span>':`<span class="muted">${w.비고||''}</span>`}</td>
+        <td class="num"><b>${w.대상?w.주휴:0}</b></td></tr>`).join('')}
+     </tbody></table></div>
+   ${e.weekList.length?`<p class="muted" style="margin:6px 0">주차별 연장(분) : ${e.weekList.map((w,i)=>`${w.w.slice(5)} ${Math.round(w.ot*60)}분${w.tot>52?' ⚠':''}`).join(' · ')} → 주평균 <b>${(e.평균주연장분||0).toLocaleString()}분</b></p>`:''}
    <div class="cal">${['월','화','수','목','금','토','일'].map(w=>`<div class="wh">${w}</div>`).join('')}${lead}${cells}</div>`;
   $('#dlg').showModal();
 }
@@ -1405,19 +1519,27 @@ function detail(id){
 /* ---------- 내보내기 ---------- */
 $('#exp').onclick=()=>{
   const wb=XLSX.utils.book_new();
-  const sum=filtered().map(e=>({사번:e.empId,성명:e.name,부서:e.dept,대상일수:e.대상일수,근무일수:e.근무일수,
-    휴일근무일:e.휴일근무,'출장/교육일':e.출장교육,휴무일수:e.휴무일수,휴가일수:e.휴가일수,연차차감:e.연차차감,
-    결근일수:e.결근일수,미분류:e.미분류,'기본(소정)시간':e.기본시간,연장시간:e.연장시간,'연장(분)':e.연장분,야간시간:e.야간시간,'심야(분)':e.심야분,
-    휴일근로시간:e.휴일근로,총근로시간:e.총근로,주평균연장:e.평균주연장,'주52h초과주수':e.주52초과,확인사항:e.이슈.join(', ')}));
+  const sum=filtered().map(e=>({사번:e.empId,성명:e.name,부서:e.dept,대상일수:e.대상일수,
+    '근무일수(출근+유급휴무)':e.근무일수,'실제 출근일수':e.출근일수,'유급휴무일수':e.유급휴무,
+    '유급휴무 내역':Object.entries(e.유급휴무상세||{}).map(([k,v])=>`${k} ${v}일`).join(', '),
+    휴일근무일:e.휴일근무,'출장/교육일':e.출장교육,'무급휴무일수(정일 등)':e.휴무일수,'무급휴가일수':e.휴가일수,연차차감:e.연차차감,
+    결근일수:e.결근일수,주휴:e.주휴,미분류:e.미분류,'기본(소정)시간':e.기본시간,'연장(분)':e.연장분,'심야(분)':e.심야분,
+    '휴일근로(분)':e.휴일분,총근로시간:e.총근로,'주평균연장(분)':e.평균주연장분,'주52h초과주수':e.주52초과,확인사항:e.이슈.join(', ')}));
   XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(sum),'사번별요약');
-  const pay=filtered().map(e=>({사번:e.empId,성명:e.name,부서:e.dept,출근일수:e.출근일수,
+  const pay=filtered().map(e=>({사번:e.empId,성명:e.name,부서:e.dept,
+    '근무일수(출근+유급휴무)':e.근무일수,'실제 출근일수':e.출근일수,'유급휴무일수':e.유급휴무,
     평일수:e.평일수,법정공휴일수:e.공휴일수,'급여일수(평일+공휴일)':e.급여일수,
-    일요일수:e.일요일수,'결근발생 주':e.결근주,'차감 일요일':e.차감일요일,'인정 일요일수':e.인정일요일,
+    입사일:e.입사일||'',퇴사일:e.퇴사일||'',
+    일요일수:e.일요일수,'주휴 대상주':e.주휴대상주,'결근발생 주':e.결근주,주휴:e.주휴,
     '총유급일수':e.총유급일수,
     '연장시간(분)':e.연장분,'연장시간(시:분)':e.연장HM,
     '심야시간(분)':e.심야분,'심야시간(시:분)':e.심야HM,
-    '휴일근로(분)':e.휴일분,'연장시간(h)':e.연장시간}));
+    '휴일근로(분)':e.휴일분,'주평균연장(분)':e.평균주연장분}));
   XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(pay),'급여기준집계');
+  const wh=[]; filtered().forEach(e=>e.주휴상세.forEach(w=>wh.push({사번:e.empId,성명:e.name,입사일:e.입사일||'',
+    '주(월~일 시작)':w.주,'주휴일(일요일)':w.주휴일,'이 달 대상':w.대상?'O':'X',
+    '그 주 출근일수':w.출근,'기록일수':w.기록,결근:w.결근?'O':'',비고:w.비고||'',주휴:w.대상?w.주휴:0})));
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(wh.length?wh:[{안내:'주휴 내역 없음'}]),'주휴상세');
   const W=(S.wage||[]).filter(e=>filtered().some(f=>f.empId===e.empId));
   if(W.length && W.some(e=>e.시급!=null)){
     XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(W.map(e=>({
@@ -1437,6 +1559,10 @@ $('#exp').onclick=()=>{
     ['항목','설정값'],
     ['기준 연월', `${$('#yy').value}-${String($('#mm').value).padStart(2,'0')}`],
     ['주휴 기준 요일', $('#sunDow').selectedOptions[0].text],
+    ['주휴 산정', `주(월~일) 단위 · 그 주 일요일이 대상 월에 속한 주만 · 한 주 = min(1, 출근일수 ÷ ${$('#whBase').value}) · 결근이 1일이라도 있으면 그 주 0`],
+    ['주휴 출근일수에 일요일 포함', $('#whSun').checked?'포함':'제외'],
+    ['파일 앞뒤가 잘린 주', $('#whEdge').selectedOptions[0].text],
+    ['대상자 명단', S.roster? `${S.roster.size}명 (입사일 ${[...S.roster.values()].filter(x=>x.hire).length}명) — 입사·퇴사 주는 비례 계산` : '미사용'],
     ['결근 판정 주 단위','월요일 ~ 일요일 (ISO)'],
     ['급여일수 정의', S.usePD? `파일의 급여요일 열 기준 — 평일="${$('#pdWd').value}" + 법일="${$('#pdHd').value}"` : '평일(공휴일 제외 월~금) + 법정공휴일 (달력 추정)'],
     ['일요일수 차감 규칙','해당 주(월~일)에 결근이 1건이라도 있으면 그 주의 일요일을 제외'],
