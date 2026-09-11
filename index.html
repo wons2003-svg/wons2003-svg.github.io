@@ -287,7 +287,7 @@ body.audit #nav{margin-top:9px}
     <button data-v="home" class="on">홈</button>
     <button data-v="analyze">근태 분석기</button>
     <button data-v="audit">근태 검수기</button>
-    <span style="margin-left:auto;align-self:center;font-size:11.5px;opacity:.7">v4.6 · 2026-09</span>
+    <span style="margin-left:auto;align-self:center;font-size:11.5px;opacity:.7">v4.7 · 2026-09</span>
   </nav>
 </div></header>
 
@@ -484,7 +484,7 @@ body.audit #nav{margin-top:9px}
 </div>
 
 <footer>
-  <b>근태 도구 v4.6 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
+  <b>근태 도구 v4.7 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
   ⓘ 이 도구는 업로드한 파일을 브라우저 메모리에서만 계산합니다. 네트워크 전송·서버 저장이 없습니다.<br>
   ⓘ 총근로시간 = 기본(소정) + 연장 + 휴일근로. <b>야간·심야는 가산수당 산정용으로 따로 표시</b>하며 총합에 중복 더하지 않습니다 — 심야 연장은 이미 연장시간에 포함돼 있는 경우가 많아 더하면 이중 계산이 됩니다.<br>
   ⓘ 급여일수 = 평일(월~금, 법정공휴일 제외) + 법정공휴일. 인정 일요일수 = 데이터상 일요일 수 − 결근이 있는 주(월~일)의 일요일 수.<br>
@@ -651,6 +651,8 @@ body.audit #nav{margin-top:9px}
     <div class="f" style="justify-content:flex-end"><label>&nbsp;</label>
       <label class="muted"><input type="checkbox" id="vPartWk"> 파일 앞뒤가 <b>잘린 주</b>도 검사 (앞뒤 달을 함께 올릴 때만 권장)</label></div>
     <div class="f"><label>이 달 법일 일수 (비우면 자동)</label><input type="number" id="vHolQuota" placeholder="자동" style="width:170px"></div>
+    <div class="f" style="justify-content:flex-end"><label>&nbsp;</label>
+      <label class="muted"><input type="checkbox" id="vHolAll"> 중도 입사·퇴사자도 <b>월 전체 기준</b>을 그대로 적용</label></div>
   </div>
   <div class="split" style="margin-top:6px">
     <b style="font-size:13px">근태코드 → 급여요일 기준표 (R1 판정 기준)</b>
@@ -1627,7 +1629,7 @@ const RULES=[
  {id:'R11',dep:['ws','tin'],n:'근무시작 ↔ 출근(센싱) 차이가 허용치 초과',d:'두 시각 차이가 허용 오차(기본 29분)를 넘는 행 = 30분 이상 차이나는 행을 찾습니다.'},
  {id:'R12',dep:['ws','tout','em'],n:'개별연장(분) 금액이 절사 기준과 다름',d:'기준은 <b>근무시작 + 소정근무시간(8시간)</b> 입니다. 퇴근(센싱)이 그 시각을 넘으면 넘은 만큼이 연장이고, 절사 단위(기본 10분, 올림)로 인정합니다. 예) 08:00 시작 → 기준 16:00, 퇴근 18:04 → 초과 124분 → <b>130분</b>. 근무종료가 잘못 입력돼 있어도 이 기준은 흔들리지 않습니다.'},
  {id:'R13',dep:['date'],n:'한 주(월~일) 정일 일수가 기준과 다름',d:'인원별로 월요일~일요일 한 주에 정일이 지정 일수(기본 2일)만큼 있어야 합니다. <b>법일이 있는 주도 정일은 그대로 2일</b>이어야 합니다(정일 2 + 법일 1). 중도 입사·퇴사로 생긴 부분 주도 검사하며, 파일 앞뒤가 잘려서 생긴 주만 제외합니다.'},
- {id:'R14',dep:['date'],n:'이 달 법일 일수가 기준과 다름',d:'법일은 날짜가 정해져 있지 않고 그 달 안에서 자유롭게 잡을 수 있으므로, <b>인원별 법일 개수</b>가 그 달 기준과 맞는지 봅니다. 기준 = 공휴일 목록 중 평일에 해당하는 날 수 (토·일에 온 공휴일은 법일이 생기지 않고, 대체공휴일이 평일이면 그 몫으로 1개). 위 칸에 숫자를 넣어 직접 지정할 수도 있습니다.'},
+ {id:'R14',dep:['date'],n:'이 달 법일 일수가 기준과 다름',d:'법일은 날짜가 정해져 있지 않고 그 달 안에서 자유롭게 잡을 수 있으므로, <b>인원별 법일 개수</b>가 그 달 기준과 맞는지 봅니다. 기준 = 공휴일 목록 중 평일에 해당하는 날 수 (토·일에 온 공휴일은 법일이 생기지 않고, 대체공휴일이 평일이면 그 몫으로 1개).<br><br><b>중도 입사·퇴사자</b>는 기본적으로 <b>그 사람의 근무 기간</b>에 들어오는 공휴일만 기준으로 셉니다 — 공휴일 이후에 입사했으면 기준이 0이 됩니다. 회사가 달 단위로 똑같이 준다면 위 <b>「중도 입사·퇴사자도 월 전체 기준을 그대로 적용」</b>을 체크하세요. 위 칸에 숫자를 넣어 직접 지정할 수도 있습니다.<br><br>메시지에 <b>실제 법일이 잡힌 날짜</b>와 <b>기준이 된 공휴일 날짜</b>가 함께 표시되니, 결과가 이상하면 그 두 가지를 먼저 비교해 보세요.'},
  {id:'R18',n:'명단에 있는데 근태 기록이 없는 인원',d:'대상 인원 명단에는 있는데 이 근태 파일에 한 줄도 없는 사번을 찾습니다. 명단을 넣었을 때만 동작합니다.'},
  {id:'R19',n:'근태에 있는데 명단에 없는 사번',d:'근태 파일에는 있는데 대상 인원 명단에 없는 사번을 찾습니다. 퇴사자이거나 사번 오입력일 수 있습니다. 명단을 넣었을 때만 동작합니다.'},
  {id:'R24',dep:['ws','we','tin','tout'],n:'근무시간은 비었는데 센싱에만 값이 있음',
@@ -1784,7 +1786,7 @@ function wageMapA(){
   return m;
 }
 $('#vHolReload').onclick=()=>{ $('#vHolList').value=holDefaults(+$('#vYear').value||new Date().getFullYear()); runA(); };
-['vLeave','vHol','vEarly','vAbs','vMap','vWd','vHd','vOd','vStd','vBreak','vTol','vOtUnit','vOtMode','vWrap','vOff','vOffWk','vPartWk','vHolQuota','vHolList'].forEach(id=>{
+['vLeave','vHol','vEarly','vAbs','vMap','vWd','vHd','vOd','vStd','vBreak','vTol','vOtUnit','vOtMode','vWrap','vOff','vOffWk','vPartWk','vHolQuota','vHolAll','vHolList'].forEach(id=>{
   const el=$('#'+id); if(el) el[el.type==='checkbox'?'onchange':'oninput']=runA; });
 
 /* ---- 규칙 표 ---- */
@@ -1843,10 +1845,18 @@ function runA(){
             excelRow:r.excelRow,cell:cell||'',row:r}); };
 
   const body=A.aoa.slice(A.hrow+1);
+  let lastId='', carried=0, dropped=[];
   for(let ri=0; ri<body.length; ri++){
     const raw=body[ri]||[];
     const excelRow=A.hrow+ri+2;
-    const empId=norm(raw[m.empId]); if(!empId) continue;
+    let empId=norm(raw[m.empId]);
+    if(!empId){
+      // 사번이 비어 있어도 내용이 있는 행이면 버리지 않고 바로 위 사번을 이어받는다
+      const hasAny = [m.date,m.code,m.pay,m.ws,m.we,m.tin,m.tout].some(i=>i>=0 && norm(raw[i])!=='');
+      if(hasAny && lastId){ empId=lastId; carried++; }
+      else { if(hasAny) dropped.push(excelRow); continue; }
+    }
+    lastId=empId;
     const g=i=>i>=0?raw[i]:null;
     const rv=i=>{ const v=g(i); if(v instanceof Date) return hm(v.getHours()*60+v.getMinutes()); return norm(v); };
     let dv=g(m.date), ds='';
@@ -1981,8 +1991,8 @@ function runA(){
       if(r.dt<w.min) w.min=r.dt;
       if(r.dt>w.max) w.max=r.dt;
       if(r.dt<w.first.dt) w.first=r;
-      const pe=(emp[r.empId] ||= {hol:0,first:r,min:r.dt,max:r.dt});
-      if(HOLI.has(c)) pe.hol++;
+      const pe=(emp[r.empId] ||= {hol:0,days:[],first:r,min:r.dt,max:r.dt});
+      if(HOLI.has(c)){ pe.hol++; pe.days.push(dKey(r.dt)); }
       if(r.dt<pe.min){ pe.min=r.dt; pe.first=r; }
       if(r.dt>pe.max) pe.max=r.dt;
       if(!fMin||r.dt<fMin) fMin=r.dt;
@@ -2010,12 +2020,16 @@ function runA(){
       _bad: !skip && w.off!==OFFWK, _skip:skip};
   }).sort((a,b)=> a.사번===b.사번 ? (a['주(월~일)']<b['주(월~일)']?-1:1) : (a.사번<b.사번?-1:1));
 
+  const wdHolDays=(a,b)=>holList_.filter(d=>{const dw=d.getDay(); return dw>=1&&dw<=5&&d>=a&&d<=b;});
+  const HOLALL=$('#vHolAll')?.checked;
   A.holTable = Object.keys(emp).map(id=>{
     const pe=emp[id];
-    const q = manualQ==='' ? wdHol(pe.min,pe.max) : (+manualQ||0);
+    pe.basis = manualQ==='' ? (HOLALL? wdHolDays(fMin,fMax) : wdHolDays(pe.min,pe.max)) : [];
+    const q = manualQ==='' ? pe.basis.length : (+manualQ||0);
     pe.quota=q;
     return {사번:id, 성명:pe.first.name, 기간:`${dKey(pe.min)} ~ ${dKey(pe.max)}`,
-      [HDNM]:pe.hol, 기준:q,
+      [HDNM]:pe.hol, [HDNM+' 날짜']:(pe.days||[]).join(', '),
+      기준:q, '기준 근거(평일 공휴일)':pe.basis.map(d=>dKey(d)).join(', '),
       판정: pe.hol===q ? '정상' : (pe.hol<q ? `부족 ${q-pe.hol}일` : `초과 ${pe.hol-q}일`),
       _bad: pe.hol!==q};
   }).sort((a,b)=>a.사번<b.사번?-1:1);
@@ -2046,12 +2060,14 @@ function runA(){
     for(const id of Object.keys(emp)){
       const pe=emp[id];
       const quota = pe.quota||0;   // 기준 = 공휴일 목록 중 '평일'이면서 그 인원 근무기간에 속하는 날 수
+      const HDNM2=$('#vHol').value.split(',')[0].trim()||'법일';
       if(pe.hol===quota) continue;
+      const basis=(pe.basis||[]).map(d=>dKey(d).slice(5)).join(', ');
       add('R14', pe.first,
-        `이 기간 법일이 ${pe.hol}일 (기준 ${quota}일)`,
+        `이 기간 ${HDNM2}이 ${pe.hol}일${pe.days.length?` (${pe.days.map(d=>d.slice(5)).join(', ')})`:''} — 기준 ${quota}일${basis?` (공휴일 ${basis})`:''}`,
         `${dKey(pe.min)} ~ ${dKey(pe.max)}`,
-        pe.hol<quota ? `법일이 ${quota-pe.hol}일 모자랍니다. 법일은 그 달 아무 날에나 잡을 수 있으니, 어느 날에 잡혔는지 확인해 채우세요`
-                     : `법일이 ${pe.hol-quota}일 많습니다. 정일이나 다른 근태가 법일로 잘못 들어갔는지 확인하세요`,
+        pe.hol<quota ? `${HDNM2}이 ${quota-pe.hol}일 모자랍니다. ${HDNM2}은 그 달 아무 날에나 잡을 수 있으니 어느 날에 잡혔는지 확인하세요. 파일에 ${HDNM2}이 있는데도 이 메시지가 나오면 그 행의 사번·일자·근태 표기를 확인해 주세요`
+                     : `${HDNM2}이 ${pe.hol-quota}일 많습니다. 정일이나 다른 근태가 ${HDNM2}로 잘못 들어갔는지, 또는 위 공휴일 목록이 이 달과 맞는지 확인하세요`,
         CR(m.code, pe.first.excelRow),
         `${dKey(pe.min).slice(0,7)} (월 단위)`);
     }
@@ -2103,6 +2119,7 @@ function runA(){
     slotDone('dropWg', WM.size>0);
   }
 
+  A.carried=carried; A.droppedRows=dropped;
   A.rows=rows; A.find=F;
   if(A.prev&&A.prev.items){
     const pk=new Set(A.prev.items.map(x=>x.k));
@@ -2119,7 +2136,7 @@ function runA(){
 const kOf=f=>`${f.empId}|${f.date}|${f.rule}`;
 const dlJSON=(obj,name)=>{ const b=new Blob([JSON.stringify(obj,null,1)],{type:'application/json'});
   const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=name; a.click(); };
-const CFGIDS=['vLeave','vHol','vEarly','vAbs','vMap','vWd','vHd','vOd','vStd','vBreak','vTol','vOtUnit','vOtMode','vOff','vOffWk','vHolQuota','vHolList'];
+const CFGIDS=['vLeave','vHol','vEarly','vAbs','vMap','vWd','vHd','vOd','vStd','vBreak','vTol','vOtUnit','vOtMode','vOff','vOffWk','vHolQuota','vHolAll','vHolList'];
 
 $('#aCfgSave').onclick=()=>{
   const map={}; $$('#mapA select').forEach(sel=>{ const i=+sel.value; map[sel.dataset.a]= i>=0? A.headers[i] : null; });
@@ -2217,6 +2234,15 @@ function offDetail(){
    </div>`;
   $('#dlg').showModal();
 }
+function rowWarnHTML(){
+  const c=A.carried||0, d=(A.droppedRows||[]);
+  if(!c && !d.length) return '';
+  let h='<div class="note w"><b>⚠️ 사번이 비어 있는 행이 있었습니다</b><br>';
+  if(c) h+=`내용이 들어 있는 <b>${c}행</b>은 바로 위 행의 사번으로 이어 붙여 검수했습니다. 원본에서 사번이 빠진 것인지 확인해 주세요.<br>`;
+  if(d.length) h+=`사번도 없고 위에 이어붙일 사번도 없어 <b>${d.length}행</b>을 건너뛰었습니다 (엑셀 ${d.slice(0,12).join(', ')}${d.length>12?' 외':''}행).<br>`;
+  h+='<span class="muted">사번이 빠진 행은 그 인원의 정일·법일 집계에서 빠져 R13·R14가 잘못 나올 수 있습니다.</span></div>';
+  return h;
+}
 function mapWarnHTML(){
   if(!A.missing || !A.missing.size) return '';
   const rs=Object.keys(A.skip||{});
@@ -2272,7 +2298,7 @@ function renderA(cnt){
 
   $('#offBox').innerHTML = offBoxHTML();
   $$('[data-off]').forEach(el=>el.onclick=offDetail);
-  $('#cmpBox').innerHTML = mapWarnHTML() + floodWarnHTML(cnt) + (!A.prev ? '' :
+  $('#cmpBox').innerHTML = mapWarnHTML() + rowWarnHTML() + floodWarnHTML(cnt) + (!A.prev ? '' :
     `<div class="note i"><b>이전 검수(${A.prev.저장시각||'저장 시각 미상'}, 이상 ${A.prev.이상건수}건)와 비교 중</b> —
      해결 ${(A.resolved||[]).length}건 · 남음 ${A.find.filter(f=>f.status==='남음').length}건 · 신규 ${A.find.filter(f=>f.status==='신규').length}건.</div>`);
 
@@ -2626,6 +2652,8 @@ $('#expA').onclick=()=>{
     ['기준 연도',$('#vYear').value],
     ['이 달 법일 기준 일수', ($('#vHolQuota').value.trim()||`자동 ${A.holQuota??'-'}일`)+' (공휴일 목록 중 평일 수)'],
     ['법일 판정 방식','날짜 고정이 아니라 그 달 안의 개수로 판정 — 법일은 아무 날에나 지정 가능'],
+    ['법일 기준 산출', $('#vHolAll').checked? '월 전체 기준을 모든 인원에 동일 적용' : '인원별 근무기간에 들어오는 평일 공휴일만 계산 (중도 입사·퇴사 반영)'],
+    ['사번 빈칸 행 처리', `이어붙임 ${A.carried||0}행 · 건너뜀 ${(A.droppedRows||[]).length}행`],
     ['연장 절사', `${$('#vOtUnit').value}분 단위 · ${$('#vOtMode').selectedOptions[0].text}`],
     ['적용 법정공휴일',[...holSetA()].sort().join(', ')],
     ['검수 행수',A.rows.length],['이상 건수',A.find.length],
