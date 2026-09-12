@@ -613,7 +613,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
     <button data-v="anom"><span class="ni"><svg viewBox="0 0 18 18"><path d="M2.6 4.2h12.8a1 1 0 0 1 1 1v7.6a1 1 0 0 1-1 1H2.6a1 1 0 0 1-1-1V5.2a1 1 0 0 1 1-1m.7 2 5.7 3.7 5.7-3.7z"/></svg></span>근태 특이건<span class="navp" id="navAnom"></span></button>
   </nav>
   <div class="side-foot">
-    <b>APRS</b><span class="ver">v7.3 · 2026-09</span>
+    <b>APRS</b><span class="ver">v7.4 · 2026-09</span>
     <span class="who" id="gWho"></span>
     <button class="sfout" id="btnOut" title="로그아웃">로그아웃</button>
   </div>
@@ -998,7 +998,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
 </div>
 
 <footer>
-  <b>APRS v7.3 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
+  <b>APRS v7.4 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
   ⓘ 이 도구는 업로드한 파일을 브라우저 메모리에서만 계산합니다. 네트워크 전송·서버 저장이 없습니다.<br>
   ⓘ 총근로시간 = 기본(소정) + 연장 + 휴일근로. <b>야간·심야는 가산수당 산정용으로 따로 표시</b>하며 총합에 중복 더하지 않습니다 — 심야 연장은 이미 연장시간에 포함돼 있는 경우가 많아 더하면 이중 계산이 됩니다.<br>
   ⓘ 급여일수 = 평일(월~금, 법정공휴일 제외) + 법정공휴일. 인정 일요일수 = 데이터상 일요일 수 − 결근이 있는 주(월~일)의 일요일 수.<br>
@@ -1331,18 +1331,17 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
       </select>
       <span class="grow"></span>
       <button class="sm" id="pExp">대조표 엑셀</button>
-      <button class="pri" id="pCalc">계산기 양식으로 내보내기</button>
+      <button class="pri" id="pCalc">대조 결과 내보내기 (6시트)</button>
     </div>
     <div id="pDiffBox"></div>
     <div class="tblwrap" style="max-height:620px"><table id="pOut"></table></div>
     <div class="note i" style="margin-top:12px">
-      <b>「계산기 양식으로 내보내기」</b>를 누르면 <b>5개 시트</b>가 든 엑셀이 나옵니다.<br>
-      <b>재직자 · 퇴사자</b> — 회사 계산기와 똑같은 열·수식 (그대로 붙여 쓸 수 있습니다) ·
-      <b>항목별 차액</b> — 항목마다 <b>계산 / 대장 / 차액</b>을 나란히 ·
-      <b>차이 내역</b> — 차이 난 건만 한 줄씩 (사번·항목·금액·어디를 볼지) ·
-      <b>확인필요</b> — 대장 누락·근태 없음·시급 없음 ·
-      <b>안내</b> — 연결 안 된 항목 목록<br>
-      <span class="muted">대장 칸이 비어 있으면 그 항목이 2단계에서 <b>연결되지 않은 것</b>입니다. 「안내」 시트에 어떤 항목이 빠졌는지 적어둡니다.</span>
+      <b>「대조 결과 내보내기」</b>를 누르면 <b>6개 시트</b>가 든 엑셀이 나옵니다. <b>①②를 보고 확인하시고, ③④는 회사 양식에 붙여 쓰실 때 쓰세요.</b><br>
+      <b>① 항목별 대조</b> — 전체 인원 × 모든 항목에 <b>계산 / 대장 / 차액</b>이 반드시 같이 나옵니다 (차액은 수식) ·
+      <b>② 차이 내역</b> — 차이 난 건만 한 줄씩 + <b>원인 · 어디를 볼지</b> ·
+      <b>③ 재직자 · ④ 퇴사자</b> — 회사 계산기와 똑같은 열·수식 ·
+      <b>⑤ 확인필요</b> · <b>⑥ 읽는 법</b><br>
+      <span class="muted">대장 칸이 비어 있으면 그 항목이 2단계에서 <b>연결되지 않은 것</b>입니다. ⑥ 시트에 <b>연결된 항목과 안 된 항목</b>을 적어둡니다.</span>
     </div>
     <div class="note w" style="margin-top:10px">
       <b>실제 지급액은 급여 시스템과 반드시 대조하세요.</b> 차액이 <b>+</b>면 대장이 더 많고, <b>−</b>면 대장이 더 적습니다.
@@ -4231,7 +4230,7 @@ function pDiffBox(){
       <td class="num">${Math.round(it.calc).toLocaleString()}</td>
       <td class="num">${Math.round(it.led).toLocaleString()}</td>
       <td class="num"><b style="color:${it.d>0?'#b91c1c':'#1d4ed8'}">${it.d>0?'+':''}${Math.round(it.d).toLocaleString()}</b></td>
-      <td class="muted" style="white-space:normal;font-size:11.5px">${DIFFHINT[it.k]||''}</td>
+      <td style="white-space:normal;font-size:11.5px">${explainDiff(r,it)}</td>
     </tr>`).join('');
   }).join('');
   box.innerHTML=`<div class="note b" style="margin:6px 0 10px">
@@ -4290,28 +4289,144 @@ function pTable(){
     </tr>`).join('')+'</tbody>';
   $$('#pOut tbody tr').forEach(tr=>tr.onclick=()=>pDetail(rows[+tr.dataset.pi]));
 }
+/* ── 차액을 '단위'로 되돌려 원인을 짚어 준다 ──────────────────
+   금액 차액을 그 항목의 단위(일수·분·주휴 개수·시간)로 나눠 보면
+   "일수 1일치" "연장 30분치"처럼 무엇이 어긋났는지 바로 보입니다. */
+function payStd(){
+  return { STD:+$('#pStd').value||7, WHH:+$('#pWhH').value||7,
+           EDUH:(($('#pEduH').value)===''?1:+$('#pEduH').value),
+           OTR:+$('#pOtR').value||1.5, NIW:+$('#pNiW').value||8700, NIR:+$('#pNiR').value||0.5,
+           TOL:Math.abs(+$('#pTol').value||0) };
+}
+const wonF=v=>(v==null?'-':(v>0?'+':'')+Math.round(v).toLocaleString());
+/* 항목별 계산식 (숫자를 대입한 문장) */
+function payFormula(r,k){
+  const S=payStd(), w=r.wage||0;
+  if(k==='base') return `시급 ${w.toLocaleString()} × 일수 ${r.일수} × ${S.STD}h`;
+  if(k==='wh')   return `시급 ${w.toLocaleString()} × 주휴 ${r.주휴} × ${S.WHH}h`;
+  if(k==='ot')   return `시급 ${w.toLocaleString()} × ${(r.연장분??0).toLocaleString()}분 ÷ 60 × ${S.OTR}`;
+  if(k==='ni')   return `심야시급 ${S.NIW.toLocaleString()} × ${(r.심야분??0).toLocaleString()}분 ÷ 60 × ${S.NIR}`;
+  if(k==='edu')  return r.신규? `시급 ${w.toLocaleString()} × 교육 ${r.교육시간}h — ${r.입사일} 입사(이 달 입사자)`
+                             : `이 달 입사자가 아니어서 0원${r.입사일?` (입사일 ${r.입사일})`:''}`;
+  if(k==='tot')  return `기본급 + 연장 + 심야 + 주휴 + 교육 + 대장 인정분 ${(r.passSum||0).toLocaleString()}`;
+  return '근태로 계산할 수 없어 대장 값을 그대로 씁니다';
+}
+/* 차액 한 건의 원인 설명 — 숫자로 구체적으로 */
+function explainDiff(r,it){
+  const S=payStd(), w=r.wage||0, d=it.d;
+  const near=(x)=>Math.abs(x-Math.round(x))<0.03 && Math.round(x)!==0;
+  const dir = d>0? '대장이 더 많습니다(과지급 의심)' : '대장이 더 적습니다(미지급 의심)';
+  if(it.k==='base'){
+    const per=w*S.STD;                                   // 1일치 금액
+    const day=per? d/per : null;
+    let t=`${dir}. `;
+    if(day!=null && near(day)) t+=`차액 ${wonF(d)}원은 정확히 <b>일수 ${Math.abs(Math.round(day))}일치</b>(1일 ${per.toLocaleString()}원)입니다 — 대장은 일수를 <b>${r.일수+Math.round(day)}일</b>로 본 것 같습니다. 근태의 유급휴무(연차·연중·예비군·경조·건강검진·법일) 포함 여부와 결근 처리를 확인하세요.`;
+    else if(day!=null) t+=`일수로 바꾸면 약 <b>${day.toFixed(2)}일치</b>입니다 (1일 ${per.toLocaleString()}원). 일수가 아니라 <b>시급</b>이 다를 수도 있습니다 — 대장 시급을 확인하세요.`;
+    return t;
+  }
+  if(it.k==='wh'){
+    const per=w*S.WHH;
+    const cnt=per? d/per : null;
+    let t=`${dir}. `;
+    if(cnt!=null && Math.abs(cnt*10-Math.round(cnt*10))<0.3)
+      t+=`차액 ${wonF(d)}원은 <b>주휴 ${(Math.round(cnt*10)/10)}개</b>분(1개 ${per.toLocaleString()}원)입니다 — 대장은 주휴를 <b>${Math.round((r.주휴+cnt)*10)/10}개</b>로 본 것 같습니다. 결근이 있는 주, 입사·퇴사한 주의 비례 계산을 확인하세요.`;
+    else if(cnt!=null) t+=`주휴 개수로 바꾸면 약 <b>${cnt.toFixed(2)}개</b>분입니다 (1개 ${per.toLocaleString()}원).`;
+    return t;
+  }
+  if(it.k==='ot'){
+    const perMin=w/60*S.OTR;
+    const mins=perMin? d/perMin : null;
+    let t=`${dir}. `;
+    if(mins!=null) t+=`차액 ${wonF(d)}원은 <b>개별연장 ${Math.abs(Math.round(mins))}분</b>에 해당합니다 (1분 ${Math.round(perMin).toLocaleString()}원) — 대장은 연장을 <b>${Math.round((r.연장분??0)+mins)}분</b>으로 본 것 같습니다. 근태 검수기의 <b>R10·R12</b>(개별연장 분이 기준과 다름)와 <b>R16</b>(퇴근 센싱 없는데 연장 값 있음)을 확인하세요.`;
+    return t;
+  }
+  if(it.k==='ni'){
+    const perMin=S.NIW/60*S.NIR;
+    const mins=perMin? d/perMin : null;
+    let t=`${dir}. `;
+    if(mins!=null) t+=`차액 ${wonF(d)}원은 <b>심야 ${Math.abs(Math.round(mins))}분</b>에 해당합니다 (1분 ${Math.round(perMin).toLocaleString()}원) — 대장은 심야를 <b>${Math.round((r.심야분??0)+mins)}분</b>으로 본 것 같습니다. 심야 열 연결과 심야 분 입력을 확인하세요.`;
+    return t;
+  }
+  if(it.k==='edu'){
+    const per=w*(S.EDUH||1);
+    let t=`${dir}. `;
+    if(!r.신규) t+=`이 사람은 <b>이 달 입사자가 아닙니다</b>${r.입사일?` (입사일 ${r.입사일})`:' (명단에 입사일이 없습니다)'}. 그런데 대장에 교육수당 ${Math.round(it.led).toLocaleString()}원이 있습니다 — 교육 대상이 맞는지, 입사일이 맞는지 확인하세요.`;
+    else if(it.led===0||it.led==null) t+=`<b>${r.입사일} 입사자</b>라 교육수당 ${per.toLocaleString()}원(시급 × ${S.EDUH}h)이 들어가야 하는데 대장이 0원입니다 — 교육수당 지급 누락으로 보입니다.`;
+    else t+=`교육 시간으로 바꾸면 약 <b>${(w? d/w:0).toFixed(2)}시간</b>분입니다. 기준(${S.EDUH}시간)과 실제 교육 시간을 확인하세요.`;
+    return t;
+  }
+  if(it.k==='tot'){
+    const own=(r.items||[]).filter(x=>x.k!=='tot').reduce((s,x)=>s+x.d,0);
+    const gap=d-own;
+    if(Math.abs(gap)<=Math.max(1,S.TOL))
+      return `위 항목의 차액(${wonF(own)}원)이 그대로 합계에 반영된 것입니다. <b>항목을 고치면 합계도 맞습니다.</b>`;
+    if(Math.abs(own)<=Math.max(1,S.TOL))
+      return `<b>항목은 모두 맞는데 합계만 ${wonF(d)}원 다릅니다.</b> 이 도구가 대조하지 않는 수당(심야1·휴근·휴연·연차 등)이 대장에 <b>${wonF(gap)}원</b> 더 있거나, 대장 합계 칸이 항목 합과 맞지 않는 경우입니다. 급여대장 ${r.ledRow||''}행의 <b>지급 항목을 왼쪽부터 더해</b> 합계 칸과 맞는지 확인하세요.`;
+    return `항목 차액 합계는 ${wonF(own)}원인데 합계 차액은 ${wonF(d)}원입니다. 차이 <b>${wonF(gap)}원</b>은 대조하지 않는 수당(심야1·휴근·휴연·연차 등)이거나 대장 합계 칸의 오류입니다.`;
+  }
+  return dir;
+}
+/* ── 인원 한 명 상세 (팝업) ─────────────────────────────────── */
 function pDetail(r){
-  const m=P.map, STD=+$('#pStd').value||7, WHH=+$('#pWhH').value||7;
-  const OTR=+$('#pOtR').value||1.5, NIW=+$('#pNiW').value||8700, NIR=+$('#pNiR').value||0.5;
+  const S=payStd();
+  const linked=k=>r.led[k]!=null;
   $('#dlgT').textContent=`${r.name||''} (${r.empId})${r.ledRow?`  ·  급여대장 ${r.ledRow}행`:''}`;
-  const fm={ base:`시급 ${(r.wage||0).toLocaleString()} × 일수 ${r.일수} × ${STD}h`,
-             wh:`시급 ${(r.wage||0).toLocaleString()} × 주휴 ${r.주휴} × ${WHH}h`,
-             ot:`시급 ${(r.wage||0).toLocaleString()} × ${(r.연장분??0).toLocaleString()}분 ÷ 60 × ${OTR}`,
-             ni:`심야시급 ${NIW.toLocaleString()} × ${(r.심야분??0).toLocaleString()}분 ÷ 60 × ${NIR}`,
-             edu:r.신규? `시급 ${(r.wage||0).toLocaleString()} × 교육 ${r.교육시간}h  (${r.입사일} 입사 — 그 달 입사자)`
-                        : `이 달 입사자가 아니므로 0원${r.입사일?` (입사일 ${r.입사일})`:''}`,
-             tot:`위 계산 항목 합계 + 대장 인정 항목 ${(r.passSum||0).toLocaleString()}원` };
-  $('#dlgB').innerHTML=`
-    <table><thead><tr><th>항목</th><th>계산식</th><th class="num">근태계산</th><th class="num">급여대장</th><th class="num">차액</th></tr></thead><tbody>
-    ${PITEMS.filter(it=>m[it.k]>=0).map(it=>{ const d=r.diff[it.k];
-      return `<tr><td><b>${it.n}</b>${it.calc?'':' <span class="tag y">대장 인정</span>'}</td>
-        <td class="muted" style="white-space:normal">${it.calc?(fm[it.k]||''):'근태로 계산 불가 — 대장 값을 그대로 씁니다'}</td>
-        <td class="num">${r.calc[it.k]!=null?Math.round(r.calc[it.k]).toLocaleString():'-'}</td>
-        <td class="num">${r.led[it.k]!=null?Math.round(r.led[it.k]).toLocaleString():'-'}</td>
-        <td class="num"><b style="color:${d>0?'#b91c1c':(d<0?'#1d4ed8':'#0f9d58')}">${d==null?'-':(d>0?'+':'')+Math.round(d).toLocaleString()}</b></td></tr>`;}).join('')}
-    </tbody></table>
-    <div class="note i" style="margin-top:12px">일수 = 근무일수(출근 + 유급휴무) <b>${r.일수}일</b> · 주휴 <b>${r.주휴}개</b> · 연장 <b>${(r.연장분??0).toLocaleString()}분</b> · 심야 <b>${(r.심야분??0).toLocaleString()}분</b><br>
-      근태 집계 기준은 <b>근태 분석기</b>와 동일합니다.</div>`;
+  const own=(r.items||[]).filter(x=>x.k!=='tot');
+  const ownSum=own.reduce((s,x)=>s+x.d,0);
+  const totDiff=r.diff.tot;
+  const head = !own.length && (totDiff==null || Math.abs(totDiff)<=Math.max(1,S.TOL))
+    ? `<div class="note g"><b>모든 항목이 맞습니다.</b></div>`
+    : `<div class="note b"><b>차이가 난 항목 ${own.length}개${totDiff!=null&&Math.abs(totDiff)>S.TOL?' · 합계 '+wonF(totDiff)+'원':''}</b><br>
+        ${own.length
+          ? own.slice().sort((a,b)=>Math.abs(b.d)-Math.abs(a.d)).map(x=>`<b>${x.n}</b> ${wonF(x.d)}원`).join(' · ')
+          : '<b>개별 항목은 모두 맞고 합계만 다릅니다</b> — 아래 「합계 검산」을 보세요.'}
+      </div>`;
+  const rowsH=PITEMS.map(it=>{
+    const cv=it.calc? r.calc[it.k] : null;
+    const lv=r.led[it.k];
+    const d=(cv!=null&&lv!=null)? lv-cv : null;
+    const bad=d!=null && Math.abs(d)>S.TOL;
+    const hit=(r.items||[]).find(x=>x.k===it.k);
+    if(cv==null && lv==null) return '';
+    return `<tr style="${bad?'background:var(--bad-w)':''}">
+      <td><b>${it.n}</b>${it.calc?'':' <span class="tag y">대장 인정</span>'}</td>
+      <td class="muted" style="white-space:normal;font-size:11.5px">${payFormula(r,it.k)}</td>
+      <td class="num">${cv!=null?Math.round(cv).toLocaleString():'<span class="muted">-</span>'}</td>
+      <td class="num">${lv!=null?Math.round(lv).toLocaleString():'<span class="muted">연결 안 됨</span>'}</td>
+      <td class="num"><b style="color:${d>0?'#b91c1c':(d<0?'#1d4ed8':'#0f9d58')}">${d==null?'-':wonF(d)}</b></td>
+      <td style="white-space:normal;font-size:11.5px">${hit? explainDiff(r,hit) : (bad? explainDiff(r,{k:it.k,n:it.n,d,calc:cv,led:lv}) : '<span class="muted">일치</span>')}</td>
+    </tr>`;
+  }).join('');
+  /* 합계 검산 — 항목을 더한 값과 대장 합계가 맞는지 */
+  const parts=['base','ot','ni','wh','edu'];
+  const calcSum=parts.reduce((s,k)=>s+(r.calc[k]||0),0)+(r.passSum||0);
+  const ledSum=parts.reduce((s,k)=>s+(r.led[k]||0),0)
+    + ['ni1','hol','holot','yc'].reduce((s,k)=>s+(r.led[k]||0),0);
+  const ledTot=r.led.tot;
+  const inner=(ledTot!=null)? ledTot-ledSum : null;
+  $('#dlgB').innerHTML= head + `
+    <div class="tblwrap" style="max-height:none"><table>
+      <thead><tr><th style="width:92px">항목</th><th style="width:210px">계산식</th>
+        <th class="num" style="width:100px">근태 계산</th><th class="num" style="width:100px">급여대장</th>
+        <th class="num" style="width:96px">차액</th><th>원인 · 어디를 볼지</th></tr></thead>
+      <tbody>${rowsH||'<tr><td colspan="6"><div class="empty">대조할 항목이 없습니다. 2단계에서 급여대장 열을 연결해 주세요.</div></td></tr>'}</tbody>
+    </table></div>
+    <div class="note i" style="margin-top:12px">
+      <b>합계 검산</b><br>
+      근태로 계산한 합계 <b>${Math.round(calcSum).toLocaleString()}원</b> ·
+      대장 항목을 더한 값 <b>${Math.round(ledSum).toLocaleString()}원</b> ·
+      대장 합계 칸 <b>${ledTot!=null?Math.round(ledTot).toLocaleString()+'원':'연결 안 됨'}</b>
+      ${inner!=null? `<br>대장 안에서 <b>항목 합과 합계 칸의 차이 ${wonF(inner)}원</b> — ${Math.abs(inner)<=Math.max(1,S.TOL)
+        ? '맞습니다.'
+        : '이 도구가 안 보는 수당이 대장에 더 있다는 뜻입니다. 급여대장 그 행의 지급 항목을 모두 더해 확인하세요.'}`:''}
+      ${own.length? `<br>항목 차액 합계 <b>${wonF(ownSum)}원</b>${totDiff!=null? ` · 합계 차액 <b>${wonF(totDiff)}원</b>`:''}`:''}
+    </div>
+    <div class="note ${'w'}" style="margin-top:8px">
+      일수 = 근무일수(출근 + 유급휴무) <b>${r.일수}일</b> · 주휴 <b>${r.주휴}개</b> ·
+      연장 <b>${(r.연장분??0).toLocaleString()}분</b> · 심야 <b>${(r.심야분??0).toLocaleString()}분</b> ·
+      교육 <b>${r.교육시간||0}시간</b>${r.입사일?` · 입사일 <b>${r.입사일}</b>`:''}<br>
+      <span class="muted">이 숫자는 근태 분석기 집계와 같습니다. 숫자 자체가 틀렸다면 근태 파일이나 근태코드 분류를 고쳐야 합니다.</span>
+    </div>`;
   $('#dlg').showModal();
 }
 
@@ -4739,92 +4854,103 @@ function calcSheet(rows, kind){
   ws['!cols']=H.map((h,i)=>({wch: i<2?10 : (h==='차액'?11:10)}));
   return ws;
 }
-/* 항목마다 계산 / 대장 / 차액을 나란히 — 어느 항목에서 틀렸는지 바로 보이는 시트 */
+/* ── 「① 항목별 대조」 — 실제로 확인하는 시트 ────────────────
+   항목마다 계산 / 대장 / 차액이 반드시 같이 나옵니다.
+   대장 값은 업로드한 급여대장에서 그대로 가져오고, 차액은 엑셀 수식으로 넣어
+   대장 칸을 고치면 차액이 바로 다시 계산됩니다. */
 function itemSheet(rows){
-  const m=P.map||{};
-  const use=PITEMS.filter(it=>it.k!=='tot');
-  const head1=['사번','이름','시급','일수','주휴','연장(분)','심야(분)','교육(시간)','입사일'];
-  const head2=['','','','','','','','',''];
-  use.concat([PITEMS.find(x=>x.k==='tot')]).forEach(it=>{
-    head1.push(it.n,'','');
-    head2.push('계산','대장','차액');
-  });
-  head1.push('가장 큰 차이 항목','차이 합계(절대값)');
-  head2.push('','');
-  const aoa=[head1,head2];
+  const S=payStd();
+  const items=PITEMS.slice();                       /* 합계까지 전부 */
+  const L1=['사번','성명','구분','시급','일수','주휴','연장(분)','심야(분)','교육(시간)','입사일','대장행'];
+  const L2=L1.map(()=>'');
+  const base=L1.length;
+  items.forEach(it=>{ L1.push(it.n,'',''); L2.push('계산','대장','차액'); });
+  L1.push('차이 항목','차이 합계');  L2.push('','');
+  const aoa=[L1,L2];
   rows.forEach(r=>{
-    const a=[r.empId,r.name,r.wage,r.일수,r.주휴,r.연장분,r.심야분,r.교육시간||0,r.입사일||''];
-    const all=use.concat([PITEMS.find(x=>x.k==='tot')]);
-    all.forEach(it=>{
-      const cv=(it.calc && r.calc[it.k]!=null)? r.calc[it.k] : null;
-      const lv=(m[it.k]>=0 && r.led[it.k]!=null)? r.led[it.k] : null;
-      a.push(cv, lv, (cv!=null&&lv!=null)? lv-cv : null);
+    const a=[r.empId,r.name,r.퇴사?'퇴사':'재직',r.wage,r.일수,r.주휴,r.연장분,r.심야분,r.교육시간||0,r.입사일||'',r.ledRow||''];
+    items.forEach(it=>{
+      a.push(it.calc? (r.calc[it.k]!=null?r.calc[it.k]:null) : null,
+             r.led[it.k]!=null? r.led[it.k] : null,
+             null);                                  /* 차액은 수식으로 채움 */
     });
-    const top=(r.items||[]).slice().sort((x,y)=>Math.abs(y.d)-Math.abs(x.d))[0];
-    a.push(top? `${top.n} ${top.d>0?'+':''}${top.d.toLocaleString()}` : '', r.absSum||0);
+    const its=(r.items||[]).filter(x=>x.k!=='tot').sort((x,y)=>Math.abs(y.d)-Math.abs(x.d));
+    a.push(its.length? its.map(x=>`${x.n} ${wonF(x.d)}`).join(' / ') : (r.문제||'일치'), r.absSum||0);
     aoa.push(a);
   });
   const ws=XLSX.utils.aoa_to_sheet(aoa);
-  ws['!cols']=head1.map((h,i)=>({wch:i<2?11:(i<9?10:12)}));
+  /* 차액 = 대장 − 계산 (엑셀 수식) */
+  rows.forEach((_,i)=>{ const rn=i+3;                /* 머리글 2줄 */
+    items.forEach((it,k)=>{
+      const c=base+k*3;
+      const A=XLSX.utils.encode_col(c), B=XLSX.utils.encode_col(c+1), C=XLSX.utils.encode_col(c+2);
+      ws[C+rn]={t:'n', f:`IF(OR(${A}${rn}="",${B}${rn}=""),"",${B}${rn}-${A}${rn})`};
+    });
+  });
+  ws['!ref']=XLSX.utils.encode_range({s:{r:0,c:0},e:{r:rows.length+1,c:L1.length-1}});
+  ws['!cols']=L1.map((h,i)=>({wch: i===1?11 : (i<base?9:11)}));
   ws['!merges']=[];
-  let c=9;
-  use.concat([PITEMS.find(x=>x.k==='tot')]).forEach(()=>{ ws['!merges'].push({s:{r:0,c},e:{r:0,c:c+2}}); c+=3; });
-  for(let i=0;i<9;i++) ws['!merges'].push({s:{r:0,c:i},e:{r:1,c:i}});
+  for(let i=0;i<base;i++) ws['!merges'].push({s:{r:0,c:i},e:{r:1,c:i}});
+  items.forEach((it,k)=>{ const c=base+k*3; ws['!merges'].push({s:{r:0,c},e:{r:0,c:c+2}}); });
+  ws['!merges'].push({s:{r:0,c:base+items.length*3},e:{r:1,c:base+items.length*3}});
+  ws['!merges'].push({s:{r:0,c:base+items.length*3+1},e:{r:1,c:base+items.length*3+1}});
   ws['!freeze']={xSplit:2,ySplit:2};
+  ws['!autofilter']={ref:XLSX.utils.encode_range({s:{r:1,c:0},e:{r:rows.length+1,c:L1.length-1}})};
   return ws;
 }
 /* 차이가 난 건만 한 줄씩 — 확인·수정용 */
 function diffRows(){
   const out=[];
   (P.rows||[]).forEach(r=>{
-    (r.items||[]).forEach(it=>{
-      out.push({사번:r.empId, 성명:r.name, 항목:it.n,
-        '계산(근태 기준)':it.calc, '대장(시스템)':it.led, '차액(대장−계산)':it.d,
+    (r.items||[]).slice().sort((x,y)=>Math.abs(y.d)-Math.abs(x.d)).forEach(it=>{
+      out.push({사번:r.empId, 성명:r.name, 구분:r.퇴사?'퇴사':'재직', '대장행':r.ledRow||'',
+        항목:it.n,
+        '계산(근태 기준)':Math.round(it.calc), '대장(시스템)':Math.round(it.led), '차액(대장−계산)':Math.round(it.d),
         방향: it.d>0? '대장이 더 많음(과지급 의심)' : '대장이 더 적음(미지급 의심)',
+        계산식: payFormula(r,it.k),
+        '원인 · 어디를 볼지': explainDiff(r,it).replace(/<[^>]+>/g,''),
         시급:r.wage, 일수:r.일수, 주휴:r.주휴, '연장(분)':r.연장분, '심야(분)':r.심야분,
-        '교육(시간)':r.교육시간||0, 입사일:r.입사일||'',
-        '어디를 볼지': DIFFHINT[it.k]||''});
+        '교육(시간)':r.교육시간||0, 입사일:r.입사일||''});
     });
   });
   return out;
 }
-const DIFFHINT={
-  base:'근무일수(출근+유급휴무) × 시급 × 1일 유급시간. 근태의 근태코드 분류와 결근·유급휴무 처리를 확인',
-  ot:'개별연장(분) 합계 × 시급 ÷ 60 × 연장배율. 근태 검수기 R10·R12(개별연장 분) 확인',
-  ni:'심야(분) × 심야시급 × 가산배율. 심야 열 연결과 심야 분 입력 확인',
-  wh:'주휴 개수 × 시급 × 주휴 1개당 시간. 결근 주·입사/퇴사 주 비례를 확인',
-  edu:'그 달 입사자만 시급 × 교육시간. 입사일과 교육 지급 여부 확인',
-  tot:'위 항목 중 어디가 어긋났는지 먼저 보고, 항목이 다 맞는데 합계만 다르면 대장에 다른 수당이 더 있는지 확인',
-};
 $('#pCalc').onclick=()=>{
   if(!P.rows||!P.rows.length){ alert('먼저 근태 파일과 급여대장을 올려주세요.'); return; }
   const m=P.map||{};
   const use=P.rows.filter(r=>r.근태있음);
   const act=use.filter(r=>!r.퇴사), qui=use.filter(r=>r.퇴사);
   const wb=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, calcSheet(act,'a'), '재직자');
-  XLSX.utils.book_append_sheet(wb, calcSheet(qui.length?qui:[], 'q'), '퇴사자');
-  XLSX.utils.book_append_sheet(wb, itemSheet(P.rows), '항목별 차액');
+  /* ① 확인용 — 항목마다 계산·대장·차액 */
+  XLSX.utils.book_append_sheet(wb, itemSheet(P.rows), '① 항목별 대조');
   const dr=diffRows();
-  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(dr.length? dr : [{결과:'차이 없음'}]), '차이 내역');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(dr.length? dr : [{결과:'차이 없음'}]), '② 차이 내역');
+  /* ③④ 회사 계산기 양식 그대로 (붙여 쓰는 용도) */
+  XLSX.utils.book_append_sheet(wb, calcSheet(act,'a'), '③ 재직자');
+  XLSX.utils.book_append_sheet(wb, calcSheet(qui.length?qui:[], 'q'), '④ 퇴사자');
   const miss=P.rows.filter(r=>!r.대장있음).map(r=>({사번:r.empId,성명:r.name,사유:'급여대장에 없음 — 시스템 작업 누락 확인'}));
   const noAtt=P.rows.filter(r=>!r.근태있음).map(r=>({사번:r.empId,성명:r.name,사유:'근태 기록 없음'}));
   const noW=P.rows.filter(r=>r.근태있음&&r.대장있음&&!r.wage).map(r=>({사번:r.empId,성명:r.name,사유:'시급 없음 — 대상자 명단의 시급 열 확인'}));
   const chk=miss.concat(noAtt).concat(noW);
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(chk.length? chk : [{결과:'누락 인원 없음'}]),'확인필요');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(chk.length? chk : [{결과:'누락 인원 없음'}]),'⑤ 확인필요');
   const notLinked=PITEMS.filter(it=>!(m[it.k]>=0)).map(it=>it.n);
+  const linked=PITEMS.filter(it=>m[it.k]>=0).map(it=>`${it.n} → ${(P.ledHdr&&P.ledHdr[m[it.k]])||''}`);
+  const S=payStd();
   XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([
-    ['안내',''],
-    ['시트 구성','「재직자·퇴사자」 회사 계산기와 같은 열·수식 / 「항목별 차액」 항목마다 계산·대장·차액 / 「차이 내역」 차이 난 건만'],
-    ['어느 항목이 틀렸는지','「차이 내역」 시트를 먼저 보세요. 사번·항목·계산·대장·차액과 「어디를 볼지」가 한 줄로 나옵니다.'],
-    ['근태에서 채운 칸','D 일수 · K 연장(분) · N 심야시간(분) · V 주휴 · AB 교육(시간)'],
-    ['교육수당','그 달에 입사한 인원만 시급 × '+((($('#pEduH').value)===''?1:+$('#pEduH').value))+'시간으로 계산했습니다 (AB 교육 칸 = 시간).'],
-    ['대장 칸이 비어 있으면','그 항목이 급여대장에서 연결되지 않은 것입니다. 2단계 「급여대장 열 연결」에서 골라주세요.'],
-    ['연결되지 않은 항목', notLinked.length? notLinked.join(' · ') : '없음 — 모든 항목이 연결되었습니다'],
-    ['연장·심야 대장(S열)','회사 양식은 연장·심야·심야1의 대장이 한 칸(S)으로 묶여 있어, T 차액은 S −(연장+심야+심야1)로 계산했습니다. 항목별로 보시려면 「항목별 차액」 시트를 보세요.'],
+    ['어느 항목이 틀렸는지 보는 순서',''],
+    ['1','「② 차이 내역」 — 차이가 난 건만 한 줄씩 나옵니다. 사번·항목·계산·대장·차액과 「원인 · 어디를 볼지」가 같이 있습니다.'],
+    ['2','「① 항목별 대조」 — 전체 인원을 항목마다 계산/대장/차액으로 봅니다. 차액 칸은 수식이라 대장 값을 고치면 바로 다시 계산됩니다.'],
+    ['3','「③ 재직자 · ④ 퇴사자」 — 회사 「기간제 급여 계산기」와 같은 열·수식. 회사 양식에 붙여 쓰실 때 쓰세요.'],
+    ['',''],
+    ['급여대장에서 연결된 항목', linked.length? linked.join('  /  ') : '없음'],
+    ['연결되지 않은 항목', notLinked.length? notLinked.join(' · ')+'  ← 이 항목은 대장 칸이 빈칸이고 차액도 안 나옵니다. 2단계 「급여대장 열 연결」에서 골라주세요.' : '없음 — 모든 항목이 연결되었습니다'],
+    ['',''],
+    ['계산 기준', `기본급 = 시급 × 일수 × ${S.STD}h  /  주휴 = 시급 × 주휴 × ${S.WHH}h  /  연장 = 시급 × 분 ÷ 60 × ${S.OTR}  /  심야 = ${S.NIW.toLocaleString()} × 분 ÷ 60 × ${S.NIR}  /  교육 = 시급 × ${S.EDUH}h (그 달 입사자만)`],
+    ['일수의 뜻','근무일수 = 출근일수 + 유급휴무(연차·연중·예비군·경조·건강검진·법일)'],
+    ['③④ 시트의 S열(연장 대장)','회사 양식은 연장·심야·심야1의 대장이 S열 한 칸으로 묶여 있어 항목별 차액을 볼 수 없습니다. 그래서 T열 차액을 S −(연장+심야+심야1)로 넣었습니다. 항목별로는 ① 시트를 보세요.'],
     ['주의','실제 지급액은 급여 시스템과 반드시 대조하세요. 차액이 + 면 대장이 더 많고, − 면 대장이 더 적습니다.'],
-  ]),'안내');
-  XLSX.writeFile(wb, `급여_계산기양식_${P.name||''}.xlsx`);
+  ]),'⑥ 읽는 법');
+  XLSX.writeFile(wb, `급여대조_${P.name||''}.xlsx`);
 };
 
 $('#pExp').onclick=()=>{
