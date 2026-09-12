@@ -324,7 +324,8 @@ dialog::backdrop{background:rgba(0,0,0,.35);-webkit-backdrop-filter:blur(4px);ba
   background:var(--fill);color:var(--ink2);vertical-align:1px}
 .pill.bad{background:var(--bad-w);color:var(--bad)}
 .pill.ok{background:rgba(52,199,89,.16);color:var(--ok)}
-@media (prefers-color-scheme:dark){.pill.bad,.pill.ok{color:var(--ink)}}
+.pill.y{background:var(--warn-w);color:var(--warn)}
+@media (prefers-color-scheme:dark){.pill.bad,.pill.ok,.pill.y{color:var(--ink)}}
 
 .dgrid{display:grid;grid-template-columns:268px minmax(0,1fr) 296px;gap:14px;margin-bottom:14px;align-items:start}
 @media(max-width:1240px){.dgrid{grid-template-columns:248px minmax(0,1fr)}}
@@ -472,7 +473,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
     <button data-v="audit"><span class="ni"><svg viewBox="0 0 18 18"><path d="M8 2.2a5.8 5.8 0 1 0 3.5 10.4l3 3a1.1 1.1 0 0 0 1.6-1.6l-3-3A5.8 5.8 0 0 0 8 2.2m0 2.2a3.6 3.6 0 1 1 0 7.2 3.6 3.6 0 0 1 0-7.2"/></svg></span>근태 검수기</button>
     <button data-v="pay"><span class="ni"><svg viewBox="0 0 18 18"><path d="M9 1.6a1 1 0 0 1 1 1v.7c1.9.24 3.3 1.3 3.3 2.8a1 1 0 0 1-2 0c0-.42-.9-1.1-2.3-1.1s-2.3.68-2.3 1.1c0 .38.63.74 2.5 1.08 2.2.4 4.1 1.05 4.1 3 0 1.55-1.4 2.6-3.3 2.85v.7a1 1 0 1 1-2 0v-.7c-1.9-.25-3.3-1.3-3.3-2.85a1 1 0 1 1 2 0c0 .42.9 1.1 2.3 1.1s2.3-.68 2.3-1.1c0-.38-.63-.74-2.5-1.08-2.2-.4-4.1-1.05-4.1-3C6.7 4.6 8.1 3.54 10 3.3v-.7a1 1 0 0 1-1-1"/></svg></span>급여 검수기</button>
   </nav>
-  <div class="side-foot"><b>근태 도구</b><span class="ver">v6.5 · 2026-09</span></div>
+  <div class="side-foot"><b>근태 도구</b><span class="ver">v6.6 · 2026-09</span></div>
 </aside>
 <main class="macmain">
 <div class="mactool">
@@ -726,7 +727,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
 </div>
 
 <footer>
-  <b>근태 도구 v6.5 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
+  <b>근태 도구 v6.6 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
   ⓘ 이 도구는 업로드한 파일을 브라우저 메모리에서만 계산합니다. 네트워크 전송·서버 저장이 없습니다.<br>
   ⓘ 총근로시간 = 기본(소정) + 연장 + 휴일근로. <b>야간·심야는 가산수당 산정용으로 따로 표시</b>하며 총합에 중복 더하지 않습니다 — 심야 연장은 이미 연장시간에 포함돼 있는 경우가 많아 더하면 이중 계산이 됩니다.<br>
   ⓘ 급여일수 = 평일(월~금, 법정공휴일 제외) + 법정공휴일. 인정 일요일수 = 데이터상 일요일 수 − 결근이 있는 주(월~일)의 일요일 수.<br>
@@ -1042,8 +1043,12 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
 <div class="card off" id="p4">
   <h2><span class="n">4</span>결과</h2>
   <div class="ptabs" style="margin-bottom:12px">
-    <button class="on" data-ptab="pay">급여 대조</button>
-    <button data-ptab="mail">특이건 · 메일 만들기</button>
+    <button class="on" data-ptab="pay">급여 대조<span class="pill" id="pillPay"></span></button>
+    <button data-ptab="mail">특이건 · 메일 만들기<span class="pill" id="pillMail"></span></button>
+  </div>
+  <div id="pNeedLed" class="note w" hidden style="margin-bottom:12px">
+    <b>급여 대조는 급여대장 파일이 있어야 합니다.</b> 위 1단계에서 <b>급여대장</b>을 넣어주세요.
+    특이건·메일 만들기는 <b>근태 파일만으로도</b> 바로 쓸 수 있습니다.
   </div>
 
   <div id="ptabPay">
@@ -1074,12 +1079,14 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
   <div id="ptabMail" hidden>
     <div class="cards" id="mKpi"></div>
     <div class="split">
-      <select id="mKind" style="min-width:230px">
-        <option value="all">전체 (누락 + 조기센싱)</option>
-        <option value="in">출근 지문 누락</option>
-        <option value="out">퇴근 지문 누락</option>
-        <option value="early">조기 센싱</option>
-        <option value="late">늦은 센싱</option>
+      <select id="mKind" style="min-width:260px">
+        <option value="all">지문 누락 + 비고 표기 (메일용)</option>
+        <option value="in">출근 지문 누락만</option>
+        <option value="out">퇴근 지문 누락만</option>
+        <option value="memo">비고 표기만 (조기센싱·지각 등)</option>
+        <option value="all2">위 전부 + 시간차로 계산한 조기센싱</option>
+        <option value="early">시간차 조기센싱만</option>
+        <option value="late">시간차 늦은센싱만</option>
       </select>
       <select id="mGroup" style="min-width:170px">
         <option value="emp">인원별로 묶기</option>
@@ -1088,13 +1095,21 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
       <div class="f"><label style="font-size:11px">조기센싱 기준(분)</label><input type="number" id="mEarly" value="30" style="width:110px;padding:5px 8px"></div>
       <span class="grow"></span>
       <button class="sm" id="mCopy">본문 복사</button>
-      <button class="pri sm" id="mExp">엑셀로 내보내기</button>
+      <button class="sm" id="mTxt">메일 본문 (.txt)</button>
+      <button class="sm" id="mHtml">메일 서식 (.html)</button>
+      <button class="pri sm" id="mExp">특이건 엑셀 (.xlsx)</button>
     </div>
     <textarea id="mText" style="width:100%;height:420px;font-family:ui-monospace,monospace;font-size:12.5px;
       border:1px solid var(--line);border-radius:10px;padding:12px;line-height:1.7"></textarea>
     <div class="note i" style="margin-top:10px">
-      <b>대상자 명단에 있는 인원만</b> 담습니다. 위 칸을 그대로 복사해 메일에 붙여넣으세요.
-      <b>조기 센싱</b>은 출근(센싱)이 근무시작보다 기준 분 이상 <b>빠른</b> 경우, <b>늦은 센싱</b>은 그만큼 <b>늦은</b> 경우입니다.
+      <b>대상자 명단에 있는 인원만</b> 담습니다. 위 칸을 복사해 붙여넣거나, <b>파일로 내려받아</b> 메일에 첨부하세요.<br>
+      <b>메일 본문 (.txt)</b> 위 내용 그대로의 텍스트 파일 ·
+      <b>메일 서식 (.html)</b> 표로 정리된 파일 (브라우저에서 열어 전체 선택 후 메일에 붙여넣으면 표가 그대로 들어갑니다) ·
+      <b>특이건 엑셀 (.xlsx)</b> 사번·성명·일자·구분이 열로 정리된 파일
+    </div>
+    <div class="note w" style="margin-top:8px">
+      <b>비고 표기</b>는 근태 파일 「비고」란에 시스템이 적어 둔 내용(조기센싱 등)을 <b>그대로</b> 옮긴 것이라 가장 정확합니다.
+      <b>시간차 조기센싱</b>은 출근(센싱)이 근무시작보다 기준 분 이상 빠른 경우를 도구가 직접 계산한 것으로, 비고에 없는 건도 잡힙니다.
     </div>
   </div>
 </div>
@@ -2088,10 +2103,40 @@ function readTable(file, pats, done, req){
     best.aoa.slice(best.hi+1).forEach(r=>{ const o={}; let any=false;
       keys.forEach(k=>{ o[k]= best.col[k]>=0? r[best.col[k]] : null; if(norm(o[k])!=='') any=true; });
       if(any) out.push(o); });
-    done(out, best.hdr, best.col, best.sn);
+    done(out, best.hdr, best.col, best.sn, wb, best);
   }catch(err){ alert('파일을 읽지 못했습니다: '+err.message); } };
   fr.readAsArrayBuffer(file);
 }
+/* 한 표(aoa)에서 '기준 사번과 실제로 가장 잘 맞는 열'을 찾는다. 머리글 이름에 기대지 않는다.
+   맞는 값이 처음 나오는 행의 바로 윗행을 머리글 행으로 본다. */
+function scanIdCol(aoa,hrow,keys){
+  const body=aoa.slice(hrow+1); if(!body.length) return {i:-1,hit:0,first:-1};
+  const w=Math.max(0,...body.map(r=>r.length));
+  let best={i:-1,hit:0,first:-1};
+  for(let i=0;i<w;i++){
+    const seen=new Set(); let hit=0, first=-1;
+    for(let ri=0;ri<body.length;ri++){
+      const k=idKey(body[ri][i]); if(!k||seen.has(k)) continue; seen.add(k);
+      if(keys.has(k)){ hit++; if(first<0) first=hrow+1+ri; }
+    }
+    if(hit>best.hit) best={i,hit,first};
+  }
+  return best;
+}
+/* 통합문서 전체에서 가장 잘 맞는 시트·열·머리글행 */
+function scanIdBook(wb,keys){
+  let best={hit:0};
+  wb.SheetNames.forEach(sn=>{
+    const aoa=XLSX.utils.sheet_to_json(wb.Sheets[sn],{header:1,defval:null,blankrows:false,raw:true});
+    if(!aoa.length) return;
+    const b=scanIdCol(aoa,-1,keys);
+    if(b.hit>best.hit) best={hit:b.hit, col:b.i, sheet:sn, hrow:Math.max(0,b.first-1), aoa};
+  });
+  return best.hit? best : null;
+}
+/* 이름 정규화 — 공백·괄호 제거 */
+const nmKey=v=>norm(v).replace(/[\s()（）\[\]]/g,'').toUpperCase();
+
 /* 근무종료 이후 초과분(분) → 회사 기준으로 인정되는 개별연장 분 */
 function otRound(mins){
   if(!(mins>0)) return 0;
@@ -2153,7 +2198,8 @@ const RULES=[
  {id:'R12',dep:['ws','tout','em'],n:'개별연장(분) 금액이 절사 기준과 다름',d:'기준은 <b>근무시작 + 소정근무시간(8시간)</b> 입니다. 퇴근(센싱)이 그 시각을 넘으면 넘은 만큼이 연장이고, 절사 단위(기본 10분, 올림)로 인정합니다. 예) 08:00 시작 → 기준 16:00, 퇴근 18:04 → 초과 124분 → <b>130분</b>. 근무종료가 잘못 입력돼 있어도 이 기준은 흔들리지 않습니다.'},
  {id:'R13',dep:['date'],n:'한 주(월~일) 정일 일수가 기준과 다름',d:'인원별로 월요일~일요일 한 주에 정일이 지정 일수(기본 2일)만큼 있어야 합니다. <b>법일이 있는 주도 정일은 그대로 2일</b>이어야 합니다(정일 2 + 법일 1). 중도 입사·퇴사로 생긴 부분 주도 검사하며, 파일 앞뒤가 잘려서 생긴 주만 제외합니다.'},
  {id:'R14',dep:['date'],n:'이 달 법일 일수가 기준과 다름',d:'법일은 날짜가 정해져 있지 않고 그 달 안에서 자유롭게 잡을 수 있으므로, <b>인원별 법일 개수</b>가 그 달 기준과 맞는지 봅니다. 기준 = 공휴일 목록 중 평일에 해당하는 날 수 (토·일에 온 공휴일은 법일이 생기지 않고, 대체공휴일이 평일이면 그 몫으로 1개).<br><br><b>중도 입사·퇴사자</b>는 기본적으로 <b>그 사람의 근무 기간</b>에 들어오는 공휴일만 기준으로 셉니다 — 공휴일 이후에 입사했으면 기준이 0이 됩니다. 회사가 달 단위로 똑같이 준다면 위 <b>「중도 입사·퇴사자도 월 전체 기준을 그대로 적용」</b>을 체크하세요. 위 칸에 숫자를 넣어 직접 지정할 수도 있습니다.<br><br>메시지에 <b>실제 법일이 잡힌 날짜</b>와 <b>기준이 된 공휴일 날짜</b>가 함께 표시되니, 결과가 이상하면 그 두 가지를 먼저 비교해 보세요.'},
- {id:'R18',n:'명단에 있는데 근태 기록이 없는 인원',d:'대상 인원 명단에는 있는데 이 근태 파일에 한 줄도 없는 사번을 찾습니다. 명단을 넣었을 때만 동작합니다.'},
+ {id:'R18',n:'명단에 있는데 근태 기록이 없는 인원',d:'대상 인원 명단에는 있는데 이 근태 파일에 한 줄도 없는 사번을 찾습니다. 성명으로도 못 찾은 경우만 표시합니다. 명단을 넣었을 때만 동작합니다.'},
+ {id:'R27',n:'명단과 근태의 사번이 서로 다름',d:'명단의 사번으로는 근태에 없는데, 같은 성명이 근태에 딱 한 명 있는 경우입니다. 두 파일의 사번 표기가 다른 것이므로 어느 쪽이 맞는지 확인하세요. 명단을 넣었을 때만 동작합니다.'},
  {id:'R24',dep:['ws','we','tin','tout'],n:'근무시간은 비었는데 센싱에만 값이 있음',
    d:'<b>근무시작·근무종료가 둘 다 비어 있는데</b> 출근(센싱)이나 퇴근(센싱)에 값이 들어간 행입니다. 네 칸은 <b>같이 있거나 같이 없어야</b> 합니다. 실제 근무한 날이면 근무시작·근무종료를 채우고, 근무한 날이 아니면 센싱 값을 지우고 근태 항목을 맞춰 주세요.'},
  {id:'R25',dep:['ws','we','tin','tout'],n:'센싱은 비었는데 근무시간에만 값이 있음',
@@ -2281,7 +2327,8 @@ $('#rosClear').onclick=()=>{ A.roster=null; A.rosName='';
 $('#rosFile').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
   readTable(f,{id:/사번|사원번호|직번|emp/i, name:/성명|이름|name/i,
                w:/시급|단가|시간당|임률|임율|기본급?시급|rate|wage/i},
-    (rowsR,hdr,col)=>{
+    (rowsR,hdr,col,sn,wb)=>{
+      A.rosWb=wb; A.rosPick=null;
       const m=new Map(); const lines=[];
       rowsR.forEach(r=>{ const id=idKey(r.id); if(!id) return;
         m.set(id, norm(r.name));
@@ -2394,6 +2441,7 @@ function runA(){
   const body=A.aoa.slice(A.hrow+1);
   const ROS=(A.mode==='both' && A.rosterUse && A.rosterUse.size) ? A.rosterUse : null;
   let lastId='', carried=0, dropped=[], skipped=new Set();
+  const allNames=new Map(), allCount=new Map();   // 파일에 있는 모든 사번 ↔ 성명 (대상자 밖 포함)
   for(let ri=0; ri<body.length; ri++){
     const raw=body[ri]||[];
     const excelRow=A.hrow+ri+2;
@@ -2405,6 +2453,8 @@ function runA(){
       else { if(hasAny) dropped.push(excelRow); continue; }
     }
     lastId=empId;
+    { const nv=m.name>=0?norm(raw[m.name]):''; if(nv && !allNames.has(empId)) allNames.set(empId,nv);
+      allCount.set(empId,(allCount.get(empId)||0)+1); }
     if(ROS && !ROS.has(empId)){ skipped.add(empId); continue; }   // 대상자만 검수 — 그 외는 그냥 뺀다
     const g=i=>i>=0?raw[i]:null;
     const rv=i=>{ const v=g(i); if(v instanceof Date) return hm(v.getHours()*60+v.getMinutes()); return norm(v); };
@@ -2624,16 +2674,69 @@ function runA(){
     }
   }
 
-  // ── R18 : 명단에 있는데 근태 기록이 없는 인원 ──
+  // ── R18 / R27 : 명단 ↔ 근태 대조 ──
+  A.link=null;
   if(A.rosterUse && A.rosterUse.size){
     const seen=new Set(rows.map(r=>r.empId));
-    if(RON.R18) for(const [id,nm] of A.rosterUse){
-      if(seen.has(id)) continue;
-      F.push({rule:'R18',ruleName:RULES.find(x=>x.id==='R18').n,empId:id,name:nm||'',date:'-',
-        code:'',pay:'',detail:'명단에 있으나 이 근태 파일에 기록이 없음',extra:'',
-        fix:'근태 미등록·입력 누락인지, 아니면 퇴사·휴직으로 대상이 아닌지 확인',
-        excelRow:'',cell:'',row:{empId:id,name:nm||'',date:'-',code:'',pay:'',rws:'',rwe:'',rin:'',rout:'',res:'',ree:'',rem:''}});
+    let ROSTER=A.rosterUse;
+    let missing=[...ROSTER.keys()].filter(id=>!seen.has(id));
+
+    /* ① 명단의 사번 열이 잘못 잡혔으면, 근태 사번과 가장 잘 맞는 열로 자동 재연결 */
+    let relink=null;
+    const ALL=new Set([...rows.map(r=>r.empId), ...allNames.keys()]);
+    if(missing.length && A.rosWb && ALL.size){
+      const b=scanIdBook(A.rosWb, ALL);
+      if(b){
+        const hdr=(b.aoa[b.hrow]||[]).map(norm);
+        let nmCol=-1; hdr.forEach((h,i)=>{ if(nmCol<0 && i!==b.col && /성명|이름|name/i.test(h)) nmCol=i; });
+        if(nmCol<0) for(let i=0;i<hdr.length;i++){ if(i===b.col) continue;
+          const txt=b.aoa.slice(b.hrow+1).filter(r=>{const v=norm(r[i]); return v && !/^\d+$/.test(v);}).length;
+          if(txt>=Math.max(2,(b.aoa.length-b.hrow-1)*0.5)){ nmCol=i; break; } }
+        const m2=new Map();
+        b.aoa.slice(b.hrow+1).forEach(r=>{ const k=idKey(r[b.col]); if(k) m2.set(k, nmCol>=0?norm(r[nmCol]):''); });
+        const curHit=[...ROSTER.keys()].filter(k=>ALL.has(k)).length, curJunk=ROSTER.size-curHit;
+        const newHit=[...m2.keys()].filter(k=>ALL.has(k)).length, newJunk=m2.size-newHit;
+        if(m2.size && (newHit>curHit || (newHit===curHit && newJunk<curJunk))){
+          relink={was:curHit, now:newHit, sheet:b.sheet, col:hdr[b.col]||`(열${XLSX.utils.encode_col(b.col)})`, size:m2.size};
+          ROSTER=m2; A.rosterUse=m2; A.roster=m2;
+          missing=[...ROSTER.keys()].filter(id=>!seen.has(id));
+        }
+      }
     }
+
+    /* ② 그래도 못 찾은 사람은 '성명'으로 근태에서 찾아본다 — 사번만 다른 경우를 잡아낸다 */
+    const byName=new Map();
+    allNames.forEach((nv,eid)=>{ const k=nmKey(nv); if(!k) return;
+      if(!byName.has(k)) byName.set(k,new Set()); byName.get(k).add(eid); });
+    rows.forEach(r=>{ const k=nmKey(r.name); if(!k) return;
+      if(!byName.has(k)) byName.set(k,new Set()); byName.get(k).add(r.empId); });
+    const byId=new Map(); rows.forEach(r=>{ if(!byId.has(r.empId)) byId.set(r.empId,r); });
+    let nName=0, nGone=0;
+    for(const id of missing){
+      const nm=ROSTER.get(id)||'';
+      const cand=byName.get(nmKey(nm));
+      if(nm && cand && cand.size===1){                      // 성명이 딱 한 사람과 맞음 → 사번 불일치
+        nName++;
+        const otherId=[...cand][0];
+        const r0=byId.get(otherId) || {empId:id,name:nm,date:'-',code:'',pay:'',excelRow:'',
+          rws:'',rwe:'',rin:'',rout:'',res:'',ree:'',rem:''};
+        const days=allCount.get(otherId) || rows.filter(x=>x.empId===otherId).length;
+        add('R27', r0,
+          `명단 사번 <b>${id}</b> ↔ 근태 사번 <b>${otherId}</b> — 성명 「${nm}」으로는 근태에 기록이 있습니다`,
+          `근태 ${days}일치`,
+          '두 파일의 사번 중 어느 쪽이 맞는지 확인해 한쪽을 고쳐주세요. 성명이 같은 사람이라면 근태 기록은 정상이고, 사번 표기만 다릅니다',
+          r0.excelRow? CR(m.empId,r0.excelRow) : '', '-');
+      }else{
+        nGone++;
+        if(RON.R18) F.push({rule:'R18',ruleName:RULES.find(x=>x.id==='R18').n,empId:id,name:nm||'',date:'-',
+          code:'',pay:'',detail:'명단에 있으나 이 근태 파일에 기록이 없음'
+            + (nm&&cand&&cand.size>1? ` (성명 「${nm}」이 근태에 ${cand.size}명 있어 자동으로 맞추지 못했습니다)`:''),
+          extra:'',
+          fix:'근태 미등록·입력 누락인지, 아니면 퇴사·휴직으로 대상이 아닌지 확인. 사번이 서로 다른 것은 아닌지도 함께 확인',
+          excelRow:'',cell:'',row:{empId:id,name:nm||'',date:'-',code:'',pay:'',rws:'',rwe:'',rin:'',rout:'',res:'',ree:'',rem:''}});
+      }
+    }
+    A.link={total:ROSTER.size, byId:ROSTER.size-missing.length, byName:nName, gone:nGone, relink};
   }
 
   // ── 급여 영향액 ──
@@ -2665,7 +2768,7 @@ function runA(){
   }
 
   A.carried=carried; A.droppedRows=dropped;
-  A.rows=rows; A.skipped=skipped.size; A.find=F;
+  A.rows=rows; A.skipped=skipped.size; A.allNames=allNames; A.allCount=allCount; A.find=F;
   if(A.prev&&A.prev.items){
     const pk=new Set(A.prev.items.map(x=>x.k));
     F.forEach(f=>f.status=pk.has(kOf(f))?'남음':'신규');
@@ -2788,6 +2891,20 @@ function rowWarnHTML(){
   h+='<span class="muted">사번이 빠진 행은 그 인원의 정일·법일 집계에서 빠져 R13·R14가 잘못 나올 수 있습니다.</span></div>';
   return h;
 }
+/* 명단 ↔ 근태 사번 대조 현황 */
+function linkWarnHTML(){
+  const L=A.link; if(!L) return '';
+  let h='';
+  if(L.relink) h+=`<div class="note w"><b>명단의 사번 열을 자동으로 바꿨습니다</b> — 시트 「${L.relink.sheet}」 · 「${L.relink.col}」 열<br>
+    원래 잡은 열로는 근태와 ${L.relink.was}명만 맞았는데, 이 열로 보니 <b>${L.relink.now}명</b>이 맞습니다 (명단 ${L.relink.size}명).</div>`;
+  if(L.byName) h+=`<div class="note w"><b>사번이 서로 다른 인원 ${L.byName}명 (R27)</b> — 명단 사번으로는 근태에 없지만 <b>성명으로는 근태에 기록이 있습니다.</b><br>
+    「근태 기록이 없음」이 아니라 <b>두 파일의 사번 표기가 다른 것</b>입니다. 아래 목록에서 R27을 눌러 양쪽 사번을 확인하세요.</div>`;
+  const cls = L.gone? 'b' : (L.byName? 'w':'g');
+  h+=`<div class="note ${cls}"><b>명단 대조 현황</b> — 명단 <b>${L.total}명</b> 중 ·
+    사번으로 찾음 <b>${L.byId}명</b>${L.byName?` · 성명으로 찾음 <b>${L.byName}명</b>`:''}${L.gone?` · <b>못 찾음 ${L.gone}명</b>`:' · 못 찾음 0명'}
+    <span class="muted">(사번은 공백·하이픈·앞의 0을 무시하고 맞춥니다)</span></div>`;
+  return h;
+}
 function mapWarnHTML(){
   if(!A.missing || !A.missing.size) return '';
   const rs=Object.keys(A.skip||{});
@@ -2847,7 +2964,7 @@ function renderA(cnt){
 
   $('#offBox').innerHTML = offBoxHTML();
   $$('[data-off]').forEach(el=>el.onclick=offDetail);
-  $('#cmpBox').innerHTML = mapWarnHTML() + rowWarnHTML() + floodWarnHTML(cnt) + (!A.prev ? '' :
+  $('#cmpBox').innerHTML = mapWarnHTML() + linkWarnHTML() + rowWarnHTML() + floodWarnHTML(cnt) + (!A.prev ? '' :
     `<div class="note i"><b>이전 검수(${A.prev.저장시각||'저장 시각 미상'}, 이상 ${A.prev.이상건수}건)와 비교 중</b> —
      해결 ${(A.resolved||[]).length}건 · 남음 ${A.find.filter(f=>f.status==='남음').length}건 · 신규 ${A.find.filter(f=>f.status==='신규').length}건.</div>`);
 
@@ -3262,6 +3379,7 @@ if($('#vMap') && !$('#vMap').value.trim()) $('#vMap').value = payMapText();
    급여 확인 검수기 — 「기간제 급여 계산기」 수식 기준
    ========================================================= */
 const P={att:null, led:null, ledAoa:[], ledHdr:[], hrow:0, diag:null,
+         alias:new Map(), aliasRev:new Map(), rlink:null,
          wage:new Map(), hire:new Map(), quit:new Map(), roster:new Map(),
          rows:[], anom:[], name:''};
 
@@ -3305,8 +3423,9 @@ $('#pFile1').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
   readFile(f);
   const wait=setInterval(()=>{ if(S.sum && S.sum.length){ clearInterval(wait);
     P.att=S.sum; scanAnom();
-    $('#pInfo1').innerHTML=`✓ ${S.sum.length}명 · ${f.name}`;
-    $('#dropP1').classList.add('done'); runP(); } },300);
+    $('#pInfo1').innerHTML=`✓ ${S.sum.length}명 · ${f.name} · 특이건 ${P.anom.length}건`;
+    $('#dropP1').classList.add('done'); pReveal(); runP();
+    if(!P.led){ const mb=$$('[data-ptab]').find(x=>x.dataset.ptab==='mail'); if(mb) mb.click(); } } },300);
   setTimeout(()=>clearInterval(wait), 20000);
   e.target.value=''; };
 
@@ -3316,7 +3435,8 @@ function scanAnom(){
   const H=S.headers||[]; if(!H.length) return;
   const find=(pat,ex)=>H.findIndex(h=>{const x=norm(h); return pat.test(x)&&!(ex&&ex.test(x));});
   const ci={ id:find(/사번|사원번호|직번/), nm:find(/성명|이름/), dt:find(/일자|날짜|근무일/),
-             cd:find(/근태/,/시작|종료|시각/), ws:find(/근무.*시작/), tin:find(/출근/), tout:find(/퇴근/) };
+             cd:find(/근태/,/시작|종료|시각/), ws:find(/근무.*시작/), tin:find(/출근/), tout:find(/퇴근/),
+             memo:find(/^비고$|비고|특이|메모/,/연장/) };
   if(ci.id<0||ci.dt<0) return;
   const NON=/^(정일|법일|연차휴가|연중휴가|예비군|조의|건강검진휴가|공가|경조휴가|결근|무단결근|휴무|대체휴무)$/;
   const t2m=v=>{ if(v instanceof Date) return v.getHours()*60+v.getMinutes();
@@ -3334,13 +3454,22 @@ function scanAnom(){
     const rin=ci.tin>=0? norm(raw[ci.tin]) : '', rout=ci.tout>=0? norm(raw[ci.tout]) : '';
     const rws=ci.ws>=0? norm(raw[ci.ws]) : '';
     const row={id,nm,d,dl,code,excelRow:(S.headerRow||0)+i+2, ws:rws, tin:rin, tout:rout};
-    if(rws===''&&rin===''&&rout==='') return;        // 아무 기록도 없는 날은 건너뜀
-    if(rin==='') P.anom.push({...row, kind:'in',  label:'출근 지문 누락'});
-    if(rout==='') P.anom.push({...row, kind:'out', label:'퇴근 지문 누락'});
+    const memo=ci.memo>=0? norm(raw[ci.memo]) : '';
+    row.memo=memo;
+    if(rws===''&&rin===''&&rout===''&&memo==='') return;   // 아무 기록도 없는 날은 건너뜀
+    if(rws!==''||rin!==''||rout!==''){
+      if(rin==='') P.anom.push({...row, kind:'in',  label:'출근 지문 누락'});
+      if(rout==='') P.anom.push({...row, kind:'out', label:'퇴근 지문 누락'});
+    }
+    // 근태 파일 「비고」에 시스템이 적어 둔 표기를 그대로 특이건으로 (조기센싱·지각 등)
+    if(memo){
+      const diff=(ws!=null&&ti!=null)? ws-ti : null;
+      P.anom.push({...row, kind:'memo', memo, diff, label:memo});
+    }
     if(ws!=null && ti!=null){ const diff=ws-ti;      // +면 센싱이 빠름
       row.diff=diff;
-      if(diff>0) P.anom.push({...row, kind:'early', diff, label:'조기 센싱'});
-      else if(diff<0) P.anom.push({...row, kind:'late', diff, label:'늦은 센싱'});
+      if(diff>0) P.anom.push({...row, kind:'early', diff, label:'조기 센싱(시간차)'});
+      else if(diff<0) P.anom.push({...row, kind:'late', diff, label:'늦은 센싱(시간차)'});
     }
   });
 }
@@ -3353,7 +3482,7 @@ $('#pFile2').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
     $('#pSheet').innerHTML=P.led.SheetNames.map(n=>`<option>${n}</option>`).join('');
     $('#pInfo2').innerHTML=`✓ ${f.name} · 시트 ${P.led.SheetNames.length}개`;
     $('#dropP2').classList.add('done'); $('#p2').classList.remove('off');
-    pLoadSheet();
+    pReveal(); pLoadSheet();
   }catch(err){ alert('급여대장을 읽지 못했습니다: '+err.message); } };
   fr.readAsArrayBuffer(f); e.target.value=''; };
 $('#pSheet').onchange=pLoadSheet;
@@ -3395,7 +3524,8 @@ $('#pFile3').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
   readTable(f,{id:/사번|사원번호|직번|emp/i, name:/성명|이름|name/i,
                w:/시급|단가|시간당|임률|임율|rate|wage/i,
                hire:/입사|시작일|hire/i, quit:/퇴사|종료일|quit/i},
-    (rows,hdr,col)=>{
+    (rows,hdr,col,sn,wb)=>{
+      P.rosWb=wb;
       P.roster=new Map(); P.wage=new Map(); P.quit=new Map();
       rows.forEach(r=>{ const id=idKey(r.id); if(!id) return;
         P.roster.set(id, norm(r.name));
@@ -3423,22 +3553,7 @@ $('#mCopy').onclick=()=>{ const t=$('#mText'); t.select(); t.setSelectionRange(0
   catch(e){ alert('복사에 실패했습니다. 칸을 클릭하고 Ctrl+A → Ctrl+C 해주세요.'); } };
 
 /* ---- 대조 ---- */
-/* 한 시트에서 '명단 사번과 실제로 가장 잘 맞는 열'을 찾는다 (머리글 이름에 의존하지 않음).
-   맞는 값이 처음 나오는 행의 바로 윗행을 머리글 행으로 봅니다. */
-function pScanIdCol(aoa,hrow,keys){
-  const body=aoa.slice(hrow+1); if(!body.length) return {i:-1,hit:0,first:-1};
-  const w=Math.max(0,...body.map(r=>r.length));
-  let best={i:-1,hit:0,first:-1};
-  for(let i=0;i<w;i++){
-    const seen=new Set(); let hit=0, first=-1;
-    for(let ri=0;ri<body.length;ri++){
-      const k=idKey(body[ri][i]); if(!k||seen.has(k)) continue; seen.add(k);
-      if(keys.has(k)){ hit++; if(first<0) first=hrow+1+ri; }
-    }
-    if(hit>best.hit) best={i,hit,first};
-  }
-  return best;
-}
+const pScanIdCol=scanIdCol;
 /* 시트 하나를 머리글까지 스스로 인식해서 읽는다 (재직자·퇴사자처럼 시트가 나뉜 대장용) */
 function pReadSheet(sn,keys){
   const aoa=XLSX.utils.sheet_to_json(P.led.Sheets[sn],{header:1,defval:null,blankrows:false,raw:true});
@@ -3470,8 +3585,62 @@ function pScanAll(keys){
   });
   return best.hit? best : null;
 }
+/* ── 근태 ↔ 명단 사번 맞추기 ──
+   ① 명단의 사번 열이 잘못 잡혔으면 근태 사번과 가장 잘 맞는 열로 다시 연결
+   ② 그래도 못 찾으면 성명으로 찾아 이어 붙인다 (사번 표기만 다른 경우)
+   급여대장이 없어도 동작합니다. */
+function pLink(){
+  P.alias=new Map(); P.aliasRev=new Map(); P.rlink=null;
+  if(!P.att || !P.roster.size) return;
+  const attMap=new Map(P.att.map(e=>[e.empId,e]));
+  if(attMap.size){
+    const attIds=new Set(attMap.keys());
+    let miss=[...P.roster.keys()].filter(id=>!attIds.has(id));
+    if(miss.length && P.rosWb){
+      const b=scanIdBook(P.rosWb, attIds);
+      if(b){
+        const hdr=(b.aoa[b.hrow]||[]).map(norm);
+        let nmCol=-1; hdr.forEach((h,i)=>{ if(nmCol<0 && i!==b.col && /성명|이름|name/i.test(h)) nmCol=i; });
+        if(nmCol<0) for(let i=0;i<hdr.length;i++){ if(i===b.col) continue;
+          const txt=b.aoa.slice(b.hrow+1).filter(r=>{const v=norm(r[i]); return v && !/^\d+$/.test(v);}).length;
+          if(txt>=Math.max(2,(b.aoa.length-b.hrow-1)*0.5)){ nmCol=i; break; } }
+        const m2=new Map();
+        b.aoa.slice(b.hrow+1).forEach(r=>{ const k=idKey(r[b.col]); if(k) m2.set(k, nmCol>=0?norm(r[nmCol]):''); });
+        const curHit=P.roster.size-miss.length, curJunk=miss.length;
+        const newHit=[...m2.keys()].filter(k=>attIds.has(k)).length, newJunk=m2.size-newHit;
+        if(m2.size && (newHit>curHit || (newHit===curHit && newJunk<curJunk))){
+          P.rlink={was:curHit, now:newHit, sheet:b.sheet, col:hdr[b.col]||`(열${XLSX.utils.encode_col(b.col)})`, size:m2.size};
+          P.roster=m2; miss=[...P.roster.keys()].filter(id=>!attIds.has(id));
+        }
+      }
+    }
+    const byName=new Map();
+    P.att.forEach(e=>{ const k=nmKey(e.name); if(!k) return;
+      if(!byName.has(k)) byName.set(k,new Set()); byName.get(k).add(e.empId); });
+    miss.forEach(id=>{ const nm=P.roster.get(id); if(!nm) return;
+      const c=byName.get(nmKey(nm));
+      if(c && c.size===1 && !P.roster.has([...c][0])) P.alias.set(id,[...c][0]); });
+  }
+  P.aliasRev=new Map([...P.alias].map(([a,b])=>[b,a]));
+}
+/* 근태 파일만 있어도 결과 칸(특이건 탭)을 연다 */
+function pReveal(){
+  if(!P.att) return;
+  pLink();
+  $('#p4').classList.remove('off');
+  const needLed=!P.led;
+  $('#pNeedLed').hidden=!needLed;
+  $('#ptabPay').style.display = needLed? 'none' : '';
+  const hasR=P.roster.size>0;
+  const n=P.anom.filter(a=>(a.kind==='in'||a.kind==='out'||a.kind==='memo')
+    && (!hasR || P.roster.has(a.id) || P.aliasRev.has(a.id))).length;
+  const pm=$('#pillMail'); if(pm){ pm.textContent=n? n+'건':''; pm.className='pill '+(n?'bad':''); }
+  const pp=$('#pillPay'); if(pp){ pp.textContent=P.led?'':'대장 필요'; pp.className='pill '+(P.led?'':'y'); }
+  if(!$('#ptabMail').hidden) mailBuild();
+}
 function runP(){
-  if(!P.att || !P.led) return;
+  if(!P.att) return;
+  if(!P.led){ pReveal(); return; }
   let m=PM();
 
   /* ── 급여대장 사번을 명단과 '실제로 맞춰보고' 스스로 바로잡는다 ──
@@ -3525,10 +3694,16 @@ function runP(){
     led.set(id,o);
   });
 
+  const attMap=new Map(P.att.map(e=>[e.empId,e]));
+  const hasRoster=P.roster.size>0;
+
+  pLink();
+  const AL=id=>P.alias.get(id)||id;
+
   /* 대장이 시트로 나뉘어 있으면(재직자·퇴사자 등) 나머지 시트에서도 찾아 함께 대조한다 */
   P.extra=[];
   if(P.roster.size && P.led.SheetNames.length>1){
-    const need=new Set([...P.roster.keys()].filter(id=>!led.has(id)));
+    const need=new Set([...P.roster.keys()].map(AL).filter(id=>!led.has(id)));
     if(need.size){
       const cur=$('#pSheet').value;
       for(const sn of P.led.SheetNames){
@@ -3541,16 +3716,16 @@ function runP(){
     }
   }
 
-  const attMap=new Map(P.att.map(e=>[e.empId,e]));
-  const hasRoster=P.roster.size>0;
   const targets = hasRoster? [...P.roster.keys()] : [...new Set([...attMap.keys(),...led.keys()])];
 
   const rows=[];
   targets.forEach(id=>{
-    const a=attMap.get(id), L=led.get(id);
+    const a=attMap.get(id) || attMap.get(AL(id));
+    const L=led.get(id) || led.get(AL(id));
     const wage=(L&&L.wage) || P.wage.get(id) || null;
     const r={empId:id, name:(P.roster.get(id))||(a&&a.name)||(L&&L.name)||'', wage,
       퇴사:P.quit.has(id), 근태있음:!!a, 대장있음:!!L, ledRow:L?L.row:'', ledSheet:(L&&L.sheet)||'',
+      근태사번:(a&&a.empId!==id)?a.empId:'',
       일수:a?a.근무일수:null, 주휴:a?a.주휴:null, 연장분:a?a.연장분:null, 심야분:a?a.심야분:null,
       calc:{}, led:{}, diff:{}, items:[], absSum:0};
     PITEMS.forEach(it=>{ r.led[it.k]= L? L.v[it.k] : null; });
@@ -3578,7 +3753,7 @@ function runP(){
   });
   rows.sort((x,y)=> (y.absSum-x.absSum) || (x.empId<y.empId?-1:1));
   P.rows=rows; P.map=m;
-  $('#p4').classList.remove('off');
+  pReveal();
   pKpi(); pTable(); if(!$('#ptabMail').hidden) mailBuild();
 }
 function pKpi(){
@@ -3608,8 +3783,14 @@ function pKpi(){
     + `<br><span class="muted">항목을 연결하려면 2단계 「급여대장 열 연결」에서 고르세요.</span></div>`;
   if(P.roster.size){
     const nAtt=rows.filter(r=>r.근태있음).length, nLed=rows.filter(r=>r.대장있음).length;
-    h+=`<div class="note ${nLed===rows.length?'g':'i'}"><b>사번 대조 현황</b> — 대상자 ${rows.length}명 중 ·
-      근태 파일에서 찾음 <b>${nAtt}명</b> · 급여대장에서 찾음 <b>${nLed}명</b>
+    const nAl=rows.filter(r=>r.근태사번).length;
+    if(P.rlink) h+=`<div class="note w"><b>명단의 사번 열을 자동으로 바꿨습니다</b> — 시트 「${P.rlink.sheet}」 · 「${P.rlink.col}」 열<br>
+      원래 열로는 근태와 ${P.rlink.was}명만 맞았는데, 이 열로 보니 <b>${P.rlink.now}명</b>이 맞습니다.</div>`;
+    if(nAl) h+=`<div class="note w"><b>사번이 서로 다른 인원 ${nAl}명</b> — 명단 사번으로는 근태에 없지만 <b>성명이 같은 사람</b>이 근태에 있어 이어서 대조했습니다.<br>
+      ${rows.filter(r=>r.근태사번).slice(0,10).map(r=>`${r.name||''} 명단 <b>${r.empId}</b> ↔ 근태 <b>${r.근태사번}</b>`).join(' · ')}<br>
+      <span class="muted">어느 쪽 사번이 맞는지 확인해 한쪽을 고쳐두시면 다음 달부터는 이 안내가 나오지 않습니다.</span></div>`;
+    h+=`<div class="note ${nLed===rows.length&&nAtt===rows.length?'g':'i'}"><b>사번 대조 현황</b> — 대상자 ${rows.length}명 중 ·
+      근태 파일에서 찾음 <b>${nAtt}명</b>${nAl?` (성명으로 이어 붙인 ${nAl}명 포함)`:''} · 급여대장에서 찾음 <b>${nLed}명</b>
       <span class="muted">(사번은 공백·하이픈·앞의 0을 무시하고 맞춥니다. 이름은 명단의 사번 기준으로 표시합니다.)</span></div>`;
   }
   if(P.extra && P.extra.length)
@@ -3630,6 +3811,7 @@ function pKpi(){
         <span class="mono">명단 사번 예시 : ${(D.ros||[]).join(' · ')}</span><br>
         2단계 「급여대장 열 연결」에서 <b>사번</b> 열을, 필요하면 <b>시트·머리글 행</b>까지 직접 골라주세요.</div>`;
   if(missLed.length) h+=`<div class="note ${D&&D.how==='fail'?'w':'b'}"><b>${D&&D.how==='fail'?'ℹ️':'⚠️'} 대상자인데 급여대장에 없는 인원 ${missLed.length}명</b> — ${missLed.slice(0,20).map(r=>`${r.empId} ${r.name}`).join(' · ')}${missLed.length>20?` 외 ${missLed.length-20}명`:''}<br>${D&&D.how==='fail'?'사번을 제대로 읽지 못해 생긴 숫자일 수 있습니다. 위 안내를 먼저 확인하세요.':'시스템에서 급여 작업이 누락된 인원일 수 있습니다. 대장에서 사번으로 직접 검색해 확인해 보세요.'}</div>`;
+  if(missAtt.length) h+=`<div class="note b"><b>⚠️ 대상자인데 근태 파일에 없는 인원 ${missAtt.length}명</b> — ${missAtt.slice(0,20).map(r=>`${r.empId} ${r.name}`).join(' · ')}${missAtt.length>20?` 외 ${missAtt.length-20}명`:''}<br>사번·성명 어느 쪽으로도 근태에서 찾지 못했습니다. 근태 등록이 빠졌는지, 아니면 명단의 사번이 잘못됐는지 확인하세요.</div>`;
   if(noW) h+=`<div class="note w"><b>시급이 없어 계산하지 못한 인원 ${noW}명</b> — 대장에 시급 열이 있으면 2단계에서 연결하거나, 명단 파일에 시급을 넣어주세요.</div>`;
   $('#pWarn').innerHTML=h;
 }
@@ -3699,29 +3881,32 @@ function mailRows(){
   const lim=Math.abs(+$('#mEarly').value||30), kind=$('#mKind').value;
   const hasR=P.roster.size>0;
   return P.anom.filter(a=>{
-    if(hasR && !P.roster.has(a.id)) return false;       // 대상자만
+    if(hasR && !P.roster.has(a.id) && !P.aliasRev.has(a.id)) return false;   // 대상자만 (사번이 다른 경우 포함)
     if(a.kind==='early') { if(a.diff<lim) return false; }
     if(a.kind==='late')  { if(-a.diff<lim) return false; }
-    if(kind==='all') return a.kind!=='late';
+    if(kind==='all')  return a.kind==='in'||a.kind==='out'||a.kind==='memo';   // 지문 누락 + 비고 표기
+    if(kind==='all2') return a.kind!=='late';
     return a.kind===kind;
   });
 }
 function mailBuild(){
   const rows=mailRows(), grp=$('#mGroup').value;
-  const nm=id=>P.roster.get(id) || (rows.find(x=>x.id===id)||{}).nm || '';
-  const cnt={in:0,out:0,early:0,late:0};
-  P.anom.filter(a=>!P.roster.size||P.roster.has(a.id)).forEach(a=>{
+  const nm=id=>P.roster.get(id) || P.roster.get(P.aliasRev&&P.aliasRev.get(id)) || (rows.find(x=>x.id===id)||{}).nm || '';
+  const cnt={in:0,out:0,early:0,late:0,memo:0}, memoBy={};
+  P.anom.filter(a=>!P.roster.size||P.roster.has(a.id)||(P.aliasRev&&P.aliasRev.has(a.id))).forEach(a=>{
     const lim=Math.abs(+$('#mEarly').value||30);
     if(a.kind==='early'&&a.diff<lim) return;
     if(a.kind==='late'&&-a.diff<lim) return;
-    cnt[a.kind]++; });
+    cnt[a.kind]=(cnt[a.kind]||0)+1;
+    if(a.kind==='memo') memoBy[a.memo]=(memoBy[a.memo]||0)+1; });
   const people=new Set(rows.map(r=>r.id)).size;
   $('#mKpi').innerHTML=[['대상 인원',people,'명',people?'v-bad':'v-ok'],['출근 지문 누락',cnt.in,'건',cnt.in?'v-bad':''],
-    ['퇴근 지문 누락',cnt.out,'건',cnt.out?'v-bad':''],['조기 센싱',cnt.early,'건',cnt.early?'v-bad':''],
-    ['늦은 센싱',cnt.late,'건','']]
+    ['퇴근 지문 누락',cnt.out,'건',cnt.out?'v-bad':''],['비고 표기',cnt.memo,'건',cnt.memo?'v-bad':''],
+    ['시간차 조기센싱',cnt.early,'건','']]
     .map(([l,v,u,c])=>`<div class="kpi"><div class="l">${l}</div><div class="v ${c}">${v}<span class="u">${u}</span></div></div>`).join('');
+  P.memoBy=memoBy;
 
-  const line=a=>`${a.id} ${nm(a.id)} ${a.dl} ${a.label}${a.kind==='early'||a.kind==='late'?` (${Math.abs(a.diff)}분)`:''}`;
+  const line=a=>`${a.id} ${nm(a.id)} ${a.dl} ${a.label}${(a.kind==='early'||a.kind==='late')&&a.diff!=null?` (${Math.abs(a.diff)}분)`:''}`;
   let out='';
   if(!rows.length){ $('#mText').value='해당하는 특이건이 없습니다.'; return; }
   if(grp==='flat'){
@@ -3734,20 +3919,72 @@ function mailBuild(){
       return `[${id} ${nm(id)}] ${list.length}건\n`+list.map(a=>'  - '+line(a)).join('\n');
     }).join('\n\n');
   }
+  const memoTxt=Object.entries(P.memoBy||{}).map(([k,v])=>`${k} ${v}건`).join(' · ');
   const hdr=`■ 근태 특이건 확인 요청\n기간 : ${P.name||''}\n대상 : ${people}명 / ${rows.length}건`
-    + `\n구분 : 출근 지문 누락 ${cnt.in}건 · 퇴근 지문 누락 ${cnt.out}건 · 조기 센싱 ${cnt.early}건\n`
+    + `\n구분 : 출근 지문 누락 ${cnt.in}건 · 퇴근 지문 누락 ${cnt.out}건${memoTxt?` · 비고 표기 ${memoTxt}`:''}\n`
     + '─'.repeat(46)+'\n';
-  $('#mText').value=hdr+out+'\n'+'─'.repeat(46)+'\n※ 조기 센싱 = 출근(센싱)이 근무시작보다 '+(+$('#mEarly').value||30)+'분 이상 빠른 경우\n';
+  $('#mText').value=hdr+out+'\n'+'─'.repeat(46)
+    +'\n※ 지문 누락 = 출근/퇴근 센싱 시각이 비어 있는 날'
+    +'\n※ 비고 표기 = 근태 파일 「비고」란에 적힌 내용 (조기센싱 등)을 그대로 옮긴 것'
+    +'\n※ 시간차 조기센싱 = 출근(센싱)이 근무시작보다 '+(+$('#mEarly').value||30)+'분 이상 빠른 경우\n';
 }
+function mailFileName(ext){
+  const d=new Date(), p2=n=>String(n).padStart(2,'0');
+  return `근태특이건_${P.name||'근태'}_${d.getFullYear()}${p2(d.getMonth()+1)}${p2(d.getDate())}.${ext}`;
+}
+function dlBlob(text, name, mime){
+  const blob=new Blob(['\ufeff'+text],{type:mime+';charset=utf-8'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name;
+  document.body.appendChild(a); a.click();
+  setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },1500);
+}
+$('#mTxt').onclick=()=>{
+  const t=$('#mText').value;
+  if(!t.trim()||/해당하는 특이건이 없습니다/.test(t)){ alert('내려받을 특이건이 없습니다.'); return; }
+  dlBlob(t, mailFileName('txt'), 'text/plain');
+};
+$('#mHtml').onclick=()=>{
+  const rows=mailRows(); if(!rows.length){ alert('내려받을 특이건이 없습니다.'); return; }
+  const nm=id=>P.roster.get(id)||P.roster.get(P.aliasRev&&P.aliasRev.get(id))||(rows.find(x=>x.id===id)||{}).nm||'';
+  const esc=v=>String(v??'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+  const by=new Map(); rows.forEach(a=>{ if(!by.has(a.id)) by.set(a.id,[]); by.get(a.id).push(a); });
+  const people=by.size;
+  const trs=[...by.entries()].sort((x,y)=>x[0]<y[0]?-1:1).map(([id,list])=>{
+    list.sort((a,b)=>(a.d&&b.d)?a.d-b.d:0);
+    return list.map((a,i)=>`<tr>`
+      +(i===0?`<td rowspan="${list.length}" style="border:1px solid #d0d0d5;padding:7px 10px;text-align:center;vertical-align:middle;font-family:monospace">${esc(id)}</td>`
+             +`<td rowspan="${list.length}" style="border:1px solid #d0d0d5;padding:7px 10px;text-align:center;vertical-align:middle;font-weight:600">${esc(nm(id))}</td>`:'')
+      +`<td style="border:1px solid #d0d0d5;padding:7px 10px;text-align:center">${esc(a.dl)}</td>`
+      +`<td style="border:1px solid #d0d0d5;padding:7px 10px">${esc(a.label)}${(a.kind==='early'||a.kind==='late')&&a.diff!=null?` (${Math.abs(a.diff)}분)`:''}</td>`
+      +`<td style="border:1px solid #d0d0d5;padding:7px 10px;text-align:center;color:#666">${esc(a.tin||'-')} / ${esc(a.tout||'-')}</td>`
+      +`</tr>`).join('');
+  }).join('');
+  const th=t=>`<th style="border:1px solid #d0d0d5;padding:8px 10px;background:#f2f2f7;font-weight:700;text-align:center">${t}</th>`;
+  const html=`<!doctype html><html lang="ko"><meta charset="utf-8"><title>근태 특이건 확인 요청</title>
+<body style="margin:0;padding:24px;font-family:'맑은 고딕','Malgun Gothic',AppleSDGothicNeo,sans-serif;font-size:13px;color:#111">
+<p style="font-size:16px;font-weight:700;margin:0 0 4px">근태 특이건 확인 요청</p>
+<p style="margin:0 0 16px;color:#555">기간 ${esc(P.name||'')} · 대상 ${people}명 / ${rows.length}건</p>
+<p style="margin:0 0 14px">아래 인원의 근태에 특이 사항이 있어 확인 요청드립니다. 확인 후 회신 부탁드립니다.</p>
+<table style="border-collapse:collapse;font-size:13px">
+<thead><tr>${th('사번')}${th('성명')}${th('일자')}${th('내용')}${th('출근/퇴근 센싱')}</tr></thead>
+<tbody>${trs}</tbody></table>
+<p style="margin:16px 0 0;color:#666;font-size:12px">
+※ 지문 누락 = 출근/퇴근 센싱 시각이 비어 있는 날<br>
+※ 비고 표기 = 근태 파일 「비고」란의 내용을 그대로 옮긴 것<br>
+※ 시간차 조기센싱 = 출근(센싱)이 근무시작보다 ${(+$('#mEarly').value||30)}분 이상 빠른 경우</p>
+</body></html>`;
+  dlBlob(html, mailFileName('html'), 'text/html');
+};
 $('#mExp').onclick=()=>{
   const rows=mailRows(); if(!rows.length){ alert('내보낼 특이건이 없습니다.'); return; }
   const wb=XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows.map(a=>({
-    사번:a.id, 성명:P.roster.get(a.id)||a.nm, 일자:a.dl, 구분:a.label,
+    사번:a.id, 성명:P.roster.get(a.id)||P.roster.get(P.aliasRev&&P.aliasRev.get(a.id))||a.nm,
+    일자:a.dl, 구분:a.label, '근태 비고':a.memo||'',
     '근무시작':a.ws, '출근(센싱)':a.tin, '퇴근(센싱)':a.tout,
     '차이(분)':a.diff!=null?Math.abs(a.diff):'', '원본 행':a.excelRow,
-    '메일 문구':`${a.id} ${P.roster.get(a.id)||a.nm} ${a.dl} ${a.label}`}))),'특이건');
-  XLSX.writeFile(wb,`${P.name||'근태'}_특이건.xlsx`);
+    '메일 문구':`${a.id} ${P.roster.get(a.id)||P.roster.get(P.aliasRev&&P.aliasRev.get(a.id))||a.nm} ${a.dl} ${a.label}`}))),'특이건');
+  XLSX.writeFile(wb, mailFileName('xlsx'));
 };
 
 /* ---- 계산기 양식 그대로 내보내기 (수식 살려서) ---- */
