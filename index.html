@@ -613,7 +613,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
     <button data-v="anom"><span class="ni"><svg viewBox="0 0 18 18"><path d="M2.6 4.2h12.8a1 1 0 0 1 1 1v7.6a1 1 0 0 1-1 1H2.6a1 1 0 0 1-1-1V5.2a1 1 0 0 1 1-1m.7 2 5.7 3.7 5.7-3.7z"/></svg></span>근태 특이건<span class="navp" id="navAnom"></span></button>
   </nav>
   <div class="side-foot">
-    <b>APRS</b><span class="ver">v7.0 · 2026-09</span>
+    <b>APRS</b><span class="ver">v7.3 · 2026-09</span>
     <span class="who" id="gWho"></span>
     <button class="sfout" id="btnOut" title="로그아웃">로그아웃</button>
   </div>
@@ -739,7 +739,74 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
       <b>시간차 조기센싱</b>은 출근(센싱)이 근무시작보다 기준 분 이상 빠른 경우를 도구가 직접 계산한 것으로, 비고에 없는 건도 잡힙니다.
     </div>
 </div>
+
+<div class="card off" id="ao3">
+  <h2><span class="n">3</span>메일 보내기</h2>
+  <p class="hint">담당자를 <b>주소록에 등록</b>해 두면 이름만 골라 받는사람이 채워집니다.
+    <b>메일 파일(.eml)</b>로 만들면 표와 엑셀 첨부까지 들어간 메일이 열려서 <b>「보내기」만 누르면</b> 됩니다.</p>
+
+  <div class="split" style="margin-bottom:10px">
+    <select id="mTo" style="min-width:320px"><option value="">담당자 고르기…</option></select>
+    <button class="sm" data-open="dgAddr">주소록 관리<span class="pill" id="abCount"></span></button>
+  </div>
+  <div class="row" style="margin-bottom:10px">
+    <div class="f" style="flex:2;min-width:260px"><label>받는사람 <span class="muted">여러 명은 ; 로 구분</span></label>
+      <input type="text" id="mToBox" placeholder="hong@company.co.kr; kim@company.co.kr" spellcheck="false"></div>
+    <div class="f" style="flex:1.4;min-width:200px"><label>참조 (선택)</label>
+      <input type="text" id="mCcBox" placeholder="team@company.co.kr" spellcheck="false"></div>
+  </div>
+  <div class="row" style="margin-bottom:12px">
+    <div class="f" style="flex:1;min-width:320px"><label>제목 <span class="muted">비워두면 자동으로 만듭니다</span></label>
+      <input type="text" id="mSubj" placeholder="[근태 특이건] 확인 요청"></div>
+    <label class="muted" style="display:flex;align-items:center;gap:6px;align-self:flex-end;padding-bottom:9px;font-size:12.5px;font-weight:600">
+      <input type="checkbox" id="mAtt" checked> 엑셀 파일 첨부</label>
+  </div>
+  <div class="split">
+    <button class="pri" id="mEml">메일 파일(.eml) 만들기</button>
+    <button class="sm" id="mSplit">담당자별로 나눠 만들기</button>
+    <button class="sm" id="mOpen">메일 앱으로 열기</button>
+    <button class="sm" id="mRich">표 서식 복사</button>
+  </div>
+  <div id="mSplitInfo" style="margin-top:10px"></div>
+  <div class="note i" style="margin-top:10px">
+    <b>이 도구는 메일을 직접 발송하지 못합니다</b> — 브라우저 안에서만 도는 파일이라 메일 서버가 없습니다. 대신 아래 세 가지로 <b>보내기 직전 상태</b>까지 만들어 드립니다.<br><br>
+    <b>① 메일 파일(.eml) 만들기</b> <span class="muted">(권장)</span> — 내려받은 파일을 두 번 눌러 열면 <b>받는사람·제목·표·엑셀 첨부가 채워진 메일</b>이 Outlook에 뜹니다. 내용 확인하고 <b>보내기</b>만 누르세요.<br>
+    <b>② 담당자별로 나눠 만들기</b> — 주소록에 <b>담당 사번</b>을 넣어두면, 담당자마다 <b>자기 인원만</b> 담긴 메일 파일이 따로 나옵니다.<br>
+    <b>③ 메일 앱으로 열기</b> — 새 메일 창이 바로 열리지만 <b>본문이 글자만</b>이고 길면 잘릴 수 있습니다. 건수가 적을 때 쓰세요.<br>
+    <b>④ 표 서식 복사</b> — 표 모양 그대로 복사됩니다. Outlook 본문에 붙여넣으면 표가 유지됩니다.
+  </div>
+</div>
 </div><!-- /viewAnom -->
+
+<dialog id="dgAddr">
+  <div class="dlg-h"><h3>주소록 — 부서 담당자</h3>
+    <button class="sm" onclick="document.getElementById('dgAddr').close()">닫기</button></div>
+  <div class="dlg-b">
+    <p class="hint">이 브라우저에 저장됩니다. <b>다른 PC에서도 쓰시려면</b> 아래 「주소록 내려받기」로 파일을 받아 그 PC에서 「주소록 불러오기」 하세요.</p>
+    <div id="abList" style="margin:12px 0"></div>
+    <div class="row">
+      <div class="f" style="min-width:120px"><label>이름 *</label><input type="text" id="abName" placeholder="홍길동"></div>
+      <div class="f" style="min-width:120px"><label>부서</label><input type="text" id="abDept" placeholder="영업1팀"></div>
+      <div class="f" style="flex:1.3;min-width:200px"><label>메일 주소 *</label><input type="text" id="abMail" placeholder="hong@company.co.kr" spellcheck="false"></div>
+      <div class="f" style="flex:1;min-width:170px"><label>참조 (선택)</label><input type="text" id="abCc" placeholder="team@company.co.kr" spellcheck="false"></div>
+    </div>
+    <div class="f" style="margin-top:10px"><label>담당 사번 (선택) — <span class="muted">엑셀에서 사번 열을 복사해 붙여넣으세요. 줄바꿈·쉼표·공백 모두 됩니다</span></label>
+      <textarea id="abIds" rows="3" placeholder="518800
+519589
+521563" style="width:100%;font-family:ui-monospace,monospace;font-size:12.5px;border:1px solid var(--line);border-radius:8px;padding:9px"></textarea></div>
+    <div class="split" style="margin-top:12px">
+      <button class="pri" id="abAdd">담당자 추가 · 수정</button>
+      <span class="grow"></span>
+      <button class="sm" id="abExp">주소록 내려받기</button>
+      <button class="sm" id="abImpBtn">주소록 불러오기</button>
+      <input type="file" id="abImp" accept=".json" hidden>
+    </div>
+    <div class="note w" style="margin-top:12px">
+      <b>같은 이름·같은 주소</b>를 다시 추가하면 <b>덮어씁니다</b> (수정하실 때 그렇게 쓰세요).<br>
+      담당 사번을 넣어두면 「담당자별로 나눠 만들기」에서 <b>그 사번의 특이건만</b> 골라 담습니다. 비워두면 그 담당자는 나눠 만들기에서 빠집니다.
+    </div>
+  </div>
+</dialog>
 
 <!-- ================= 분석기 ================= -->
 <div class="view" id="viewAnalyze" hidden>
@@ -931,7 +998,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
 </div>
 
 <footer>
-  <b>APRS v7.0 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
+  <b>APRS v7.3 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
   ⓘ 이 도구는 업로드한 파일을 브라우저 메모리에서만 계산합니다. 네트워크 전송·서버 저장이 없습니다.<br>
   ⓘ 총근로시간 = 기본(소정) + 연장 + 휴일근로. <b>야간·심야는 가산수당 산정용으로 따로 표시</b>하며 총합에 중복 더하지 않습니다 — 심야 연장은 이미 연장시간에 포함돼 있는 경우가 많아 더하면 이중 계산이 됩니다.<br>
   ⓘ 급여일수 = 평일(월~금, 법정공휴일 제외) + 법정공휴일. 인정 일요일수 = 데이터상 일요일 수 − 결근이 있는 주(월~일)의 일요일 수.<br>
@@ -1229,7 +1296,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
   <div class="row" style="margin-bottom:12px">
     <div class="f"><label>기본급 · 1일 유급시간</label><input type="number" id="pStd" value="7" step="0.5" style="width:150px"></div>
     <div class="f"><label>주휴 1개당 시간</label><input type="number" id="pWhH" value="7" step="0.5" style="width:140px"></div>
-    <div class="f"><label>교육 1일 시간(기본급)</label><input type="number" id="pEduH" value="4" step="0.5" style="width:160px"></div>
+    <div class="f"><label>교육수당 시간 <span class="muted">(신규 입사자)</span></label><input type="number" id="pEduH" value="1" step="0.5" style="width:170px"></div>
     <div class="f"><label>연장 배율</label><input type="number" id="pOtR" value="1.5" step="0.1" style="width:110px"></div>
     <div class="f"><label>심야 시급(고정)</label><input type="number" id="pNiW" value="8700" step="100" style="width:140px"></div>
     <div class="f"><label>심야 가산 배율</label><input type="number" id="pNiR" value="0.5" step="0.1" style="width:130px"></div>
@@ -1266,11 +1333,16 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
       <button class="sm" id="pExp">대조표 엑셀</button>
       <button class="pri" id="pCalc">계산기 양식으로 내보내기</button>
     </div>
+    <div id="pDiffBox"></div>
     <div class="tblwrap" style="max-height:620px"><table id="pOut"></table></div>
     <div class="note i" style="margin-top:12px">
-      <b>「계산기 양식으로 내보내기」</b>를 누르면 회사 <b>기간제 급여 계산기</b>와 <b>똑같은 열 구성·수식</b>으로 된 엑셀이 나옵니다.
-      근태에서 뽑은 값(일수·연장·심야·주휴)과 급여대장 값이 이미 채워져 있어, 열면 <b>차액 칸이 바로 계산</b>됩니다.
-      재직자·퇴사자 시트가 나뉘어 나오고, 근태에 없는 칸(교육·심야1·휴근·휴연·연차)만 채우면 차액이 0으로 맞습니다.
+      <b>「계산기 양식으로 내보내기」</b>를 누르면 <b>5개 시트</b>가 든 엑셀이 나옵니다.<br>
+      <b>재직자 · 퇴사자</b> — 회사 계산기와 똑같은 열·수식 (그대로 붙여 쓸 수 있습니다) ·
+      <b>항목별 차액</b> — 항목마다 <b>계산 / 대장 / 차액</b>을 나란히 ·
+      <b>차이 내역</b> — 차이 난 건만 한 줄씩 (사번·항목·금액·어디를 볼지) ·
+      <b>확인필요</b> — 대장 누락·근태 없음·시급 없음 ·
+      <b>안내</b> — 연결 안 된 항목 목록<br>
+      <span class="muted">대장 칸이 비어 있으면 그 항목이 2단계에서 <b>연결되지 않은 것</b>입니다. 「안내」 시트에 어떤 항목이 빠졌는지 적어둡니다.</span>
     </div>
     <div class="note w" style="margin-top:10px">
       <b>실제 지급액은 급여 시스템과 반드시 대조하세요.</b> 차액이 <b>+</b>면 대장이 더 많고, <b>−</b>면 대장이 더 적습니다.
@@ -3584,7 +3656,7 @@ const PITEMS=[
   {k:'ni',   n:'심야수당',  calc:1, p:/(심야|야간).*(수당|급)/i,            ex:/공제|합계|시급|1/},
   {k:'wh',   n:'주휴수당',  calc:1, p:/주휴/i,                              ex:/공제|합계|시급/},
   {k:'ni1',  n:'심야1수당', calc:0, p:/심야\s*1.*(수당|급)/i,               ex:/공제|합계|시급/},
-  {k:'edu',  n:'교육수당',  calc:0, p:/교육.*(수당|급)/i,                   ex:/공제|합계|시급/},
+  {k:'edu',  n:'교육수당',  calc:1, p:/교육.*(수당|급)/i,                   ex:/공제|합계|시급/},
   {k:'hol',  n:'휴근수당',  calc:0, p:/휴근.*(수당|급)|휴일.*(수당|급)|특근.*(수당|급)/i, ex:/공제|합계|시급|연장/},
   {k:'holot',n:'휴연수당',  calc:0, p:/휴연.*(수당|급)/i,                   ex:/공제|합계|시급/},
   {k:'yc',   n:'연차수당',  calc:0, p:/연차.*(수당|급)/i,                   ex:/공제|합계|시급/},
@@ -3979,7 +4051,16 @@ function runP(){
     if(P.diag && P.diag.how==='fail'){ $('#p4').classList.remove('off'); P.rows=[]; P.map=m; pKpi(); pTable(); }
     return;
   }
-  const STD=+$('#pStd').value||7, WHH=+$('#pWhH').value||7, EDUH=+$('#pEduH').value||4;
+  const STD=+$('#pStd').value||7, WHH=+$('#pWhH').value||7;
+  const EDUH=(($('#pEduH').value)===''? 1 : +$('#pEduH').value);
+  /* 대상 월 — 근태 집계에 들어온 날짜로 판단 (교육수당 = 그 달 입사자) */
+  let TMONTH=null;
+  { const ds=(P.att||[]).map(e=>e._first||e.최초일자||'').filter(Boolean);
+    const any=(P.anom||[]).find(x=>x.d);
+    const d0 = any? any.d : null;
+    if(d0) TMONTH=d0.getFullYear()*12+d0.getMonth();
+    else { const mm=+($('#mm')&&$('#mm').value), yy=+($('#yy')&&$('#yy').value);
+      if(yy&&mm) TMONTH=yy*12+(mm-1); } }
   const OTR=+$('#pOtR').value||1.5, NIW=+$('#pNiW').value||8700, NIR=+$('#pNiR').value||0.5;
   const TOL=Math.abs(+$('#pTol').value||0);
 
@@ -4027,15 +4108,20 @@ function runP(){
       일수:a?a.근무일수:null, 주휴:a?a.주휴:null, 연장분:a?a.연장분:null, 심야분:a?a.심야분:null,
       calc:{}, led:{}, diff:{}, items:[], absSum:0};
     PITEMS.forEach(it=>{ r.led[it.k]= L? L.v[it.k] : null; });
+    /* 교육수당 — 그 달에 입사한 사람은 교육을 받으므로 시급 × 교육시간(기본 1시간) */
+    const hire=P.hire? P.hire.get(id) : null;
+    r.입사일 = hire? dKey(hire) : '';
+    r.신규 = !!(hire && TMONTH!==null && (hire.getFullYear()*12+hire.getMonth())===TMONTH);
+    r.교육시간 = r.신규? EDUH : 0;
     if(a && wage){
-      const edu=0;                                   // 교육 일수는 근태에 없으므로 0
-      r.calc.base = Math.round(wage*a.근무일수*STD + wage*edu*EDUH);
+      r.calc.base = Math.round(wage*a.근무일수*STD);
       r.calc.wh   = Math.round(wage*(a.주휴||0)*WHH);
       r.calc.ot   = Math.round(wage*(a.연장분||0)/60*OTR);
       r.calc.ni   = Math.round(NIW*(a.심야분||0)/60*NIR);
+      r.calc.edu  = Math.round(wage*r.교육시간);
       // 근태로 못 만드는 항목은 대장 값을 그대로 인정
-      const pass=['ni1','edu','hol','holot','yc'].reduce((s,k)=>s+((m[k]>=0&&r.led[k])||0),0);
-      r.calc.tot  = r.calc.base + r.calc.wh + r.calc.ot + r.calc.ni + pass;
+      const pass=['ni1','hol','holot','yc'].reduce((s,k)=>s+((m[k]>=0&&r.led[k])||0),0);
+      r.calc.tot  = r.calc.base + r.calc.wh + r.calc.ot + r.calc.ni + r.calc.edu + pass;
       r.passSum   = pass;
     }
     PITEMS.forEach(it=>{
@@ -4122,6 +4208,42 @@ function pKpi(){
       + `</div>`;
   }
   $('#pWarn').innerHTML=h;
+  pDiffBox();
+}
+/* 차이가 난 건만 한눈에 — 누가 · 어느 항목 · 얼마 · 어디를 볼지 */
+function pDiffBox(){
+  const box=$('#pDiffBox'); if(!box) return;
+  const bad=(P.rows||[]).filter(r=>r.items&&r.items.length);
+  if(!bad.length){ box.innerHTML=''; return; }
+  const byItem=new Map();
+  bad.forEach(r=>r.items.forEach(it=>{
+    if(!byItem.has(it.n)) byItem.set(it.n,{n:0,sum:0,k:it.k});
+    const o=byItem.get(it.n); o.n++; o.sum+=it.d; }));
+  const chips=[...byItem.entries()].sort((a,b)=>b[1].n-a[1].n).map(([n,o])=>
+    `<span class="chip" style="cursor:default"><b>${n}</b> ${o.n}건 · ${o.sum>0?'+':''}${Math.round(o.sum).toLocaleString()}원</span>`).join('');
+  const rowsH=bad.map(r=>{
+    const its=r.items.slice().sort((x,y)=>Math.abs(y.d)-Math.abs(x.d));
+    return its.map((it,i)=>`<tr>
+      ${i===0?`<td rowspan="${its.length}" class="mono" style="vertical-align:middle">${r.empId}</td>
+              <td rowspan="${its.length}" style="vertical-align:middle"><b>${r.name||''}</b>${r.퇴사?' <span class="tag y">퇴사</span>':''}</td>
+              <td rowspan="${its.length}" class="num" style="vertical-align:middle">${r.ledRow||''}</td>`:''}
+      <td><b>${it.n}</b></td>
+      <td class="num">${Math.round(it.calc).toLocaleString()}</td>
+      <td class="num">${Math.round(it.led).toLocaleString()}</td>
+      <td class="num"><b style="color:${it.d>0?'#b91c1c':'#1d4ed8'}">${it.d>0?'+':''}${Math.round(it.d).toLocaleString()}</b></td>
+      <td class="muted" style="white-space:normal;font-size:11.5px">${DIFFHINT[it.k]||''}</td>
+    </tr>`).join('');
+  }).join('');
+  box.innerHTML=`<div class="note b" style="margin:6px 0 10px">
+      <b>차이가 난 인원 ${bad.length}명 — 어느 항목에서 틀렸는지</b><br>
+      <div style="margin-top:7px">${chips}</div>
+      <span class="muted">아래 표의 「어디를 볼지」를 따라 시스템에서 확인·수정하세요. 차액 <b>+</b>는 대장이 더 많음(과지급 의심), <b>−</b>는 대장이 더 적음(미지급 의심)입니다.</span>
+    </div>
+    <div class="tblwrap" style="max-height:340px;margin-bottom:14px"><table>
+      <thead><tr><th style="width:78px">사번</th><th style="width:92px">성명</th><th class="num" style="width:60px">대장행</th>
+        <th style="width:92px">항목</th><th class="num" style="width:104px">계산</th><th class="num" style="width:104px">대장</th>
+        <th class="num" style="width:104px">차액</th><th>어디를 볼지</th></tr></thead>
+      <tbody>${rowsH}</tbody></table></div>`;
 }
 function pRows(){
   const q=$('#pQ').value.trim().toLowerCase(), f=$('#pFilter').value;
@@ -4157,7 +4279,14 @@ function pTable(){
         ? `<td class="num" style="border-left:2px solid var(--line)">${won(r.calc[c.k])}</td><td class="num">${won(r.led[c.k])}</td>
            <td class="num ${r.diff[c.k]!=null&&Math.abs(r.diff[c.k])>TOL?'bad-cell':''}">${dcell(r.diff[c.k])}</td>`
         : `<td class="num" style="border-left:2px solid var(--line)">${won(r.led[c.k])}</td>`).join('')}
-      <td>${r.문제? `<span class="tag ${r.문제==='차이'||r.문제==='대장 누락'?'r':'y'}">${r.문제}</span>`:'<span class="tag g">일치</span>'}</td>
+      <td style="white-space:normal">${r.문제
+        ? `<span class="tag ${r.문제==='차이'||r.문제==='대장 누락'?'r':'y'}">${r.문제}</span>`
+          + (r.items&&r.items.length? (()=>{ const its=r.items.filter(x=>x.k!=='tot')
+                .sort((x,y)=>Math.abs(y.d)-Math.abs(x.d));
+              const top=its[0]; if(!top) return '';
+              return `<br><span style="font-size:11px;font-weight:600">${top.n} <b style="color:${top.d>0?'#b91c1c':'#1d4ed8'}">${top.d>0?'+':''}${Math.round(top.d).toLocaleString()}</b>${its.length>1?` 외 ${its.length-1}건`:''}</span>`;
+            })():'')
+        : '<span class="tag g">일치</span>'}</td>
     </tr>`).join('')+'</tbody>';
   $$('#pOut tbody tr').forEach(tr=>tr.onclick=()=>pDetail(rows[+tr.dataset.pi]));
 }
@@ -4169,6 +4298,8 @@ function pDetail(r){
              wh:`시급 ${(r.wage||0).toLocaleString()} × 주휴 ${r.주휴} × ${WHH}h`,
              ot:`시급 ${(r.wage||0).toLocaleString()} × ${(r.연장분??0).toLocaleString()}분 ÷ 60 × ${OTR}`,
              ni:`심야시급 ${NIW.toLocaleString()} × ${(r.심야분??0).toLocaleString()}분 ÷ 60 × ${NIR}`,
+             edu:r.신규? `시급 ${(r.wage||0).toLocaleString()} × 교육 ${r.교육시간}h  (${r.입사일} 입사 — 그 달 입사자)`
+                        : `이 달 입사자가 아니므로 0원${r.입사일?` (입사일 ${r.입사일})`:''}`,
              tot:`위 계산 항목 합계 + 대장 인정 항목 ${(r.passSum||0).toLocaleString()}원` };
   $('#dlgB').innerHTML=`
     <table><thead><tr><th>항목</th><th>계산식</th><th class="num">근태계산</th><th class="num">급여대장</th><th class="num">차액</th></tr></thead><tbody>
@@ -4198,7 +4329,7 @@ function anomRefresh(){
   const SRC=anomSrc(), ROS=anomRoster();
   const box=$('#aoSrc'); if(!box) return;
   if(!SRC){
-    $('#ao2').classList.add('off');
+    $('#ao2').classList.add('off'); $('#ao3').classList.add('off');
     box.innerHTML=`<div class="note w"><b>아직 올린 근태 파일이 없습니다.</b><br>
       왼쪽 <b>근태 검수기</b>나 <b>급여 검수기</b>에서 근태 파일을 올리면 <b>여기에 자동으로 연결</b>됩니다.
       <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
@@ -4208,7 +4339,7 @@ function anomRefresh(){
     $('#navAnom').textContent='';
     return;
   }
-  $('#ao2').classList.remove('off');
+  $('#ao2').classList.remove('off'); $('#ao3').classList.remove('off');
   const n=P.anom.filter(a=>(a.kind==='in'||a.kind==='out'||a.kind==='memo')
     && (!ROS.size || ROS.has(a.id) || anomAliasRev().has(a.id))).length;
   box.innerHTML=`<div class="note ${n?'i':'g'}">
@@ -4276,8 +4407,9 @@ function mailFileName(ext){
   const d=new Date(), p2=n=>String(n).padStart(2,'0');
   return `근태특이건_${P.anomName||P.name||'근태'}_${d.getFullYear()}${p2(d.getMonth()+1)}${p2(d.getDate())}.${ext}`;
 }
-function dlBlob(text, name, mime){
-  const blob=new Blob(['\ufeff'+text],{type:mime+';charset=utf-8'});
+function dlBlob(text, name, mime, noBom){
+  /* .eml 은 맨 앞에 BOM 이 붙으면 Outlook 이 첫 머리글(To:)을 못 읽습니다 */
+  const blob=new Blob([noBom? text : '\ufeff'+text],{type:mime+';charset=utf-8'});
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name;
   document.body.appendChild(a); a.click();
   setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },1500);
@@ -4289,27 +4421,44 @@ $('#mTxt').onclick=()=>{
 };
 $('#mHtml').onclick=()=>{
   const rows=mailRows(); if(!rows.length){ alert('내려받을 특이건이 없습니다.'); return; }
+  dlBlob(mailHtml(rows), mailFileName('html'), 'text/html');
+};
+$('#mExp').onclick=()=>{
+  const rows=mailRows(); if(!rows.length){ alert('내보낼 특이건이 없습니다.'); return; }
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows.map(a=>({
+    사번:a.id, 성명:anomName(a.id), 일자:a.dl, 구분:a.label, '근태 비고':a.memo||'',
+    '근무시작':a.ws, '출근(센싱)':a.tin, '퇴근(센싱)':a.tout,
+    '차이(분)':a.diff!=null?Math.abs(a.diff):'', '원본 행':a.excelRow,
+    '메일 문구':`${a.id} ${anomName(a.id)} ${a.dl} ${a.label}`}))),'특이건');
+  XLSX.writeFile(wb, mailFileName('xlsx'));
+};
+/* ── 특이건 : 공통 빌더 (본문 · 표 · 엑셀) ─────────────────── */
+function anomName(id){
   const ROS=anomRoster(), AR=anomAliasRev();
-  const nm=id=>ROS.get(id)||ROS.get(AR.get(id))||(rows.find(x=>x.id===id)||{}).nm||'';
-  const esc=v=>String(v??'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+  return ROS.get(id) || ROS.get(AR.get(id)) || ((P.anom.find(x=>x.id===id)||{}).nm) || '';
+}
+const esc=v=>String(v==null?'':v).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+/* 메일에 붙일 HTML 표 (Outlook에서 표 그대로 보이도록 인라인 스타일) */
+function mailHtml(rows, who){
   const by=new Map(); rows.forEach(a=>{ if(!by.has(a.id)) by.set(a.id,[]); by.get(a.id).push(a); });
-  const people=by.size;
+  const bd='1px solid #d0d0d5';
   const trs=[...by.entries()].sort((x,y)=>x[0]<y[0]?-1:1).map(([id,list])=>{
     list.sort((a,b)=>(a.d&&b.d)?a.d-b.d:0);
-    return list.map((a,i)=>`<tr>`
-      +(i===0?`<td rowspan="${list.length}" style="border:1px solid #d0d0d5;padding:7px 10px;text-align:center;vertical-align:middle;font-family:monospace">${esc(id)}</td>`
-             +`<td rowspan="${list.length}" style="border:1px solid #d0d0d5;padding:7px 10px;text-align:center;vertical-align:middle;font-weight:600">${esc(nm(id))}</td>`:'')
-      +`<td style="border:1px solid #d0d0d5;padding:7px 10px;text-align:center">${esc(a.dl)}</td>`
-      +`<td style="border:1px solid #d0d0d5;padding:7px 10px">${esc(a.label)}${(a.kind==='early'||a.kind==='late')&&a.diff!=null?` (${Math.abs(a.diff)}분)`:''}</td>`
-      +`<td style="border:1px solid #d0d0d5;padding:7px 10px;text-align:center;color:#666">${esc(a.tin||'-')} / ${esc(a.tout||'-')}</td>`
-      +`</tr>`).join('');
+    return list.map((a,i)=>'<tr>'
+      +(i===0?`<td rowspan="${list.length}" style="border:${bd};padding:7px 10px;text-align:center;vertical-align:middle;font-family:Consolas,monospace">${esc(id)}</td>`
+             +`<td rowspan="${list.length}" style="border:${bd};padding:7px 10px;text-align:center;vertical-align:middle;font-weight:700">${esc(anomName(id))}</td>`:'')
+      +`<td style="border:${bd};padding:7px 10px;text-align:center">${esc(a.dl)}</td>`
+      +`<td style="border:${bd};padding:7px 10px">${esc(a.label)}${(a.kind==='early'||a.kind==='late')&&a.diff!=null?` (${Math.abs(a.diff)}분)`:''}</td>`
+      +`<td style="border:${bd};padding:7px 10px;text-align:center;color:#666">${esc(a.tin||'-')} / ${esc(a.tout||'-')}</td>`
+      +'</tr>').join('');
   }).join('');
-  const th=t=>`<th style="border:1px solid #d0d0d5;padding:8px 10px;background:#f2f2f7;font-weight:700;text-align:center">${t}</th>`;
-  const html=`<!doctype html><html lang="ko"><meta charset="utf-8"><title>근태 특이건 확인 요청</title>
-<body style="margin:0;padding:24px;font-family:'맑은 고딕','Malgun Gothic',AppleSDGothicNeo,sans-serif;font-size:13px;color:#111">
+  const th=t=>`<th style="border:${bd};padding:8px 10px;background:#f2f2f7;font-weight:700;text-align:center">${t}</th>`;
+  return `<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>근태 특이건 확인 요청</title></head>
+<body style="margin:0;padding:22px;font-family:'맑은 고딕','Malgun Gothic',AppleSDGothicNeo,sans-serif;font-size:13px;color:#111;line-height:1.6">
 <p style="font-size:16px;font-weight:700;margin:0 0 4px">근태 특이건 확인 요청</p>
-<p style="margin:0 0 16px;color:#555">기간 ${esc(P.anomName||P.name||'')} · 대상 ${people}명 / ${rows.length}건</p>
-<p style="margin:0 0 14px">아래 인원의 근태에 특이 사항이 있어 확인 요청드립니다. 확인 후 회신 부탁드립니다.</p>
+<p style="margin:0 0 14px;color:#555">기간 ${esc(P.anomName||P.name||'')} · 대상 ${by.size}명 / ${rows.length}건</p>
+<p style="margin:0 0 14px">${who?esc(who)+'님, ':''}아래 인원의 근태에 특이 사항이 있어 확인 요청드립니다. 확인 후 회신 부탁드립니다.</p>
 <table style="border-collapse:collapse;font-size:13px">
 <thead><tr>${th('사번')}${th('성명')}${th('일자')}${th('내용')}${th('출근/퇴근 센싱')}</tr></thead>
 <tbody>${trs}</tbody></table>
@@ -4318,66 +4467,269 @@ $('#mHtml').onclick=()=>{
 ※ 비고 표기 = 근태 파일 「비고」란의 내용을 그대로 옮긴 것<br>
 ※ 시간차 조기센싱 = 출근(센싱)이 근무시작보다 ${(+$('#mEarly').value||30)}분 이상 빠른 경우</p>
 </body></html>`;
-  dlBlob(html, mailFileName('html'), 'text/html');
-};
-$('#mExp').onclick=()=>{
-  const rows=mailRows(); if(!rows.length){ alert('내보낼 특이건이 없습니다.'); return; }
+}
+/* 메일 본문(텍스트) — 화면의 문구를 그대로 */
+function mailText(rows, who){
+  const by=new Map(); rows.forEach(a=>{ if(!by.has(a.id)) by.set(a.id,[]); by.get(a.id).push(a); });
+  const line=a=>`${a.id} ${anomName(a.id)} ${a.dl} ${a.label}`
+    +((a.kind==='early'||a.kind==='late')&&a.diff!=null?` (${Math.abs(a.diff)}분)`:'');
+  const body=[...by.entries()].sort((x,y)=>x[0]<y[0]?-1:1).map(([id,list])=>{
+    list.sort((a,b)=>(a.d&&b.d)?a.d-b.d:0);
+    return `[${id} ${anomName(id)}] ${list.length}건\n`+list.map(a=>'  - '+line(a)).join('\n');
+  }).join('\n\n');
+  return (who?`${who}님, 안녕하세요.\n\n`:'')
+    + `아래 인원의 근태에 특이 사항이 있어 확인 요청드립니다.\n`
+    + `기간 : ${P.anomName||P.name||''}\n대상 : ${by.size}명 / ${rows.length}건\n`
+    + '─'.repeat(42)+'\n'+body+'\n'+'─'.repeat(42)
+    + '\n※ 지문 누락 = 출근/퇴근 센싱 시각이 비어 있는 날'
+    + '\n※ 비고 표기 = 근태 파일 「비고」란의 내용을 그대로 옮긴 것\n';
+}
+/* 첨부용 엑셀 (base64) */
+function mailXlsxB64(rows){
   const wb=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows.map(a=>({
-    사번:a.id, 성명:anomRoster().get(a.id)||anomRoster().get(anomAliasRev().get(a.id))||a.nm,
-    일자:a.dl, 구분:a.label, '근태 비고':a.memo||'',
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rows.map(a=>({
+    사번:a.id, 성명:anomName(a.id), 일자:a.dl, 구분:a.label, '근태 비고':a.memo||'',
     '근무시작':a.ws, '출근(센싱)':a.tin, '퇴근(센싱)':a.tout,
-    '차이(분)':a.diff!=null?Math.abs(a.diff):'', '원본 행':a.excelRow,
-    '메일 문구':`${a.id} ${anomRoster().get(a.id)||anomRoster().get(anomAliasRev().get(a.id))||a.nm} ${a.dl} ${a.label}`}))),'특이건');
-  XLSX.writeFile(wb, mailFileName('xlsx'));
+    '차이(분)':a.diff!=null?Math.abs(a.diff):'', '원본 행':a.excelRow}))), '특이건');
+  return XLSX.write(wb,{bookType:'xlsx',type:'base64'});
+}
+function mailSubject(rows){
+  const t=$('#mSubj');
+  if(t && t.value.trim()) return t.value.trim();
+  const people=new Set(rows.map(r=>r.id)).size;
+  return `[근태 특이건] ${P.anomName||P.name||''} 확인 요청 (${people}명 ${rows.length}건)`;
+}
+
+/* ── 주소록 ─────────────────────────────────────────────────
+   사내 메일 주소를 이 브라우저에 저장해 두고, 이름을 골라 쓰는 기능.
+   담당 사번을 넣어두면 담당자별로 나눠 만들 수 있습니다. */
+const ABK='aprs.addr.v1';
+function abLoad(){ try{ return JSON.parse(LS.get(ABK)||'[]'); }catch(e){ return []; } }
+function abSave(list){ P.addr=list; if(!LS.set(ABK, JSON.stringify(list))) alert('이 브라우저에 저장하지 못했습니다. 주소록을 파일로 내려받아 보관해 주세요.'); abRender(); }
+function abRender(){
+  const list=P.addr||[];
+  const sel=$('#mTo');
+  if(sel) sel.innerHTML='<option value="">담당자 고르기…</option>'
+    + list.map((a,i)=>`<option value="${i}">${esc(a.name)}${a.dept?` (${esc(a.dept)})`:''} — ${esc(a.email)}</option>`).join('');
+  const box=$('#abList');
+  if(box) box.innerHTML = !list.length
+    ? '<div class="empty">아직 등록한 담당자가 없습니다. 아래에서 추가하세요.</div>'
+    : `<div class="tblwrap" style="max-height:300px"><table class="prev"><thead><tr>
+        <th style="width:110px">이름</th><th style="width:110px">부서</th><th>메일 주소</th>
+        <th style="width:150px">참조(선택)</th><th style="width:170px">담당 사번(선택)</th><th style="width:54px"></th>
+       </tr></thead><tbody>${list.map((a,i)=>`<tr>
+        <td><b>${esc(a.name)}</b></td><td>${esc(a.dept||'')}</td><td class="mono">${esc(a.email)}</td>
+        <td class="mono muted">${esc(a.cc||'')}</td>
+        <td class="muted">${a.ids&&a.ids.length? `${a.ids.length}명` : '<span class="muted">전체</span>'}</td>
+        <td><button class="sm" data-abdel="${i}">삭제</button></td></tr>`).join('')}</tbody></table></div>`;
+  if(box) box.querySelectorAll('[data-abdel]').forEach(b=>b.onclick=()=>{
+    const l=(P.addr||[]).slice(); l.splice(+b.dataset.abdel,1); abSave(l); });
+  const n=list.length, chip=$('#abCount');
+  if(chip){ chip.textContent = n? `${n}명` : ''; chip.className='pill '+(n?'ok':''); }
+}
+$('#abAdd').onclick=()=>{
+  const name=$('#abName').value.trim(), email=$('#abMail').value.trim();
+  const dept=$('#abDept').value.trim(), cc=$('#abCc').value.trim();
+  const ids=[...new Set($('#abIds').value.split(/[\s,;]+/).map(idKey).filter(Boolean))];
+  if(!name) return alert('이름을 넣어주세요.');
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return alert('메일 주소 형태가 맞지 않습니다.\n예) hong@company.co.kr');
+  const l=(P.addr||[]).slice();
+  const at=l.findIndex(x=>x.name===name && x.email===email);
+  const rec={name,email,dept,cc,ids};
+  if(at>=0) l[at]=rec; else l.push(rec);
+  abSave(l);
+  ['abName','abMail','abDept','abCc','abIds'].forEach(k=>$('#'+k).value='');
+};
+$('#abExp').onclick=()=>{
+  if(!(P.addr||[]).length) return alert('등록된 담당자가 없습니다.');
+  dlBlob(JSON.stringify(P.addr,null,2),'APRS_주소록.json','application/json');
+};
+$('#abImpBtn').onclick=()=>$('#abImp').click();
+$('#abImp').onchange=e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const fr=new FileReader();
+  fr.onload=ev=>{ try{
+    const l=JSON.parse(ev.target.result);
+    if(!Array.isArray(l)) throw new Error('형식이 맞지 않습니다');
+    const clean=l.filter(x=>x&&x.name&&x.email).map(x=>({name:String(x.name),email:String(x.email),
+      dept:String(x.dept||''),cc:String(x.cc||''),ids:Array.isArray(x.ids)?x.ids.map(idKey).filter(Boolean):[]}));
+    abSave(clean); alert(`주소록 ${clean.length}명을 불러왔습니다.`);
+  }catch(x){ alert('주소록 파일을 읽지 못했습니다: '+x.message); } };
+  fr.readAsText(f); e.target.value='';
+};
+$('#mTo').onchange=()=>{
+  const i=$('#mTo').value; if(i==='') return;
+  const a=(P.addr||[])[+i]; if(!a) return;
+  const add=(el,v)=>{ if(!v) return; const cur=el.value.trim();
+    const has=cur.split(/[;,]\s*/).filter(Boolean).includes(v);
+    if(!has) el.value = cur? cur.replace(/[;,\s]*$/,'')+'; '+v : v; };
+  add($('#mToBox'), a.email);
+  add($('#mCcBox'), a.cc);
+  $('#mTo').value='';
+  mailBuild();
 };
 
-/* ---- 계산기 양식 그대로 내보내기 (수식 살려서) ---- */
+/* ── 보내기 ─────────────────────────────────────────────────
+   브라우저 안에서 도는 파일이라 직접 발송은 못 합니다.
+   ① 메일 앱으로 열기 : mailto — 받는사람·제목·본문이 채워진 새 메일이 열립니다
+   ② 메일 파일(.eml) : 두 번 눌러 열면 Outlook에 '보내기만 하면 되는' 메일이 뜹니다 (표 + 엑셀 첨부) */
+function toAddrs(v){ return v.split(/[;,]+/).map(x=>x.trim()).filter(Boolean); }
+$('#mOpen').onclick=()=>{
+  const rows=mailRows(); if(!rows.length) return alert('보낼 특이건이 없습니다.');
+  const to=toAddrs($('#mToBox').value), cc=toAddrs($('#mCcBox').value);
+  if(!to.length) return alert('받는사람을 넣어주세요. 주소록에서 담당자를 고르거나 직접 입력하면 됩니다.');
+  const body=mailText(rows);
+  const url=`mailto:${encodeURIComponent(to.join(';'))}`
+    + `?subject=${encodeURIComponent(mailSubject(rows))}`
+    + (cc.length? `&cc=${encodeURIComponent(cc.join(';'))}` : '')
+    + `&body=${encodeURIComponent(body)}`;
+  if(url.length>1800){
+    if(!confirm('내용이 길어 메일 앱이 본문을 잘라낼 수 있습니다.\n\n「메일 파일(.eml)」로 만들면 표와 엑셀 첨부까지 그대로 들어갑니다. 그래도 메일 앱을 열까요?')) return;
+  }
+  location.href=url;
+};
+/* RFC 2047 — 한글 제목·파일명 */
+function mimeWord(s){
+  const b=btoa(String.fromCharCode(...new TextEncoder().encode(s)));
+  return `=?UTF-8?B?${b}?=`;
+}
+function b64lines(b64){ return (b64.match(/.{1,76}/g)||[]).join('\r\n'); }
+function b64utf8(s){ return btoa(String.fromCharCode(...new TextEncoder().encode(s))); }
+function buildEml(to,cc,subject,html,attName,attB64){
+  const B='----=_APRS_'+Date.now().toString(36);
+  const L=[];
+  L.push('To: '+to.join(', '));
+  if(cc.length) L.push('Cc: '+cc.join(', '));
+  L.push('Subject: '+mimeWord(subject));
+  L.push('Date: '+new Date().toUTCString().replace('GMT','+0000'));
+  L.push('MIME-Version: 1.0');
+  L.push('X-Unsent: 1');                      /* Outlook이 '보내기 전 메일'로 엽니다 */
+  L.push(`Content-Type: multipart/mixed; boundary="${B}"`);
+  L.push('','--'+B);
+  L.push('Content-Type: text/html; charset=UTF-8');
+  L.push('Content-Transfer-Encoding: base64','');
+  L.push(b64lines(b64utf8(html)));
+  if(attB64){
+    L.push('--'+B);
+    L.push(`Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; name="${mimeWord(attName)}"`);
+    L.push('Content-Transfer-Encoding: base64');
+    L.push(`Content-Disposition: attachment; filename="${mimeWord(attName)}"`,'');
+    L.push(b64lines(attB64));
+  }
+  L.push('--'+B+'--','');
+  return L.join('\r\n');
+}
+function emlDown(rows, who, to, cc, fname, attName){
+  const html=mailHtml(rows, who);
+  const att=$('#mAtt').checked ? mailXlsxB64(rows) : null;
+  const eml=buildEml(to, cc, mailSubject(rows), html, attName||mailFileName('xlsx'), att);
+  dlBlob(eml, fname, 'message/rfc822', true);
+}
+$('#mEml').onclick=()=>{
+  const rows=mailRows(); if(!rows.length) return alert('보낼 특이건이 없습니다.');
+  const to=toAddrs($('#mToBox').value), cc=toAddrs($('#mCcBox').value);
+  if(!to.length) return alert('받는사람을 넣어주세요. 주소록에서 담당자를 고르거나 직접 입력하면 됩니다.');
+  emlDown(rows, '', to, cc, mailFileName('eml'));
+};
+/* 담당자별로 나눠 만들기 — 담당 사번이 등록된 담당자에게 그 인원만 */
+$('#mSplit').onclick=()=>{
+  const rows=mailRows(); if(!rows.length) return alert('보낼 특이건이 없습니다.');
+  const list=(P.addr||[]).filter(a=>a.ids&&a.ids.length);
+  if(!list.length) return alert('담당 사번이 등록된 담당자가 없습니다.\n\n「주소록 관리」에서 담당자마다 담당 사번을 넣어주세요.\n엑셀에서 사번 열을 복사해 붙여넣으면 됩니다.');
+  const used=new Set(); let made=0, lines=[];
+  list.forEach((a,k)=>{
+    const set=new Set(a.ids);
+    const mine=rows.filter(r=>set.has(r.id) || set.has(anomAliasRev().get(r.id)));
+    if(!mine.length){ lines.push(`${a.name} — 해당 특이건 없음`); return; }
+    mine.forEach(r=>used.add(r.id));
+    const safe=(a.name||'담당자').replace(/[\\/:*?"<>|]/g,'');
+    const per=`근태특이건_${safe}_${(P.anomName||'').replace(/[\\/:*?"<>|]/g,'')}`;
+    setTimeout(()=>emlDown(mine, a.name, toAddrs(a.email), toAddrs(a.cc||''), per+'.eml', per+'.xlsx'), k*700);
+    made++; lines.push(`${a.name} — ${new Set(mine.map(r=>r.id)).size}명 ${mine.length}건`);
+  });
+  const left=[...new Set(rows.map(r=>r.id))].filter(id=>!used.has(id));
+  $('#mSplitInfo').innerHTML=`<div class="note ${left.length?'w':'g'}">
+    <b>담당자별 메일 ${made}개를 만들었습니다</b> — 내려받은 .eml 파일을 두 번 눌러 열고 <b>보내기</b>만 누르면 됩니다.<br>
+    ${lines.map(x=>esc(x)).join(' · ')}
+    ${left.length? `<br><b style="color:var(--warn)">담당자가 정해지지 않은 인원 ${left.length}명</b> — ${left.slice(0,15).map(id=>`${id} ${esc(anomName(id))}`).join(' · ')}${left.length>15?' 외':''}<br>
+      <span class="muted">이 인원은 어느 담당자에게도 사번이 등록돼 있지 않아 빠졌습니다. 주소록에 사번을 추가하거나, 위에서 받는사람을 직접 넣어 전체로 보내세요.</span>`:''}
+  </div>`;
+};
+/* 표 서식 그대로 클립보드에 — Outlook에 붙이면 표가 유지됩니다 */
+$('#mRich').onclick=async()=>{
+  const rows=mailRows(); if(!rows.length) return alert('복사할 특이건이 없습니다.');
+  const html=mailHtml(rows), txt=mailText(rows);
+  try{
+    if(!navigator.clipboard || !window.ClipboardItem) throw new Error('unsupported');
+    await navigator.clipboard.write([new ClipboardItem({
+      'text/html': new Blob([html],{type:'text/html'}),
+      'text/plain': new Blob([txt],{type:'text/plain'})})]);
+    $('#mRich').textContent='복사됨 ✓'; setTimeout(()=>$('#mRich').textContent='표 서식 복사',1600);
+  }catch(e){
+    const d=document.createElement('div');
+    d.setAttribute('contenteditable','true');
+    d.style.cssText='position:fixed;left:-9999px;top:0';
+    d.innerHTML=html; document.body.appendChild(d);
+    const r=document.createRange(); r.selectNodeContents(d);
+    const sel=window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+    let ok=false; try{ ok=document.execCommand('copy'); }catch(x){}
+    sel.removeAllRanges(); d.remove();
+    if(ok){ $('#mRich').textContent='복사됨 ✓'; setTimeout(()=>$('#mRich').textContent='표 서식 복사',1600); }
+    else alert('이 브라우저에서는 표 서식 복사가 막혀 있습니다.\n「메일 파일(.eml)」을 쓰시면 표가 그대로 들어갑니다.');
+  }
+};
+P.addr=abLoad(); abRender();
+
+
+/* ── 계산기 양식 내보내기 ──────────────────────────────────────
+   ① 「재직자」·「퇴사자」 : 회사 「기간제 급여 계산기」와 같은 열·수식.
+      회사 양식에는 항목마다 대장/차액 칸이 있지는 않아서(연장·심야는 묶여 있음),
+      차액을 항목별로 보시려면 ②를 쓰세요.
+   ② 「항목별 차액」 : 항목마다 계산 / 대장 / 차액을 나란히 — 어디서 틀렸는지 바로 보입니다.
+   ③ 「차이 내역」   : 차이가 난 건만 한 줄씩 (사번·항목·계산·대장·차액·추정 원인). */
 const CALC_HDR_A=['사번','이름','시급','일수','교육','시간','기본급','대장','차액','연장시급','연장','연장수당',
   '심야시급','심야시간','심야수당','심야1시급','심야1시간','심야1수당','대장','차액','주휴시급','주휴','주휴수당','대장','차액',
-  '휴근시급','교육시습','교육','교육수당','대장','차액','심야','심야수당','대장','차액','연차시급','휴근','휴근수당','대장','차액',
+  '휴근시급','교육시급','교육','교육수당','대장','차액','심야','심야수당','대장','차액','연차시급','휴근','휴근수당','대장','차액',
   '휴연','휴연수당','대장','차액','합계','대장','차액'];
 const CALC_HDR_Q=['사번','이름','시급','일수','교육','시간','기본급','대장','차액','연장시급','연장','연장수당',
   '심야시급','심야시간','심야수당','심야1시급','심야1시간','심야1수당','대장','차액','주휴시급','주휴','주휴수당','대장','차액',
-  '휴근시급','교육시습','교육','교육수당','대장','차액','휴근','휴근수당','대장','차액','연차시급','연차','연차수당','대장','차액',
+  '휴근시급','교육시급','교육','교육수당','대장','차액','휴근','휴근수당','대장','차액','연차시급','연차','연차수당','대장','차액',
   '심야','심야수당','대장','차액','합계','대장','차액'];
 function calcSheet(rows, kind){
   const H = kind==='q'? CALC_HDR_Q : CALC_HDR_A;
   const aoa=[H];
   rows.forEach(r=>{
     const a=new Array(H.length).fill(null);
-    a[0]=r.empId; a[1]=r.name; a[2]=r.wage??null;
-    a[3]=r.일수??0; a[4]=0;                       // D 일수 · E 교육
-    a[10]=r.연장분??0;                            // K 연장(분)
-    a[13]=r.심야분??0;                            // N 심야시간(분)
-    a[16]=0;                                      // Q 심야1
-    a[21]=r.주휴??0;                              // V 주휴
-    a[27]=0;                                      // AB 교육
-    a[31]=0; a[36]=0; a[40]=0;                    // AF · AK · AO
-    a[7] =r.led.base ?? null;                     // H  기본급 대장
-    a[18]=r.led.ot   ?? null;                     // S  연장 대장
-    a[23]=r.led.wh   ?? null;                     // X  주휴 대장
-    a[29]=r.led.edu  ?? null;                     // AD 교육 대장
-    a[33]=r.led.ni1  ?? null;                     // AH
-    a[38]=r.led.hol  ?? null;                     // AM
-    a[42]=r.led.holot ?? r.led.yc ?? null;        // AQ
-    a[45]=r.led.tot  ?? null;                     // AT 합계 대장
+    a[0]=r.empId; a[1]=r.name; a[2]=r.wage==null?null:r.wage;
+    a[3]=r.일수==null?0:r.일수; a[4]=0;             // D 일수 · E 교육(일수 — 기본급에 더하는 칸, 안 씀)
+    a[10]=r.연장분==null?0:r.연장분;                 // K 연장(분)
+    a[13]=r.심야분==null?0:r.심야분;                 // N 심야시간(분)
+    a[16]=0;                                         // Q 심야1
+    a[21]=r.주휴==null?0:r.주휴;                     // V 주휴
+    a[27]=r.교육시간||0;                             // AB 교육(시간) — 그 달 입사자 1
+    a[31]=0; a[36]=0; a[40]=0;                       // AF · AK · AO
+    /* 대장 값 — 연결된 항목만 채웁니다 (연결 안 된 항목은 비워 두어야 차액이 거짓으로 안 잡힙니다) */
+    const L=k=>(P.map&&P.map[k]>=0 && r.led[k]!=null)? r.led[k] : null;
+    a[7] =L('base');                                 // H  기본급 대장
+    a[18]=L('ot');                                   // S  연장 대장
+    a[23]=L('wh');                                   // X  주휴 대장
+    a[29]=L('edu');                                  // AD 교육 대장
+    a[33]=L('ni1');                                  // AH 심야1 대장
+    a[38]=L('hol');                                  // AM 휴근 대장
+    a[42]=kind==='q'? L('yc') : L('holot');          // AQ 휴연/연차 대장
+    a[45]=L('tot');                                  // AT 합계 대장
     aoa.push(a);
   });
   const ws=XLSX.utils.aoa_to_sheet(aoa);
+  const common={ F:'G{r}/C{r}', G:'(C{r}*D{r}*7)+(C{r}*E{r}*4)', I:'H{r}-G{r}', J:'C{r}',
+    L:'J{r}*K{r}/60*1.5', M:'8700', O:'M{r}*N{r}/60*0.5', P:'8700', R:'P{r}*Q{r}*0.5',
+    T:'S{r}-(L{r}+O{r}+R{r})',                       /* 연장·심야·심야1을 묶은 대장과 비교 */
+    U:'C{r}', W:'U{r}*V{r}*7', Y:'X{r}-W{r}', Z:'C{r}', AA:'C{r}', AC:'AA{r}*AB{r}*1', AE:'AD{r}-AC{r}',
+    AJ:'C{r}', AP:'ROUNDUP(AJ{r}*AO{r}/60*2,-1)', AR:'AQ{r}-AP{r}',
+    AS:'SUM(G{r}+L{r}+O{r}+R{r}+W{r}+AG{r}+AP{r}+AC{r}+AL{r})', AU:'AT{r}-AS{r}' };
   const F = kind==='q'
-    ? { F:'G{r}/C{r}', G:'(C{r}*D{r}*7)+(C{r}*E{r}*4)', I:'H{r}-G{r}', J:'C{r}',
-        L:'J{r}*K{r}/60*1.5', M:'8700', O:'M{r}*N{r}/60*0.5', P:'8700', R:'P{r}*Q{r}*0.5', T:'S{r}-L{r}',
-        U:'C{r}', W:'U{r}*V{r}*7', Y:'X{r}-W{r}', Z:'C{r}', AA:'C{r}', AC:'AA{r}*AB{r}*1', AE:'AD{r}-AC{r}',
-        AG:'Z{r}*AF{r}*7*2.5', AI:'AH{r}-AG{r}', AJ:'C{r}', AL:'AJ{r}*AK{r}*7', AN:'AM{r}-AL{r}',
-        AP:'ROUNDUP(AJ{r}*AO{r}/60*2,-1)', AR:'AQ{r}-AP{r}',
-        AS:'SUM(G{r}+L{r}+O{r}+R{r}+W{r}+AG{r}+AP{r}+AC{r}+AL{r})', AU:'AT{r}-AS{r}' }
-    : { F:'G{r}/C{r}', G:'(C{r}*D{r}*7)+(C{r}*E{r}*4)', I:'H{r}-G{r}', J:'C{r}',
-        L:'J{r}*K{r}/60*1.5', M:'8700', O:'M{r}*N{r}/60*0.5', P:'8700', R:'P{r}*Q{r}*0.5', T:'S{r}-L{r}',
-        U:'C{r}', W:'U{r}*V{r}*7', Y:'X{r}-W{r}', Z:'C{r}', AA:'C{r}', AC:'AA{r}*AB{r}*1', AE:'AD{r}-AC{r}',
-        AG:'ROUNDUP(AA{r}*AF{r}/60*0.5,-1)', AI:'AH{r}-AG{r}', AJ:'C{r}', AL:'AJ{r}*AK{r}*7*2.5', AN:'AM{r}-AL{r}',
-        AP:'ROUNDUP(AJ{r}*AO{r}/60*2,-1)', AR:'AQ{r}-AP{r}',
-        AS:'SUM(G{r}+L{r}+O{r}+R{r}+W{r}+AG{r}+AP{r}+AC{r}+AL{r})', AU:'AT{r}-AS{r}' };
+    ? {...common, AG:'Z{r}*AF{r}*7*2.5', AI:'AH{r}-AG{r}', AL:'AJ{r}*AK{r}*7', AN:'AM{r}-AL{r}'}
+    : {...common, AG:'ROUNDUP(AA{r}*AF{r}/60*0.5,-1)', AI:'AH{r}-AG{r}', AL:'AJ{r}*AK{r}*7*2.5', AN:'AM{r}-AL{r}'};
   rows.forEach((_,i)=>{ const rn=i+2;
     Object.entries(F).forEach(([col,f])=>{
       ws[col+rn] = /^\d+$/.test(f) ? {t:'n', v:+f} : {t:'n', f:f.replace(/\{r\}/g,rn)};
@@ -4387,27 +4739,92 @@ function calcSheet(rows, kind){
   ws['!cols']=H.map((h,i)=>({wch: i<2?10 : (h==='차액'?11:10)}));
   return ws;
 }
+/* 항목마다 계산 / 대장 / 차액을 나란히 — 어느 항목에서 틀렸는지 바로 보이는 시트 */
+function itemSheet(rows){
+  const m=P.map||{};
+  const use=PITEMS.filter(it=>it.k!=='tot');
+  const head1=['사번','이름','시급','일수','주휴','연장(분)','심야(분)','교육(시간)','입사일'];
+  const head2=['','','','','','','','',''];
+  use.concat([PITEMS.find(x=>x.k==='tot')]).forEach(it=>{
+    head1.push(it.n,'','');
+    head2.push('계산','대장','차액');
+  });
+  head1.push('가장 큰 차이 항목','차이 합계(절대값)');
+  head2.push('','');
+  const aoa=[head1,head2];
+  rows.forEach(r=>{
+    const a=[r.empId,r.name,r.wage,r.일수,r.주휴,r.연장분,r.심야분,r.교육시간||0,r.입사일||''];
+    const all=use.concat([PITEMS.find(x=>x.k==='tot')]);
+    all.forEach(it=>{
+      const cv=(it.calc && r.calc[it.k]!=null)? r.calc[it.k] : null;
+      const lv=(m[it.k]>=0 && r.led[it.k]!=null)? r.led[it.k] : null;
+      a.push(cv, lv, (cv!=null&&lv!=null)? lv-cv : null);
+    });
+    const top=(r.items||[]).slice().sort((x,y)=>Math.abs(y.d)-Math.abs(x.d))[0];
+    a.push(top? `${top.n} ${top.d>0?'+':''}${top.d.toLocaleString()}` : '', r.absSum||0);
+    aoa.push(a);
+  });
+  const ws=XLSX.utils.aoa_to_sheet(aoa);
+  ws['!cols']=head1.map((h,i)=>({wch:i<2?11:(i<9?10:12)}));
+  ws['!merges']=[];
+  let c=9;
+  use.concat([PITEMS.find(x=>x.k==='tot')]).forEach(()=>{ ws['!merges'].push({s:{r:0,c},e:{r:0,c:c+2}}); c+=3; });
+  for(let i=0;i<9;i++) ws['!merges'].push({s:{r:0,c:i},e:{r:1,c:i}});
+  ws['!freeze']={xSplit:2,ySplit:2};
+  return ws;
+}
+/* 차이가 난 건만 한 줄씩 — 확인·수정용 */
+function diffRows(){
+  const out=[];
+  (P.rows||[]).forEach(r=>{
+    (r.items||[]).forEach(it=>{
+      out.push({사번:r.empId, 성명:r.name, 항목:it.n,
+        '계산(근태 기준)':it.calc, '대장(시스템)':it.led, '차액(대장−계산)':it.d,
+        방향: it.d>0? '대장이 더 많음(과지급 의심)' : '대장이 더 적음(미지급 의심)',
+        시급:r.wage, 일수:r.일수, 주휴:r.주휴, '연장(분)':r.연장분, '심야(분)':r.심야분,
+        '교육(시간)':r.교육시간||0, 입사일:r.입사일||'',
+        '어디를 볼지': DIFFHINT[it.k]||''});
+    });
+  });
+  return out;
+}
+const DIFFHINT={
+  base:'근무일수(출근+유급휴무) × 시급 × 1일 유급시간. 근태의 근태코드 분류와 결근·유급휴무 처리를 확인',
+  ot:'개별연장(분) 합계 × 시급 ÷ 60 × 연장배율. 근태 검수기 R10·R12(개별연장 분) 확인',
+  ni:'심야(분) × 심야시급 × 가산배율. 심야 열 연결과 심야 분 입력 확인',
+  wh:'주휴 개수 × 시급 × 주휴 1개당 시간. 결근 주·입사/퇴사 주 비례를 확인',
+  edu:'그 달 입사자만 시급 × 교육시간. 입사일과 교육 지급 여부 확인',
+  tot:'위 항목 중 어디가 어긋났는지 먼저 보고, 항목이 다 맞는데 합계만 다르면 대장에 다른 수당이 더 있는지 확인',
+};
 $('#pCalc').onclick=()=>{
   if(!P.rows||!P.rows.length){ alert('먼저 근태 파일과 급여대장을 올려주세요.'); return; }
+  const m=P.map||{};
   const use=P.rows.filter(r=>r.근태있음);
   const act=use.filter(r=>!r.퇴사), qui=use.filter(r=>r.퇴사);
   const wb=XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, calcSheet(act,'a'), '재직자');
   XLSX.utils.book_append_sheet(wb, calcSheet(qui.length?qui:[], 'q'), '퇴사자');
+  XLSX.utils.book_append_sheet(wb, itemSheet(P.rows), '항목별 차액');
+  const dr=diffRows();
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(dr.length? dr : [{결과:'차이 없음'}]), '차이 내역');
   const miss=P.rows.filter(r=>!r.대장있음).map(r=>({사번:r.empId,성명:r.name,사유:'급여대장에 없음 — 시스템 작업 누락 확인'}));
   const noAtt=P.rows.filter(r=>!r.근태있음).map(r=>({사번:r.empId,성명:r.name,사유:'근태 기록 없음'}));
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(
-    miss.concat(noAtt).length? miss.concat(noAtt) : [{결과:'누락 인원 없음'}]),'확인필요');
+  const noW=P.rows.filter(r=>r.근태있음&&r.대장있음&&!r.wage).map(r=>({사번:r.empId,성명:r.name,사유:'시급 없음 — 대상자 명단의 시급 열 확인'}));
+  const chk=miss.concat(noAtt).concat(noW);
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(chk.length? chk : [{결과:'누락 인원 없음'}]),'확인필요');
+  const notLinked=PITEMS.filter(it=>!(m[it.k]>=0)).map(it=>it.n);
   XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([
     ['안내',''],
-    ['이 파일은','회사 「기간제 급여 계산기」와 같은 열 구성·수식으로 만들었습니다. 열면 차액 칸이 자동 계산됩니다.'],
-    ['근태에서 채운 칸','D 일수 · K 연장(분) · N 심야시간(분) · V 주휴'],
-    ['급여대장에서 채운 칸','H 기본급 · S 연장수당 · X 주휴수당 · AD 교육수당 · AH · AM · AQ · AT 합계'],
-    ['직접 채워야 하는 칸','E 교육 · Q 심야1시간 · AB 교육 · AF · AK · AO — 근태 파일에 없는 값입니다'],
-    ['차액 보는 법','I · T · Y · AE · AI · AN · AR · AU 열이 0이면 일치. 0이 아닌 칸만 확인하세요.'],
-    ['대상 인원',`재직 ${act.length}명 · 퇴사 ${qui.length}명`],
-  ]),'읽어보기');
-  XLSX.writeFile(wb,`${P.name||'급여'}_계산기양식.xlsx`);
+    ['시트 구성','「재직자·퇴사자」 회사 계산기와 같은 열·수식 / 「항목별 차액」 항목마다 계산·대장·차액 / 「차이 내역」 차이 난 건만'],
+    ['어느 항목이 틀렸는지','「차이 내역」 시트를 먼저 보세요. 사번·항목·계산·대장·차액과 「어디를 볼지」가 한 줄로 나옵니다.'],
+    ['근태에서 채운 칸','D 일수 · K 연장(분) · N 심야시간(분) · V 주휴 · AB 교육(시간)'],
+    ['교육수당','그 달에 입사한 인원만 시급 × '+((($('#pEduH').value)===''?1:+$('#pEduH').value))+'시간으로 계산했습니다 (AB 교육 칸 = 시간).'],
+    ['대장 칸이 비어 있으면','그 항목이 급여대장에서 연결되지 않은 것입니다. 2단계 「급여대장 열 연결」에서 골라주세요.'],
+    ['연결되지 않은 항목', notLinked.length? notLinked.join(' · ') : '없음 — 모든 항목이 연결되었습니다'],
+    ['연장·심야 대장(S열)','회사 양식은 연장·심야·심야1의 대장이 한 칸(S)으로 묶여 있어, T 차액은 S −(연장+심야+심야1)로 계산했습니다. 항목별로 보시려면 「항목별 차액」 시트를 보세요.'],
+    ['주의','실제 지급액은 급여 시스템과 반드시 대조하세요. 차액이 + 면 대장이 더 많고, − 면 대장이 더 적습니다.'],
+  ]),'안내');
+  XLSX.writeFile(wb, `급여_계산기양식_${P.name||''}.xlsx`);
 };
 
 $('#pExp').onclick=()=>{
