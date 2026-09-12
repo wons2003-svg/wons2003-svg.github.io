@@ -1206,6 +1206,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
       <div class="sl-s" id="pInfo3">아직 넣지 않음</div>
     </div>
   </div>
+  <div id="pRosDiag"></div>
   <input type="file" id="pFile1" accept=".xlsx,.xlsm,.xls,.csv" hidden>
   <input type="file" id="pFile2" accept=".xlsx,.xlsm,.xls,.csv" hidden>
   <input type="file" id="pFile3" accept=".xlsx,.xlsm,.xls,.csv" hidden>
@@ -2227,16 +2228,23 @@ function readTable(file, pats, done, req){
     const keys=Object.keys(pats);
     const need=(req&&req.length)?req:keys;
     let best=null;
-    // ① 모든 시트를 훑어 '머리글이 있는' 표를 먼저 찾는다 (많이 맞는 시트 우선)
+    // ① 모든 시트 × 앞쪽 12행을 훑어 '머리글로 가장 잘 맞는 행'을 찾는다.
+    //    칸 개수로 짐작하지 않고 머리글 이름이 실제로 맞는 행을 고르므로,
+    //    위에 제목이 몇 줄 있거나 뒤쪽 행에 칸이 더 많아도 흔들리지 않는다.
+    //    머리글 안의 공백은 무시한다 ("시 급" → "시급").
+    const hkey=h=>norm(h).replace(/\s+/g,'');
     for(const sn of wb.SheetNames){
       const aoa=XLSX.utils.sheet_to_json(wb.Sheets[sn],{header:1,defval:null,blankrows:false,raw:true});
       if(!aoa.length) continue;
-      let hi=0,bc=-1;
-      aoa.slice(0,10).forEach((r,i)=>{ const c=r.filter(x=>norm(x)!=='').length; if(c>bc){bc=c;hi=i;} });
-      const hdr=(aoa[hi]||[]).map(norm);
-      const col={}; let hit=0;
-      keys.forEach(k=>{ col[k]=hdr.findIndex(h=>pats[k].test(h)); if(col[k]>=0) hit++; });
-      if(col.id>=0 && (!best || hit>best.hit)) best={aoa,hi,hdr,col,hit,sn};
+      let pick=null;
+      for(let hi=0; hi<Math.min(12,aoa.length); hi++){
+        const kh=(aoa[hi]||[]).map(hkey);
+        const col={}; let hit=0;
+        keys.forEach(k=>{ col[k]=kh.findIndex(h=>h && pats[k].test(h)); if(col[k]>=0) hit++; });
+        if(col.id>=0 && (!pick || hit>pick.hit)) pick={hi,col,hit};
+      }
+      if(pick && (!best || pick.hit>best.hit))
+        best={aoa, hi:pick.hi, hdr:(aoa[pick.hi]||[]).map(norm), col:pick.col, hit:pick.hit, sn};
     }
     const full = best && need.every(k=>best.col[k]>=0);   // 꼭 필요한 열을 찾았는지
     // ② 머리글이 없는 표(사번·성명만 든 시트 등)도 받아준다
@@ -3564,7 +3572,7 @@ if($('#vMap') && !$('#vMap').value.trim()) $('#vMap').value = payMapText();
 /* =========================================================
    급여 확인 검수기 — 「기간제 급여 계산기」 수식 기준
    ========================================================= */
-const P={att:null, led:null, ledAoa:[], ledHdr:[], hrow:0, diag:null,
+const P={att:null, led:null, ledAoa:[], ledHdr:[], hrow:0, diag:null, rosName:'',
          alias:new Map(), aliasRev:new Map(), rlink:null,
          wage:new Map(), hire:new Map(), quit:new Map(), roster:new Map(),
          rows:[], anom:[], name:''};
@@ -3732,19 +3740,92 @@ function pMapUI(){
 const PM=()=>{ const m={}; $$('#pMap select').forEach(s=>m[s.dataset.p]=+s.value); return m; };
 
 /* ③ 대상자 명단 */
+/* 시급처럼 보이는 열을 '값'으로 찾는다 — 머리글 이름이 달라도 잡히도록 */
+function findWageCol(aoa,hrow,skip){
+  const body=aoa.slice(hrow+1); if(!body.length) return null;
+  const w=Math.max(0,...body.map(r=>r.length));
+  let best={i:-1,n:0};
+  for(let c=0;c<w;c++){
+    if(skip.includes(c)) continue;
+    let n=0;
+    for(const r of body){
+      const v=r[c];
+      if(v===null||v===undefined||v==='') continue;
+      if(v instanceof Date) continue;
+      const t=String(v);
+      if(/[년월일]/.test(t) || /\d{4}[.\-\/]\d{1,2}/.test(t)) continue;   // 날짜는 제외
+      const x=num(v);
+      if(isFinite(x) && x>=1000 && x<=300000 && Math.abs(x-Math.round(x))<1e-9) n++;
+    }
+    if(n>best.n) best={i:c,n};
+  }
+  return best.n >= Math.max(2, (body.length)*0.5) ? best : null;
+}
 $('#pFile3').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
-  readTable(f,{id:/사번|사원번호|직번|emp/i, name:/성명|이름|name/i,
-               w:/시급|단가|시간당|임률|임율|rate|wage/i,
-               hire:/입사|시작일|hire/i, quit:/퇴사|종료일|quit/i},
-    (rows,hdr,col,sn,wb)=>{
-      P.rosWb=wb;
-      P.roster=new Map(); P.wage=new Map(); P.quit=new Map();
-      rows.forEach(r=>{ const id=idKey(r.id); if(!id) return;
-        P.roster.set(id, norm(r.name));
-        if(col.w>=0){ const w=num(r.w); if(isFinite(w)&&w>0) P.wage.set(id,w); }
-        if(col.quit>=0){ const d=pDate(r.quit, new Date().getFullYear()); if(d) P.quit.set(id,d); } });
-      $('#pInfo3').innerHTML=`✓ 대상자 ${P.roster.size}명${P.wage.size?` · 시급 ${P.wage.size}명`:''}${P.quit.size?` · 퇴사자 ${P.quit.size}명`:''} · ${f.name}`;
+  readTable(f,{id:/사번|사원번호|직번|사원.?번호|emp/i, name:/성명|이름|name/i,
+               w:/시급|시간급|시간당|단가|임률|임율|임금|rate|wage/i,
+               hire:/입사|입사일|시작일|hire|join/i, quit:/퇴사|퇴사일|종료일|quit|leave.?date/i},
+    (rows,hdr,col,sn,wb,best)=>{
+      P.rosWb=wb; P.rosName=f.name;
+      P.roster=new Map(); P.wage=new Map(); P.quit=new Map(); P.hire=new Map();
+      const YR=+($('#vYear')&&$('#vYear').value) || +($('#yy')&&$('#yy').value) || new Date().getFullYear();
+      const aoa=(best&&best.aoa)||[], hrow=(best&&best.hi!=null)?best.hi:0;
+
+      /* 시급 열을 머리글로 못 찾았으면 값으로 찾아본다 */
+      let wCol = col.w>=0 ? col.w : -1, guess=null;
+      if(wCol<0 && aoa.length){
+        const g=findWageCol(aoa,hrow,[col.id,col.name,col.hire,col.quit].filter(x=>x>=0));
+        if(g){ wCol=g.i; guess=g; }
+      }
+      const body=aoa.slice(hrow+1);
+      const hasRaw = body.length>0;
+
+      (hasRaw? body : rows).forEach((r,ix)=>{
+        const id = hasRaw ? idKey(r[col.id]) : idKey(r.id);
+        if(!id) return;
+        P.roster.set(id, hasRaw ? (col.name>=0?norm(r[col.name]):'') : norm(r.name));
+        if(wCol>=0){ const w=num(hasRaw? r[wCol] : r.w); if(isFinite(w)&&w>0) P.wage.set(id,w); }
+        if(col.hire>=0){ const d=pDate(hasRaw? r[col.hire] : r.hire, YR); if(d) P.hire.set(id,d); }
+        if(col.quit>=0){ const d=pDate(hasRaw? r[col.quit] : r.quit, YR); if(d) P.quit.set(id,d); }
+      });
+
+      /* 입사일·퇴사일·시급은 분석기(주휴 비례 계산)에도 넘겨준다 */
+      if(P.wage.size) $('#wTable').value=[...P.wage].map(([i2,w])=>i2+'\t'+w).join('\n');
+      if(P.hire.size || P.quit.size){
+        const m2=new Map();
+        P.roster.forEach((nm,id)=>m2.set(id,{name:nm, hire:P.hire.get(id)||null, quit:P.quit.get(id)||null}));
+        S.roster=m2;
+        try{ if(S.sum && S.sum.length){ recalc(); P.att=S.sum; scanAnom(); } }catch(x){}
+      }
+
+      $('#pInfo3').innerHTML=`✓ 대상자 ${P.roster.size}명`
+        + (P.wage.size? ` · 시급 ${P.wage.size}명` : ' · <span style="color:var(--bad)">시급 없음</span>')
+        + (P.hire.size? ` · 입사일 ${P.hire.size}명`:'') + ` · ${f.name}`;
       $('#dropP3').classList.toggle('done', P.roster.size>0);
+
+      /* 어떤 열을 무엇으로 읽었는지 눈으로 확인 */
+      const nm=i2=> i2>=0 ? ((hdr&&hdr[i2]) ? hdr[i2] : `(열${XLSX.utils.encode_col(i2)})`) : null;
+      const smp=i2=>{ if(i2<0) return '';
+        return body.slice(0,3).map(r=>{ const v=r[i2];
+          return v instanceof Date? dKey(v) : (norm(v)||'(빈칸)'); }).join('  ·  '); };
+      const row=(label,i2,note)=>`<tr><td style="width:74px"><b>${label}</b></td>
+        <td style="width:180px">${i2>=0? nm(i2) : (note||'<span style="color:var(--bad)">찾지 못함</span>')}</td>
+        <td class="muted">${smp(i2)}</td></tr>`;
+      $('#pRosDiag').innerHTML=`<div class="note ${P.wage.size? (P.hire.size?'g':'i') : 'b'}" style="margin-top:12px">
+        <b>대상자 명단을 이렇게 읽었습니다</b> — ${f.name}${sn?` · 시트 「${sn}」`:''} · ${hrow<0? '머리글 없는 표' : `머리글 ${hrow+1}행`}
+        ${guess? `<br>시급은 머리글 이름으로 못 찾아 <b>값으로 찾았습니다</b> (${guess.n}칸이 시급처럼 보임).`:''}
+        <div class="tblwrap" style="margin-top:8px;max-height:none">
+        <table class="prev" style="background:transparent"><tbody>
+          ${row('사번',col.id)}
+          ${row('성명',col.name,'<span class="muted">없음 — 사번만으로 대조합니다</span>')}
+          ${row('시급',wCol)}
+          ${row('입사일',col.hire,'<span style="color:var(--warn)">없음 — 입사·퇴사 주 주휴 비례 계산을 못 합니다</span>')}
+          ${row('퇴사일',col.quit,'<span class="muted">없음 (선택)</span>')}
+        </tbody></table></div>
+        ${P.wage.size? '' : `<b style="color:var(--bad)">시급을 한 건도 못 읽었습니다.</b>
+          위 「시급」 줄이 <b>찾지 못함</b>이면 머리글을 <b>시급</b>으로 바꿔주세요.
+          열은 맞는데 값이 비었다면 그 칸이 <b>빈칸이거나 글자</b>로 들어가 있는지 확인하세요 (10,400 · 10400 · 10,400원 은 모두 읽힙니다).`}
+      </div>`;
       runP();
     }, ['id']);
   e.target.value=''; };
@@ -3816,7 +3897,19 @@ function pLink(){
         const curHit=P.roster.size-miss.length, curJunk=miss.length;
         const newHit=[...m2.keys()].filter(k=>attIds.has(k)).length, newJunk=m2.size-newHit;
         if(m2.size && (newHit>curHit || (newHit===curHit && newJunk<curJunk))){
-          P.rlink={was:curHit, now:newHit, sheet:b.sheet, col:hdr[b.col]||`(열${XLSX.utils.encode_col(b.col)})`, size:m2.size};
+          /* 사번 열이 바뀌면 같은 행의 시급·입사일·퇴사일도 새 사번으로 다시 붙여야 한다 */
+          const old=[...P.roster.keys()], W=new Map(), H=new Map(), Q=new Map();
+          const nk=[...m2.keys()];
+          if(nk.length===old.length){
+            nk.forEach((k,ix)=>{ const o=old[ix];
+              if(P.wage.has(o)) W.set(k,P.wage.get(o));
+              if(P.hire.has(o)) H.set(k,P.hire.get(o));
+              if(P.quit.has(o)) Q.set(k,P.quit.get(o)); });
+            if(W.size) P.wage=W;
+            if(H.size) P.hire=H;
+            if(Q.size) P.quit=Q;
+          }
+          P.rlink={was:curHit, now:newHit, sheet:b.sheet, col:hdr[b.col]||`(열${XLSX.utils.encode_col(b.col)})`, size:m2.size, moved:W.size};
           P.roster=m2; miss=[...P.roster.keys()].filter(id=>!attIds.has(id));
         }
       }
@@ -3927,7 +4020,7 @@ function runP(){
   targets.forEach(id=>{
     const a=attMap.get(id) || attMap.get(AL(id));
     const L=led.get(id) || led.get(AL(id));
-    const wage=(L&&L.wage) || P.wage.get(id) || null;
+    const wage=(L&&L.wage) || P.wage.get(id) || P.wage.get(AL(id)) || null;
     const r={empId:id, name:(P.roster.get(id))||(a&&a.name)||(L&&L.name)||'', wage,
       퇴사:P.quit.has(id), 근태있음:!!a, 대장있음:!!L, ledRow:L?L.row:'', ledSheet:(L&&L.sheet)||'',
       근태사번:(a&&a.empId!==id)?a.empId:'',
@@ -3990,7 +4083,7 @@ function pKpi(){
     const nAtt=rows.filter(r=>r.근태있음).length, nLed=rows.filter(r=>r.대장있음).length;
     const nAl=rows.filter(r=>r.근태사번).length;
     if(P.rlink) h+=`<div class="note w"><b>명단의 사번 열을 자동으로 바꿨습니다</b> — 시트 「${P.rlink.sheet}」 · 「${P.rlink.col}」 열<br>
-      원래 열로는 근태와 ${P.rlink.was}명만 맞았는데, 이 열로 보니 <b>${P.rlink.now}명</b>이 맞습니다.</div>`;
+      원래 열로는 근태와 ${P.rlink.was}명만 맞았는데, 이 열로 보니 <b>${P.rlink.now}명</b>이 맞습니다.${P.rlink.moved?` 시급 ${P.rlink.moved}명도 새 사번으로 함께 옮겼습니다.`:''}</div>`;
     if(nAl) h+=`<div class="note w"><b>사번이 서로 다른 인원 ${nAl}명</b> — 명단 사번으로는 근태에 없지만 <b>성명이 같은 사람</b>이 근태에 있어 이어서 대조했습니다.<br>
       ${rows.filter(r=>r.근태사번).slice(0,10).map(r=>`${r.name||''} 명단 <b>${r.empId}</b> ↔ 근태 <b>${r.근태사번}</b>`).join(' · ')}<br>
       <span class="muted">어느 쪽 사번이 맞는지 확인해 한쪽을 고쳐두시면 다음 달부터는 이 안내가 나오지 않습니다.</span></div>`;
@@ -4017,7 +4110,17 @@ function pKpi(){
         2단계 「급여대장 열 연결」에서 <b>사번</b> 열을, 필요하면 <b>시트·머리글 행</b>까지 직접 골라주세요.</div>`;
   if(missLed.length) h+=`<div class="note ${D&&D.how==='fail'?'w':'b'}"><b>${D&&D.how==='fail'?'ℹ️':'⚠️'} 대상자인데 급여대장에 없는 인원 ${missLed.length}명</b> — ${missLed.slice(0,20).map(r=>`${r.empId} ${r.name}`).join(' · ')}${missLed.length>20?` 외 ${missLed.length-20}명`:''}<br>${D&&D.how==='fail'?'사번을 제대로 읽지 못해 생긴 숫자일 수 있습니다. 위 안내를 먼저 확인하세요.':'시스템에서 급여 작업이 누락된 인원일 수 있습니다. 대장에서 사번으로 직접 검색해 확인해 보세요.'}</div>`;
   if(missAtt.length) h+=`<div class="note b"><b>⚠️ 대상자인데 근태 파일에 없는 인원 ${missAtt.length}명</b> — ${missAtt.slice(0,20).map(r=>`${r.empId} ${r.name}`).join(' · ')}${missAtt.length>20?` 외 ${missAtt.length-20}명`:''}<br>사번·성명 어느 쪽으로도 근태에서 찾지 못했습니다. 근태 등록이 빠졌는지, 아니면 명단의 사번이 잘못됐는지 확인하세요.</div>`;
-  if(noW) h+=`<div class="note w"><b>시급이 없어 계산하지 못한 인원 ${noW}명</b> — 대장에 시급 열이 있으면 2단계에서 연결하거나, 명단 파일에 시급을 넣어주세요.</div>`;
+  if(noW){
+    const ex=rows.filter(r=>r.근태있음&&r.대장있음&&!r.wage).slice(0,10).map(r=>`${r.empId} ${r.name||''}`).join(' · ');
+    const all=noW===rows.filter(r=>r.근태있음&&r.대장있음).length;
+    h+=`<div class="note b"><b>⚠️ 시급이 없어 계산하지 못한 인원 ${noW}명</b>${all?' — 전원':''}<br>${ex}${noW>10?` 외 ${noW-10}명`:''}<br>`
+      + (P.roster.size
+          ? (P.wage.size
+              ? `명단에서 시급 <b>${P.wage.size}명</b>을 읽었는데 이 인원들과는 <b>사번이 맞지 않습니다.</b> 위 1단계 「대상자 명단을 이렇게 읽었습니다」에서 사번·시급 열을 확인하세요.`
+              : `<b>명단에서 시급을 한 건도 읽지 못했습니다.</b> 위 1단계의 「대상자 명단을 이렇게 읽었습니다」 표에서 <b>시급</b> 줄을 확인하세요 — 머리글이 「시급」이 아니면 바꿔주시면 됩니다.`)
+          : `대상자 명단을 넣거나, 급여대장에 시급 열이 있으면 2단계에서 <b>시급</b>으로 연결해 주세요.`)
+      + `</div>`;
+  }
   $('#pWarn').innerHTML=h;
 }
 function pRows(){
