@@ -579,6 +579,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
       <label class="gck"><input type="checkbox" id="gSave"> 아이디 저장</label>
       <button type="submit" class="gbtn">로그인</button>
       <button type="button" class="gbtn alt" id="gToReset">비밀번호 재설정</button>
+      <button type="button" class="gbtn alt" id="gAddUser" hidden>＋ 새 사람 계정 만들기</button>
     </form>
 
     <form class="gform" id="gNew" hidden autocomplete="off">
@@ -589,12 +590,13 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
     </form>
 
     <form class="gform" id="gReset" hidden autocomplete="off">
+      <input type="text" id="rId" placeholder="아이디" spellcheck="false" style="width:116px">
       <input type="text" id="rCode" placeholder="복구 코드" spellcheck="false" style="width:172px">
       <input type="password" id="rPw" placeholder="새 비밀번호" autocomplete="new-password">
       <input type="password" id="rPw2" placeholder="새 비밀번호 확인" autocomplete="new-password">
       <button type="submit" class="gbtn">비밀번호 변경</button>
       <button type="button" class="gbtn alt" id="gToLogin">돌아가기</button>
-      <button type="button" class="gbtn alt" id="gWipe">계정 지우고 새로 만들기</button>
+      <button type="button" class="gbtn alt" id="gWipe">이 아이디 계정 지우기</button>
     </form>
   </div>
 
@@ -610,10 +612,10 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
     <button data-v="analyze"><span class="ni"><svg viewBox="0 0 18 18"><rect x="2.2" y="9.6" width="3" height="6" rx="1"/><rect x="7.5" y="4.4" width="3" height="11.2" rx="1"/><rect x="12.8" y="7" width="3" height="8.6" rx="1"/></svg></span>근태 분석기</button>
     <button data-v="audit"><span class="ni"><svg viewBox="0 0 18 18"><path d="M8 2.2a5.8 5.8 0 1 0 3.5 10.4l3 3a1.1 1.1 0 0 0 1.6-1.6l-3-3A5.8 5.8 0 0 0 8 2.2m0 2.2a3.6 3.6 0 1 1 0 7.2 3.6 3.6 0 0 1 0-7.2"/></svg></span>근태 검수기</button>
     <button data-v="pay"><span class="ni"><svg viewBox="0 0 18 18"><path d="M9 1.6a1 1 0 0 1 1 1v.7c1.9.24 3.3 1.3 3.3 2.8a1 1 0 0 1-2 0c0-.42-.9-1.1-2.3-1.1s-2.3.68-2.3 1.1c0 .38.63.74 2.5 1.08 2.2.4 4.1 1.05 4.1 3 0 1.55-1.4 2.6-3.3 2.85v.7a1 1 0 1 1-2 0v-.7c-1.9-.25-3.3-1.3-3.3-2.85a1 1 0 1 1 2 0c0 .42.9 1.1 2.3 1.1s2.3-.68 2.3-1.1c0-.38-.63-.74-2.5-1.08-2.2-.4-4.1-1.05-4.1-3C6.7 4.6 8.1 3.54 10 3.3v-.7a1 1 0 0 1-1-1"/></svg></span>급여 검수기</button>
-    <button data-v="anom"><span class="ni"><svg viewBox="0 0 18 18"><path d="M2.6 4.2h12.8a1 1 0 0 1 1 1v7.8a1 1 0 0 1-1 1H2.6a1 1 0 0 1-1-1V5.2a1 1 0 0 1 1-1m.7 2 5.7 3.7 5.7-3.7z"/></svg></span>근태 특이건<span class="navp" id="navAnom"></span></button>
+    <button data-v="anom"><span class="ni"><svg viewBox="0 0 18 18"><path d="M2.6 4.2h12.8a1 1 0 0 1 1 1v8.1a1 1 0 0 1-1 1H2.6a1 1 0 0 1-1-1V5.2a1 1 0 0 1 1-1m.7 2 5.7 3.7 5.7-3.7z"/></svg></span>근태 특이건<span class="navp" id="navAnom"></span></button>
   </nav>
   <div class="side-foot">
-    <b>APRS</b><span class="ver">v7.8 · 2026-09</span>
+    <b>APRS</b><span class="ver">v8.1 · 2026-09</span>
     <span class="who" id="gWho"></span>
     <button class="sfout" id="btnOut" title="로그아웃">로그아웃</button>
   </div>
@@ -743,7 +745,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
 <div class="card off" id="ao3">
   <h2><span class="n">3</span>메일 보내기</h2>
   <p class="hint">담당자를 <b>주소록에 등록</b>해 두면 이름만 골라 받는사람이 채워집니다.
-    <b>메일 파일(.eml)</b>로 만들면 표와 엑셀 첨부까지 들어간 메일이 열려서 <b>「보내기」만 누르면</b> 됩니다.</p>
+    <b>「Outlook으로 보내기」</b>를 누르면 이 PC의 Outlook으로 <b>실제 발송</b>됩니다 — 확인창 한 번만 누르시면 됩니다.</p>
 
   <div class="split" style="margin-bottom:10px">
     <select id="mTo" style="min-width:320px"><option value="">담당자 고르기…</option></select>
@@ -761,19 +763,79 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
     <label class="muted" style="display:flex;align-items:center;gap:6px;align-self:flex-end;padding-bottom:9px;font-size:12.5px;font-weight:600">
       <input type="checkbox" id="mAtt" checked> 엑셀 파일 첨부</label>
   </div>
+  <div id="msBox" class="note i" style="margin-bottom:12px;padding:14px 16px">
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+      <b style="font-size:13.5px">브라우저에서 바로 보내기</b>
+      <span class="tag g">Microsoft 365</span>
+      <span class="grow"></span>
+      <button class="sm" id="msAsk">IT에 보낼 요청서 복사</button>
+    </div>
+    <p style="margin:8px 0 0;font-size:12.5px;line-height:1.6">
+      회사가 Microsoft 365를 쓰면 <b>이 화면에서 회사 계정으로 로그인해 바로 보낼 수 있습니다.</b>
+      Outlook을 열 필요도, 파일을 내려받을 필요도 없습니다.<br>
+      비밀번호는 <b>회사 로그인 창에만</b> 넣고 이 파일에는 아무것도 저장되지 않습니다. 메일은 <b>회사 메일 서버로만</b> 가고 외부 업체를 거치지 않습니다.<br>
+      <span class="muted">처음 한 번은 회사 IT가 <b>앱 등록</b>을 해줘야 합니다 — 위 「IT에 보낼 요청서 복사」를 눌러 그대로 전달하세요.</span>
+    </p>
+    <div id="msIn" style="margin-top:10px">
+      <div class="row">
+        <div class="f" style="flex:1.4;min-width:260px"><label>애플리케이션(클라이언트) ID <span class="muted">IT가 알려줍니다</span></label>
+          <input type="text" id="msClient" placeholder="11111111-2222-3333-4444-555555555555" spellcheck="false"></div>
+        <div class="f" style="flex:1;min-width:200px"><label>디렉터리(테넌트) ID <span class="muted">비우면 organizations</span></label>
+          <input type="text" id="msTenant" placeholder="organizations" spellcheck="false"></div>
+      </div>
+      <div class="split" style="margin-top:8px">
+        <button class="sm pri" id="msSaveCfg">저장</button>
+        <button class="sm" id="msLoginBtn">회사 계정으로 로그인</button>
+        <span class="muted" style="font-size:11.5px">앱 등록에 넣을 리디렉션 URI : <b class="mono" id="msRedir"></b>
+          <span id="msRedir2"></span></span>
+      </div>
+    </div>
+    <div id="msOut" hidden style="margin-top:10px">
+      <div class="split">
+        <span style="font-size:12.5px;align-self:center" id="msWho"></span>
+        <span class="grow"></span>
+        <button class="pri" id="msNow">이 내용 지금 보내기</button>
+        <button class="pri" id="msNowSplit">담당자별로 지금 보내기</button>
+        <button class="sm" id="msLogout">로그아웃</button>
+      </div>
+    </div>
+    <div id="msStat"></div>
+  </div>
+
+  <div class="split" style="margin-bottom:6px">
+    <b style="font-size:12.5px;align-self:center">Outlook 앱으로 보내기</b>
+    <button class="pri" id="mSend">이 내용 보내기</button>
+    <button class="pri" id="mSendSplit">담당자별로 나눠 보내기</button>
+    <label class="muted" style="display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600">
+      <input type="checkbox" id="mNow" checked> 확인창 한 번 뒤 바로 발송</label>
+  </div>
   <div class="split">
-    <button class="pri" id="mEml">메일 파일(.eml) 만들기</button>
-    <button class="sm" id="mSplit">담당자별로 나눠 만들기</button>
+    <b style="font-size:12.5px;align-self:center;color:var(--ink3)">직접 확인해서 보내기</b>
+    <button class="sm" id="mEml">메일 파일(.eml) 만들기</button>
+    <button class="sm" id="mSplit">담당자별 .eml 만들기</button>
     <button class="sm" id="mOpen">메일 앱으로 열기</button>
     <button class="sm" id="mRich">표 서식 복사</button>
   </div>
+  <div id="mSendInfo" style="margin-top:10px"></div>
   <div id="mSplitInfo" style="margin-top:10px"></div>
   <div class="note i" style="margin-top:10px">
-    <b>이 도구는 메일을 직접 발송하지 못합니다</b> — 브라우저 안에서만 도는 파일이라 메일 서버가 없습니다. 대신 아래 세 가지로 <b>보내기 직전 상태</b>까지 만들어 드립니다.<br><br>
-    <b>① 메일 파일(.eml) 만들기</b> <span class="muted">(권장)</span> — 내려받은 파일을 두 번 눌러 열면 <b>받는사람·제목·표·엑셀 첨부가 채워진 메일</b>이 Outlook에 뜹니다. 내용 확인하고 <b>보내기</b>만 누르세요.<br>
-    <b>② 담당자별로 나눠 만들기</b> — 주소록에 <b>담당 사번</b>을 넣어두면, 담당자마다 <b>자기 인원만</b> 담긴 메일 파일이 따로 나옵니다.<br>
-    <b>③ 메일 앱으로 열기</b> — 새 메일 창이 바로 열리지만 <b>본문이 글자만</b>이고 길면 잘릴 수 있습니다. 건수가 적을 때 쓰세요.<br>
-    <b>④ 표 서식 복사</b> — 표 모양 그대로 복사됩니다. Outlook 본문에 붙여넣으면 표가 유지됩니다.
+    <b>보내는 방법이 세 가지입니다 — 위에서부터 편한 순서입니다.</b><br><br>
+    <b>① 브라우저에서 바로 보내기</b> <span class="muted">(Microsoft 365 · IT 앱 등록 한 번 필요)</span> —
+    회사 계정으로 로그인하면 <b>이 화면에서 버튼 한 번으로 발송</b>됩니다. 파일을 내려받지 않고, 담당자별 여러 통도 한 번에 나갑니다.<br>
+    <b>② Outlook 앱으로 보내기</b> <span class="muted">(IT 도움 없이 지금 바로)</span> — 아래 설명대로 스크립트를 내려받아 두 번 누르면 발송됩니다.<br>
+    <b>③ 직접 확인해서 보내기</b> — .eml을 열어 눈으로 보고 보내기를 누릅니다.<br><br>
+    <b>「Outlook 앱으로 보내기」는 이렇게 동작합니다.</b> 브라우저 자체는 메일을 보낼 수 없어서(메일 서버가 없음),
+    <b>이 PC에 설치된 Outlook</b>을 불러 보내는 <b>발송 스크립트(.vbs)</b>를 만들어 드립니다.<br>
+    내려받은 파일을 <b>두 번 누르면</b> 「메일 N통을 보냅니다」 확인창이 한 번 뜨고 <b>발송</b>됩니다.
+    보내는 계정은 <b>지금 Outlook에 로그인된 본인 계정</b>이고, <b>외부 서비스로 나가는 데이터도 비밀번호를 넣는 곳도 없습니다.</b><br>
+    <span class="muted">「확인창 한 번 뒤 바로 발송」을 끄면 메일 창만 띄워 직접 확인하고 보낼 수 있습니다.</span><br><br>
+    <b>담당자별로 나눠 보내기</b> — 주소록에 <b>담당 사번</b>을 넣어두면 담당자마다 <b>자기 인원만</b> 담아 한 번에 여러 통을 보냅니다.<br><br>
+    <b>직접 확인해서 보내기</b> — 스크립트가 회사 정책으로 막혀 있거나, 보내기 전에 꼭 눈으로 보고 싶을 때 쓰세요.
+    <b>.eml</b>은 두 번 누르면 <b>표·첨부까지 채워진 메일</b>이 열리고 보내기만 누르면 됩니다.
+  </div>
+  <div class="note w" style="margin-top:8px">
+    <b>처음에는 본인에게 한 통 보내보세요.</b> 받는사람에 본인 주소를 넣고 보내 표와 첨부가 제대로 오는지 확인한 뒤 실제로 쓰시는 게 안전합니다.<br>
+    회사 PC에서 <b>스크립트 실행이 막혀 있으면</b> 「Outlook을 열지 못했습니다」 창이 뜹니다 — 그때는 아래 <b>.eml</b> 방식을 쓰세요.
   </div>
 </div>
 </div><!-- /viewAnom -->
@@ -998,7 +1060,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
 </div>
 
 <footer>
-  <b>APRS v7.8 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
+  <b>APRS v8.1 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
   ⓘ 이 도구는 업로드한 파일을 브라우저 메모리에서만 계산합니다. 네트워크 전송·서버 저장이 없습니다.<br>
   ⓘ 총근로시간 = 기본(소정) + 연장 + 휴일근로. <b>야간·심야는 가산수당 산정용으로 따로 표시</b>하며 총합에 중복 더하지 않습니다 — 심야 연장은 이미 연장시간에 포함돼 있는 경우가 많아 더하면 이중 계산이 됩니다.<br>
   ⓘ 급여일수 = 평일(월~금, 법정공휴일 제외) + 법정공휴일. 인정 일요일수 = 데이터상 일요일 수 − 결근이 있는 주(월~일)의 일요일 수.<br>
@@ -1397,6 +1459,20 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
 /* =========================================================
    근태 분석기 — 계산 엔진 + UI
    ========================================================= */
+/* 회사 로그인 창(팝업)이 돌아온 경우 — 부모에게 코드만 넘기고 닫는다 */
+const __APRS_POPUP = (()=>{
+  try{
+    const q=new URLSearchParams(location.search);
+    const code=q.get('code'), err=q.get('error_description')||q.get('error')||'';
+    if(!code && !err) return false;
+    if(window.opener && window.opener!==window){
+      window.opener.postMessage({t:'aprs-ms', code, state:q.get('state'), err}, location.origin);
+      setTimeout(()=>{ try{ window.close(); }catch(e){} }, 300);
+      return true;
+    }
+  }catch(e){}
+  return false;
+})();
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 const CATS = ['근무','휴일근무','출장/교육','휴무','유급휴가','무급/결근','기타','미분류'];
@@ -4903,6 +4979,8 @@ function anomRefresh(){
     <br>특이건 <b>${n}건</b> — 지문 누락 + 비고 표기 기준
     <br><span class="muted">다른 파일로 보려면 근태 검수기 / 급여 검수기에서 그 파일을 올린 뒤 다시 이 화면으로 오세요.</span></div>`;
   $('#navAnom').textContent = n? String(n) : '';
+  const si=$('#mSendInfo'); if(si) si.innerHTML=P.sendMsg||'';
+  if(typeof msUI==='function') msUI();
   mailBuild();
 }
 function mailRows(){
@@ -5185,6 +5263,396 @@ $('#mEml').onclick=()=>{
   if(!to.length) return alert('받는사람을 넣어주세요. 주소록에서 담당자를 고르거나 직접 입력하면 됩니다.');
   emlDown(rows, '', to, cc, mailFileName('eml'));
 };
+/* ── 브라우저에서 바로 보내기 (Microsoft 365 / Outlook) ───────
+   회사가 Microsoft 365를 쓰면, 브라우저가 회사 메일 서버로 직접 보낼 수 있습니다.
+   방식은 Microsoft Graph + OAuth 2.0 (PKCE) — 회사 로그인 창으로 본인이 로그인하고,
+   그 권한으로 본인 계정에서 보냅니다.
+     · 이 파일에 비밀번호나 API 키를 넣지 않습니다 (PKCE라 비밀키가 필요 없음)
+     · 메일은 회사 메일 서버로만 갑니다 — 외부 업체를 거치지 않습니다
+     · 보낸 메일은 Outlook [보낸 항목]에 남습니다
+   대신 회사 IT가 <앱 등록>을 한 번 해줘야 합니다 (아래 「IT에 보낼 요청서」). */
+const MSK='aprs.ms.v1';
+const msCfg=()=>{ try{ return JSON.parse(LS.get(MSK)||'{}'); }catch(e){ return {}; } };
+const msSave=o=>LS.set(MSK, JSON.stringify(o));
+const msTok=()=>{ try{ const t=JSON.parse(SS.get('aprs.ms.tok')||'null');
+  return (t && t.exp>Date.now()+30000)? t : null; }catch(e){ return null; } };
+const msRedirect=()=>location.origin+location.pathname;
+
+function b64url(buf){
+  return btoa(String.fromCharCode(...new Uint8Array(buf)))
+    .replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+async function pkce(){
+  const v=b64url(crypto.getRandomValues(new Uint8Array(48)));
+  const h=await crypto.subtle.digest('SHA-256', new TextEncoder().encode(v));
+  return {verifier:v, challenge:b64url(h)};
+}
+function jwtName(idToken){
+  try{ const p=idToken.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');
+    const o=JSON.parse(decodeURIComponent(escape(atob(p))));
+    return o.preferred_username || o.email || o.name || '';
+  }catch(e){ return ''; }
+}
+/* 로그인 — 팝업으로 해서 올려둔 파일·결과가 그대로 남습니다 */
+async function msLogin(){
+  const c=msCfg();
+  if(!c.client) { alert('먼저 「애플리케이션(클라이언트) ID」를 넣어주세요.\nIT에서 앱 등록 후 알려줍니다.'); return; }
+  if(!window.crypto || !crypto.subtle){
+    alert('이 브라우저에서는 안전한 로그인을 쓸 수 없습니다.\n\nhttps 주소(GitHub Pages 등)로 열어야 합니다 — 파일을 직접 열면(file://) 동작하지 않습니다.');
+    return;
+  }
+  const {verifier, challenge}=await pkce();
+  const state=b64url(crypto.getRandomValues(new Uint8Array(16)));
+  SS.set('aprs.ms.v', verifier); SS.set('aprs.ms.s', state);
+  const url=`https://login.microsoftonline.com/${encodeURIComponent(c.tenant||'organizations')}/oauth2/v2.0/authorize`
+    + `?client_id=${encodeURIComponent(c.client)}`
+    + `&response_type=code&response_mode=query`
+    + `&redirect_uri=${encodeURIComponent(msRedirect())}`
+    + `&scope=${encodeURIComponent('openid profile https://graph.microsoft.com/Mail.Send')}`
+    + `&code_challenge=${challenge}&code_challenge_method=S256&state=${state}&prompt=select_account`;
+  const w=window.open(url,'aprsMsLogin','width=520,height=680');
+  if(!w){ alert('팝업이 막혀 있습니다. 주소창 오른쪽의 팝업 차단을 풀어주세요.'); return; }
+  msStatus('회사 로그인 창에서 로그인해 주세요…');
+  const onMsg=async ev=>{
+    if(ev.origin!==location.origin || !ev.data || ev.data.t!=='aprs-ms') return;
+    window.removeEventListener('message', onMsg);
+    try{ w.close(); }catch(e){}
+    if(ev.data.err){ msStatus('로그인 실패 — '+ev.data.err, 'b'); return; }
+    if(ev.data.state!==SS.get('aprs.ms.s')){ msStatus('로그인 응답이 맞지 않습니다. 다시 시도해 주세요.', 'b'); return; }
+    await msToken(ev.data.code);
+  };
+  window.addEventListener('message', onMsg);
+}
+/* 받은 code 를 토큰으로 바꾼다 (비밀키 없이 — PKCE) */
+async function msToken(code){
+  const c=msCfg();
+  msStatus('토큰을 받는 중…');
+  try{
+    const body=new URLSearchParams({
+      client_id:c.client, grant_type:'authorization_code', code,
+      redirect_uri:msRedirect(), code_verifier:SS.get('aprs.ms.v')||'',
+      scope:'openid profile https://graph.microsoft.com/Mail.Send'});
+    const res=await fetch(`https://login.microsoftonline.com/${encodeURIComponent(c.tenant||'organizations')}/oauth2/v2.0/token`,
+      {method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body});
+    const j=await res.json();
+    if(!res.ok) throw new Error((j.error_description||j.error||'토큰 실패').split('\n')[0]);
+    SS.set('aprs.ms.tok', JSON.stringify({
+      at:j.access_token, exp:Date.now()+(j.expires_in||3600)*1000, who:jwtName(j.id_token||'')}));
+    msUI(); msStatus('');
+  }catch(e){ msStatus('토큰을 받지 못했습니다 — '+e.message, 'b'); }
+}
+/* Graph 로 실제 발송 */
+async function msSendOne(to, cc, subject, html, attName, attB64){
+  const t=msTok(); if(!t) throw new Error('로그인이 필요합니다');
+  const msg={ message:{ subject,
+      body:{contentType:'HTML', content:html},
+      toRecipients:to.map(a=>({emailAddress:{address:a}})),
+      ccRecipients:(cc||[]).map(a=>({emailAddress:{address:a}})) },
+    saveToSentItems:true };
+  if(attName && attB64) msg.message.attachments=[{
+    '@odata.type':'#microsoft.graph.fileAttachment', name:attName,
+    contentType:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    contentBytes:attB64}];
+  const res=await fetch('https://graph.microsoft.com/v1.0/me/sendMail',
+    {method:'POST', headers:{'Authorization':'Bearer '+t.at,'Content-Type':'application/json'},
+     body:JSON.stringify(msg)});
+  if(!res.ok){
+    let d=''; try{ const j=await res.json(); d=(j.error&&(j.error.message||j.error.code))||''; }catch(e){}
+    throw new Error(`${res.status} ${d}`.trim());
+  }
+}
+function msStatus(txt, kind){
+  const el=$('#msStat'); if(!el) return;
+  el.innerHTML = txt? `<div class="note ${kind||'i'}" style="margin:8px 0 0">${txt}</div>` : '';
+}
+function msUI(){
+  const c=msCfg(), t=msTok();
+  const ci=$('#msClient'), ti=$('#msTenant');
+  if(ci && !ci.value) ci.value=c.client||'';
+  if(ti && !ti.value) ti.value=c.tenant||'';
+  const r=$('#msRedir'); if(r) r.textContent=msRedirect();
+  const r2=$('#msRedir2'), alt=location.origin+location.pathname.replace(/index\.html$/,'');
+  if(r2) r2.innerHTML = (alt!==msRedirect())? ` 와 <b class="mono">${alt}</b> 둘 다` : '';
+  const w=$('#msWho');
+  if(w) w.innerHTML = t? `<b style="color:var(--ok)">${esc(t.who||'로그인됨')}</b> 으로 로그인되어 있습니다`
+                       : '<span class="muted">아직 로그인하지 않았습니다</span>';
+  ['msNow','msNowSplit'].forEach(id=>{ const b=$('#'+id); if(b) b.disabled=!t; });
+  const lo=$('#msOut'); if(lo) lo.hidden=!t;
+  const li=$('#msIn'); if(li) li.hidden=!!t;
+}
+/* 팝업이 막혀 이 창이 직접 돌아온 경우 — 주소를 정리하고 토큰만 받아둔다 */
+(function msSelfReturn(){
+  if(__APRS_POPUP) return;
+  const q=new URLSearchParams(location.search);
+  const code=q.get('code');
+  if(!code) return;
+  try{ history.replaceState(null,'',location.pathname); }catch(e){}
+  if(q.get('state')===SS.get('aprs.ms.s')) setTimeout(()=>msToken(code), 300);
+})();
+$('#msSaveCfg').onclick=()=>{
+  const client=$('#msClient').value.trim(), tenant=$('#msTenant').value.trim();
+  if(!/^[0-9a-f-]{30,40}$/i.test(client)) return alert('애플리케이션(클라이언트) ID 형태가 아닙니다.\n예) 11111111-2222-3333-4444-555555555555');
+  msSave({client, tenant}); msUI();
+  msStatus('저장했습니다. 「회사 계정으로 로그인」을 눌러주세요.', 'g');
+};
+$('#msLoginBtn').onclick=()=>msLogin();
+$('#msLogout').onclick=()=>{ SS.del('aprs.ms.tok'); msUI(); msStatus('로그아웃했습니다.'); };
+$('#msAsk').onclick=()=>{
+  const t=`■ 요청 : 사내 근태 검수 도구에서 메일을 보낼 수 있도록 Azure AD 앱 등록\n\n`
+   +`용도\n`
+   +`  인사팀에서 쓰는 근태 확인 도구에서, 근태 특이건 확인 요청 메일을\n`
+   +`  담당자에게 보내려고 합니다. 보내는 계정은 사용하는 직원 본인 계정입니다.\n\n`
+   +`요청 내용 (Azure Portal > Microsoft Entra ID > 앱 등록)\n`
+   +`  1. 새 등록 — 이름 : APRS 근태 검수 도구\n`
+   +`  2. 플랫폼 : 단일 페이지 애플리케이션(SPA)\n`
+   +`     리디렉션 URI (아래 둘 다 넣어주세요)\n`
+   +`       ${msRedirect()}\n`
+   +`       ${location.origin+location.pathname.replace(/index\.html$/,'')}\n`
+   +`  3. API 권한 : Microsoft Graph > 위임된 권한 > Mail.Send\n`
+   +`     (앱 권한이 아니라 위임된 권한입니다 — 본인 계정으로만 보냅니다)\n`
+   +`  4. 관리자 동의 부여\n`
+   +`  5. 알려주실 값 : 애플리케이션(클라이언트) ID, 디렉터리(테넌트) ID\n\n`
+   +`참고\n`
+   +`  · 클라이언트 비밀키는 필요 없습니다 (PKCE 방식)\n`
+   +`  · 메일은 회사 메일 서버로만 가고 외부 업체를 거치지 않습니다\n`
+   +`  · 보낸 메일은 본인 Outlook [보낸 항목]에 남습니다\n`;
+  const ta=document.createElement('textarea'); ta.value=t;
+  ta.style.cssText='position:fixed;left:-9999px'; document.body.appendChild(ta); ta.select();
+  try{ document.execCommand('copy'); $('#msAsk').textContent='복사됨 ✓'; setTimeout(()=>$('#msAsk').textContent='IT에 보낼 요청서 복사',1800); }
+  catch(e){ alert(t); }
+  ta.remove();
+};
+/* 지금 화면 내용을 한 통 보내기 */
+$('#msNow').onclick=async()=>{
+  const rows=mailRows(); if(!rows.length) return alert('보낼 특이건이 없습니다.');
+  const to=toAddrs($('#mToBox').value), cc=toAddrs($('#mCcBox').value);
+  if(!to.length) return alert('받는사람을 넣어주세요.');
+  if(!confirm(`${to.join(', ')} 에게 지금 보냅니다.\n\n보내는 계정 : ${(msTok()||{}).who||''}\n계속할까요?`)) return;
+  $('#msNow').disabled=true; msStatus('보내는 중…');
+  try{
+    const att=$('#mAtt').checked? mailFileName('xlsx') : '';
+    await msSendOne(to, cc, mailSubject(rows), mailHtml(rows), att, att? mailXlsxB64(rows):'');
+    msStatus(`<b>보냈습니다</b> — ${esc(to.join(', '))}${cc.length?` (참조 ${esc(cc.join(', '))})`:''}. Outlook <b>보낸 항목</b>에서 확인하세요.`,'g');
+  }catch(e){ msStatus(msErr(e),'b'); }
+  $('#msNow').disabled=false; msUI();
+};
+/* 담당자별로 한 번에 보내기 */
+$('#msNowSplit').onclick=async()=>{
+  const rows=mailRows(); if(!rows.length) return alert('보낼 특이건이 없습니다.');
+  const list=(P.addr||[]).filter(a=>a.ids&&a.ids.length);
+  if(!list.length) return alert('담당 사번이 등록된 담당자가 없습니다.\n\n「주소록 관리」에서 담당자마다 담당 사번을 넣어주세요.');
+  const AR=anomAliasRev();
+  const jobs=[], lines=[], used=new Set();
+  list.forEach(a=>{
+    const set=new Set(a.ids);
+    const mine=rows.filter(r=>set.has(r.id)||set.has(AR.get(r.id)));
+    if(!mine.length){ lines.push(`${a.name} — 해당 없음`); return; }
+    mine.forEach(r=>used.add(r.id));
+    jobs.push({a, mine}); lines.push(`${a.name} — ${new Set(mine.map(r=>r.id)).size}명 ${mine.length}건`);
+  });
+  if(!jobs.length) return alert('보낼 대상이 없습니다.');
+  if(!confirm(`담당자 ${jobs.length}명에게 지금 보냅니다.\n\n${lines.join('\n')}\n\n보내는 계정 : ${(msTok()||{}).who||''}\n계속할까요?`)) return;
+  $('#msNowSplit').disabled=true;
+  const ok=[], bad=[];
+  for(let i=0;i<jobs.length;i++){
+    const {a,mine}=jobs[i];
+    msStatus(`보내는 중… ${i+1}/${jobs.length} — ${esc(a.name)}`);
+    try{
+      const att=$('#mAtt').checked? `근태특이건_${(a.name||'').replace(/[\\/:*?"<>|]/g,'')}.xlsx` : '';
+      await msSendOne(toAddrs(a.email), toAddrs(a.cc||''), mailSubject(mine),
+        mailHtml(mine, a.name), att, att? mailXlsxB64(mine):'');
+      ok.push(a.name);
+    }catch(e){ bad.push(`${a.name} (${msErr(e,1)})`); }
+  }
+  const left=[...new Set(rows.map(r=>r.id))].filter(id=>!used.has(id));
+  msStatus(`<b>보냄 ${ok.length}명</b>${ok.length?` — ${esc(ok.join(' · '))}`:''}`
+    + (bad.length? `<br><b style="color:var(--bad)">실패 ${bad.length}명</b> — ${esc(bad.join(' · '))}`:'')
+    + (left.length? `<br><b style="color:var(--warn)">담당자가 정해지지 않은 인원 ${left.length}명</b>은 보내지 않았습니다 — ${left.slice(0,10).map(id=>`${id} ${esc(anomName(id))}`).join(' · ')}${left.length>10?' 외':''}`:'')
+    + `<br><span class="muted">Outlook <b>보낸 항목</b>에서 확인하세요.</span>`,
+    bad.length? 'w':'g');
+  $('#msNowSplit').disabled=false; msUI();
+};
+function msErr(e,short){
+  const m=String(e&&e.message||e);
+  if(/401/.test(m)) return '로그인이 만료되었습니다. 다시 로그인해 주세요.';
+  if(/403/.test(m)) return short?'권한 없음':'권한이 없습니다 — IT에 <b>Mail.Send</b> 위임된 권한과 <b>관리자 동의</b>가 부여됐는지 확인해 주세요.';
+  if(/Failed to fetch|NetworkError/i.test(m)) return short?'연결 실패':'회사 서버에 연결하지 못했습니다. 사내망·프록시나 앱 등록의 <b>리디렉션 URI</b>가 이 주소와 같은지 확인해 주세요.';
+  return (short?'':'보내지 못했습니다 — ')+esc(m);
+}
+
+/* ── Outlook으로 실제 발송 ─────────────────────────────────────
+   브라우저는 메일을 직접 보낼 수 없습니다(메일 서버가 없음).
+   대신 이 PC에 설치된 <Outlook 데스크톱 앱>을 불러서 보내는 스크립트를 만듭니다.
+     · 보내는 계정 = 지금 Outlook에 로그인된 본인 계정
+     · 외부 서비스로 나가는 데이터 없음 · 비밀번호를 넣는 곳도 없음
+     · 파일을 두 번 누르면 "N통을 보냅니다" 확인창이 한 번 뜨고 발송
+   회사 정책으로 스크립트가 막혀 있으면 .eml 방식을 쓰시면 됩니다. */
+function vbsQ(str){
+  /* VBScript 문자열로 안전하게 — 따옴표는 두 개로, 줄바꿈은 코드로 */
+  return String(str==null?'':str).replace(/"/g,'""').replace(/\r?\n/g,'" & vbCrLf & "');
+}
+/* 긴 HTML 본문을 여러 줄로 쪼개 이어붙인다 (한 줄이 너무 길면 WSH가 싫어함) */
+function vbsBody(varName, html){
+  const CH=260, out=[]; const s=html;
+  out.push(`  ${varName} = ""`);
+  for(let i=0;i<s.length;i+=CH){
+    out.push(`  ${varName} = ${varName} & "${vbsQ(s.slice(i,i+CH))}"`);
+  }
+  return out.join('\r\n');                 /* 한 줄씩 끊어야 WSH가 안전하게 읽습니다 */
+}
+/* mails = [{to:[],cc:[],subject,html,who}] */
+function buildVbs(mails, attName, sendNow){
+  const L=[];
+  const esc=t=>vbsQ(t);
+  L.push(`' ============================================================`);
+  L.push(`'  APRS · 근태 특이건 메일 보내기`);
+  L.push(`'  만든 때 : ${new Date().toLocaleString('ko-KR')}`);
+  L.push(`'`);
+  L.push(`'  이 파일을 두 번 누르면 이 PC의 Outlook으로 메일을 보냅니다.`);
+  L.push(`'  보내는 계정은 지금 Outlook에 로그인된 본인 계정이고,`);
+  L.push(`'  외부 서비스로 나가는 데이터는 없습니다.`);
+  L.push(`'`);
+  L.push(`'  바로 보내지 않고 메일 창만 띄워 확인하려면`);
+  L.push(`'  아래 MODE 를 "display" 로 바꿔 저장하세요.`);
+  L.push(`' ============================================================`);
+  L.push(`Option Explicit`);
+  L.push(`Const MODE = "${sendNow?'send':'display'}"      ' send = 바로 보내기 / display = 메일 창만 띄우기`);
+  L.push(`Const ATTACH = "${esc(attName||'')}"   ' 같은 폴더에 이 파일이 있으면 첨부합니다`);
+  L.push(``);
+  L.push(`Dim ol, fso, baseDir, ans, sent, failed, msgs`);
+  L.push(`Set fso = CreateObject("Scripting.FileSystemObject")`);
+  L.push(`baseDir = fso.GetParentFolderName(WScript.ScriptFullName)`);
+  L.push(`sent = 0 : failed = 0`);
+  L.push(``);
+  L.push(`On Error Resume Next`);
+  L.push(`Set ol = CreateObject("Outlook.Application")`);
+  L.push(`If Err.Number <> 0 Then`);
+  L.push(`  MsgBox "Outlook을 열지 못했습니다." & vbCrLf & vbCrLf & _`);
+  L.push(`    "· Outlook 데스크톱 앱이 설치되어 실행 중인지 확인하세요." & vbCrLf & _`);
+  L.push(`    "· 회사 정책으로 스크립트 실행이 막혀 있을 수도 있습니다." & vbCrLf & vbCrLf & _`);
+  L.push(`    "그럴 때는 같이 내려받은 .eml 파일을 두 번 눌러 보내세요.", 48, "APRS"`);
+  L.push(`  WScript.Quit`);
+  L.push(`End If`);
+  L.push(`On Error GoTo 0`);
+  L.push(``);
+  const lines = mails.map(m=>`${m.who? m.who+' — ':''}${m.to.join(', ')}`).join('\n');
+  L.push(`msgs = "${vbsQ(lines)}"`);
+  L.push(`If MODE = "send" Then`);
+  L.push(`  ans = MsgBox("메일 ${mails.length}통을 보냅니다." & vbCrLf & vbCrLf & msgs & vbCrLf & vbCrLf & _`);
+  L.push(`    "보내는 계정 : Outlook에 로그인된 본인 계정" & vbCrLf & vbCrLf & "계속할까요?", 36, "APRS 근태 특이건")`);
+  L.push(`Else`);
+  L.push(`  ans = MsgBox("메일 ${mails.length}통을 창으로 띄웁니다. 내용을 확인하고 직접 보내기를 누르세요." & vbCrLf & vbCrLf & msgs, 33, "APRS 근태 특이건")`);
+  L.push(`End If`);
+  L.push(`If ans <> 6 And ans <> 1 Then WScript.Quit`);
+  L.push(``);
+  L.push(`Sub SendOne(toAddr, ccAddr, subj, bodyHtml)`);
+  L.push(`  Dim m, p`);
+  L.push(`  On Error Resume Next`);
+  L.push(`  Set m = ol.CreateItem(0)`);
+  L.push(`  m.To = toAddr`);
+  L.push(`  If ccAddr <> "" Then m.CC = ccAddr`);
+  L.push(`  m.Subject = subj`);
+  L.push(`  m.HTMLBody = bodyHtml`);
+  L.push(`  If ATTACH <> "" Then`);
+  L.push(`    p = baseDir & "\\" & ATTACH`);
+  L.push(`    If fso.FileExists(p) Then m.Attachments.Add p`);
+  L.push(`  End If`);
+  L.push(`  If MODE = "send" Then`);
+  L.push(`    m.Send`);
+  L.push(`  Else`);
+  L.push(`    m.Display`);
+  L.push(`  End If`);
+  L.push(`  If Err.Number <> 0 Then`);
+  L.push(`    failed = failed + 1 : Err.Clear`);
+  L.push(`  Else`);
+  L.push(`    sent = sent + 1`);
+  L.push(`  End If`);
+  L.push(`  On Error GoTo 0`);
+  L.push(`End Sub`);
+  L.push(``);
+  mails.forEach((m,i)=>{
+    L.push(`' ── ${i+1}번 : ${m.who||''} ${m.to.join(', ')}`);
+    L.push(`Dim t${i}, c${i}, s${i}, b${i}`);
+    L.push(`t${i} = "${esc(m.to.join('; '))}"`);
+    L.push(`c${i} = "${esc((m.cc||[]).join('; '))}"`);
+    L.push(`s${i} = "${esc(m.subject)}"`);
+    L.push(vbsBody('b'+i, m.html));
+    L.push(`Call SendOne(t${i}, c${i}, s${i}, b${i})`);
+    L.push(``);
+  });
+  L.push(`If MODE = "send" Then`);
+  L.push(`  MsgBox "보냄 " & sent & "통" & vbCrLf & "실패 " & failed & "통" & vbCrLf & vbCrLf & _`);
+  L.push(`    "Outlook의 [보낸 항목]에서 확인하세요.", 64, "APRS 근태 특이건"`);
+  L.push(`Else`);
+  L.push(`  MsgBox "메일 창 " & sent & "개를 띄웠습니다. 내용을 확인하고 각각 보내기를 누르세요.", 64, "APRS 근태 특이건"`);
+  L.push(`End If`);
+  return L.join('\r\n');
+}
+/* .vbs 는 한글이 들어가면 UTF-16LE + BOM 으로 저장해야 Windows가 제대로 읽습니다 */
+function dlVbs(text, name){
+  const u=new Uint16Array(text.length+1);
+  u[0]=0xFEFF;                                     /* BOM */
+  for(let i=0;i<text.length;i++) u[i+1]=text.charCodeAt(i);
+  const blob=new Blob([u.buffer],{type:'application/octet-stream'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name;
+  document.body.appendChild(a); a.click();
+  setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },1500);
+}
+function xlsxDown(rows, name){
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rows.map(a=>({
+    사번:a.id, 성명:anomName(a.id), 일자:a.dl, 구분:a.label, '근태 비고':a.memo||'',
+    '근무시작':a.ws, '출근(센싱)':a.tin, '퇴근(센싱)':a.tout,
+    '차이(분)':a.diff!=null?Math.abs(a.diff):'', '원본 행':a.excelRow}))), '특이건');
+  XLSX.writeFile(wb, name);
+}
+/* 한 통 — 지금 화면의 받는사람으로 */
+$('#mSend').onclick=()=>{
+  const rows=mailRows(); if(!rows.length) return alert('보낼 특이건이 없습니다.');
+  const to=toAddrs($('#mToBox').value), cc=toAddrs($('#mCcBox').value);
+  if(!to.length) return alert('받는사람을 넣어주세요.');
+  const now=$('#mNow').checked;
+  if(now && !confirm(`Outlook으로 ${to.join(', ')} 에게 바로 보내는 스크립트를 만듭니다.\n\n내려받은 파일을 두 번 누르면 확인창이 한 번 뜨고 발송됩니다.\n계속할까요?`)) return;
+  const att=$('#mAtt').checked ? mailFileName('xlsx') : '';
+  const vbs=buildVbs([{to,cc,subject:mailSubject(rows),html:mailHtml(rows),who:''}], att, now);
+  dlVbs(vbs, mailFileName('vbs'));
+  if(att) setTimeout(()=>xlsxDown(rows, att), 600);
+  P.sendMsg=`<div class="note g"><b>Outlook 발송 스크립트를 만들었습니다</b> — <b>${mailFileName('vbs')}</b>${att?` · 첨부용 <b>${att}</b>`:''}<br>
+    두 파일을 <b>같은 폴더</b>(보통 다운로드 폴더)에 두고 <b>.vbs 파일을 두 번 누르세요.</b>
+    「메일 ${1}통을 보냅니다」 확인창이 뜨고 ${now?'<b>바로 발송</b>':'<b>메일 창이 뜹니다</b>'}.</div>`;
+  anomRefresh();
+};
+/* 담당자별로 나눠 — 한 파일로 여러 통 */
+$('#mSendSplit').onclick=()=>{
+  const rows=mailRows(); if(!rows.length) return alert('보낼 특이건이 없습니다.');
+  const list=(P.addr||[]).filter(a=>a.ids&&a.ids.length);
+  if(!list.length) return alert('담당 사번이 등록된 담당자가 없습니다.\n\n「주소록 관리」에서 담당자마다 담당 사번을 넣어주세요.');
+  const AR=anomAliasRev();
+  const mails=[], used=new Set(), lines=[];
+  list.forEach(a=>{
+    const set=new Set(a.ids);
+    const mine=rows.filter(r=>set.has(r.id) || set.has(AR.get(r.id)));
+    if(!mine.length){ lines.push(`${a.name} — 해당 없음`); return; }
+    mine.forEach(r=>used.add(r.id));
+    mails.push({to:toAddrs(a.email), cc:toAddrs(a.cc||''), subject:mailSubject(mine),
+                html:mailHtml(mine,a.name), who:a.name});
+    lines.push(`${a.name} — ${new Set(mine.map(r=>r.id)).size}명 ${mine.length}건`);
+  });
+  if(!mails.length) return alert('보낼 대상이 없습니다.');
+  const now=$('#mNow').checked;
+  if(now && !confirm(`Outlook으로 ${mails.length}명에게 바로 보내는 스크립트를 만듭니다.\n\n${lines.join('\n')}\n\n계속할까요?`)) return;
+  const vbs=buildVbs(mails, '', now);            /* 나눠 보낼 때는 첨부 생략(사람마다 다름) */
+  dlVbs(vbs, `근태특이건_담당자별_${(P.anomName||'').replace(/[\\/:*?"<>|]/g,'')}.vbs`);
+  const left=[...new Set(rows.map(r=>r.id))].filter(id=>!used.has(id));
+  P.sendMsg=`<div class="note ${left.length?'w':'g'}"><b>담당자 ${mails.length}명에게 보내는 스크립트를 만들었습니다</b><br>
+    ${lines.map(x=>esc(x)).join(' · ')}<br>
+    내려받은 <b>.vbs 파일을 두 번 누르면</b> 확인창이 한 번 뜨고 ${now?'<b>전부 발송</b>됩니다':'메일 창이 하나씩 뜹니다'}.
+    ${left.length? `<br><b style="color:var(--warn)">담당자가 정해지지 않은 인원 ${left.length}명</b> — ${left.slice(0,12).map(id=>`${id} ${esc(anomName(id))}`).join(' · ')}${left.length>12?' 외':''}<br>
+      <span class="muted">주소록에 사번을 추가하거나, 위에서 받는사람을 직접 넣어 따로 보내세요.</span>`:''}
+  </div>`;
+  anomRefresh();
+};
+
 /* 담당자별로 나눠 만들기 — 담당 사번이 등록된 담당자에게 그 인원만 */
 $('#mSplit').onclick=()=>{
   const rows=mailRows(); if(!rows.length) return alert('보낼 특이건이 없습니다.');
@@ -5233,6 +5701,7 @@ $('#mRich').onclick=async()=>{
   }
 };
 P.addr=abLoad(); abRender();
+try{ msUI(); }catch(e){}
 
 
 /* ── 계산기 양식 내보내기 ──────────────────────────────────────
@@ -5491,7 +5960,7 @@ function rnd(n){
   for(let i=0;i<n;i++) o+=A[u[i]%A.length];
   return o;
 }
-const AK='aprs.acct.v1', SK='aprs.saveid.v1', TK='aprs.session.v1';
+const AK='aprs.acct.v1', AK2='aprs.users.v1', SK='aprs.saveid.v1', TK='aprs.session.v1';
 const LS={
   get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } },
   set(k,v){ try{ localStorage.setItem(k,v); return true; }catch(e){ return false; } },
@@ -5503,25 +5972,63 @@ const SS={
   set(k,v){ try{ sessionStorage.setItem(k,v); }catch(e){} },
   del(k){ try{ sessionStorage.removeItem(k); }catch(e){} }
 };
-const acct=()=>{ try{ return JSON.parse(LS.get(AK)||'null'); }catch(e){ return null; } };
-let GTMP=null;                       /* 저장이 막힌 브라우저에서는 이번 접속만 유지 */
+/* ── 계정 여러 개 ───────────────────────────────────────────────
+   한 PC(브라우저)를 여러 사람이 쓸 수 있게 계정을 목록으로 보관합니다.
+   비밀번호는 원문이 아니라 소금 섞은 해시로만 저장합니다. */
+let GTMP=[];                                   /* 저장이 막힌 브라우저 — 이번 접속만 */
+function users(){
+  let a=[];
+  try{ a=JSON.parse(LS.get(AK2)||'[]'); }catch(e){ a=[]; }
+  if(!Array.isArray(a)) a=[];
+  if(!a.length){                               /* 예전(1인) 형식이 있으면 옮겨온다 */
+    try{ const old=JSON.parse(LS.get(AK)||'null');
+      if(old && old.id){ a=[old]; LS.set(AK2, JSON.stringify(a)); LS.del(AK); }
+    }catch(e){}
+  }
+  return a.concat(GTMP.filter(g=>!a.some(x=>x.id===g.id)));
+}
+function usersSave(list){
+  if(!LS.set(AK2, JSON.stringify(list))) GTMP=list.slice();
+}
+const findUser=id=>users().find(u=>u.id.toLowerCase()===String(id||'').trim().toLowerCase());
 
 function gMsg(kind,html){ const el=$('#gMsg'); if(el) el.innerHTML = html? `<div class="note ${kind}">${html}</div>` : ''; }
+function gWhoList(){
+  const us=users();
+  if(!us.length) return '';
+  return `<div style="margin-top:9px">이 PC에 등록된 사람 —
+    ${us.map(u=>`<span class="chip" data-uid="${esc0(u.id)}" style="cursor:pointer" title="눌러서 아이디 넣기">${esc0(u.id)}</span>`).join('')}</div>`;
+}
+const esc0=v=>String(v==null?'':v).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function gMode(mode){
   ['gLogin','gNew','gReset'].forEach(id=>{ const el=$('#'+id); if(el) el.hidden = (id!==mode); });
+  const us=users();
   const warn = LS.ok() ? '' :
     `<b style="color:var(--warn)">이 브라우저는 저장이 막혀 있습니다</b> (시크릿 모드 등) — 계정이 기억되지 않고, 창을 닫으면 다시 만들어야 합니다.<br>`;
   const g=$('#gGuide');
   if(mode==='gNew') g.innerHTML = warn
-    + `처음 쓰는 화면입니다. <b>여기서 쓸 아이디와 비밀번호를 직접 정하세요.</b> 다음부터는 그 아이디·비밀번호로 들어옵니다.<br>`
-    + `<b>회사 인사시스템 계정과는 아무 관계가 없습니다 — 회사 아이디·비밀번호는 넣지 마세요.</b>`;
+    + `<b>여기서 쓸 아이디와 비밀번호를 직접 정하세요.</b> 다음부터는 그 아이디·비밀번호로 들어옵니다.<br>`
+    + `<b>여러 사람이 쓸 수 있습니다</b> — 한 PC에서는 각자 계정을 만들면 되고,
+       <b>다른 PC에서는 그 PC에서 처음 열 때 각자 새로 정하면</b> 됩니다 (계정은 PC마다 따로 저장됩니다).<br>`
+    + `<b>회사 인사시스템 계정과는 아무 관계가 없습니다 — 회사 아이디·비밀번호는 넣지 마세요.</b>`
+    + gWhoList();
   else if(mode==='gReset') g.innerHTML = warn
-    + `계정을 만들 때 받은 <b>복구 코드</b>를 넣으면 비밀번호를 바꿀 수 있습니다. `
-    + `코드를 잃어버렸다면 <b>계정을 지우고 새로 만들면</b> 됩니다 — 엑셀과 검수 결과는 이 도구에 저장되지 않으니 사라지는 것은 아이디·비밀번호뿐입니다.`;
+    + `<b>아이디</b>와 계정을 만들 때 받은 <b>복구 코드</b>를 넣으면 비밀번호를 바꿀 수 있습니다. `
+    + `코드를 잃어버렸다면 <b>그 계정만 지우고 새로 만들면</b> 됩니다 — 엑셀과 검수 결과는 이 도구에 저장되지 않으니 사라지는 것은 아이디·비밀번호뿐입니다.`
+    + gWhoList();
   else g.innerHTML = warn
     + `이 도구에서만 쓰는 아이디·비밀번호입니다. <b>회사 인사시스템 계정과 무관하니 회사 비밀번호는 넣지 마세요.</b><br>`
-    + `<span class="muted">파일과 계산은 모두 이 브라우저 안에서만 처리되며 어디로도 전송되지 않습니다. 이 로그인은 옆에서 무심코 열어보는 것을 막는 잠금이지, 회사 보안 수준의 보호는 아닙니다.</span>`;
-  if(mode==='gLogin'){ const sv=LS.get(SK); if(sv){ $('#gId').value=sv; $('#gSave').checked=true; } }
+    + `<span class="muted">계정은 <b>이 PC(브라우저)에만</b> 저장됩니다 — 다른 PC에서는 그 PC에서 각자 만들면 됩니다.
+       파일과 계산도 모두 이 브라우저 안에서만 처리되며 어디로도 전송되지 않습니다.
+       이 로그인은 옆에서 무심코 열어보는 것을 막는 잠금이지, 회사 보안 수준의 보호는 아닙니다.</span>`
+    + gWhoList();
+  if(mode==='gLogin'){ const sv=LS.get(SK); if(sv && !$('#gId').value){ $('#gId').value=sv; $('#gSave').checked=true; } }
+  /* 이름 칩을 누르면 아이디가 채워집니다 */
+  $$('#gGuide [data-uid]').forEach(c=>c.onclick=()=>{
+    const t = mode==='gReset'? $('#rId') : (mode==='gNew'? null : $('#gId'));
+    if(t){ t.value=c.dataset.uid; const pw=(mode==='gReset'? $('#rCode') : $('#gPw')); pw&&pw.focus(); }
+  });
+  const nb=$('#gAddUser'); if(nb) nb.hidden = (mode!=='gLogin') || !us.length;
   setTimeout(()=>{ const f=$('#'+mode); if(!f) return;
     const empty=[...f.querySelectorAll('input:not([type=checkbox])')].find(i=>!i.value);
     (empty||f.querySelector('input:not([type=checkbox])')).focus();
@@ -5530,7 +6037,7 @@ function gMode(mode){
 function gateOpen(){
   document.body.classList.add('locked');
   $('#gate').hidden=false;
-  gMode((acct()||GTMP)? 'gLogin' : 'gNew');
+  gMode(users().length? 'gLogin' : 'gNew');
 }
 function gateClose(who){
   SS.set(TK, who||'1');
@@ -5543,16 +6050,17 @@ $('#gNew').onsubmit=e=>{
   e.preventDefault();
   const id=$('#nId').value.trim(), pw=$('#nPw').value, pw2=$('#nPw2').value;
   if(id.length<2) return gMsg('b','아이디를 2자 이상 넣어주세요.');
+  if(findUser(id)) return gMsg('b',`<b>${esc0(id)}</b> 는 이미 이 PC에 등록된 아이디입니다. 다른 아이디를 쓰거나, 본인 것이면 <b>로그인</b>하세요.`);
   if(pw.length<4) return gMsg('b','비밀번호를 4자 이상 넣어주세요.');
   if(pw!==pw2)    return gMsg('b','비밀번호 확인이 다릅니다. 두 칸을 같게 넣어주세요.');
   const code=rnd(4)+'-'+rnd(4)+'-'+rnd(4);
   const rec={id, salt:rnd(16), csalt:rnd(16), made:new Date().toISOString().slice(0,10)};
   rec.hash=pwHash(pw,rec.salt);
   rec.chash=pwHash(code,rec.csalt);
-  if(!LS.set(AK, JSON.stringify(rec))) GTMP=rec;
+  const list=users().slice(); list.push(rec); usersSave(list);
   LS.set(SK,id);
-  $('#nPw').value=''; $('#nPw2').value='';
-  gMsg('w',`<b>계정을 만들었습니다 — 아이디 ${id}</b><br>`
+  $('#nId').value=''; $('#nPw').value=''; $('#nPw2').value='';
+  gMsg('w',`<b>계정을 만들었습니다 — 아이디 ${esc0(id)}</b><br>`
     + `비밀번호를 잊었을 때 쓰는 <b>복구 코드</b>입니다. 지금 적어두거나 사진으로 남겨두세요. 이 화면을 닫으면 다시 볼 수 없습니다.`
     + `<div class="gcode">${code}</div><br>`
     + `<button type="button" class="gbtn alt" id="gCopyCode">코드 복사</button> `
@@ -5566,45 +6074,58 @@ $('#gNew').onsubmit=e=>{
 };
 $('#gLogin').onsubmit=e=>{
   e.preventDefault();
-  const a=acct()||GTMP;
-  if(!a) return gMode('gNew');
+  const us=users();
+  if(!us.length) return gMode('gNew');
   const id=$('#gId').value.trim(), pw=$('#gPw').value;
-  if(id!==a.id || pwHash(pw,a.salt)!==a.hash){
+  const u=findUser(id);
+  if(!u || pwHash(pw,u.salt)!==u.hash){
     $('#gPw').value='';
-    return gMsg('b','아이디 또는 비밀번호가 맞지 않습니다. 비밀번호를 잊으셨으면 <b>비밀번호 재설정</b>을 누르세요.');
+    return gMsg('b','아이디 또는 비밀번호가 맞지 않습니다.'
+      + (u? ' 비밀번호를 잊으셨으면 <b>비밀번호 재설정</b>을 누르세요.'
+          : ` 이 PC에 <b>${esc0(id)}</b> 계정이 없습니다 — 처음이시면 <b>＋ 새 사람 계정 만들기</b>를 누르세요.`));
   }
-  if($('#gSave').checked) LS.set(SK,id); else LS.del(SK);
-  $('#gPw').value=''; gMsg(''); gateClose(id);
+  if($('#gSave').checked) LS.set(SK,u.id); else LS.del(SK);
+  $('#gPw').value=''; gMsg(''); gateClose(u.id);
 };
-$('#gToReset').onclick=()=>{ gMsg(''); gMode('gReset'); };
+$('#gAddUser').onclick=()=>{ gMsg(''); $('#nId').value=''; gMode('gNew'); };
+$('#gToReset').onclick=()=>{ gMsg(''); if($('#gId').value) $('#rId').value=$('#gId').value; gMode('gReset'); };
 $('#gToLogin').onclick=()=>{ gMsg(''); gMode('gLogin'); };
 $('#gReset').onsubmit=e=>{
   e.preventDefault();
-  const a=acct()||GTMP; if(!a) return gMode('gNew');
+  const id=$('#rId').value.trim();
+  const u=findUser(id);
+  if(!u) return gMsg('b',`이 PC에 <b>${esc0(id)||'(빈칸)'}</b> 계정이 없습니다. 아이디를 확인해 주세요.`);
   const code=$('#rCode').value.trim().toUpperCase(), pw=$('#rPw').value, pw2=$('#rPw2').value;
-  if(!a.chash || pwHash(code,a.csalt)!==a.chash)
-    return gMsg('b','복구 코드가 맞지 않습니다. 하이픈까지 그대로 넣어주세요.');
+  if(!u.chash || pwHash(code,u.csalt)!==u.chash) return gMsg('b','복구 코드가 맞지 않습니다. 하이픈까지 그대로 넣어주세요.');
   if(pw.length<4) return gMsg('b','새 비밀번호를 4자 이상 넣어주세요.');
   if(pw!==pw2)    return gMsg('b','새 비밀번호 확인이 다릅니다.');
-  a.salt=rnd(16); a.hash=pwHash(pw,a.salt);
-  if(!LS.set(AK, JSON.stringify(a))) GTMP=a;
+  u.salt=rnd(16); u.hash=pwHash(pw,u.salt);
+  const list=users().map(x=>x.id===u.id? u : x); usersSave(list);
   $('#rCode').value=''; $('#rPw').value=''; $('#rPw2').value='';
+  $('#gId').value=u.id;
   gMode('gLogin');
-  gMsg('g','<b>비밀번호를 바꿨습니다.</b> 새 비밀번호로 로그인하세요.');
+  gMsg('g',`<b>${esc0(u.id)}</b> 의 비밀번호를 바꿨습니다. 새 비밀번호로 로그인하세요.`);
 };
 $('#gWipe').onclick=()=>{
-  if(!confirm('아이디와 비밀번호를 지우고 처음부터 새로 만듭니다. 엑셀과 검수 결과는 이 도구에 저장되지 않으니 사라지는 것은 계정 정보뿐입니다. 계속할까요?')) return;
-  LS.del(AK); LS.del(SK); SS.del(TK); GTMP=null;
-  $('#gId').value=''; $('#gPw').value='';
-  gMode('gNew');
-  gMsg('w','계정을 지웠습니다. 아래에서 <b>새 아이디와 비밀번호</b>를 정해주세요.');
+  const id=$('#rId').value.trim();
+  const u=findUser(id);
+  if(!u) return gMsg('b','지울 계정의 <b>아이디</b>를 먼저 넣어주세요.');
+  if(!confirm(`「${u.id}」 계정을 지웁니다.\n\n엑셀과 검수 결과는 이 도구에 저장되지 않으니 사라지는 것은 이 아이디와 비밀번호뿐입니다.\n계속할까요?`)) return;
+  const list=users().filter(x=>x.id!==u.id); usersSave(list);
+  GTMP=GTMP.filter(x=>x.id!==u.id);
+  if(LS.get(SK)===u.id) LS.del(SK);
+  if(SS.get(TK)===u.id) SS.del(TK);
+  $('#rId').value=''; $('#gId').value=''; $('#gPw').value='';
+  gMode(users().length? 'gLogin' : 'gNew');
+  gMsg('w',`<b>${esc0(u.id)}</b> 계정을 지웠습니다.`);
 };
 if($('#btnOut')) $('#btnOut').onclick=()=>{ SS.del(TK); gMsg(''); gateOpen(); };
 
 /* 시작할 때 — 이번 접속에 이미 들어왔으면 그대로, 아니면 로그인 화면 */
 (function bootGate(){
+  if(__APRS_POPUP) return;
   const who=SS.get(TK);
-  if(who && acct()){
+  if(who && findUser(who)){
     document.body.classList.remove('locked');
     $('#gate').hidden=true;
     const w=$('#gWho'); if(w) w.textContent=who;
