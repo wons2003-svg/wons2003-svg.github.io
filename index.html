@@ -610,10 +610,10 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
     <button data-v="analyze"><span class="ni"><svg viewBox="0 0 18 18"><rect x="2.2" y="9.6" width="3" height="6" rx="1"/><rect x="7.5" y="4.4" width="3" height="11.2" rx="1"/><rect x="12.8" y="7" width="3" height="8.6" rx="1"/></svg></span>근태 분석기</button>
     <button data-v="audit"><span class="ni"><svg viewBox="0 0 18 18"><path d="M8 2.2a5.8 5.8 0 1 0 3.5 10.4l3 3a1.1 1.1 0 0 0 1.6-1.6l-3-3A5.8 5.8 0 0 0 8 2.2m0 2.2a3.6 3.6 0 1 1 0 7.2 3.6 3.6 0 0 1 0-7.2"/></svg></span>근태 검수기</button>
     <button data-v="pay"><span class="ni"><svg viewBox="0 0 18 18"><path d="M9 1.6a1 1 0 0 1 1 1v.7c1.9.24 3.3 1.3 3.3 2.8a1 1 0 0 1-2 0c0-.42-.9-1.1-2.3-1.1s-2.3.68-2.3 1.1c0 .38.63.74 2.5 1.08 2.2.4 4.1 1.05 4.1 3 0 1.55-1.4 2.6-3.3 2.85v.7a1 1 0 1 1-2 0v-.7c-1.9-.25-3.3-1.3-3.3-2.85a1 1 0 1 1 2 0c0 .42.9 1.1 2.3 1.1s2.3-.68 2.3-1.1c0-.38-.63-.74-2.5-1.08-2.2-.4-4.1-1.05-4.1-3C6.7 4.6 8.1 3.54 10 3.3v-.7a1 1 0 0 1-1-1"/></svg></span>급여 검수기</button>
-    <button data-v="anom"><span class="ni"><svg viewBox="0 0 18 18"><path d="M2.6 4.2h12.8a1 1 0 0 1 1 1v7.7a1 1 0 0 1-1 1H2.6a1 1 0 0 1-1-1V5.2a1 1 0 0 1 1-1m.7 2 5.7 3.7 5.7-3.7z"/></svg></span>근태 특이건<span class="navp" id="navAnom"></span></button>
+    <button data-v="anom"><span class="ni"><svg viewBox="0 0 18 18"><path d="M2.6 4.2h12.8a1 1 0 0 1 1 1v7.8a1 1 0 0 1-1 1H2.6a1 1 0 0 1-1-1V5.2a1 1 0 0 1 1-1m.7 2 5.7 3.7 5.7-3.7z"/></svg></span>근태 특이건<span class="navp" id="navAnom"></span></button>
   </nav>
   <div class="side-foot">
-    <b>APRS</b><span class="ver">v7.7 · 2026-09</span>
+    <b>APRS</b><span class="ver">v7.8 · 2026-09</span>
     <span class="who" id="gWho"></span>
     <button class="sfout" id="btnOut" title="로그아웃">로그아웃</button>
   </div>
@@ -998,7 +998,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
 </div>
 
 <footer>
-  <b>APRS v7.7 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
+  <b>APRS v7.8 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
   ⓘ 이 도구는 업로드한 파일을 브라우저 메모리에서만 계산합니다. 네트워크 전송·서버 저장이 없습니다.<br>
   ⓘ 총근로시간 = 기본(소정) + 연장 + 휴일근로. <b>야간·심야는 가산수당 산정용으로 따로 표시</b>하며 총합에 중복 더하지 않습니다 — 심야 연장은 이미 연장시간에 포함돼 있는 경우가 많아 더하면 이중 계산이 됩니다.<br>
   ⓘ 급여일수 = 평일(월~금, 법정공휴일 제외) + 법정공휴일. 인정 일요일수 = 데이터상 일요일 수 − 결근이 있는 주(월~일)의 일요일 수.<br>
@@ -1300,7 +1300,12 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
     <div class="f"><label>주휴 1개당 시간</label><input type="number" id="pWhH" value="7" step="0.5" style="width:140px"></div>
     <div class="f"><label>교육수당 시간 <span class="muted">(신규 입사자)</span></label><input type="number" id="pEduH" value="1" step="0.5" style="width:170px"></div>
     <div class="f"><label>연장 배율</label><input type="number" id="pOtR" value="1.5" step="0.1" style="width:110px"></div>
-    <div class="f"><label>심야 시급(고정)</label><input type="number" id="pNiW" value="8700" step="100" style="width:140px"></div>
+    <div class="f"><label>심야 기준</label><select id="pNiMode" style="min-width:196px">
+      <option value="wage">그 사람의 시급 × 배율</option>
+      <option value="fix">고정 심야시급 × 배율</option>
+      <option value="flat">1시간당 고정 금액</option>
+    </select></div>
+    <div class="f"><label id="pNiWL">고정 심야시급</label><input type="number" id="pNiW" value="8700" step="100" style="width:150px"></div>
     <div class="f"><label>심야 가산 배율</label><input type="number" id="pNiR" value="0.5" step="0.1" style="width:130px"></div>
     <div class="f"><label>허용 오차(원)</label><input type="number" id="pTol" value="1" step="1" style="width:120px"></div>
   </div>
@@ -1308,7 +1313,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
     <b>기본급</b> = 시급 × 일수 × 7 &nbsp;·&nbsp;
     <b>주휴수당</b> = 시급 × 주휴 × 7 &nbsp;·&nbsp;
     <b>연장수당</b> = 시급 × 연장(분) ÷ 60 × 1.5 &nbsp;·&nbsp;
-    <b>심야수당</b> = 8,700 × 심야(분) ÷ 60 × 0.5 &nbsp;·&nbsp;
+    <b>심야수당</b> = <span id="niFormula">시급 × 0.5</span> × 심야(분) ÷ 60 &nbsp;·&nbsp;
     <b>교육수당</b> = 시급 × 1 <span class="muted">(그 달 입사자만)</span><br>
     <span class="muted">근태로 계산할 수 없는 항목(심야1·휴근·휴연·연차)은 <b>대장 값을 그대로 인정</b>해 합계에만 반영합니다.
     일수 = 근무일수(출근 + 유급휴무), 주휴·연장·심야는 근태 분석기 집계를 그대로 씁니다.</span>
@@ -3835,7 +3840,7 @@ function ledAutoMap(){
     const o={ base:Math.round(w*a.근무일수*S.STD),
               wh:Math.round(w*(a.주휴||0)*S.WHH),
               ot:Math.round(w*(a.연장분||0)/60*S.OTR),
-              ni:Math.round(S.NIW*(a.심야분||0)/60*S.NIR),
+              ni:niPay(w, a.심야분),
               edu:Math.round(w*(isNew? S.EDUH:0)) };
     o.tot=o.base+o.wh+o.ot+o.ni+o.edu;
     want.set(id,o);
@@ -4062,12 +4067,13 @@ function ledDiagText(withSample){
     push('  * 기본급 비율 = 1일 유급시간 (지금 설정 ', S.STD, ')');
     push('  * 주휴수당 비율 = 주휴 1개당 시간 (지금 설정 ', S.WHH, ')');
     push('  * 연장수당 비율 = 연장 배율 (지금 설정 ', S.OTR, ')');
-    push('  * 심야수당 비율 = 심야 1시간당 금액 (지금 설정 ', S.NIW*S.NIR, ')');
+    push('  * 심야수당 비율 = 심야 1시간당 금액 (지금 기준 ', {wage:'시급×'+S.NIR,fix:(S.NIW*S.NIR),flat:S.NIW}[S.NIM], ')');
   }
   push('');
   push('[8] 계산 기준');
   push('  1일 유급시간 ', S.STD, ' · 주휴 1개당 ', S.WHH, ' · 연장 배율 ', S.OTR,
-       ' · 심야시급 ', S.NIW, ' × ', S.NIR, ' · 교육 ', S.EDUH, '시간 · 허용오차 ', S.TOL);
+       ' · 심야 ', {wage:'시급 × '+S.NIR, fix:S.NIW+' × '+S.NIR, flat:'1시간당 '+S.NIW}[S.NIM],
+       ' · 교육 ', S.EDUH, '시간 · 허용오차 ', S.TOL);
   return out.join('\n');
 }
 
@@ -4135,9 +4141,10 @@ function ledMapWarn(){
     const fx=$('#pStdFix');
     if(fx) fx.onclick=()=>{
       r.stdFix.forEach(f=>{
-        if(f.ni){ $('#pNiW').value=Math.round(f.to/(+$('#pNiR').value||0.5)); }
-        else $('#'+f.id).value=f.to;
+        if(f.niMode && $('#pNiMode')) $('#pNiMode').value=f.niMode;
+        $('#'+f.id).value=f.to;
       });
+      niUI();
       P.fitMsg=`<div class="note g"><b>계산 기준을 대장에 맞췄습니다</b> — ${r.stdFix.map(f=>`${f.label} ${f.to}`).join(' · ')}</div>`;
       runP();
     };
@@ -4151,9 +4158,10 @@ function ledMapWarn(){
   const fx2=$('#pStdFix');
   if(fx2 && P.stdFix) fx2.onclick=()=>{
     P.stdFix.forEach(f=>{
-      if(f.ni){ $('#pNiW').value=Math.round(f.to/(+$('#pNiR').value||0.5)); }
-      else $('#'+f.id).value=f.to;
+      if(f.niMode && $('#pNiMode')) $('#pNiMode').value=f.niMode;
+      $('#'+f.id).value=f.to;
     });
+    niUI();
     P.fitMsg=`<div class="note g"><b>계산 기준을 대장에 맞췄습니다</b> — ${P.stdFix.map(f=>`${f.label} ${f.to}`).join(' · ')}</div>`;
     P.stdFix=null; runP();
   };
@@ -4252,7 +4260,16 @@ $('#pFile3').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
   e.target.value=''; };
 
 ['pStd','pWhH','pEduH','pOtR','pNiW','pNiR','pTol'].forEach(id=>{ const el=$('#'+id);
-  if(el){ el.oninput=runP; el.onchange=runP; } });
+  if(el){ el.oninput=()=>{niUI();runP();}; el.onchange=()=>{niUI();runP();}; } });
+function niUI(){
+  const S=payStd(), L=$('#pNiWL'), W=$('#pNiW'), F=$('#niFormula');
+  if(L) L.textContent = S.NIM==='flat'? '1시간당 금액' : '고정 심야시급';
+  if(W){ W.disabled = S.NIM==='wage'; W.parentElement.style.opacity = S.NIM==='wage'? '.45' : '1'; }
+  if(F) F.textContent = S.NIM==='flat'? `1시간당 ${S.NIW.toLocaleString()}원`
+        : (S.NIM==='fix'? `${S.NIW.toLocaleString()} × ${S.NIR}` : `시급 × ${S.NIR}`);
+}
+if($('#pNiMode')) $('#pNiMode').onchange=()=>{ niUI(); P.autoTried=false; P.fitMsg=''; runP(); };
+niUI();
 $('#pQ').oninput=()=>pTable();
 $('#pFilter').onchange=()=>pTable();
 
@@ -4467,7 +4484,7 @@ function runP(){
       r.calc.base = Math.round(wage*a.근무일수*STD);
       r.calc.wh   = Math.round(wage*(a.주휴||0)*WHH);
       r.calc.ot   = Math.round(wage*(a.연장분||0)/60*OTR);
-      r.calc.ni   = Math.round(NIW*(a.심야분||0)/60*NIR);
+      r.calc.ni   = niPay(wage, a.심야분);
       r.calc.edu  = Math.round(wage*r.교육시간);
       // 근태로 못 만드는 항목은 대장 값을 그대로 인정
       const pass=['ni1','hol','holot','yc'].reduce((s,k)=>s+((m[k]>=0&&r.led[k])||0),0);
@@ -4674,16 +4691,31 @@ function payStd(){
   return { STD:+$('#pStd').value||7, WHH:+$('#pWhH').value||7,
            EDUH:(($('#pEduH').value)===''?1:+$('#pEduH').value),
            OTR:+$('#pOtR').value||1.5, NIW:+$('#pNiW').value||8700, NIR:+$('#pNiR').value||0.5,
+           NIM:($('#pNiMode')&&$('#pNiMode').value)||'wage',
            TOL:Math.abs(+$('#pTol').value||0) };
 }
 const wonF=v=>(v==null?'-':(v>0?'+':'')+Math.round(v).toLocaleString());
+/* 심야 1시간당 금액 — 기준 방식에 따라 다르다 */
+function niRate(wage){
+  const S=payStd();
+  if(S.NIM==='flat') return S.NIW;                 // 1시간당 고정 금액
+  if(S.NIM==='fix')  return S.NIW*S.NIR;           // 고정 심야시급 × 배율
+  return (wage||0)*S.NIR;                          // 그 사람의 시급 × 배율 (법정 기준)
+}
+function niPay(wage,mins){ return Math.round(niRate(wage)*(mins||0)/60); }
 /* 항목별 계산식 (숫자를 대입한 문장) */
 function payFormula(r,k){
   const S=payStd(), w=r.wage||0;
   if(k==='base') return `시급 ${w.toLocaleString()} × 일수 ${r.일수} × ${S.STD}h`;
   if(k==='wh')   return `시급 ${w.toLocaleString()} × 주휴 ${r.주휴} × ${S.WHH}h`;
   if(k==='ot')   return `시급 ${w.toLocaleString()} × ${(r.연장분??0).toLocaleString()}분 ÷ 60 × ${S.OTR}`;
-  if(k==='ni')   return `심야시급 ${S.NIW.toLocaleString()} × ${(r.심야분??0).toLocaleString()}분 ÷ 60 × ${S.NIR}`;
+  if(k==='ni'){
+    const rt=niRate(r.wage);
+    const how = S.NIM==='flat'? `1시간당 ${S.NIW.toLocaleString()}`
+             : S.NIM==='fix' ? `고정 심야시급 ${S.NIW.toLocaleString()} × ${S.NIR}`
+             : `시급 ${(r.wage||0).toLocaleString()} × ${S.NIR}`;
+    return `${how} = 1시간당 ${Math.round(rt).toLocaleString()}원 × ${(r.심야분??0).toLocaleString()}분 ÷ 60`;
+  }
   if(k==='edu')  return r.신규? `시급 ${w.toLocaleString()} × 교육 ${r.교육시간}h — ${r.입사일} 입사(이 달 입사자)`
                              : `이 달 입사자가 아니어서 0원${r.입사일?` (입사일 ${r.입사일})`:''}`;
   if(k==='tot')  return `기본급 + 연장 + 심야 + 주휴 + 교육 + 대장 인정분 ${(r.passSum||0).toLocaleString()}`;
@@ -4736,16 +4768,22 @@ function explainDiff(r,it){
     return t;
   }
   if(it.k==='ni'){
-    const perMin=S.NIW/60*S.NIR, hrs=(r.심야분||0)/60;
+    const hrs=(r.심야분||0)/60, ourRate=niRate(r.wage), perMin=ourRate/60;
     let t=`${dir}. `;
     if(hrs>0){
-      const gotRate=it.led/hrs, ourRate=S.NIW*S.NIR;
-      const tidyR=Math.abs(gotRate-Math.round(gotRate/100)*100)<5;  /* 100원 단위로 딱 떨어지는지 */
-      if(Math.abs(gotRate-ourRate)>Math.max(ourRate*0.02,10) && tidyR)
-        return t+`대장은 <b>심야 1시간당 ${Math.round(gotRate).toLocaleString()}원</b>으로 계산했는데 이 도구 기준은 <b>${Math.round(ourRate).toLocaleString()}원</b>입니다 (심야시급 ${S.NIW.toLocaleString()} × ${S.NIR}). <b>심야 ${hrs.toFixed(1)}시간은 양쪽이 같습니다</b> — 3단계의 <b>심야 시급·가산 배율</b>을 회사 기준으로 바꾸면 맞습니다.`;
+      const gotRate=it.led/hrs;
+      const mult=r.wage? gotRate/r.wage : null;
+      if(Math.abs(gotRate-ourRate)>Math.max(ourRate*0.02,10)){
+        t+=`<b>심야 ${Math.round(r.심야분)}분(${hrs.toFixed(2)}시간)은 양쪽이 같습니다.</b> 1시간당 금액이 다릅니다 —
+            대장 <b>${Math.round(gotRate).toLocaleString()}원</b> ↔ 이 도구 <b>${Math.round(ourRate).toLocaleString()}원</b>.`;
+        if(mult!=null) t+=` 대장 금액은 <b>시급 ${(r.wage||0).toLocaleString()} × ${Math.round(mult*1000)/1000}</b>에 해당합니다.`;
+        t+=` 3단계의 <b>심야 기준</b>을 회사 방식에 맞춰 바꾸세요 (시급 × 배율 / 고정 심야시급 / 1시간당 고정 금액).`;
+        return t;
+      }
     }
     const mins=perMin? d/perMin : null;
     if(mins!=null) t+=`차액 ${wonF(d)}원은 <b>심야 ${Math.abs(Math.round(mins))}분</b>에 해당합니다 (1분 ${Math.round(perMin).toLocaleString()}원) — 대장은 심야를 <b>${Math.round((r.심야분??0)+mins)}분</b>으로 본 것 같습니다. 심야 열 연결과 심야 분 입력을 확인하세요.`;
+    else t+=`심야 시간이 0인데 대장에 금액이 있습니다 — 심야 열 연결과 근태의 심야 분을 확인하세요.`;
     return t;
   }
   if(it.k==='edu'){
@@ -5237,10 +5275,13 @@ function calcSheet(rows, kind){
     aoa.push(a);
   });
   const ws=XLSX.utils.aoa_to_sheet(aoa);
-  const common={ F:'G{r}/C{r}', G:'(C{r}*D{r}*7)+(C{r}*E{r}*4)', I:'H{r}-G{r}', J:'C{r}',
-    L:'J{r}*K{r}/60*1.5', M:'8700', O:'M{r}*N{r}/60*0.5', P:'8700', R:'P{r}*Q{r}*0.5',
+  const S=payStd();
+  const NIC = S.NIM==='wage'? 'C{r}' : String(S.NIW);          /* M·P 심야시급 칸 */
+  const NIO = S.NIM==='flat'? 'M{r}*N{r}/60' : `M{r}*N{r}/60*${S.NIR}`;
+  const common={ F:'G{r}/C{r}', G:`(C{r}*D{r}*${S.STD})+(C{r}*E{r}*4)`, I:'H{r}-G{r}', J:'C{r}',
+    L:`J{r}*K{r}/60*${S.OTR}`, M:NIC, O:NIO, P:NIC, R:`P{r}*Q{r}*${S.NIR}`,
     T:'S{r}-(L{r}+O{r}+R{r})',                       /* 연장·심야·심야1을 묶은 대장과 비교 */
-    U:'C{r}', W:'U{r}*V{r}*7', Y:'X{r}-W{r}', Z:'C{r}', AA:'C{r}', AC:'AA{r}*AB{r}*1', AE:'AD{r}-AC{r}',
+    U:'C{r}', W:`U{r}*V{r}*${S.WHH}`, Y:'X{r}-W{r}', Z:'C{r}', AA:'C{r}', AC:'AA{r}*AB{r}*1', AE:'AD{r}-AC{r}',
     AJ:'C{r}', AP:'ROUNDUP(AJ{r}*AO{r}/60*2,-1)', AR:'AQ{r}-AP{r}',
     AS:'SUM(G{r}+L{r}+O{r}+R{r}+W{r}+AG{r}+AP{r}+AC{r}+AL{r})', AU:'AT{r}-AS{r}' };
   const F = kind==='q'
@@ -5346,7 +5387,9 @@ $('#pCalc').onclick=()=>{
     ['급여대장에서 연결된 항목', linked.length? linked.join('  /  ') : '없음'],
     ['연결되지 않은 항목', notLinked.length? notLinked.join(' · ')+'  ← 이 항목은 대장 칸이 빈칸이고 차액도 안 나옵니다. 2단계 「급여대장 열 연결」에서 골라주세요.' : '없음 — 모든 항목이 연결되었습니다'],
     ['',''],
-    ['계산 기준', `기본급 = 시급 × 일수 × ${S.STD}h  /  주휴 = 시급 × 주휴 × ${S.WHH}h  /  연장 = 시급 × 분 ÷ 60 × ${S.OTR}  /  심야 = ${S.NIW.toLocaleString()} × 분 ÷ 60 × ${S.NIR}  /  교육 = 시급 × ${S.EDUH}h (그 달 입사자만)`],
+    ['계산 기준', `기본급 = 시급 × 일수 × ${S.STD}h  /  주휴 = 시급 × 주휴 × ${S.WHH}h  /  연장 = 시급 × 분 ÷ 60 × ${S.OTR}  /  심야 = ${
+      S.NIM==='flat'? `1시간당 ${S.NIW.toLocaleString()}원` : (S.NIM==='fix'? `${S.NIW.toLocaleString()} × ${S.NIR}` : `시급 × ${S.NIR}`)
+    } × 분 ÷ 60  /  교육 = 시급 × ${S.EDUH}h (그 달 입사자만)`],
     ['일수의 뜻','근무일수 = 출근일수 + 유급휴무(연차·연중·예비군·경조·건강검진·법일)'],
     ['③④ 시트의 S열(연장 대장)','회사 양식은 연장·심야·심야1의 대장이 S열 한 칸으로 묶여 있어 항목별 차액을 볼 수 없습니다. 그래서 T열 차액을 S −(연장+심야+심야1)로 넣었습니다. 항목별로는 ① 시트를 보세요.'],
     ['주의','실제 지급액은 급여 시스템과 반드시 대조하세요. 차액이 + 면 대장이 더 많고, − 면 대장이 더 적습니다.'],
@@ -5376,7 +5419,8 @@ $('#pExp').onclick=()=>{
   XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([
     ['항목','설정값'],['기본급 1일 유급시간',$('#pStd').value],['주휴 1개당 시간',$('#pWhH').value],
     ['교육 1일 시간(기본급)',$('#pEduH').value],['연장 배율',$('#pOtR').value],
-    ['심야 시급(고정)',$('#pNiW').value],['심야 가산 배율',$('#pNiR').value],['허용 오차(원)',$('#pTol').value],
+    ['심야 기준',{wage:'그 사람의 시급 × 배율',fix:'고정 심야시급 × 배율',flat:'1시간당 고정 금액'}[payStd().NIM]],
+    ['고정 심야시급',$('#pNiW').value],['심야 가산 배율',$('#pNiR').value],['허용 오차(원)',$('#pTol').value],
     ['근태로 검증한 항목',PITEMS.filter(it=>m[it.k]>=0&&it.calc).map(it=>it.n).join(', ')],
     ['대장 값을 인정한 항목',PITEMS.filter(it=>m[it.k]>=0&&!it.calc).map(it=>it.n).join(', ')||'없음'],
     ['대상자 명단',P.roster.size? `${P.roster.size}명` : '미사용(전체 대조)'],
