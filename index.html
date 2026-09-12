@@ -613,7 +613,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
     <button data-v="anom"><span class="ni"><svg viewBox="0 0 18 18"><path d="M2.6 4.2h12.8a1 1 0 0 1 1 1v7.6a1 1 0 0 1-1 1H2.6a1 1 0 0 1-1-1V5.2a1 1 0 0 1 1-1m.7 2 5.7 3.7 5.7-3.7z"/></svg></span>근태 특이건<span class="navp" id="navAnom"></span></button>
   </nav>
   <div class="side-foot">
-    <b>APRS</b><span class="ver">v7.4 · 2026-09</span>
+    <b>APRS</b><span class="ver">v7.5 · 2026-09</span>
     <span class="who" id="gWho"></span>
     <button class="sfout" id="btnOut" title="로그아웃">로그아웃</button>
   </div>
@@ -998,7 +998,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
 </div>
 
 <footer>
-  <b>APRS v7.4 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
+  <b>APRS v7.5 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
   ⓘ 이 도구는 업로드한 파일을 브라우저 메모리에서만 계산합니다. 네트워크 전송·서버 저장이 없습니다.<br>
   ⓘ 총근로시간 = 기본(소정) + 연장 + 휴일근로. <b>야간·심야는 가산수당 산정용으로 따로 표시</b>하며 총합에 중복 더하지 않습니다 — 심야 연장은 이미 연장시간에 포함돼 있는 경우가 많아 더하면 이중 계산이 됩니다.<br>
   ⓘ 급여일수 = 평일(월~금, 법정공휴일 제외) + 법정공휴일. 인정 일요일수 = 데이터상 일요일 수 − 결근이 있는 주(월~일)의 일요일 수.<br>
@@ -1281,12 +1281,14 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
 
 <div class="card off" id="p2">
   <h2><span class="n">2</span>급여대장 열 연결</h2>
-  <p class="hint">금액 열을 자동으로 찾아 넣었습니다. 회사 대장 양식에 맞게 바꿔주세요. <b>사번</b>은 필수입니다.</p>
+  <p class="hint">금액 열을 <b>머리글 이름</b>으로 먼저 찾고, 못 찾으면 <b>근태로 계산한 금액과 맞춰</b> 찾습니다. 회사 양식에 맞게 바꿔주세요. <b>사번</b>은 필수입니다.<br>
+    <b>연결되지 않은 항목은 대장 값도 차액도 나오지 않습니다</b> — 아래 안내를 꼭 확인하세요.</p>
   <div class="row" style="margin-bottom:10px">
     <div class="f"><label>시트</label><select id="pSheet"></select></div>
     <div class="f"><label>머리글 행 (1부터)</label><input type="number" id="pHrow" min="1" value="1" style="width:110px"></div>
   </div>
   <div class="tblwrap" style="max-height:190px;margin-bottom:12px"><table class="prev" id="pPrev"></table></div>
+  <div id="pMapWarn" style="margin-bottom:12px"></div>
   <div class="row" id="pMap"></div>
 </div>
 
@@ -1303,11 +1305,12 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
     <div class="f"><label>허용 오차(원)</label><input type="number" id="pTol" value="1" step="1" style="width:120px"></div>
   </div>
   <div class="note i" style="margin-bottom:0">
-    <b>기본급</b> = (시급 × 일수 × 7) + (시급 × 교육 × 4) &nbsp;·&nbsp;
+    <b>기본급</b> = 시급 × 일수 × 7 &nbsp;·&nbsp;
     <b>주휴수당</b> = 시급 × 주휴 × 7 &nbsp;·&nbsp;
     <b>연장수당</b> = 시급 × 연장(분) ÷ 60 × 1.5 &nbsp;·&nbsp;
-    <b>심야수당</b> = 8,700 × 심야(분) ÷ 60 × 0.5<br>
-    <span class="muted">근태로 검증할 수 없는 항목(교육·심야1·휴근·휴연·연차)은 <b>대장 값을 그대로 인정</b>해 합계에만 반영합니다.
+    <b>심야수당</b> = 8,700 × 심야(분) ÷ 60 × 0.5 &nbsp;·&nbsp;
+    <b>교육수당</b> = 시급 × 1 <span class="muted">(그 달 입사자만)</span><br>
+    <span class="muted">근태로 계산할 수 없는 항목(심야1·휴근·휴연·연차)은 <b>대장 값을 그대로 인정</b>해 합계에만 반영합니다.
     일수 = 근무일수(출근 + 유급휴무), 주휴·연장·심야는 근태 분석기 집계를 그대로 씁니다.</span>
   </div>
 </div>
@@ -3643,17 +3646,17 @@ if($('#vMap') && !$('#vMap').value.trim()) $('#vMap').value = payMapText();
 /* =========================================================
    급여 확인 검수기 — 「기간제 급여 계산기」 수식 기준
    ========================================================= */
-const P={att:null, led:null, ledAoa:[], ledHdr:[], hrow:0, diag:null, rosName:'',
+const P={att:null, led:null, ledAoa:[], ledHdr:[], hrow:0, diag:null, rosName:'', autoTried:false, autoMsg:'', tmonth:null,
          alias:new Map(), aliasRev:new Map(), rlink:null,
          wage:new Map(), hire:new Map(), quit:new Map(), roster:new Map(),
          rows:[], anom:[], name:''};
 
 /* 대조 항목 — 계산기 시트의 열 구성 그대로 */
 const PITEMS=[
-  {k:'base', n:'기본급',    calc:1, p:/기본급|기본\s*임금|소정.*급|basic/i, ex:/공제|합계|세|시급/},
-  {k:'ot',   n:'연장수당',  calc:1, p:/연장.*(수당|급)|시간외/i,            ex:/공제|합계|심야|야간|휴일|휴근|시급/},
-  {k:'ni',   n:'심야수당',  calc:1, p:/(심야|야간).*(수당|급)/i,            ex:/공제|합계|시급|1/},
-  {k:'wh',   n:'주휴수당',  calc:1, p:/주휴/i,                              ex:/공제|합계|시급/},
+  {k:'base', n:'기본급',    calc:1, p:/기본급|기본임금|기본금|소정.*급|basic/i, ex:/공제|합계|세|시급|단가/},
+  {k:'ot',   n:'연장수당',  calc:1, p:/연장|시간외|초과근/i,                ex:/공제|합계|심야|야간|휴일|휴근|시급|단가|분|시간$/},
+  {k:'ni',   n:'심야수당',  calc:1, p:/심야|야간/i,                          ex:/공제|합계|시급|단가|1|분|시간$/},
+  {k:'wh',   n:'주휴수당',  calc:1, p:/주휴/i,                              ex:/공제|합계|시급|단가|개수|일수/},
   {k:'ni1',  n:'심야1수당', calc:0, p:/심야\s*1.*(수당|급)/i,               ex:/공제|합계|시급/},
   {k:'edu',  n:'교육수당',  calc:1, p:/교육.*(수당|급)/i,                   ex:/공제|합계|시급/},
   {k:'hol',  n:'휴근수당',  calc:0, p:/휴근.*(수당|급)|휴일.*(수당|급)|특근.*(수당|급)/i, ex:/공제|합계|시급|연장/},
@@ -3779,7 +3782,7 @@ $('#pFile2').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
 $('#pSheet').onchange=pLoadSheet;
 $('#pHrow').oninput=()=>pHead(true);
 function pLoadSheet(){
-  P._resc=0;
+  P._resc=0; P.autoTried=false; P.autoMsg='';
   P.ledAoa=XLSX.utils.sheet_to_json(P.led.Sheets[$('#pSheet').value],{header:1,defval:null,blankrows:false,raw:true});
   let best=0,bc=-1;
   P.ledAoa.slice(0,15).forEach((r,i)=>{ const c=r.filter(x=>norm(x)!=='').length; if(c>bc){bc=c;best=i;} });
@@ -3799,16 +3802,138 @@ function pHead(remap){
 function pMapUI(){
   const used=new Set();
   $('#pMap').innerHTML=PFIELDS.map(f=>{
-    let g=-1; P.ledHdr.forEach((h,i)=>{ const hh=norm(h);
+    let g=-1; P.ledHdr.forEach((h,i)=>{ const hh=norm(h).replace(/\s+/g,'');
       if(g<0&&!used.has(i)&&f.p.test(hh)&&!(f.ex&&f.ex.test(hh))) g=i; });
     if(g>=0) used.add(g);
     return `<div class="f"><label>${f.n}${f.req?' *':''}</label><select data-p="${f.k}">
       <option value="-1">— 없음 —</option>${P.ledHdr.map((h,i)=>`<option value="${i}"${i===g?' selected':''}>${h}</option>`).join('')}
     </select></div>`; }).join('');
-  $$('#pMap select').forEach(s=>s.onchange=runP);
+  $$('#pMap select').forEach(s=>s.onchange=()=>{ P.autoMsg=''; runP(); });
   $('#p3').classList.remove('off');
+  P.autoTried=false;
 }
 const PM=()=>{ const m={}; $$('#pMap select').forEach(s=>m[s.dataset.p]=+s.value); return m; };
+/* ── 급여대장 금액 열을 '값'으로 찾아낸다 ────────────────────
+   머리글 이름은 회사마다 달라서 이름만으로는 못 찾습니다.
+   그래서 근태로 계산한 금액(기본급·연장·주휴·심야·교육·합계)과
+   대장 각 열의 숫자를 사람마다 맞춰 보고, 가장 많이 맞는 열을 그 항목으로 잡습니다. */
+function ledAutoMap(){
+  if(!P.att || !P.ledAoa || !P.ledAoa.length) return null;
+  const m=PM(); if(!(m.empId>=0)) return null;
+  const S=payStd();
+  const attMap=new Map(P.att.map(e=>[e.empId,e]));
+  const AL=id=>(P.alias&&P.alias.get(id))||id;
+
+  /* 사람마다 근태로 계산한 기대값을 만든다 */
+  const want=new Map();                               // 사번 → {base,ot,ni,wh,edu,tot}
+  const ids=P.roster.size? [...P.roster.keys()] : [...attMap.keys()];
+  ids.forEach(id=>{
+    const a=attMap.get(id)||attMap.get(AL(id)); if(!a) return;
+    const w=P.wage.get(id)||P.wage.get(AL(id)); if(!w) return;
+    const hire=P.hire? P.hire.get(id) : null;
+    const isNew=!!(hire && P.tmonth!=null && (hire.getFullYear()*12+hire.getMonth())===P.tmonth);
+    const o={ base:Math.round(w*a.근무일수*S.STD),
+              wh:Math.round(w*(a.주휴||0)*S.WHH),
+              ot:Math.round(w*(a.연장분||0)/60*S.OTR),
+              ni:Math.round(S.NIW*(a.심야분||0)/60*S.NIR),
+              edu:Math.round(w*(isNew? S.EDUH:0)) };
+    o.tot=o.base+o.wh+o.ot+o.ni+o.edu;
+    want.set(id,o);
+  });
+  if(want.size<3) return null;
+
+  /* 대장을 사번 → 행(숫자 배열) 으로 */
+  const body=P.ledAoa.slice(P.hrow+1);
+  const width=Math.max(0,...body.map(r=>r.length));
+  const byId=new Map();
+  body.forEach(raw=>{ const k=idKey(raw[m.empId]); if(k && !byId.has(k)) byId.set(k,raw); });
+
+  /* 항목별로 가장 잘 맞는 열 찾기 */
+  const KEYS=['base','ot','ni','wh','edu','tot'];
+  const score={};
+  KEYS.forEach(k=>{
+    let best={i:-1,hit:0,n:0};
+    for(let c=0;c<width;c++){
+      if(c===m.empId) continue;
+      let hit=0, n=0;
+      want.forEach((o,id)=>{
+        const raw=byId.get(id)||byId.get(AL(id)); if(!raw) return;
+        const v=pNum(raw[c]); if(v==null) return;
+        n++;
+        const exp=o[k];
+        if(exp===0){ if(v===0) hit++; return; }
+        const tol=Math.max(1000, Math.abs(exp)*0.02);   // ±2% 또는 1,000원
+        if(Math.abs(v-exp)<=tol) hit++;
+      });
+      if(n>=3 && hit>best.hit) best={i:c,hit,n};
+    }
+    /* 0이 많은 항목(심야·교육)은 '0만 맞는' 열이 우연히 잡히기 쉬우니 더 엄격하게 */
+    const allZero=[...want.values()].every(o=>o[k]===0);
+    const need=allZero? Infinity : Math.max(3, Math.round(want.size*0.6));
+    score[k]= (best.i>=0 && best.hit>=need)? best : null;
+  });
+  return {score, want:want.size};
+}
+/* 자동 연결을 실제로 적용 — 이름으로 못 찾은 항목만 채운다 */
+function ledApplyAuto(force){
+  const r=ledAutoMap(); if(!r) return null;
+  const sel=k=>$(`#pMap select[data-p="${k}"]`);
+  const used=new Set(); $$('#pMap select').forEach(s=>{ const v=+s.value; if(v>=0) used.add(v); });
+  const done=[];
+  Object.entries(r.score).forEach(([k,b])=>{
+    if(!b) return;
+    const el=sel(k); if(!el) return;
+    const cur=+el.value;
+    if(cur>=0 && !force) return;                       // 이름으로 이미 잡힌 건 건드리지 않는다
+    if(used.has(b.i) && cur!==b.i) return;             // 다른 항목이 쓰는 열은 피한다
+    el.value=String(b.i); used.add(b.i);
+    done.push({k, n:(PITEMS.find(x=>x.k===k)||{}).n||k,
+      col:(P.ledHdr&&P.ledHdr[b.i])||`(열${XLSX.utils.encode_col(b.i)})`, hit:b.hit, of:b.n});
+  });
+  return done.length? done : null;
+}
+/* 연결 상태 안내 — 무엇이 비었고, 어떤 열이 남았는지 */
+function ledMapWarn(){
+  const box=$('#pMapWarn'); if(!box) return;
+  if(!P.ledHdr || !P.ledHdr.length){ box.innerHTML=''; return; }
+  const m=PM();
+  const need=['base','ot','wh','tot'];
+  const missNeed=PITEMS.filter(it=>need.includes(it.k) && !(m[it.k]>=0)).map(it=>it.n);
+  const miss=PITEMS.filter(it=>!(m[it.k]>=0)).map(it=>it.n);
+  const usedSet=new Set(); Object.values(m).forEach(v=>{ if(v>=0) usedSet.add(v); });
+  const body=P.ledAoa.slice(P.hrow+1);
+  const smp=i=>body.slice(0,3).map(r=>{ const v=pNum(r[i]); return v==null? (norm(r[i])||'-') : Math.round(v).toLocaleString(); }).join(' · ');
+  const free=P.ledHdr.map((h,i)=>({h,i})).filter(x=>!usedSet.has(x.i));
+  const freeNum=free.filter(x=>{ let n=0; body.slice(0,25).forEach(r=>{ const v=pNum(r[x.i]); if(v!=null&&Math.abs(v)>=1000) n++; }); return n>=3; });
+  let h='';
+  if(missNeed.length)
+    h+=`<div class="note b"><b>⚠️ 급여대장에서 못 찾은 항목 — ${missNeed.join(' · ')}</b><br>
+      이 항목은 <b>대장 값과 차액이 나오지 않습니다.</b> 아래 드롭다운에서 맞는 열을 골라주세요.
+      ${freeNum.length? `<br><br><b>아직 연결되지 않은 금액 열</b> (이 중에 있을 가능성이 큽니다)<br>${
+        freeNum.slice(0,14).map(x=>`<span class="chip" style="cursor:default"><b>${x.h}</b> · ${smp(x.i)}</span>`).join('')}`
+        : '<br><br>대장에 쓸 수 있는 금액 열이 더 없습니다. 시트나 머리글 행이 맞는지 확인해 주세요.'}
+      <br><br><button class="sm pri" id="pAutoBtn">근태 계산값과 맞춰 자동으로 연결해보기</button>
+      <span class="muted"> — 머리글 이름이 달라도 금액이 맞는 열을 찾아 넣습니다</span></div>`;
+  else if(miss.length)
+    h+=`<div class="note w"><b>연결되지 않은 항목 — ${miss.join(' · ')}</b><br>
+      대장에 그 항목이 없으면 그냥 두셔도 됩니다. 있으면 아래에서 골라주세요 — 그래야 차액이 나옵니다.
+      <br><button class="sm" id="pAutoBtn" style="margin-top:8px">근태 계산값과 맞춰 자동으로 연결해보기</button></div>`;
+  else
+    h+=`<div class="note g"><b>모든 항목이 연결되었습니다</b> — ${PITEMS.filter(it=>m[it.k]>=0).map(it=>`${it.n} → <b>${P.ledHdr[m[it.k]]}</b>`).join(' · ')}</div>`;
+  if(P.autoMsg) h=P.autoMsg+h;
+  box.innerHTML=h;
+  const ab=$('#pAutoBtn');
+  if(ab) ab.onclick=()=>{
+    const done=ledApplyAuto(false);
+    P.autoMsg = done
+      ? `<div class="note g"><b>금액이 맞는 열을 찾아 연결했습니다</b><br>${
+          done.map(d=>`${d.n} → <b>${d.col}</b> <span class="muted">(${d.hit}/${d.of}명 일치)</span>`).join(' · ')}</div>`
+      : `<div class="note b"><b>맞는 열을 찾지 못했습니다.</b> 대장 금액이 이 도구의 계산 기준과 많이 다르거나, 시트·머리글 행이 잘못 잡혔을 수 있습니다.
+          위 미리보기에서 시트와 머리글 행을 먼저 확인해 주세요.</div>`;
+    runP();
+  };
+}
+
 
 /* ③ 대상자 명단 */
 /* 시급처럼 보이는 열을 '값'으로 찾는다 — 머리글 이름이 달라도 잡히도록 */
@@ -4060,6 +4185,7 @@ function runP(){
     if(d0) TMONTH=d0.getFullYear()*12+d0.getMonth();
     else { const mm=+($('#mm')&&$('#mm').value), yy=+($('#yy')&&$('#yy').value);
       if(yy&&mm) TMONTH=yy*12+(mm-1); } }
+  P.tmonth=TMONTH;
   const OTR=+$('#pOtR').value||1.5, NIW=+$('#pNiW').value||8700, NIR=+$('#pNiR').value||0.5;
   const TOL=Math.abs(+$('#pTol').value||0);
 
@@ -4136,6 +4262,21 @@ function runP(){
   });
   rows.sort((x,y)=> (y.absSum-x.absSum) || (x.empId<y.empId?-1:1));
   P.rows=rows; P.map=m;
+  /* 필수 금액 항목이 비어 있으면 '근태 계산값과 맞춰' 한 번 자동 연결해 본다 */
+  if(!P.autoTried){
+    const need=['base','ot','wh','tot'];
+    if(need.some(k=>!(m[k]>=0))){
+      P.autoTried=true;
+      const done=ledApplyAuto(false);
+      if(done){
+        P.autoMsg=`<div class="note g"><b>머리글 이름으로 못 찾은 항목을 금액으로 찾아 연결했습니다</b><br>${
+          done.map(d=>`${d.n} → <b>${d.col}</b> <span class="muted">(${d.hit}/${d.of}명 일치)</span>`).join(' · ')}
+          <br><span class="muted">잘못 잡혔으면 아래에서 직접 고르세요.</span></div>`;
+        runP(); return;
+      }
+    } else P.autoTried=true;
+  }
+  ledMapWarn();
   pReveal();
   pKpi(); pTable();
 }
@@ -4979,7 +5120,7 @@ $('#pExp').onclick=()=>{
     ['근태로 검증한 항목',PITEMS.filter(it=>m[it.k]>=0&&it.calc).map(it=>it.n).join(', ')],
     ['대장 값을 인정한 항목',PITEMS.filter(it=>m[it.k]>=0&&!it.calc).map(it=>it.n).join(', ')||'없음'],
     ['대상자 명단',P.roster.size? `${P.roster.size}명` : '미사용(전체 대조)'],
-    ['기본급 식','(시급 × 일수 × 7) + (시급 × 교육 × 4)'],
+    ['기본급 식','시급 × 일수 × 7'],
     ['주휴수당 식','시급 × 주휴 × 7'],['연장수당 식','시급 × 연장(분) ÷ 60 × 1.5'],
     ['심야수당 식','심야시급 × 심야(분) ÷ 60 × 0.5'],
     ['⚠ 확인 필요','참고용입니다. 실제 지급액은 급여 시스템과 반드시 대조하세요']
