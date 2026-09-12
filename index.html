@@ -610,10 +610,10 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
     <button data-v="analyze"><span class="ni"><svg viewBox="0 0 18 18"><rect x="2.2" y="9.6" width="3" height="6" rx="1"/><rect x="7.5" y="4.4" width="3" height="11.2" rx="1"/><rect x="12.8" y="7" width="3" height="8.6" rx="1"/></svg></span>근태 분석기</button>
     <button data-v="audit"><span class="ni"><svg viewBox="0 0 18 18"><path d="M8 2.2a5.8 5.8 0 1 0 3.5 10.4l3 3a1.1 1.1 0 0 0 1.6-1.6l-3-3A5.8 5.8 0 0 0 8 2.2m0 2.2a3.6 3.6 0 1 1 0 7.2 3.6 3.6 0 0 1 0-7.2"/></svg></span>근태 검수기</button>
     <button data-v="pay"><span class="ni"><svg viewBox="0 0 18 18"><path d="M9 1.6a1 1 0 0 1 1 1v.7c1.9.24 3.3 1.3 3.3 2.8a1 1 0 0 1-2 0c0-.42-.9-1.1-2.3-1.1s-2.3.68-2.3 1.1c0 .38.63.74 2.5 1.08 2.2.4 4.1 1.05 4.1 3 0 1.55-1.4 2.6-3.3 2.85v.7a1 1 0 1 1-2 0v-.7c-1.9-.25-3.3-1.3-3.3-2.85a1 1 0 1 1 2 0c0 .42.9 1.1 2.3 1.1s2.3-.68 2.3-1.1c0-.38-.63-.74-2.5-1.08-2.2-.4-4.1-1.05-4.1-3C6.7 4.6 8.1 3.54 10 3.3v-.7a1 1 0 0 1-1-1"/></svg></span>급여 검수기</button>
-    <button data-v="anom"><span class="ni"><svg viewBox="0 0 18 18"><path d="M2.6 4.2h12.8a1 1 0 0 1 1 1v7.6a1 1 0 0 1-1 1H2.6a1 1 0 0 1-1-1V5.2a1 1 0 0 1 1-1m.7 2 5.7 3.7 5.7-3.7z"/></svg></span>근태 특이건<span class="navp" id="navAnom"></span></button>
+    <button data-v="anom"><span class="ni"><svg viewBox="0 0 18 18"><path d="M2.6 4.2h12.8a1 1 0 0 1 1 1v7.7a1 1 0 0 1-1 1H2.6a1 1 0 0 1-1-1V5.2a1 1 0 0 1 1-1m.7 2 5.7 3.7 5.7-3.7z"/></svg></span>근태 특이건<span class="navp" id="navAnom"></span></button>
   </nav>
   <div class="side-foot">
-    <b>APRS</b><span class="ver">v7.5 · 2026-09</span>
+    <b>APRS</b><span class="ver">v7.7 · 2026-09</span>
     <span class="who" id="gWho"></span>
     <button class="sfout" id="btnOut" title="로그아웃">로그아웃</button>
   </div>
@@ -998,7 +998,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
 </div>
 
 <footer>
-  <b>APRS v7.5 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
+  <b>APRS v7.7 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
   ⓘ 이 도구는 업로드한 파일을 브라우저 메모리에서만 계산합니다. 네트워크 전송·서버 저장이 없습니다.<br>
   ⓘ 총근로시간 = 기본(소정) + 연장 + 휴일근로. <b>야간·심야는 가산수당 산정용으로 따로 표시</b>하며 총합에 중복 더하지 않습니다 — 심야 연장은 이미 연장시간에 포함돼 있는 경우가 많아 더하면 이중 계산이 됩니다.<br>
   ⓘ 급여일수 = 평일(월~금, 법정공휴일 제외) + 법정공휴일. 인정 일요일수 = 데이터상 일요일 수 − 결근이 있는 주(월~일)의 일요일 수.<br>
@@ -3646,7 +3646,7 @@ if($('#vMap') && !$('#vMap').value.trim()) $('#vMap').value = payMapText();
 /* =========================================================
    급여 확인 검수기 — 「기간제 급여 계산기」 수식 기준
    ========================================================= */
-const P={att:null, led:null, ledAoa:[], ledHdr:[], hrow:0, diag:null, rosName:'', autoTried:false, autoMsg:'', tmonth:null,
+const P={att:null, led:null, ledAoa:[], ledHdr:[], hrow:0, diag:null, rosName:'', autoTried:false, autoMsg:'', fitMsg:'', stdFix:null, tmonth:null,
          alias:new Map(), aliasRev:new Map(), rlink:null,
          wage:new Map(), hire:new Map(), quit:new Map(), roster:new Map(),
          rows:[], anom:[], name:''};
@@ -3782,7 +3782,7 @@ $('#pFile2').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
 $('#pSheet').onchange=pLoadSheet;
 $('#pHrow').oninput=()=>pHead(true);
 function pLoadSheet(){
-  P._resc=0; P.autoTried=false; P.autoMsg='';
+  P._resc=0; P.autoTried=false; P.autoMsg=''; P.fitMsg=''; P.stdFix=null;
   P.ledAoa=XLSX.utils.sheet_to_json(P.led.Sheets[$('#pSheet').value],{header:1,defval:null,blankrows:false,raw:true});
   let best=0,bc=-1;
   P.ledAoa.slice(0,15).forEach((r,i)=>{ const c=r.filter(x=>norm(x)!=='').length; if(c>bc){bc=c;best=i;} });
@@ -3808,7 +3808,7 @@ function pMapUI(){
     return `<div class="f"><label>${f.n}${f.req?' *':''}</label><select data-p="${f.k}">
       <option value="-1">— 없음 —</option>${P.ledHdr.map((h,i)=>`<option value="${i}"${i===g?' selected':''}>${h}</option>`).join('')}
     </select></div>`; }).join('');
-  $$('#pMap select').forEach(s=>s.onchange=()=>{ P.autoMsg=''; runP(); });
+  $$('#pMap select').forEach(s=>s.onchange=()=>{ P.autoMsg=''; P.fitMsg=''; runP(); });
   $('#p3').classList.remove('off');
   P.autoTried=false;
 }
@@ -3856,16 +3856,20 @@ function ledAutoMap(){
     for(let c=0;c<width;c++){
       if(c===m.empId) continue;
       let hit=0, n=0;
+      let nz=0, nzHit=0;
       want.forEach((o,id)=>{
         const raw=byId.get(id)||byId.get(AL(id)); if(!raw) return;
         const v=pNum(raw[c]); if(v==null) return;
         n++;
         const exp=o[k];
         if(exp===0){ if(v===0) hit++; return; }
+        nz++;
         const tol=Math.max(1000, Math.abs(exp)*0.02);   // ±2% 또는 1,000원
-        if(Math.abs(v-exp)<=tol) hit++;
+        if(Math.abs(v-exp)<=tol){ hit++; nzHit++; }
       });
-      if(n>=3 && hit>best.hit) best={i:c,hit,n};
+      /* 0끼리만 맞아떨어진 우연한 연결을 막는다 */
+      if(nz>=3 && nzHit < Math.max(2, nz*0.6)) continue;
+      if(n>=3 && hit>best.hit) best={i:c,hit,n,nz,nzHit};
     }
     /* 0이 많은 항목(심야·교육)은 '0만 맞는' 열이 우연히 잡히기 쉬우니 더 엄격하게 */
     const allZero=[...want.values()].every(o=>o[k]===0);
@@ -3892,11 +3896,186 @@ function ledApplyAuto(force){
   });
   return done.length? done : null;
 }
-/* 연결 상태 안내 — 무엇이 비었고, 어떤 열이 남았는지 */
+/* ── 급여대장 금액 열을 '비율'로 찾아낸다 ─────────────────────
+   기본급 ÷ (시급 × 일수) 는 사람이 달라도 늘 같은 값(1일 유급시간)입니다.
+   그래서 대장 각 열을 근태 단위로 나눠 보고, 그 값이 사람마다 일정한 열을
+   그 항목으로 잡습니다. 회사가 1일 8시간을 쓰든 7시간을 쓰든 찾아내고,
+   덤으로 '회사가 쓰는 기준'까지 알려줍니다. */
+function med(a){ const b=a.slice().sort((x,y)=>x-y); const n=b.length;
+  return n? (n%2? b[(n-1)/2] : (b[n/2-1]+b[n/2])/2) : null; }
+function ledFit(){
+  if(!P.att || !P.ledAoa || !P.ledAoa.length) return {err:'no-data'};
+  const m=PM(); if(!(m.empId>=0)) return {err:'no-id'};
+  const attMap=new Map(P.att.map(e=>[e.empId,e]));
+  const AL=id=>(P.alias&&P.alias.get(id))||id;
+  const body=P.ledAoa.slice(P.hrow+1);
+  const width=Math.max(0,...body.map(r=>r.length));
+  /* 대장 행 ↔ 근태 집계 ↔ 시급 을 붙인다 */
+  const L=[]; let noAtt=0, noWage=0, ledIds=0;
+  body.forEach(raw=>{
+    const k=idKey(raw[m.empId]); if(!k) return; ledIds++;
+    const a=attMap.get(k)||attMap.get(AL(k))||attMap.get((P.aliasRev&&P.aliasRev.get(k))||'');
+    if(!a){ noAtt++; return; }
+    const w=P.wage.get(k)||P.wage.get(AL(k))||P.wage.get((P.aliasRev&&P.aliasRev.get(k))||'')||null;
+    if(!w) noWage++;
+    L.push({k, raw, a, w});
+  });
+  const info={ledIds, matched:L.length, noAtt, noWage, width,
+              wage:L.filter(x=>x.w).length};
+  if(L.length<5) return {err:'few-match', info};
+
+  /* 항목별 : 대장값 ÷ (근태 단위) 의 비율이 일정한 열 찾기 */
+  const SPEC={
+    base:{n:'기본급',  unit:x=>x.a.근무일수,            byWage:1, label:'1일 유급시간', input:'pStd'},
+    wh  :{n:'주휴수당', unit:x=>x.a.주휴,               byWage:1, label:'주휴 1개당 시간', input:'pWhH'},
+    ot  :{n:'연장수당', unit:x=>(x.a.연장분||0)/60,      byWage:1, label:'연장 배율', input:'pOtR'},
+    ni  :{n:'심야수당', unit:x=>(x.a.심야분||0)/60,      byWage:0, label:'심야 1시간당 금액', input:null},
+  };
+  const fit={};
+  Object.entries(SPEC).forEach(([key,sp])=>{
+    let best=null;
+    for(let c=0;c<width;c++){
+      if(c===m.empId) continue;
+      const rs=[];
+      L.forEach(x=>{
+        const u=sp.unit(x); if(!(u>0)) return;
+        if(sp.byWage && !x.w) return;
+        const v=pNum(x.raw[c]); if(v==null || v===0) return;
+        rs.push(v/(u*(sp.byWage? x.w : 1)));
+      });
+      if(rs.length< (key==='ni'?3:5)) continue;
+      const mm=med(rs); if(!(mm>0)) continue;
+      const ok=rs.filter(r=>Math.abs(r-mm)<=Math.max(mm*0.02,1e-9)).length;   // 중앙값 ±2%
+      const rate=ok/rs.length;
+      if(rate>=0.7 && (!best || rate>best.rate || (rate===best.rate && rs.length>best.n)))
+        best={i:c, k:mm, n:rs.length, ok, rate};
+    }
+    fit[key]=best;
+  });
+
+  /* 합계 : 찾은 항목들의 합과 가장 가까운 열 */
+  const known=['base','ot','ni','wh'].map(k=>fit[k]&&fit[k].i).filter(i=>i>=0);
+  let tot=null;
+  if(known.length>=2){
+    for(let c=0;c<width;c++){
+      if(c===m.empId || known.includes(c)) continue;
+      let ok=0,n=0;
+      L.forEach(x=>{
+        const s=known.reduce((a,i)=>a+(pNum(x.raw[i])||0),0);
+        const v=pNum(x.raw[c]); if(v==null||s<=0) return; n++;
+        if(v>=s-1 && v<=s*1.5+1) { if(Math.abs(v-s)<=Math.max(s*0.03,1000)) ok++; }
+      });
+      if(n>=5 && ok/n>=0.6 && (!tot || ok/n>tot.rate)) tot={i:c, n, ok, rate:ok/n};
+    }
+  }
+  fit.tot=tot;
+  return {fit, info, L:L.length};
+}
+/* 찾은 결과를 화면에 반영 */
+function ledApplyFit(){
+  const r=ledFit();
+  if(r.err) return {err:r.err, info:r.info};
+  const sel=k=>$(`#pMap select[data-p="${k}"]`);
+  const used=new Set(); $$('#pMap select').forEach(s=>{ const v=+s.value; if(v>=0) used.add(v); });
+  const done=[], stdFix=[];
+  const NAME={base:'기본급',ot:'연장수당',ni:'심야수당',wh:'주휴수당',tot:'합계'};
+  const INP={base:['pStd','1일 유급시간'],wh:['pWhH','주휴 1개당 시간'],ot:['pOtR','연장 배율']};
+  Object.entries(r.fit).forEach(([k,b])=>{
+    if(!b) return;
+    const el=sel(k); if(!el) return;
+    const cur=+el.value;
+    if(cur<0 && !used.has(b.i)){ el.value=String(b.i); used.add(b.i);
+      done.push({n:NAME[k], col:(P.ledHdr&&P.ledHdr[b.i])||`(열${XLSX.utils.encode_col(b.i)})`, ok:b.ok, n2:b.n}); }
+    /* 회사가 쓰는 기준이 지금 설정과 다르면 알려준다 */
+    if(INP[k] && b.k){
+      const [id,label]=INP[k], now=+$('#'+id).value;
+      const rounded=Math.round(b.k*100)/100;
+      if(Math.abs(rounded-now)>0.02) stdFix.push({id,label,now,to:rounded,item:NAME[k]});
+    }
+    if(k==='ni' && b.k){
+      const now=(+$('#pNiW').value||8700)*(+$('#pNiR').value||0.5);
+      const rounded=Math.round(b.k);
+      if(Math.abs(rounded-now)>Math.max(now*0.02,10)) stdFix.push({id:'pNiW', label:'심야 1시간당 금액', now, to:rounded, item:'심야수당', ni:1});
+    }
+  });
+  return {done, stdFix, info:r.info};
+}
+/* ── 연결 진단 — 무엇이 어떻게 읽혔는지 전부 보여주고 파일로도 내려받는다 ── */
+function ledDiagText(withSample){
+  const m=PM(), out=[];
+  const S=payStd();
+  const body=P.ledAoa? P.ledAoa.slice(P.hrow+1) : [];
+  const attMap=new Map((P.att||[]).map(e=>[e.empId,e]));
+  const push=(...a)=>out.push(a.join(''));
+  push('■ APRS 급여 검수기 — 연결 진단');
+  push('만든 때 : ', new Date().toLocaleString('ko-KR'));
+  push('');
+  push('[1] 근태 파일');
+  push('  인원 : ', (P.att||[]).length, '명');
+  push('  사번 예시 : ', (P.att||[]).slice(0,6).map(e=>e.empId).join(' · ')||'(없음)');
+  push('  집계 예시 : ', (P.att||[]).slice(0,3).map(e=>`${e.empId} 일수${e.근무일수} 주휴${e.주휴} 연장${e.연장분}분 심야${e.심야분}분`).join(' | ')||'(없음)');
+  push('');
+  push('[2] 대상자 명단');
+  push('  인원 : ', P.roster.size, '명 · 시급 ', P.wage.size, '명 · 입사일 ', (P.hire?P.hire.size:0), '명');
+  push('  사번 예시 : ', [...P.roster.keys()].slice(0,6).join(' · ')||'(없음)');
+  push('  시급 예시 : ', [...P.wage].slice(0,6).map(([k,v])=>`${k}=${v}`).join(' · ')||'(없음)');
+  push('');
+  push('[3] 급여대장');
+  push('  파일 시트 : ', P.led? P.led.SheetNames.join(' · ') : '(없음)');
+  push('  고른 시트 : ', $('#pSheet')? $('#pSheet').value : '', ' · 머리글 ', (P.hrow+1), '행 · 본문 ', body.length, '행');
+  push('  사번 열 : ', m.empId>=0? (P.ledHdr[m.empId]+' ('+XLSX.utils.encode_col(m.empId)+'열)') : '못 찾음');
+  push('  대장 사번 예시 : ', body.slice(0,6).map(r=>idKey(r[m.empId])).filter(Boolean).join(' · ')||'(없음)');
+  push('');
+  push('[4] 사번 맞춤');
+  const ledSet=new Set(body.map(r=>idKey(r[m.empId])).filter(Boolean));
+  const rosSet=new Set(P.roster.keys());
+  const attSet=new Set(attMap.keys());
+  const inter=(a,b)=>[...a].filter(x=>b.has(x)).length;
+  push('  대장 사번 ', ledSet.size, '개 · 명단 ', rosSet.size, '개 · 근태 ', attSet.size, '개');
+  push('  명단∩근태 : ', inter(rosSet,attSet), '명 / 명단∩대장 : ', inter(rosSet,ledSet), '명 / 근태∩대장 : ', inter(attSet,ledSet), '명');
+  if(P.alias&&P.alias.size) push('  성명으로 이어 붙인 사번 : ', [...P.alias].map(([a,b])=>a+'→'+b).join(' · '));
+  push('');
+  push('[5] 대장의 열 목록 (숫자 열 위주)');
+  (P.ledHdr||[]).forEach((h,i)=>{
+    let n=0, big=0;
+    body.slice(0,40).forEach(r=>{ const v=pNum(r[i]); if(v!=null){ n++; if(Math.abs(v)>=1000) big++; } });
+    const smp = withSample? body.slice(0,3).map(r=>{ const v=pNum(r[i]); return v==null? (norm(r[i])||'-') : Math.round(v).toLocaleString(); }).join(' · ') : '(값 생략)';
+    const mapped=Object.entries(m).filter(([k,v])=>v===i).map(([k])=>k).join(',');
+    push('  ', XLSX.utils.encode_col(i), '열  ', h, '   숫자 ', n, '칸(1000이상 ', big, ') ', mapped?'[연결:'+mapped+'] ':'', smp);
+  });
+  push('');
+  push('[6] 지금 연결 상태');
+  PITEMS.forEach(it=>push('  ', it.n, ' → ', m[it.k]>=0? P.ledHdr[m[it.k]] : '없음'));
+  push('');
+  push('[7] 비율로 찾아본 결과 (대장값 ÷ 근태단위)');
+  const r=ledFit();
+  if(r.err){ push('  찾지 못함 : ', r.err, r.info? ` (대장 사번 ${r.info.ledIds} · 근태와 맞은 행 ${r.info.matched} · 시급 있는 행 ${r.info.wage})`:''); }
+  else {
+    push('  대장·근태가 맞은 행 ', r.L, '개');
+    const NM={base:'기본급',wh:'주휴수당',ot:'연장수당',ni:'심야수당',tot:'합계'};
+    Object.entries(r.fit).forEach(([k,b])=>{
+      if(!b){ push('  ', NM[k], ' : 일정한 열 없음'); return; }
+      push('  ', NM[k], ' : ', XLSX.utils.encode_col(b.i), '열 「', P.ledHdr[b.i], '」 · ',
+        (b.k!=null? '비율 '+(Math.round(b.k*1000)/1000)+' · ':''), b.ok, '/', b.n, '명 일정');
+    });
+    push('');
+    push('  * 기본급 비율 = 1일 유급시간 (지금 설정 ', S.STD, ')');
+    push('  * 주휴수당 비율 = 주휴 1개당 시간 (지금 설정 ', S.WHH, ')');
+    push('  * 연장수당 비율 = 연장 배율 (지금 설정 ', S.OTR, ')');
+    push('  * 심야수당 비율 = 심야 1시간당 금액 (지금 설정 ', S.NIW*S.NIR, ')');
+  }
+  push('');
+  push('[8] 계산 기준');
+  push('  1일 유급시간 ', S.STD, ' · 주휴 1개당 ', S.WHH, ' · 연장 배율 ', S.OTR,
+       ' · 심야시급 ', S.NIW, ' × ', S.NIR, ' · 교육 ', S.EDUH, '시간 · 허용오차 ', S.TOL);
+  return out.join('\n');
+}
+
+/* 연결 상태 안내 — 무엇이 비었고, 어떤 열이 남았는지, 회사 기준이 다른지 */
 function ledMapWarn(){
   const box=$('#pMapWarn'); if(!box) return;
   if(!P.ledHdr || !P.ledHdr.length){ box.innerHTML=''; return; }
-  const m=PM();
+  const m=PM(), S=payStd();
   const need=['base','ot','wh','tot'];
   const missNeed=PITEMS.filter(it=>need.includes(it.k) && !(m[it.k]>=0)).map(it=>it.n);
   const miss=PITEMS.filter(it=>!(m[it.k]>=0)).map(it=>it.n);
@@ -3905,32 +4084,78 @@ function ledMapWarn(){
   const smp=i=>body.slice(0,3).map(r=>{ const v=pNum(r[i]); return v==null? (norm(r[i])||'-') : Math.round(v).toLocaleString(); }).join(' · ');
   const free=P.ledHdr.map((h,i)=>({h,i})).filter(x=>!usedSet.has(x.i));
   const freeNum=free.filter(x=>{ let n=0; body.slice(0,25).forEach(r=>{ const v=pNum(r[x.i]); if(v!=null&&Math.abs(v)>=1000) n++; }); return n>=3; });
-  let h='';
+  let h=P.autoMsg||'';
+
   if(missNeed.length)
     h+=`<div class="note b"><b>⚠️ 급여대장에서 못 찾은 항목 — ${missNeed.join(' · ')}</b><br>
-      이 항목은 <b>대장 값과 차액이 나오지 않습니다.</b> 아래 드롭다운에서 맞는 열을 골라주세요.
-      ${freeNum.length? `<br><br><b>아직 연결되지 않은 금액 열</b> (이 중에 있을 가능성이 큽니다)<br>${
-        freeNum.slice(0,14).map(x=>`<span class="chip" style="cursor:default"><b>${x.h}</b> · ${smp(x.i)}</span>`).join('')}`
-        : '<br><br>대장에 쓸 수 있는 금액 열이 더 없습니다. 시트나 머리글 행이 맞는지 확인해 주세요.'}
-      <br><br><button class="sm pri" id="pAutoBtn">근태 계산값과 맞춰 자동으로 연결해보기</button>
-      <span class="muted"> — 머리글 이름이 달라도 금액이 맞는 열을 찾아 넣습니다</span></div>`;
+      이 항목은 <b>대장 값과 차액이 나오지 않습니다.</b>
+      ${freeNum.length? `<br><br><b>아직 연결되지 않은 금액 열</b><br>${
+        freeNum.slice(0,16).map(x=>`<span class="chip" style="cursor:default"><b>${x.h}</b> · ${smp(x.i)}</span>`).join('')}`
+        : '<br><br>대장에 쓸 수 있는 금액 열이 더 없습니다. <b>시트와 머리글 행</b>이 맞는지 위 미리보기에서 확인해 주세요.'}</div>`;
   else if(miss.length)
     h+=`<div class="note w"><b>연결되지 않은 항목 — ${miss.join(' · ')}</b><br>
-      대장에 그 항목이 없으면 그냥 두셔도 됩니다. 있으면 아래에서 골라주세요 — 그래야 차액이 나옵니다.
-      <br><button class="sm" id="pAutoBtn" style="margin-top:8px">근태 계산값과 맞춰 자동으로 연결해보기</button></div>`;
+      대장에 그 항목이 없으면 그냥 두셔도 됩니다. 있으면 아래에서 골라주세요 — 그래야 차액이 나옵니다.</div>`;
   else
     h+=`<div class="note g"><b>모든 항목이 연결되었습니다</b> — ${PITEMS.filter(it=>m[it.k]>=0).map(it=>`${it.n} → <b>${P.ledHdr[m[it.k]]}</b>`).join(' · ')}</div>`;
-  if(P.autoMsg) h=P.autoMsg+h;
+
+  h+=`<div class="split" style="margin-top:10px">
+      <button class="sm pri" id="pFitBtn">금액 비율로 자동 연결</button>
+      <button class="sm" id="pDiagBtn">연결 진단 보기</button>
+      <button class="sm" id="pDiagDl">진단 파일 내려받기</button>
+      <span class="muted" style="font-size:11.5px">머리글 이름이 달라도, 회사가 쓰는 시간 기준이 달라도 찾아냅니다</span>
+    </div>
+    ${P.fitMsg||''}`;
   box.innerHTML=h;
-  const ab=$('#pAutoBtn');
-  if(ab) ab.onclick=()=>{
-    const done=ledApplyAuto(false);
-    P.autoMsg = done
-      ? `<div class="note g"><b>금액이 맞는 열을 찾아 연결했습니다</b><br>${
-          done.map(d=>`${d.n} → <b>${d.col}</b> <span class="muted">(${d.hit}/${d.of}명 일치)</span>`).join(' · ')}</div>`
-      : `<div class="note b"><b>맞는 열을 찾지 못했습니다.</b> 대장 금액이 이 도구의 계산 기준과 많이 다르거나, 시트·머리글 행이 잘못 잡혔을 수 있습니다.
-          위 미리보기에서 시트와 머리글 행을 먼저 확인해 주세요.</div>`;
+
+  $('#pFitBtn').onclick=()=>{
+    const r=ledApplyFit();
+    if(r.err){
+      const i2=r.info||{};
+      P.fitMsg=`<div class="note b"><b>금액으로도 찾지 못했습니다.</b><br>
+        ${r.err==='few-match'
+          ? `대장 사번 <b>${i2.ledIds||0}개</b> 중 근태와 맞은 행이 <b>${i2.matched||0}개</b>뿐입니다${i2.wage!=null?` · 그중 시급이 있는 행 <b>${i2.wage}개</b>`:''}.<br>
+             <b>사번이 서로 안 맞거나, 대상자 명단에 시급이 없으면</b> 금액 비율을 계산할 수 없습니다.
+             1단계의 「대상자 명단을 이렇게 읽었습니다」에서 <b>시급</b>을, 위 미리보기에서 <b>사번 열</b>을 먼저 확인하세요.`
+          : (r.err==='no-id'? '대장의 <b>사번 열</b>을 먼저 골라주세요.' : '근태 파일과 급여대장을 모두 올려주세요.')}
+        <br><br>「연결 진단 보기」를 눌러 어디서 끊겼는지 확인하시고, 그 내용을 알려주시면 맞춰 드립니다.</div>`;
+      ledMapWarn(); return;
+    }
+    let t='';
+    if(r.done&&r.done.length)
+      t+=`<div class="note g"><b>금액 비율로 연결했습니다</b><br>${
+        r.done.map(d=>`${d.n} → <b>${d.col}</b> <span class="muted">(${d.ok}/${d.n2}명 비율 일정)</span>`).join(' · ')}</div>`;
+    if(r.stdFix&&r.stdFix.length)
+      t+=`<div class="note w"><b>회사 대장이 쓰는 기준이 지금 설정과 다릅니다</b><br>${
+        r.stdFix.map(f=>`<b>${f.item}</b> — ${f.label} 지금 <b>${f.now}</b> → 대장 기준 <b>${f.to}</b>`).join('<br>')}
+        <br><button class="sm pri" id="pStdFix" style="margin-top:8px">대장 기준으로 바꾸기</button>
+        <span class="muted"> — 바꾸면 전체 인원의 차액이 다시 계산됩니다</span></div>`;
+    if(!t) t=`<div class="note i">이미 다 연결돼 있고 기준도 대장과 같습니다.</div>`;
+    P.fitMsg=t; P.stdFix=r.stdFix||null;
     runP();
+    const fx=$('#pStdFix');
+    if(fx) fx.onclick=()=>{
+      r.stdFix.forEach(f=>{
+        if(f.ni){ $('#pNiW').value=Math.round(f.to/(+$('#pNiR').value||0.5)); }
+        else $('#'+f.id).value=f.to;
+      });
+      P.fitMsg=`<div class="note g"><b>계산 기준을 대장에 맞췄습니다</b> — ${r.stdFix.map(f=>`${f.label} ${f.to}`).join(' · ')}</div>`;
+      runP();
+    };
+  };
+  $('#pDiagBtn').onclick=()=>{
+    P.fitMsg=`<div class="note i" style="white-space:pre-wrap;font-family:ui-monospace,monospace;font-size:11.5px;max-height:420px;overflow:auto">${
+      ledDiagText(true).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}</div>`;
+    ledMapWarn();
+  };
+  $('#pDiagDl').onclick=()=>dlBlob(ledDiagText(true),'APRS_연결진단.txt','text/plain');
+  const fx2=$('#pStdFix');
+  if(fx2 && P.stdFix) fx2.onclick=()=>{
+    P.stdFix.forEach(f=>{
+      if(f.ni){ $('#pNiW').value=Math.round(f.to/(+$('#pNiR').value||0.5)); }
+      else $('#'+f.id).value=f.to;
+    });
+    P.fitMsg=`<div class="note g"><b>계산 기준을 대장에 맞췄습니다</b> — ${P.stdFix.map(f=>`${f.label} ${f.to}`).join(' · ')}</div>`;
+    P.stdFix=null; runP();
   };
 }
 
@@ -4267,11 +4492,23 @@ function runP(){
     const need=['base','ot','wh','tot'];
     if(need.some(k=>!(m[k]>=0))){
       P.autoTried=true;
-      const done=ledApplyAuto(false);
+      let done=ledApplyAuto(false);
+      let how='금액이 맞는';
+      if(!done){                                   /* 정확일치로 못 찾으면 비율로 */
+        const f=ledApplyFit();
+        if(!f.err && f.done && f.done.length){
+          done=f.done.map(d=>({n:d.n,col:d.col,hit:d.ok,of:d.n2}));
+          how='금액 비율이 일정한';
+          P.fitStd=f.stdFix&&f.stdFix.length? f.stdFix : null;
+        }
+      }
       if(done){
-        P.autoMsg=`<div class="note g"><b>머리글 이름으로 못 찾은 항목을 금액으로 찾아 연결했습니다</b><br>${
-          done.map(d=>`${d.n} → <b>${d.col}</b> <span class="muted">(${d.hit}/${d.of}명 일치)</span>`).join(' · ')}
-          <br><span class="muted">잘못 잡혔으면 아래에서 직접 고르세요.</span></div>`;
+        P.autoMsg=`<div class="note g"><b>머리글 이름으로 못 찾은 항목을 ${how} 열로 연결했습니다</b><br>${
+          done.map(d=>`${d.n} → <b>${d.col}</b> <span class="muted">(${d.hit}/${d.of}명)</span>`).join(' · ')}
+          <br><span class="muted">잘못 잡혔으면 아래에서 직접 고르세요.</span></div>`
+          + (P.fitStd? `<div class="note w"><b>회사 대장이 쓰는 기준이 지금 설정과 다릅니다</b><br>${
+              P.fitStd.map(f=>`<b>${f.item}</b> — ${f.label} 지금 <b>${f.now}</b> → 대장 기준 <b>${f.to}</b>`).join('<br>')}
+              <br><span class="muted">아래 「금액 비율로 자동 연결」을 누르면 기준을 맞추는 버튼이 나옵니다.</span></div>`:'');
         runP(); return;
       }
     } else P.autoTried=true;
@@ -4462,7 +4699,13 @@ function explainDiff(r,it){
     const day=per? d/per : null;
     let t=`${dir}. `;
     if(day!=null && near(day)) t+=`차액 ${wonF(d)}원은 정확히 <b>일수 ${Math.abs(Math.round(day))}일치</b>(1일 ${per.toLocaleString()}원)입니다 — 대장은 일수를 <b>${r.일수+Math.round(day)}일</b>로 본 것 같습니다. 근태의 유급휴무(연차·연중·예비군·경조·건강검진·법일) 포함 여부와 결근 처리를 확인하세요.`;
-    else if(day!=null) t+=`일수로 바꾸면 약 <b>${day.toFixed(2)}일치</b>입니다 (1일 ${per.toLocaleString()}원). 일수가 아니라 <b>시급</b>이 다를 수도 있습니다 — 대장 시급을 확인하세요.`;
+    else if(day!=null){
+      const hrs=(w&&r.일수)? it.led/(w*r.일수) : null;
+      t+=`일수로 바꾸면 약 <b>${day.toFixed(2)}일치</b>입니다 (1일 ${per.toLocaleString()}원).`;
+      if(hrs!=null && Math.abs(hrs-Math.round(hrs*2)/2)<0.02)
+        t+=` 대장 금액을 되돌려 보면 <b>1일 ${(Math.round(hrs*100)/100)}시간</b>으로 계산돼 있습니다 (이 도구 기준 ${S.STD}시간) — <b>일수</b>가 아니라 <b>1일 유급시간</b>이 다를 수 있습니다. 2단계의 「금액 비율로 자동 연결」을 누르면 대장 기준을 찾아 맞춰 줍니다.`;
+      else t+=` 일수·시급 중 어느 쪽이 다른지 대장 그 행에서 확인하세요.`;
+    }
     return t;
   }
   if(it.k==='wh'){
@@ -4471,20 +4714,37 @@ function explainDiff(r,it){
     let t=`${dir}. `;
     if(cnt!=null && Math.abs(cnt*10-Math.round(cnt*10))<0.3)
       t+=`차액 ${wonF(d)}원은 <b>주휴 ${(Math.round(cnt*10)/10)}개</b>분(1개 ${per.toLocaleString()}원)입니다 — 대장은 주휴를 <b>${Math.round((r.주휴+cnt)*10)/10}개</b>로 본 것 같습니다. 결근이 있는 주, 입사·퇴사한 주의 비례 계산을 확인하세요.`;
-    else if(cnt!=null) t+=`주휴 개수로 바꾸면 약 <b>${cnt.toFixed(2)}개</b>분입니다 (1개 ${per.toLocaleString()}원).`;
+    else if(cnt!=null){
+      const hrs=(w&&r.주휴)? it.led/(w*r.주휴) : null;
+      t+=`주휴 개수로 바꾸면 약 <b>${cnt.toFixed(2)}개</b>분입니다 (1개 ${per.toLocaleString()}원).`;
+      if(hrs!=null) t+=` 대장 금액을 되돌려 보면 <b>주휴 1개 ${(Math.round(hrs*100)/100)}시간</b>으로 계산돼 있습니다 (이 도구 기준 ${S.WHH}시간).`;
+    }
     return t;
   }
   if(it.k==='ot'){
     const perMin=w/60*S.OTR;
     const mins=perMin? d/perMin : null;
     let t=`${dir}. `;
+    const hrs=(r.연장분||0)/60;
+    if(hrs>0 && w){
+      const gotR=it.led/(w*hrs);
+      const tidy=Math.abs(gotR-Math.round(gotR*4)/4)<0.006;      /* 0.25 단위로 딱 떨어지는지 */
+      if(Math.abs(gotR-S.OTR)>0.02 && tidy)
+        return t+`대장은 <b>연장 배율 ${Math.round(gotR*100)/100}</b>로 계산했는데 이 도구 기준은 <b>${S.OTR}</b>입니다. <b>연장 ${Math.round(r.연장분)}분은 양쪽이 같습니다</b> — 3단계의 <b>연장 배율</b>을 회사 기준으로 바꾸면 맞습니다.`;
+    }
     if(mins!=null) t+=`차액 ${wonF(d)}원은 <b>개별연장 ${Math.abs(Math.round(mins))}분</b>에 해당합니다 (1분 ${Math.round(perMin).toLocaleString()}원) — 대장은 연장을 <b>${Math.round((r.연장분??0)+mins)}분</b>으로 본 것 같습니다. 근태 검수기의 <b>R10·R12</b>(개별연장 분이 기준과 다름)와 <b>R16</b>(퇴근 센싱 없는데 연장 값 있음)을 확인하세요.`;
     return t;
   }
   if(it.k==='ni'){
-    const perMin=S.NIW/60*S.NIR;
-    const mins=perMin? d/perMin : null;
+    const perMin=S.NIW/60*S.NIR, hrs=(r.심야분||0)/60;
     let t=`${dir}. `;
+    if(hrs>0){
+      const gotRate=it.led/hrs, ourRate=S.NIW*S.NIR;
+      const tidyR=Math.abs(gotRate-Math.round(gotRate/100)*100)<5;  /* 100원 단위로 딱 떨어지는지 */
+      if(Math.abs(gotRate-ourRate)>Math.max(ourRate*0.02,10) && tidyR)
+        return t+`대장은 <b>심야 1시간당 ${Math.round(gotRate).toLocaleString()}원</b>으로 계산했는데 이 도구 기준은 <b>${Math.round(ourRate).toLocaleString()}원</b>입니다 (심야시급 ${S.NIW.toLocaleString()} × ${S.NIR}). <b>심야 ${hrs.toFixed(1)}시간은 양쪽이 같습니다</b> — 3단계의 <b>심야 시급·가산 배율</b>을 회사 기준으로 바꾸면 맞습니다.`;
+    }
+    const mins=perMin? d/perMin : null;
     if(mins!=null) t+=`차액 ${wonF(d)}원은 <b>심야 ${Math.abs(Math.round(mins))}분</b>에 해당합니다 (1분 ${Math.round(perMin).toLocaleString()}원) — 대장은 심야를 <b>${Math.round((r.심야분??0)+mins)}분</b>으로 본 것 같습니다. 심야 열 연결과 심야 분 입력을 확인하세요.`;
     return t;
   }
