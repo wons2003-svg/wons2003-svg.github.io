@@ -629,7 +629,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
     <button data-v="anom"><span class="ni"><svg viewBox="0 0 18 18"><path d="M2.6 4.2h12.8a1 1 0 0 1 1 1v8.1a1 1 0 0 1-1 1H2.6a1 1 0 0 1-1-1V5.2a1 1 0 0 1 1-1m.7 2 5.7 3.7 5.7-3.7z"/></svg></span>근태 특이건<span class="navp" id="navAnom"></span></button>
   </nav>
   <div class="side-foot">
-    <b>APRS</b><span class="ver">v8.6 · 2026-09</span>
+    <b>APRS</b><span class="ver">v8.7 · 2026-09</span>
     <span class="who" id="gWho"></span>
     <button class="sfout" id="btnOut" title="로그아웃">로그아웃</button>
   </div>
@@ -1078,7 +1078,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
 </div>
 
 <footer>
-  <b>APRS v8.6 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
+  <b>APRS v8.7 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
   ⓘ 이 도구는 업로드한 파일을 브라우저 메모리에서만 계산합니다. 네트워크 전송·서버 저장이 없습니다.<br>
   ⓘ 총근로시간 = 기본(소정) + 연장 + 휴일근로. <b>야간·심야는 가산수당 산정용으로 따로 표시</b>하며 총합에 중복 더하지 않습니다 — 심야 연장은 이미 연장시간에 포함돼 있는 경우가 많아 더하면 이중 계산이 됩니다.<br>
   ⓘ 급여일수 = 평일(월~금, 법정공휴일 제외) + 법정공휴일. 인정 일요일수 = 데이터상 일요일 수 − 결근이 있는 주(월~일)의 일요일 수.<br>
@@ -4315,6 +4315,22 @@ $('#pFile3').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
       const mKey = col.omail>=0? 'omail' : 'omail2';
       const YR=+($('#vYear')&&$('#vYear').value) || +($('#yy')&&$('#yy').value) || new Date().getFullYear();
       const aoa=(best&&best.aoa)||[], hrow=(best&&best.hi!=null)?best.hi:0;
+      /* 같은 뜻의 머리글이 여러 개면 값이 가장 많이 찬 열을 씁니다.
+         (부서별 담당자 표가 사원 표 옆에 붙어 있는 양식 대응) */
+      {
+        const P2=/부서|담당팀|^팀$|팀명|소속|부문|사업부|점포|매장|department|dept|team/i;
+        const P1=/담당자|담당자명|담당자성명|담당성명|담당이름|인사담당|관리책임|책임자|담당매니저|담당파트너|^담당$|manager|owner/i;
+        const b1=bestFilled(P1, aoa, hrow, col.id, col.own);
+        const b2=bestFilled(P2, aoa, hrow, col.id, col.dept);
+        if(b1>=0) col.own=b1;
+        if(b2>=0) col.dept=b2;
+        /* 담당자와 같은 줄에만 값이 있는 부서 열 = 「담당자 표」의 부서 (사원 소속과 다름) */
+        col.mdept = pairCol(P2, aoa, hrow, col.id, col.own, col.dept);
+        /* 담당자 열이 거의 다 차 있으면 사원마다 적은 것, 일부만이면 담당자 표 */
+        const bodyN=aoa.slice(hrow+1).filter(r=>idKey(r[col.id])).length;
+        col.ownPer = col.own>=0 && bodyN>0 &&
+          aoa.slice(hrow+1).filter(r=>idKey(r[col.id]) && norm(r[col.own])!=='').length >= bodyN*0.9;
+      }
 
       /* 시급 열을 머리글로 못 찾았으면 값으로 찾아본다 */
       let wCol = col.w>=0 ? col.w : -1, guess=null;
@@ -4334,16 +4350,20 @@ $('#pFile3').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
         if(col.quit>=0){ const d=pDate(hasRaw? r[col.quit] : r.quit, YR); if(d) P.quit.set(id,d); }
         const who = col.own>=0? norm(hasRaw? r[col.own] : r.own) : '';
         const dp  = col.dept>=0? norm(hasRaw? r[col.dept] : r.dept) : '';
-        if(who) OWN.set(id,who);
+        const mdp = (hasRaw && col.mdept>=0)? norm(r[col.mdept]) : dp;   /* 담당자 표의 부서 */
+        /* 담당자가 사원마다 적혀 있을 때만 그 사람의 담당자로 씁니다.
+           일부 줄에만 있으면 「부서별 담당자 표」이므로 부서로 찾습니다. */
+        if(who && col.ownPer!==false) OWN.set(id,who);
         if(dp)  DEP.set(id,dp);
         /* 성명으로도 이어둡니다 — 두 파일의 사번 형식이 다를 때 씁니다 */
         const nk = nmKey(hasRaw ? (col.name>=0?norm(r[col.name]):'') : norm(r.name));
-        if(nk && who && !ONM.has(nk)) ONM.set(nk,who);
+        /* 담당자 표(일부 줄)일 때는 그 줄의 사원 이름과 담당자를 묶으면 안 됩니다 */
+        if(nk && who && col.ownPer!==false && !ONM.has(nk)) ONM.set(nk,who);
         if(nk && dp  && !DNM.has(nk)) DNM.set(nk,dp);
         if(mCol>=0){
           const em=norm(hasRaw? r[mCol] : r[mKey]);
-          const key=who||dp;                       /* 담당자 이름이 없으면 부서 이름으로 */
-          if(key && em && !OMAIL.has(key)) OMAIL.set(key,{email:em, dept:dp});
+          const key=who||mdp;                      /* 담당자 이름이 없으면 부서 이름으로 */
+          if(key && em && !OMAIL.has(key)) OMAIL.set(key,{email:em, dept:mdp});
         }
       });
       /* 담당자·부서는 그 열이 있는 파일만 덮어씁니다 (없는 파일이 기존 것을 지우지 않게) */
@@ -4354,6 +4374,17 @@ $('#pFile3').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
       if(OMAIL.size) P.omail=OMAIL;
       /* 명단에 담당자 메일이 있으면 주소록에 자동으로 넣습니다 */
       let abs=null; try{ abs=ownAbsorb(OMAIL); }catch(x){}
+      /* 부서 열이 일부 줄만 차 있으면 = 「부서별 담당자 표」가 따로 들어 있는 양식.
+         그 표의 부서명과 값이 맞는 열을 찾아 사원 개인의 소속으로 다시 잡습니다. */
+      let mapFix=null;
+      if(OMAIL.size && P.roster.size && DEP.size < P.roster.size*0.7){
+        const names=new Set([...OMAIL.values()].map(v=>v.dept).filter(Boolean));
+        const di=rosDeptByMap(names);
+        if(di>=0 && di!==col.dept){
+          const r2=rosBuildOwn(col.own, di, mCol);
+          if(r2 && r2.DEP.size>DEP.size){ mapFix={i:di, n:r2.DEP.size}; col.dept=di; }
+        }
+      }
       try{ P.ownMan.clear(); ownRender(); }catch(x){}
 
       /* 입사일·퇴사일·시급은 분석기(주휴 비례 계산)에도 넘겨준다 */
@@ -4395,6 +4426,8 @@ $('#pFile3').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
           ${row('부서',col.dept,'<span class="muted">없음 (선택) — 담당자 열이 없을 때 부서로 담당자를 찾습니다</span>')}
           ${row('담당자메일',mCol,'<span class="muted">없음 (선택) — 넣어두면 주소록에 자동으로 등록됩니다</span>')}
         </tbody></table></div>
+        ${mapFix? `<div class="note g" style="margin-top:10px"><b>부서별 담당자 표로 보고 이어 붙였습니다</b> —
+            「${esc((hdr&&hdr[mapFix.i])||('열'+XLSX.utils.encode_col(mapFix.i)))}」 열을 사원 소속으로 읽어 <b>${mapFix.n}명</b>에 부서를 붙였습니다.</div>`:''}
         ${abs? `<div class="note g" style="margin-top:10px"><b>담당자 ${abs.add.length+abs.upd.length}명을 주소록에 넣었습니다</b>
             ${abs.add.length? `<br>새로 등록 — ${abs.add.map(x=>esc(x)).join(' · ')}`:''}
             ${abs.upd.length? `<br>주소 갱신 — ${abs.upd.map(x=>esc(x)).join(' · ')}`:''}
@@ -4420,6 +4453,64 @@ $('#pFile3').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
 /* ── 대상자 명단의 담당자 열을 직접 고르기 ────────────────────
    머리글 이름이 회사마다 달라 못 찾는 일이 있어서, 열을 눈으로 보고 고르게 합니다.
    고른 열로 담당자·부서·메일을 다시 읽어 바로 반영합니다. */
+/* 머리글이 pat 에 맞는 열들 중 값이 가장 많이 찬 열 */
+/* anchor 열과 "같은 줄에만" 값이 있는 열 찾기 — 담당자 표의 부서 열을 집어냅니다 */
+function pairCol(pat, aoa, hrow, idCol, anchor, exclude){
+  if(!aoa || !aoa.length || !(idCol>=0) || !(anchor>=0)) return -1;
+  const hk=h=>norm(h).replace(/\s+/g,'');
+  const hdrRow=aoa[hrow]||[];
+  const body=aoa.slice(hrow+1).filter(r=>idKey(r[idCol]));
+  if(!body.length) return -1;
+  const A=body.map(r=>norm(r[anchor])!=='');
+  const aN=A.filter(Boolean).length; if(!aN) return -1;
+  let best={i:-1,s:-1e9};
+  hdrRow.forEach((h,i)=>{
+    const k=hk(h); if(!k || !pat.test(k) || i===exclude || i===anchor) return;
+    let both=0, only=0;
+    body.forEach((r,j)=>{ const f=norm(r[i])!==''; if(f&&A[j]) both++; else if(f) only++; });
+    if(both>=Math.max(2, aN*0.8) && (both-only)>best.s) best={i, s:both-only};
+  });
+  return best.i;
+}
+function bestFilled(pat, aoa, hrow, idCol, cur){
+  if(!aoa || !aoa.length || !(idCol>=0)) return cur;
+  const hk=h=>norm(h).replace(/\s+/g,'');
+  const hdrRow=aoa[hrow]||[];
+  const body=aoa.slice(hrow+1).filter(r=>idKey(r[idCol]));
+  if(!body.length) return cur;
+  const fill=i=> i>=0? body.filter(r=>norm(r[i])!=='').length : -1;
+  let best={i:cur, n:fill(cur)};
+  hdrRow.forEach((h,i)=>{
+    const k=hk(h); if(!k || !pat.test(k)) return;
+    const n=fill(i); if(n>best.n) best={i,n};
+  });
+  return best.i;
+}
+/* 어떤 열에 값이 몇 줄 들어 있는지 (사번이 있는 줄 기준) */
+function colFill(i){
+  const aoa=P.rosAoa||[], hrow=P.rosHrow||0, ci=P.rosIdCol;
+  if(!aoa.length || !(ci>=0) || !(i>=0)) return {n:0, of:0};
+  const body=aoa.slice(hrow+1).filter(r=>idKey(r[ci]));
+  return {n:body.filter(r=>norm(r[i])!=='').length, of:body.length};
+}
+/* 담당자 표의 부서명과 값이 맞는 열 찾기 (사원 개인의 소속 열) */
+function rosDeptByMap(deptNames){
+  const aoa=P.rosAoa||[], hrow=P.rosHrow||0, ci=P.rosIdCol;
+  if(!aoa.length || !(ci>=0)) return -1;
+  const want=new Set([...deptNames].map(ownDpK).filter(Boolean));
+  if(!want.size) return -1;
+  const body=aoa.slice(hrow+1).filter(r=>idKey(r[ci]));
+  if(!body.length) return -1;
+  const width=Math.max(0,...body.map(r=>r.length));
+  let best={i:-1,hit:0};
+  for(let c=0;c<width;c++){
+    if(c===ci) continue;
+    let hit=0;
+    body.forEach(r=>{ const v=ownDpK(norm(r[c])); if(v && want.has(v)) hit++; });
+    if(hit>best.hit) best={i:c,hit};
+  }
+  return best.hit>=Math.max(3, Math.round(body.length*0.5))? best.i : -1;
+}
 function rosBuildOwn(oi, di, mi){
   const aoa=P.rosAoa||[], hrow=P.rosHrow||0, ci=P.rosIdCol, ni=P.rosNmCol;
   if(!aoa.length || !(ci>=0)) return null;
@@ -4450,18 +4541,24 @@ function rosPickUI(sel){
   if(!width) return;
   const nmOf=i=> (hdr[i]!=null && String(hdr[i]).trim())? String(hdr[i]).trim() : `(열${XLSX.utils.encode_col(i)})`;
   const smp=i=> body.slice(0,2).map(r=>{ const v=r[i]; return v instanceof Date? dKey(v) : (norm(v)||'-'); }).join(' · ');
+  const rows0=body.filter(r=>idKey(r[P.rosIdCol]));
+  const fillN=i=>rows0.filter(r=>norm(r[i])!=='').length;
   const opts=cur=>['<option value="-1">— 없음 —</option>'].concat(
-    Array.from({length:width},(_,i)=>i).map(i=>
-      `<option value="${i}"${i===cur?' selected':''}>${esc(nmOf(i))} · ${esc(smp(i).slice(0,24))}</option>`)).join('');
+    Array.from({length:width},(_,i)=>i).map(i=>{
+      const n=fillN(i);
+      return `<option value="${i}"${i===cur?' selected':''}>${esc(nmOf(i))} · ${n}/${rows0.length}줄 · ${esc(smp(i).slice(0,22))}</option>`;
+    })).join('');
   const found = (sel.own>=0)||(sel.dept>=0);
   const d=document.createElement('div');
   d.className='note '+(found?'i':'w'); d.style.marginTop='10px';
   d.innerHTML=`<b>담당자 열 직접 고르기</b> — ${found
       ? '자동으로 잡은 열이 아래에 있습니다. 틀렸으면 바꿔서 다시 읽으세요.'
       : '<b style="color:var(--warn)">담당자 열을 자동으로 못 찾았습니다.</b> 아래에서 골라주시면 바로 반영됩니다.'}
+    <br><span class="muted">각 열 옆의 <b>N/${rows0.length}줄</b>은 값이 들어 있는 줄 수입니다 —
+      <b>전원 수와 같은 열</b>을 고르세요. 줄 수가 적으면 <b>부서별 담당자 표</b>일 가능성이 큽니다.</span>
     <div class="row" style="margin-top:10px">
       <div class="f" style="flex:1;min-width:180px"><label>담당자</label><select id="rpOwn">${opts(sel.own)}</select></div>
-      <div class="f" style="flex:1;min-width:180px"><label>부서</label><select id="rpDept">${opts(sel.dept)}</select></div>
+      <div class="f" style="flex:1;min-width:180px"><label>부서 <span class="muted">사원 개인의 소속</span></label><select id="rpDept">${opts(sel.dept)}</select></div>
       <div class="f" style="flex:1;min-width:180px"><label>담당자메일 <span class="muted">(선택)</span></label><select id="rpMail">${opts(sel.mail)}</select></div>
       <button class="pri" id="rpGo">이 열로 다시 읽기</button>
     </div>
@@ -5855,8 +5952,9 @@ function ownDiagText(){
   push('① 대상자 명단');
   push('   파일 : ', P.rosName||'(아직 올리지 않음)', ' · 인원 ', RS.size, '명');
   const ownVals=[...new Set([...OW.values()])], depVals=[...new Set([...DP.values()])];
-  push('   담당자 열 : ', OW.size, '명분 · 종류 ', ownVals.length, '개 — ', ex(ownVals,8));
-  push('   부서 열   : ', DP.size, '명분 · 종류 ', depVals.length, '개 — ', ex(depVals,8));
+  const cov=(n)=> RS.size? `${n}/${RS.size}명${n<RS.size? '  ⚠ 일부만 채워짐':''}` : `${n}명`;
+  push('   담당자 열 : ', cov(OW.size), ' · 종류 ', ownVals.length, '개 — ', ex(ownVals,8));
+  push('   부서 열   : ', cov(DP.size), ' · 종류 ', depVals.length, '개 — ', ex(depVals,8));
   push('   담당자메일 열 : ', OM.size, '명 — ', ex([...OM.entries()].map(([k,v])=>k+'='+v.email),6));
   push('');
   push('② 사번 맞추기');
@@ -5887,6 +5985,11 @@ function ownDiagText(){
   else{
     if(!OW.size && !DP.size) why.push('명단에서 담당자·부서 열을 읽지 못했습니다 — 급여 검수기의 「담당자 열 직접 고르기」에서 열을 골라 「이 열로 다시 읽기」를 눌러주세요.');
     else if(!ids.length) why.push('특이건이 0건입니다 — 근태 파일을 확인해 주세요.');
+    else if(byId===0 && byNm===0 && RS.size && (OW.size+DP.size) < RS.size*0.7)
+      why.push('명단이 「부서별 담당자 표」 양식으로 보입니다 — 담당자·부서 값이 '+RS.size+'명 중 일부 줄에만 들어 있습니다.'
+        +' 사원마다 소속이 적힌 열이 따로 있어야 부서로 담당자를 찾을 수 있습니다.'
+        +' 급여 검수기의 「담당자 열 직접 고르기」에서 <부서> 칸을 열어 '+RS.size+'줄이 모두 채워진 열을 골라 「이 열로 다시 읽기」를 눌러주세요.'
+        +' 그런 열이 없으면 명단에 <부서> 열을 하나 만들어 사원마다 소속을 적어주시면 됩니다.');
     else if(byId===0 && byNm===0) why.push('명단의 사번·성명이 근태 파일과 하나도 맞지 않습니다 — 두 파일의 사번 형식(앞자리 0·문자 섞임)이나 성명 표기를 확인해 주세요.');
     if(!book.length) why.push('주소록에 담당자가 한 명도 없습니다 — 「주소록 관리」에서 등록하거나, 명단에 담당자메일 열을 넣어 다시 올려주세요.');
     else if(used.length && !ok.length) why.push('명단의 담당자 이름이 주소록 이름과 하나도 같지 않습니다 — 위 ④의 이름을 서로 맞춰주세요.');
