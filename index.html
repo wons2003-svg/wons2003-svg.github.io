@@ -629,7 +629,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
     <button data-v="anom"><span class="ni"><svg viewBox="0 0 18 18"><path d="M2.6 4.2h12.8a1 1 0 0 1 1 1v8.1a1 1 0 0 1-1 1H2.6a1 1 0 0 1-1-1V5.2a1 1 0 0 1 1-1m.7 2 5.7 3.7 5.7-3.7z"/></svg></span>근태 특이건<span class="navp" id="navAnom"></span></button>
   </nav>
   <div class="side-foot">
-    <b>APRS</b><span class="ver">v8.5 · 2026-09</span>
+    <b>APRS</b><span class="ver">v8.6 · 2026-09</span>
     <span class="who" id="gWho"></span>
     <button class="sfout" id="btnOut" title="로그아웃">로그아웃</button>
   </div>
@@ -778,9 +778,11 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
   <div class="split" style="margin:10px 0 2px">
     <button class="pri" id="ownSend2">이대로 담당자별 메일 보내기</button>
     <button class="sm" id="ownPrevAll">보낼 내용 미리보기</button>
+    <button class="sm" id="ownDiagBtn">연결 진단</button>
     <span class="grow"></span>
     <span class="muted" style="font-size:12px;align-self:center" id="ownSum"></span>
   </div>
+  <div id="ownDiagBox"></div>
   <div id="ownCards"></div>
   <div id="ownInfo2" style="margin-top:8px"></div>
 
@@ -846,7 +848,10 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
     <div class="row">
       <div class="f" style="flex:1;min-width:140px"><label>이름 * <span class="muted">명단의 담당자 이름과 같게</span></label>
         <input type="text" id="abName" placeholder="홍길동"></div>
-      <div class="f" style="flex:1;min-width:130px"><label>팀 · 부서 <span class="muted">명단의 부서명과 같게</span></label>
+      <div class="f" style="min-width:110px"><label>직급 · 호칭 <span class="muted">메일에 「○○ 파트너님」</span></label>
+        <input type="text" id="abTitle" placeholder="파트너" list="dlTitle">
+        <datalist id="dlTitle"><option value="파트너"></option><option value="CP"></option><option value="매니저"></option><option value="팀장"></option><option value="점장"></option></datalist></div>
+      <div class="f" style="flex:1;min-width:120px"><label>팀 · 부서 <span class="muted">명단의 부서명과 같게</span></label>
         <input type="text" id="abDept" placeholder="영업1팀"></div>
       <div class="f" style="flex:1.2;min-width:210px"><label>메일 주소 *</label>
         <div class="atbox"><input type="text" id="abMail" placeholder="hong" spellcheck="false"><b>@shinsegae.com</b></div></div>
@@ -1073,7 +1078,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
 </div>
 
 <footer>
-  <b>APRS v8.5 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
+  <b>APRS v8.6 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
   ⓘ 이 도구는 업로드한 파일을 브라우저 메모리에서만 계산합니다. 네트워크 전송·서버 저장이 없습니다.<br>
   ⓘ 총근로시간 = 기본(소정) + 연장 + 휴일근로. <b>야간·심야는 가산수당 산정용으로 따로 표시</b>하며 총합에 중복 더하지 않습니다 — 심야 연장은 이미 연장시간에 포함돼 있는 경우가 많아 더하면 이중 계산이 됩니다.<br>
   ⓘ 급여일수 = 평일(월~금, 법정공휴일 제외) + 법정공휴일. 인정 일요일수 = 데이터상 일요일 수 − 결근이 있는 주(월~일)의 일요일 수.<br>
@@ -5231,9 +5236,11 @@ function anomPeriod(rows){
 /* 담당자 호칭 — 주소록의 직급을 붙입니다 (예 : 홍길동 파트너님) */
 function ownCall(who){
   const w=String(who==null?'':who).trim(); if(!w) return '';
-  let t='';
-  try{ const a=ownByName(w); t=(a&&a.title)? String(a.title).trim() : ''; }catch(e){}
-  return t? `${w} ${t}님` : `${w}님`;
+  let a=null; try{ a=ownByName(w); }catch(e){}
+  /* 명단에 「홍길동 파트너」처럼 직급이 붙어 있으면 한 번만 붙게 떼어냅니다 */
+  const nm = a? a.name : w.replace(/\s*(파트너|CP|매니저|팀장|점장|과장|차장|부장|대리|사원|주임|책임)\s*$/,'').trim() || w;
+  const t  = (a && a.title)? String(a.title).trim() : '';
+  return t? `${nm} ${t}님` : `${nm}님`;
 }
 function mailBodyText(rows){
   const pr=anomPeriod(rows);
@@ -5309,8 +5316,12 @@ const MAILDOM='@shinsegae.com';
 const mailAddr=v=>{ const s=String(v==null?'':v).trim(); return !s? '' : (s.indexOf('@')>=0? s : s+MAILDOM); };
 const mailLocal=v=>{ const s=String(v==null?'':v).trim(); const i=s.indexOf('@'); return i<0? s : s.slice(0,i); };
 function toAddrs(v){ return String(v==null?'':v).split(/[;,]+/).map(x=>x.trim()).filter(Boolean).map(mailAddr); }
-const abFix=x=>({ name:String((x&&x.name)||'').trim(), dept:String((x&&x.dept)||'').trim(),
-  email:mailAddr(mailLocal((x&&x.email)||'')), cc:(x&&x.cc)? mailAddr(mailLocal(x.cc)) : '' });
+/* 직급이 비어 있으면 파트너로, 아래 두 분은 CP 로 채워둡니다 (언제든 고치실 수 있습니다) */
+const CPNAMES=new Set(['윤남겸','이상미']);
+const abFix=x=>{ const name=String((x&&x.name)||'').trim();
+  return { name, dept:String((x&&x.dept)||'').trim(),
+    title:String((x&&x.title)||'').trim() || (CPNAMES.has(name)? 'CP' : '파트너'),
+    email:mailAddr(mailLocal((x&&x.email)||'')), cc:(x&&x.cc)? mailAddr(mailLocal(x.cc)) : '' }; };
 function abLoad(){ try{ const l=JSON.parse(LS.get(ABK)||'[]');
   return Array.isArray(l)? l.map(abFix).filter(x=>x.name&&x.email) : []; }catch(e){ return []; } }
 function abSave(list){
@@ -5332,10 +5343,10 @@ function abRender(){
     box.innerHTML = !list.length
       ? '<div class="empty">아직 등록한 담당자가 없습니다. 아래에서 <b>이름 · 팀 · 메일 앞부분</b>만 넣어 추가하세요.</div>'
       : `<div class="tblwrap" style="max-height:320px"><table class="prev"><thead><tr>
-          <th style="width:110px">이름</th><th style="width:130px">팀 · 부서</th><th>메일 주소</th>
-          <th style="width:170px">참조(선택)</th><th style="width:108px"></th>
+          <th style="width:96px">이름</th><th style="width:76px">직급</th><th style="width:116px">팀 · 부서</th><th>메일 주소</th>
+          <th style="width:146px">참조(선택)</th><th style="width:108px"></th>
          </tr></thead><tbody>${list.map((a,i)=>`<tr>
-          <td><b>${esc(a.name)}</b></td><td>${esc(a.dept||'')}</td><td class="mono">${esc(a.email)}</td>
+          <td><b>${esc(a.name)}</b></td><td>${esc(a.title||'')}</td><td>${esc(a.dept||'')}</td><td class="mono">${esc(a.email)}</td>
           <td class="mono muted">${esc(a.cc||'')}</td>
           <td><button class="sm" data-abed="${i}">수정</button> <button class="sm" data-abdel="${i}">삭제</button></td>
          </tr>`).join('')}</tbody></table></div>`;
@@ -5345,7 +5356,7 @@ function abRender(){
       l.splice(+b.dataset.abdel,1); abSave(l); });
     box.querySelectorAll('[data-abed]').forEach(b=>b.onclick=()=>{
       const a=(P.addr||[])[+b.dataset.abed]; if(!a) return;
-      $('#abName').value=a.name; $('#abDept').value=a.dept||'';
+      $('#abName').value=a.name; $('#abDept').value=a.dept||''; $('#abTitle').value=a.title||'';
       $('#abMail').value=mailLocal(a.email); $('#abCc').value=mailLocal(a.cc||'');
       $('#abName').focus(); });
   }
@@ -5426,6 +5437,7 @@ function ownAbsorb(found){
 }
 $('#abAdd').onclick=()=>{
   const name=$('#abName').value.trim(), dept=$('#abDept').value.trim();
+  const title=$('#abTitle').value.trim() || (CPNAMES.has(name)? 'CP' : '파트너');
   const local=mailLocal($('#abMail').value), cc=mailLocal($('#abCc').value);
   if(!name) return alert('이름을 넣어주세요.\n대상자 명단의 「담당자」 이름과 같게 넣으시면 자동으로 배정됩니다.');
   if(!local) return alert(`메일 주소 앞부분을 넣어주세요.\n예) hong  →  hong${MAILDOM}`);
@@ -5433,10 +5445,10 @@ $('#abAdd').onclick=()=>{
   if(cc && abBad(cc)) return alert('참조 주소 앞부분에 쓸 수 없는 글자가 있습니다.');
   const l=(P.addr||[]).slice();
   const at=l.findIndex(x=>x.name===name);
-  const rec={name, dept, email:mailAddr(local), cc: cc? mailAddr(cc) : ''};
+  const rec={name, dept, title, email:mailAddr(local), cc: cc? mailAddr(cc) : ''};
   if(at>=0) l[at]=rec; else l.push(rec);
   abSave(l);
-  ['abName','abMail','abDept','abCc'].forEach(k=>$('#'+k).value='');
+  ['abName','abMail','abDept','abCc','abTitle'].forEach(k=>$('#'+k).value='');
   $('#abName').focus();
 };
 $('#abExp').onclick=()=>{
@@ -5608,8 +5620,15 @@ function xlsxDown(rows, name){
      ③ 대상자 명단의 「부서」 열과 주소록의 「팀·부서」가 같은 담당자
    사번은 쓰지 않습니다 — 이름과 팀만으로 맞춥니다. */
 const ownBook=()=>P.addr||[];
-const ownByName=n=>{ const k=String(n==null?'':n).trim(); return k? (ownBook().find(a=>a.name===k)||null) : null; };
-const ownByDept=d=>{ const k=String(d==null?'':d).trim(); return k? (ownBook().find(a=>(a.dept||'')===k)||null) : null; };
+/* 「홍길동 파트너」처럼 직급이 붙어 있거나 띄어쓰기가 달라도 같은 사람으로 봅니다 */
+const ownNmK=v=>String(v==null?'':v).replace(/\s+/g,'').replace(/(파트너|CP|매니저|팀장|점장|과장|차장|부장|대리|사원|주임|책임|님)+$/,'').toUpperCase();
+const ownDpK=v=>String(v==null?'':v).replace(/\s+/g,'').toUpperCase();
+const ownByName=n=>{ const k=String(n==null?'':n).trim(); if(!k) return null;
+  const b=ownBook();
+  return b.find(a=>a.name===k) || b.find(a=>ownNmK(a.name)===ownNmK(k)) || null; };
+const ownByDept=d=>{ const k=String(d==null?'':d).trim(); if(!k) return null;
+  const b=ownBook();
+  return b.find(a=>(a.dept||'')===k) || b.find(a=>ownDpK(a.dept)===ownDpK(k)) || null; };
 const ownAlt=id=>{ try{ return anomAliasRev().get(id)||''; }catch(e){ return ''; } };
 /* 사번으로 먼저, 사번이 어긋나면 성명으로 — 두 파일의 사번 형식이 달라도 이어집니다 */
 function ownNamed(id){ const a=ownAlt(id);
@@ -5821,6 +5840,83 @@ function ownPreview(who){
     : '<div class="empty">보낼 내용이 없습니다.</div>';
   $('#dgPrev').showModal();
 }
+/* ── 담당자 연결 진단 ─────────────────────────────────────────
+   무엇이 읽혔고 어디서 끊겼는지를 그대로 보여줍니다.
+   그대로 복사해 보내주시면 원인을 바로 짚을 수 있습니다. */
+function ownDiagText(){
+  const rows=mailRows(), ids=[...new Set(rows.map(r=>r.id))];
+  let AR=new Map(); try{ AR=anomAliasRev(); }catch(e){}
+  const L=[], push=(...a)=>L.push(a.join(''));
+  const ex=(arr,n)=>arr.filter(x=>x!=null&&x!=='').slice(0,n).join(' · ')||'(없음)';
+  const OW=P.owner||new Map(), DP=P.dept||new Map(), OM=P.omail||new Map(), ON=P.ownNm||new Map();
+  const RS=P.roster||new Map(), book=ownBook();
+  push('■ 담당자 연결 진단  (APRS ', (($('.ver')||{}).textContent||'').trim(), ')');
+  push('');
+  push('① 대상자 명단');
+  push('   파일 : ', P.rosName||'(아직 올리지 않음)', ' · 인원 ', RS.size, '명');
+  const ownVals=[...new Set([...OW.values()])], depVals=[...new Set([...DP.values()])];
+  push('   담당자 열 : ', OW.size, '명분 · 종류 ', ownVals.length, '개 — ', ex(ownVals,8));
+  push('   부서 열   : ', DP.size, '명분 · 종류 ', depVals.length, '개 — ', ex(depVals,8));
+  push('   담당자메일 열 : ', OM.size, '명 — ', ex([...OM.entries()].map(([k,v])=>k+'='+v.email),6));
+  push('');
+  push('② 사번 맞추기');
+  push('   명단 사번   : ', ex([...RS.keys()],6));
+  push('   특이건 사번 : ', ex(ids,6));
+  const byId=ids.filter(id=>OW.get(id)||OW.get(AR.get(id)||'')).length;
+  push('   사번으로 담당자가 잡힌 인원 : ', byId, ' / ', ids.length, '명');
+  push('');
+  push('③ 성명 맞추기');
+  push('   명단 성명   : ', ex([...RS.values()],6));
+  push('   특이건 성명 : ', ex(ids.map(i=>anomName(i)),6));
+  const byNm=ids.filter(id=>{ const k=nmKey(anomName(id)); return !!(k && ON.get(k)); }).length;
+  push('   성명으로 담당자가 잡힌 인원 : ', byNm, ' / ', ids.length, '명');
+  push('');
+  push('④ 주소록');
+  push('   등록 ', book.length, '명 — ', ex(book.map(a=>`${a.name}${a.title?' '+a.title:''} <${a.email}>${a.dept?' ['+a.dept+']':''}`),8));
+  const used=[...new Set(ids.map(i=>ownOf(i)).filter(Boolean))];
+  const ok=used.filter(w=>ownByName(w)), bad=used.filter(w=>!ownByName(w));
+  push('   쓰이는 담당자 ', used.length, '명 중 주소록에서 찾은 사람 : ', ok.length, '명');
+  if(bad.length) push('   주소록에 없는 이름 : ', ex(bad,8));
+  push('');
+  const done=ids.filter(i=>ownOf(i)).length;
+  push('⑤ 결과 : 대상 ', ids.length, '명 · 배정 ', done, '명 · 미지정 ', ids.length-done, '명 · 보낼 메일 ', ok.length, '통');
+  push('');
+  push('■ 걸리는 점');
+  const why=[];
+  if(!RS.size) why.push('대상자 명단을 아직 올리지 않았습니다 — 급여 검수기 3번 칸에 올려주세요.');
+  else{
+    if(!OW.size && !DP.size) why.push('명단에서 담당자·부서 열을 읽지 못했습니다 — 급여 검수기의 「담당자 열 직접 고르기」에서 열을 골라 「이 열로 다시 읽기」를 눌러주세요.');
+    else if(!ids.length) why.push('특이건이 0건입니다 — 근태 파일을 확인해 주세요.');
+    else if(byId===0 && byNm===0) why.push('명단의 사번·성명이 근태 파일과 하나도 맞지 않습니다 — 두 파일의 사번 형식(앞자리 0·문자 섞임)이나 성명 표기를 확인해 주세요.');
+    if(!book.length) why.push('주소록에 담당자가 한 명도 없습니다 — 「주소록 관리」에서 등록하거나, 명단에 담당자메일 열을 넣어 다시 올려주세요.');
+    else if(used.length && !ok.length) why.push('명단의 담당자 이름이 주소록 이름과 하나도 같지 않습니다 — 위 ④의 이름을 서로 맞춰주세요.');
+    else if(bad.length) why.push('주소록에 없는 담당자가 '+bad.length+'명 있습니다 ('+ex(bad,6)+') — 그만큼 메일이 나가지 않습니다. 「주소록 관리」에 넣거나 명단의 담당자메일 열을 채워주세요.');
+  }
+  if(!why.length) why.push('특별히 걸리는 점이 없습니다. ⑤ 결과를 확인해 주세요.');
+  why.forEach((w,i)=>push('   ', i+1, '. ', w));
+  return L.join('\n');
+}
+$('#ownDiagBtn').onclick=()=>{
+  const box=$('#ownDiagBox'); if(!box) return;
+  if(box.innerHTML){ box.innerHTML=''; return; }
+  const t=ownDiagText();
+  box.innerHTML=`<div class="note i" style="margin:10px 0">
+    <div class="split" style="margin-bottom:8px"><b>담당자 연결 진단</b>
+      <span class="grow"></span>
+      <button class="sm" id="ownDiagCopy">진단 내용 복사</button>
+      <button class="sm" id="ownDiagClose">닫기</button></div>
+    <textarea id="ownDiagT" readonly style="width:100%;height:330px;font-family:ui-monospace,monospace;font-size:12px;
+      line-height:1.65;border:.5px solid var(--line);border-radius:10px;padding:12px;background:var(--panel)"></textarea>
+    <div class="muted" style="margin-top:6px;font-size:12px">연결이 안 되면 이 내용을 그대로 복사해 보내주세요 — 어디서 끊겼는지 바로 알 수 있습니다.</div>
+  </div>`;
+  $('#ownDiagT').value=t;
+  $('#ownDiagClose').onclick=()=>{ box.innerHTML=''; };
+  $('#ownDiagCopy').onclick=()=>{
+    const el=$('#ownDiagT'); el.select(); el.setSelectionRange(0,999999);
+    try{ document.execCommand('copy'); $('#ownDiagCopy').textContent='복사됨 ✓';
+      setTimeout(()=>{ const b2=$('#ownDiagCopy'); if(b2) b2.textContent='진단 내용 복사'; },1600); }catch(e){}
+  };
+};
 $('#ownPrevAll').onclick=()=>{
   if(!mailRows().length) return alert('보낼 특이건이 없습니다.');
   ownPreview('');
