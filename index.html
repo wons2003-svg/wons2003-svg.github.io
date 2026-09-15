@@ -624,7 +624,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
     <button data-v="anom"><span class="ni"><svg viewBox="0 0 18 18"><path d="M2.6 4.2h12.8a1 1 0 0 1 1 1v8.1a1 1 0 0 1-1 1H2.6a1 1 0 0 1-1-1V5.2a1 1 0 0 1 1-1m.7 2 5.7 3.7 5.7-3.7z"/></svg></span>근태 특이건<span class="navp" id="navAnom"></span></button>
   </nav>
   <div class="side-foot">
-    <b>APRS</b><span class="ver">v8.2 · 2026-09</span>
+    <b>APRS</b><span class="ver">v8.3 · 2026-09</span>
     <span class="who" id="gWho"></span>
     <button class="sfout" id="btnOut" title="로그아웃">로그아웃</button>
   </div>
@@ -757,20 +757,23 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
   <p class="hint">특이건을 <b>담당자별로 자동으로 나눠</b> 보냅니다. 대상자 명단에 <b>담당자</b>(또는 <b>부서</b>) 열을 넣어 올리면 사람마다 자동으로 배정되고,
     화면에서 <b>직접 바꿀 수도</b> 있습니다. 메일 주소는 <b>@shinsegae.com</b>으로 고정이라 <b>앞부분만</b> 넣으시면 됩니다.</p>
 
-  <div class="split" style="margin-bottom:12px">
+  <div class="split" style="margin-bottom:10px">
     <button class="sm pri" data-open="dgAddr">주소록 관리<span class="pill" id="abCount"></span></button>
-    <span class="muted" style="font-size:12px;align-self:center">담당자 <b>이름 · 팀 · 메일 앞부분</b>만 등록해 두시면 됩니다</span>
+    <span class="muted" style="font-size:12px;align-self:center">대상자 명단에 <b>담당자 · 메일</b> 열을 넣으면 여기에 <b>자동으로 등록</b>됩니다</span>
     <span class="grow"></span>
     <label class="muted" style="display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600">
       <input type="checkbox" id="mNow" checked> 확인창 한 번 뒤 바로 발송</label>
   </div>
+  <div id="ccBar" class="note i" style="margin-bottom:12px;padding:10px 14px"></div>
 
   <div id="mNoFile"></div>
 
   <div class="mh">담당자별로 나눠 보내기 <span class="muted">— 보통 이걸 쓰시면 됩니다</span></div>
   <div id="ownWarn"></div>
   <div class="split" style="margin:10px 0 8px">
-    <select id="ownBulk" style="min-width:280px"><option value="">담당자가 빈 인원을 한 번에 지정…</option></select>
+    <span style="font-size:12.5px;font-weight:660;align-self:center">한 번에 지정</span>
+    <select id="ownScope" style="min-width:210px"></select>
+    <select id="ownBulk" style="min-width:250px"><option value="">→ 이 담당자에게 지정…</option></select>
     <button class="sm" id="ownReset">직접 바꾼 것 되돌리기</button>
     <span class="grow"></span>
     <button class="pri" id="ownSend">담당자별로 보내기</button>
@@ -838,8 +841,23 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
     </div>
     <div class="note i" style="margin-top:14px">
       <b>사번은 넣지 않으셔도 됩니다.</b> 대상자 명단에 <b>담당자</b> 열이 있으면 그 이름으로, <b>부서</b> 열만 있으면 여기 적은 <b>팀 · 부서</b>로 자동 배정됩니다.
+      명단에 <b>담당자메일</b> 열까지 넣으시면 <b>여기에 자동으로 등록</b>되어 따로 넣지 않으셔도 됩니다.
       자동으로 안 잡히는 인원은 3번 화면의 표에서 <b>직접 고르시면</b> 됩니다.<br>
       <span class="muted"><b>같은 이름</b>을 다시 추가하면 덮어씁니다 — 수정하실 때 그렇게 쓰세요.</span>
+    </div>
+
+    <div class="mh" style="margin-top:26px">항상 참조 <span class="muted">— 여기 등록한 사람은 모든 메일에 자동으로 참조로 들어갑니다</span></div>
+    <div id="ccList" style="margin:12px 0"></div>
+    <div class="row">
+      <div class="f" style="flex:1;min-width:150px"><label>이름 · 설명 <span class="muted">예) 인사팀 · 김과장</span></label>
+        <input type="text" id="ccName" placeholder="인사팀"></div>
+      <div class="f" style="flex:1.2;min-width:210px"><label>메일 주소 *</label>
+        <div class="atbox"><input type="text" id="ccMail" placeholder="hrteam" spellcheck="false"><b>@shinsegae.com</b></div></div>
+      <button class="pri" id="ccAdd" style="align-self:flex-end">참조 추가</button>
+    </div>
+    <div class="note w" style="margin-top:12px">
+      담당자별로 나눠 보낼 때도, 한 통으로 보낼 때도 <b>모든 메일에 똑같이</b> 들어갑니다.
+      이번 한 번만 빼고 싶으시면 3번 화면의 <b>「항상 참조 넣기」 체크를 끄시면</b> 됩니다.
     </div>
   </div>
 </dialog>
@@ -1034,7 +1052,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
 </div>
 
 <footer>
-  <b>APRS v8.2 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
+  <b>APRS v8.3 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
   ⓘ 이 도구는 업로드한 파일을 브라우저 메모리에서만 계산합니다. 네트워크 전송·서버 저장이 없습니다.<br>
   ⓘ 총근로시간 = 기본(소정) + 연장 + 휴일근로. <b>야간·심야는 가산수당 산정용으로 따로 표시</b>하며 총합에 중복 더하지 않습니다 — 심야 연장은 이미 연장시간에 포함돼 있는 경우가 많아 더하면 이중 계산이 됩니다.<br>
   ⓘ 급여일수 = 평일(월~금, 법정공휴일 제외) + 법정공휴일. 인정 일요일수 = 데이터상 일요일 수 − 결근이 있는 주(월~일)의 일요일 수.<br>
@@ -2618,7 +2636,9 @@ $('#rosClear').onclick=()=>{ A.roster=null; A.rosName='';
 $('#rosFile').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
   readTable(f,{id:/사번|사원번호|직번|emp/i, name:/성명|이름|name/i,
                w:/시급|단가|시간당|임률|임율|기본급?시급|rate|wage/i,
-               own:/담당자|담당자명|인사담당|^담당$|manager|owner/i, dept:/부서|부서명|^팀$|팀명|소속|부문|사업부|department|dept|team/i},
+               own:/담당자|담당자명|담당자성명|담당성명|담당이름|인사담당|^담당$|manager|owner/i,
+               dept:/부서|담당팀|^팀$|팀명|소속|부문|사업부|점포|매장|department|dept|team/i,
+               omail:/담당.*(메일|이메일|mail)/i, omail2:/^(메일|이메일|메일주소|이메일주소|mail|e-?mail|emailaddress)$/i},
     (rowsR,hdr,col,sn,wb)=>{
       A.rosWb=wb; A.rosPick=null;
       const m=new Map(); const lines=[];
@@ -2634,12 +2654,18 @@ $('#rosFile').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
       A.roster=m; A.rosName=f.name;
       /* 담당자·부서 열이 있으면 특이건 메일 배정에 그대로 씁니다 */
       if(col.own>=0 || col.dept>=0){
-        const OWN=new Map(), DEP=new Map();
+        const OWN=new Map(), DEP=new Map(), OMAIL=new Map();
+        const mKey = col.omail>=0? 'omail' : (col.omail2>=0? 'omail2' : null);
         rowsR.forEach(r=>{ const id=idKey(r.id); if(!id) return;
-          if(col.own>=0){ const v=norm(r.own); if(v) OWN.set(id,v); }
-          if(col.dept>=0){ const v=norm(r.dept); if(v) DEP.set(id,v); } });
+          const who=col.own>=0? norm(r.own):'', dp=col.dept>=0? norm(r.dept):'';
+          if(who) OWN.set(id,who);
+          if(dp)  DEP.set(id,dp);
+          if(mKey){ const em=norm(r[mKey]), key=who||dp;
+            if(key && em && !OMAIL.has(key)) OMAIL.set(key,{email:em, dept:dp}); } });
         if(OWN.size) P.owner=OWN;
         if(DEP.size) P.dept=DEP;
+        if(OMAIL.size) P.omail=OMAIL;
+        try{ ownAbsorb(OMAIL); }catch(x){}
         try{ P.ownMan.clear(); ownRender(); }catch(x){}
       }
       const named=[...m.values()].filter(Boolean).length;
@@ -3704,7 +3730,7 @@ const P={att:null, led:null, ledAoa:[], ledHdr:[], hrow:0, diag:null, rosName:''
          alias:new Map(), aliasRev:new Map(), rlink:null,
          wage:new Map(), hire:new Map(), quit:new Map(), roster:new Map(),
          rows:[], anom:[], name:'', addr:[], sendMsg:'',
-         owner:new Map(), dept:new Map(), ownMan:new Map(), ownMsg:''};
+         owner:new Map(), dept:new Map(), ownMan:new Map(), ownMsg:'', fixcc:[], omail:new Map()};
 
 /* 대조 항목 — 계산기 시트의 열 구성 그대로 */
 const PITEMS=[
@@ -4244,11 +4270,15 @@ $('#pFile3').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
   readTable(f,{id:/사번|사원번호|직번|사원.?번호|emp/i, name:/성명|이름|name/i,
                w:/시급|시간급|시간당|단가|임률|임율|임금|rate|wage/i,
                hire:/입사|입사일|시작일|hire|join/i, quit:/퇴사|퇴사일|종료일|quit|leave.?date/i,
-               own:/담당자|담당자명|인사담당|^담당$|manager|owner/i, dept:/부서|부서명|^팀$|팀명|소속|부문|사업부|department|dept|team/i},
+               own:/담당자|담당자명|담당자성명|담당성명|담당이름|인사담당|^담당$|manager|owner/i,
+               dept:/부서|담당팀|^팀$|팀명|소속|부문|사업부|점포|매장|department|dept|team/i,
+               omail:/담당.*(메일|이메일|mail)/i, omail2:/^(메일|이메일|메일주소|이메일주소|mail|e-?mail|emailaddress)$/i},
     (rows,hdr,col,sn,wb,best)=>{
       P.rosWb=wb; P.rosName=f.name;
       P.roster=new Map(); P.wage=new Map(); P.quit=new Map(); P.hire=new Map();
-      const OWN=new Map(), DEP=new Map();
+      const OWN=new Map(), DEP=new Map(), OMAIL=new Map();
+      const mCol = col.omail>=0? col.omail : (col.omail2>=0? col.omail2 : -1);
+      const mKey = col.omail>=0? 'omail' : 'omail2';
       const YR=+($('#vYear')&&$('#vYear').value) || +($('#yy')&&$('#yy').value) || new Date().getFullYear();
       const aoa=(best&&best.aoa)||[], hrow=(best&&best.hi!=null)?best.hi:0;
 
@@ -4268,12 +4298,22 @@ $('#pFile3').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
         if(wCol>=0){ const w=num(hasRaw? r[wCol] : r.w); if(isFinite(w)&&w>0) P.wage.set(id,w); }
         if(col.hire>=0){ const d=pDate(hasRaw? r[col.hire] : r.hire, YR); if(d) P.hire.set(id,d); }
         if(col.quit>=0){ const d=pDate(hasRaw? r[col.quit] : r.quit, YR); if(d) P.quit.set(id,d); }
-        if(col.own>=0){ const v=norm(hasRaw? r[col.own] : r.own); if(v) OWN.set(id,v); }
-        if(col.dept>=0){ const v=norm(hasRaw? r[col.dept] : r.dept); if(v) DEP.set(id,v); }
+        const who = col.own>=0? norm(hasRaw? r[col.own] : r.own) : '';
+        const dp  = col.dept>=0? norm(hasRaw? r[col.dept] : r.dept) : '';
+        if(who) OWN.set(id,who);
+        if(dp)  DEP.set(id,dp);
+        if(mCol>=0){
+          const em=norm(hasRaw? r[mCol] : r[mKey]);
+          const key=who||dp;                       /* 담당자 이름이 없으면 부서 이름으로 */
+          if(key && em && !OMAIL.has(key)) OMAIL.set(key,{email:em, dept:dp});
+        }
       });
       /* 담당자·부서는 그 열이 있는 파일만 덮어씁니다 (없는 파일이 기존 것을 지우지 않게) */
       if(OWN.size) P.owner=OWN;
       if(DEP.size) P.dept=DEP;
+      if(OMAIL.size) P.omail=OMAIL;
+      /* 명단에 담당자 메일이 있으면 주소록에 자동으로 넣습니다 */
+      let abs=null; try{ abs=ownAbsorb(OMAIL); }catch(x){}
       try{ P.ownMan.clear(); ownRender(); }catch(x){}
 
       /* 입사일·퇴사일·시급은 분석기(주휴 비례 계산)에도 넘겨준다 */
@@ -4289,6 +4329,7 @@ $('#pFile3').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
         + (P.wage.size? ` · 시급 ${P.wage.size}명` : ' · <span style="color:var(--bad)">시급 없음</span>')
         + (P.hire.size? ` · 입사일 ${P.hire.size}명`:'')
         + (OWN.size? ` · 담당자 ${OWN.size}명`:'') + (DEP.size? ` · 부서 ${DEP.size}명`:'')
+        + (OMAIL.size? ` · <b style="color:var(--ok)">담당자 메일 ${OMAIL.size}명</b>`:'')
         + ` · ${f.name}`;
       $('#dropP3').classList.toggle('done', P.roster.size>0);
 
@@ -4312,7 +4353,21 @@ $('#pFile3').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
           ${row('퇴사일',col.quit,'<span class="muted">없음 (선택)</span>')}
           ${row('담당자',col.own,'<span class="muted">없음 — 특이건 메일을 담당자별로 나누려면 이 열을 넣어주세요</span>')}
           ${row('부서',col.dept,'<span class="muted">없음 (선택) — 담당자 열이 없을 때 부서로 담당자를 찾습니다</span>')}
+          ${row('담당자메일',mCol,'<span class="muted">없음 (선택) — 넣어두면 주소록에 자동으로 등록됩니다</span>')}
         </tbody></table></div>
+        ${abs? `<div class="note g" style="margin-top:10px"><b>담당자 ${abs.add.length+abs.upd.length}명을 주소록에 넣었습니다</b>
+            ${abs.add.length? `<br>새로 등록 — ${abs.add.map(x=>esc(x)).join(' · ')}`:''}
+            ${abs.upd.length? `<br>주소 갱신 — ${abs.upd.map(x=>esc(x)).join(' · ')}`:''}
+            <br><span class="muted">이제 3번 「담당자별로 나눠 보내기」에서 바로 보내실 수 있습니다.</span></div>`:''}
+        ${(col.own<0 && col.dept<0)? `<div class="note w" style="margin-top:10px">
+            <b>담당자·부서 열을 찾지 못했습니다.</b> 머리글을 <b>담당자</b> · <b>부서</b> · <b>담당자메일</b> 로 적어 다시 올리시면
+            특이건 메일이 <b>자동으로 나뉩니다.</b> 지금도 3번 화면 표에서 직접 고르실 수는 있습니다.
+            ${(()=>{ const used=new Set([col.id,col.name,wCol,col.hire,col.quit].filter(x=>x>=0));
+               const cand=(hdr||[]).map((h,i)=>({h,i})).filter(x=>!used.has(x.i) && x.h &&
+                 body.slice(0,20).some(r=>{ const v=norm(r[x.i]); return v && !/^[0-9,.\-]+$/.test(v); }));
+               return cand.length? `<br><br><b>쓰이지 않은 글자 열</b> — ${cand.slice(0,10).map(x=>
+                 `<span class="chip"><b>${esc(x.h)}</b> · ${esc(body.slice(0,2).map(r=>norm(r[x.i])||'-').join(' · '))}</span>`).join('')}` : ''; })()}
+          </div>`:''}
         ${P.wage.size? '' : `<b style="color:var(--bad)">시급을 한 건도 못 읽었습니다.</b>
           위 「시급」 줄이 <b>찾지 못함</b>이면 머리글을 <b>시급</b>으로 바꿔주세요.
           열은 맞는데 값이 비었다면 그 칸이 <b>빈칸이거나 글자</b>로 들어가 있는지 확인하세요 (10,400 · 10400 · 10,400원 은 모두 읽힙니다).`}
@@ -5148,7 +5203,7 @@ function abRender(){
     const keep=sel.value;
     sel.innerHTML='<option value="">주소록에서 고르기…</option>'
       + list.map((a,i)=>`<option value="${i}">${esc(a.name)}${a.dept?` · ${esc(a.dept)}`:''} — ${esc(a.email)}</option>`).join('');
-    if(keep!=='' && sel.querySelector(`option[value="${keep}"]`)) sel.value=keep;
+    if(keep!=='' && [...sel.options].some(o=>o.value===keep)) sel.value=keep;
   }
   const box=$('#abList');
   if(box){
@@ -5176,6 +5231,77 @@ function abRender(){
   if(chip){ chip.textContent = n? `${n}명` : ''; chip.className='pill '+(n?'ok':''); }
 }
 const abBad=s=>/[^0-9A-Za-z._+\-]/.test(s);
+const uniqAddr=a=>[...new Set(a.filter(Boolean))];
+
+/* ── 항상 참조 ───────────────────────────────────────────────
+   여기 등록한 주소는 담당자별로 보낼 때도, 한 통으로 보낼 때도
+   모든 메일에 똑같이 참조로 들어갑니다. */
+const CCK='aprs.fixcc.v1';
+function ccLoad(){ try{ const l=JSON.parse(LS.get(CCK)||'[]');
+  return Array.isArray(l)? l.map(x=>({name:String((x&&x.name)||'').trim(), email:mailAddr(mailLocal((x&&x.email)||''))}))
+                            .filter(x=>x.email) : []; }catch(e){ return []; } }
+function ccSave(l){ P.fixcc=l;
+  if(!LS.set(CCK, JSON.stringify(l))) alert('이 브라우저에 저장하지 못했습니다.');
+  ccRender(); try{ ownRender(); }catch(e){} }
+/* 이번 발송에 실제로 붙일 참조 주소 */
+const ccNow=()=>{ const t=$('#ccUse'); return (t && !t.checked)? [] : (P.fixcc||[]).map(x=>x.email); };
+function ccRender(){
+  const l=P.fixcc||[];
+  const box=$('#ccList');
+  if(box){
+    box.innerHTML = !l.length
+      ? '<div class="empty" style="padding:26px 14px">항상 참조로 넣을 사람이 없습니다. 아래에서 추가하세요.</div>'
+      : `<div class="tblwrap"><table class="prev"><thead><tr><th style="width:180px">이름 · 설명</th><th>메일 주소</th><th style="width:60px"></th></tr></thead>
+         <tbody>${l.map((x,i)=>`<tr><td><b>${esc(x.name||'(이름 없음)')}</b></td><td class="mono">${esc(x.email)}</td>
+           <td><button class="sm" data-ccdel="${i}">삭제</button></td></tr>`).join('')}</tbody></table></div>`;
+    box.querySelectorAll('[data-ccdel]').forEach(b=>b.onclick=()=>{
+      const n=(P.fixcc||[]).slice(); n.splice(+b.dataset.ccdel,1); ccSave(n); });
+  }
+  const bar=$('#ccBar');
+  if(bar){
+    const on=!$('#ccUse') || $('#ccUse').checked;
+    bar.innerHTML = l.length
+      ? `<label style="display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:660;cursor:pointer">
+           <input type="checkbox" id="ccUse" ${on?'checked':''}> 항상 참조 넣기</label>
+         <span style="font-size:12.5px">${l.map(x=>`<span class="chip">${esc(x.name||x.email)} · <span class="mono">${esc(x.email)}</span></span>`).join('')}</span>
+         <span class="muted" style="font-size:11.5px">— 보내는 모든 메일에 참조로 들어갑니다. 바꾸시려면 「주소록 관리」에서.</span>`
+      : `<span style="font-size:12.5px"><b>항상 참조</b>가 비어 있습니다.</span>
+         <span class="muted" style="font-size:12px">— 모든 메일에 늘 넣을 참조가 있으시면 「주소록 관리」 아래쪽에서 등록하세요.</span>`;
+    bar.style.display='flex'; bar.style.gap='10px'; bar.style.flexWrap='wrap'; bar.style.alignItems='center';
+    const u=$('#ccUse'); if(u) u.onchange=()=>{ try{ ownRender(); }catch(e){} };
+  }
+}
+$('#ccAdd').onclick=()=>{
+  const name=$('#ccName').value.trim(), local=mailLocal($('#ccMail').value);
+  if(!local) return alert(`메일 주소 앞부분을 넣어주세요.\n예) hrteam  →  hrteam${MAILDOM}`);
+  if(abBad(local)) return alert('메일 주소 앞부분에 쓸 수 없는 글자가 있습니다.\n영문·숫자와 . _ - + 만 넣어주세요.');
+  const mail=mailAddr(local), l=(P.fixcc||[]).slice();
+  const at=l.findIndex(x=>x.email===mail);
+  if(at>=0) l[at]={name:name||l[at].name, email:mail}; else l.push({name, email:mail});
+  ccSave(l);
+  $('#ccName').value=''; $('#ccMail').value='';
+};
+
+/* ── 명단에서 찾은 담당자를 주소록에 자동 등록 ─────────────── */
+function ownAbsorb(found){
+  if(!found || !found.size) return null;
+  const l=(P.addr||[]).slice(), add=[], upd=[];
+  found.forEach((v,name)=>{
+    if(!name) return;
+    const mail=v.email? mailAddr(mailLocal(v.email)) : '';
+    const at=l.findIndex(x=>x.name===name);
+    if(at<0){ if(!mail) return; l.push({name, dept:v.dept||'', email:mail, cc:''}); add.push(name); }
+    else{
+      const c=l[at]; let ch=false;
+      if(mail && c.email!==mail){ c.email=mail; ch=true; }
+      if(v.dept && c.dept!==v.dept){ c.dept=v.dept; ch=true; }
+      if(ch) upd.push(name);
+    }
+  });
+  if(!add.length && !upd.length) return null;
+  abSave(l);
+  return {add, upd};
+}
 $('#abAdd').onclick=()=>{
   const name=$('#abName').value.trim(), dept=$('#abDept').value.trim();
   const local=mailLocal($('#abMail').value), cc=mailLocal($('#abCc').value);
@@ -5384,10 +5510,19 @@ function ownRender(){
   const cnt=new Map(); rows.forEach(r=>cnt.set(r.id,(cnt.get(r.id)||0)+1));
   const hasDept=!!(P.dept&&P.dept.size);
 
-  const bulk=$('#ownBulk');
-  if(bulk){ bulk.innerHTML='<option value="">담당자가 빈 인원을 한 번에 지정…</option>'
-    + book.map(a=>`<option value="${esc(a.name)}">비어 있는 인원 전부 → ${esc(a.name)}${a.dept?` (${esc(a.dept)})`:''}</option>`).join('');
+  const bulk=$('#ownBulk'), scope=$('#ownScope');
+  if(bulk){ bulk.innerHTML='<option value="">→ 이 담당자에게 지정…</option>'
+    + book.map(a=>`<option value="${esc(a.name)}">→ ${esc(a.name)}${a.dept?` · ${esc(a.dept)}`:''}</option>`).join('');
     bulk.value=''; }
+  if(scope){
+    const keep=scope.value;
+    const none0=ids.filter(id=>!ownOf(id)).length;
+    const depts=[...new Set(ids.map(ownDeptOf).filter(Boolean))].sort();
+    scope.innerHTML=`<option value="none">담당자가 빈 인원 (${none0}명)</option>`
+      + `<option value="all">표의 모든 인원 (${ids.length}명)</option>`
+      + depts.map(d=>`<option value="d:${esc(d)}">부서 · ${esc(d)} (${ids.filter(i=>ownDeptOf(i)===d).length}명)</option>`).join('');
+    if(keep && [...scope.options].some(o=>o.value===keep)) scope.value=keep;
+  }
 
   const known=new Set(book.map(a=>a.name)), orphan=new Set();
   ids.forEach(id=>{ const w=ownOf(id); if(w && !known.has(w)) orphan.add(w); });
@@ -5448,12 +5583,21 @@ function ownRender(){
   });
   const i1=$('#ownInfo'); if(i1) i1.innerHTML=P.ownMsg||'';
 }
+/* 「한 번에 지정」의 대상 — 빈 인원 / 전체 / 특정 부서 */
+function ownScopeIds(){
+  const ids=[...new Set(mailRows().map(r=>r.id))];
+  const v=($('#ownScope')||{}).value||'none';
+  if(v==='all') return ids;
+  if(v.indexOf('d:')===0){ const d=v.slice(2); return ids.filter(i=>ownDeptOf(i)===d); }
+  return ids.filter(i=>!ownOf(i));
+}
 $('#ownBulk').onchange=()=>{
   const v=$('#ownBulk').value; if(!v) return;
-  const ids=[...new Set(mailRows().map(r=>r.id))];
-  let n=0; ids.forEach(id=>{ if(!ownOf(id)){ P.ownMan.set(id,v); n++; } });
-  P.ownMsg = n? `<div class="note g">담당자가 비어 있던 <b>${n}명</b>을 <b>${esc(v)}</b> 님으로 지정했습니다.</div>`
-              : `<div class="note i">담당자가 비어 있는 인원이 없습니다.</div>`;
+  const tgt=ownScopeIds();
+  const label=($('#ownScope').selectedOptions[0]||{}).textContent||'';
+  if(!tgt.length){ P.ownMsg=`<div class="note i">「${esc(label.trim())}」에 해당하는 인원이 없습니다.</div>`; return ownRender(); }
+  tgt.forEach(id=>P.ownMan.set(id,v));
+  P.ownMsg=`<div class="note g"><b>${tgt.length}명</b>을 <b>${esc(v)}</b> 님으로 지정했습니다 <span class="muted">— ${esc(label.trim())}</span></div>`;
   ownRender();
 };
 $('#ownReset').onclick=()=>{
@@ -5471,18 +5615,20 @@ $('#ownSend').onclick=()=>{
     if(!who){ miss.push(...new Set(list.map(r=>r.id))); return; }
     const a=ownByName(who);
     if(!a){ nobook.push(`${who} ${n}명`); return; }
-    mails.push({to:toAddrs(a.email), cc:toAddrs(a.cc||''), subject:mailSubject(list),
-                html:mailHtml(list, a.name), who:a.name});
+    mails.push({to:toAddrs(a.email), cc:uniqAddr([...toAddrs(a.cc||''), ...ccNow()]),
+                subject:mailSubject(list), html:mailHtml(list, a.name), who:a.name});
     lines.push(`${a.name} — ${n}명 ${list.length}건 → ${a.email}`);
   });
   if(!mails.length) return alert('보낼 담당자가 없습니다.\n\n아래 표에서 사람마다 담당자를 고르시거나,\n대상자 명단에 「담당자」 열을 넣어 올려주세요.');
-  const now=$('#mNow').checked;
-  if(!confirm(`Outlook으로 담당자 ${mails.length}명에게 ${now?'바로 보내는':'메일 창을 띄우는'} 스크립트를 만듭니다.\n\n${lines.join('\n')}\n\n계속할까요?`)) return;
+  const now=$('#mNow').checked, fcc=ccNow();
+  if(!confirm(`Outlook으로 담당자 ${mails.length}명에게 ${now?'바로 보내는':'메일 창을 띄우는'} 스크립트를 만듭니다.\n\n${lines.join('\n')}`
+    + (fcc.length? `\n\n참조(모든 메일) : ${fcc.join(', ')}` : '') + `\n\n계속할까요?`)) return;
   const fn=`근태특이건_담당자별_${String(P.anomName||P.name||'근태').replace(/[\\/:*?"<>|]/g,'')}.vbs`;
   dlVbs(buildVbs(mails, '', now), fn);
   P.ownMsg=`<div class="note ${(miss.length||nobook.length)?'w':'g'}">
     <b>담당자 ${mails.length}명에게 보내는 스크립트를 만들었습니다</b> — <b>${esc(fn)}</b><br>
     ${lines.map(esc).join('<br>')}<br>
+    ${fcc.length? `<b>참조</b> (모든 메일) — ${esc(fcc.join(', '))}<br>`:''}
     내려받은 <b>.vbs 파일을 두 번 누르면</b> 확인창이 한 번 뜨고 ${now?'<b>전부 발송</b>됩니다':'메일 창이 하나씩 뜹니다'}.
     ${nobook.length? `<br><b style="color:var(--bad)">주소록에 없어 빠진 담당자</b> — ${nobook.map(esc).join(' · ')}`:''}
     ${miss.length? `<br><b style="color:var(--warn)">담당자가 비어 있어 빠진 인원 ${miss.length}명</b> — ${
@@ -5493,10 +5639,12 @@ $('#ownSend').onclick=()=>{
 /* 한 통 — 지금 화면의 받는사람으로 */
 $('#mSend').onclick=()=>{
   const rows=mailRows(); if(!rows.length) return alert('보낼 특이건이 없습니다.');
-  const to=toAddrs($('#mToBox').value), cc=toAddrs($('#mCcBox').value);
+  const to=toAddrs($('#mToBox').value);
+  const cc=uniqAddr([...toAddrs($('#mCcBox').value), ...ccNow()]);
   if(!to.length) return alert('받는사람을 넣어주세요.\n주소록에서 고르시거나, 메일 앞부분만 직접 넣으셔도 됩니다.');
   const now=$('#mNow').checked;
-  if(!confirm(`Outlook으로 ${to.join(', ')} 에게 ${now?'바로 보내는':'메일 창을 띄우는'} 스크립트를 만듭니다.\n\n계속할까요?`)) return;
+  if(!confirm(`Outlook으로 ${to.join(', ')} 에게 ${now?'바로 보내는':'메일 창을 띄우는'} 스크립트를 만듭니다.`
+    + (cc.length? `\n\n참조 : ${cc.join(', ')}` : '') + `\n\n계속할까요?`)) return;
   const fn=mailFileName('vbs');
   dlVbs(buildVbs([{to,cc,subject:mailSubject(rows),html:mailHtml(rows),who:''}], '', now), fn);
   P.sendMsg=`<div class="note g"><b>발송 스크립트를 만들었습니다</b> — <b>${esc(fn)}</b><br>
@@ -5505,6 +5653,7 @@ $('#mSend').onclick=()=>{
   const si=$('#mSendInfo'); if(si) si.innerHTML=P.sendMsg;
 };
 P.addr=abLoad(); abRender();
+P.fixcc=ccLoad(); ccRender();
 
 
 /* ── 계산기 양식 내보내기 ──────────────────────────────────────
