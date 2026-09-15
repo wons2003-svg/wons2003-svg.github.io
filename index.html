@@ -284,6 +284,15 @@ body.locked .macwin{display:none}
 @media (prefers-color-scheme:dark){.note.w,.note.i,.note.b,.note.g{color:var(--ink)}}
 .chip{display:inline-block;background:var(--fill);border:0;color:var(--ink2);border-radius:var(--r-p);
   padding:3px 11px;margin:3px 5px 0 0;font-size:12.5px;font-weight:590}
+.mh{font-size:13.5px;font-weight:760;letter-spacing:-.012em;margin:16px 0 2px;padding-bottom:8px;border-bottom:.5px solid var(--line)}
+.mh .muted{font-weight:590;font-size:12px;letter-spacing:0}
+.atbox{display:flex;align-items:stretch;border:.5px solid var(--line);border-radius:var(--r-s);overflow:hidden;background:var(--panel)}
+.atbox input[type=text]{border:0!important;border-radius:0!important;flex:1;min-width:0;background:transparent}
+.atbox input[type=text]:focus{box-shadow:none;outline:0}
+.atbox>b{display:flex;align-items:center;padding:0 11px;font-size:12px;font-weight:660;color:var(--ink3);
+  background:var(--fill);white-space:nowrap;border-left:.5px solid var(--line)}
+#ownTbl tr.noown td{background:var(--warn-w)}
+#ownTbl select{background-color:var(--panel)}
 .tag{display:inline-block;border-radius:6px;padding:2px 7px;font-size:11.5px;font-weight:640;letter-spacing:-.005em}
 .tag.g{background:rgba(52,199,89,.16);color:var(--ok)}
 .tag.r{background:var(--bad-w);color:var(--bad)}
@@ -615,7 +624,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
     <button data-v="anom"><span class="ni"><svg viewBox="0 0 18 18"><path d="M2.6 4.2h12.8a1 1 0 0 1 1 1v8.1a1 1 0 0 1-1 1H2.6a1 1 0 0 1-1-1V5.2a1 1 0 0 1 1-1m.7 2 5.7 3.7 5.7-3.7z"/></svg></span>근태 특이건<span class="navp" id="navAnom"></span></button>
   </nav>
   <div class="side-foot">
-    <b>APRS</b><span class="ver">v8.1 · 2026-09</span>
+    <b>APRS</b><span class="ver">v8.2 · 2026-09</span>
     <span class="who" id="gWho"></span>
     <button class="sfout" id="btnOut" title="로그아웃">로그아웃</button>
   </div>
@@ -682,6 +691,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
         <li>출근·퇴근 <b>지문(센싱) 누락</b>일 찾기</li>
         <li>근태 「비고」란의 <b>조기센싱 · 지각</b> 표기 그대로 모으기</li>
         <li>사번 · 성명 · 날짜 · 내용 순으로 <b>메일 문구</b> 생성</li>
+        <li><b>담당자별로 자동으로 나눠</b> Outlook으로 보내기</li>
         <li><b>.txt · .html · .xlsx</b> 파일로 내려받기</li>
       </ul></div>
       <button class="pri">특이건 열기</button>
@@ -742,100 +752,62 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
     </div>
 </div>
 
-<div class="card off" id="ao3">
-  <h2><span class="n">3</span>메일 보내기</h2>
-  <p class="hint">담당자를 <b>주소록에 등록</b>해 두면 이름만 골라 받는사람이 채워집니다.
-    <b>「Outlook으로 보내기」</b>를 누르면 이 PC의 Outlook으로 <b>실제 발송</b>됩니다 — 확인창 한 번만 누르시면 됩니다.</p>
+<div class="card" id="ao3">
+  <h2><span class="n">3</span>담당자에게 메일 보내기</h2>
+  <p class="hint">특이건을 <b>담당자별로 자동으로 나눠</b> 보냅니다. 대상자 명단에 <b>담당자</b>(또는 <b>부서</b>) 열을 넣어 올리면 사람마다 자동으로 배정되고,
+    화면에서 <b>직접 바꿀 수도</b> 있습니다. 메일 주소는 <b>@shinsegae.com</b>으로 고정이라 <b>앞부분만</b> 넣으시면 됩니다.</p>
 
-  <div class="split" style="margin-bottom:10px">
-    <select id="mTo" style="min-width:320px"><option value="">담당자 고르기…</option></select>
-    <button class="sm" data-open="dgAddr">주소록 관리<span class="pill" id="abCount"></span></button>
-  </div>
-  <div class="row" style="margin-bottom:10px">
-    <div class="f" style="flex:2;min-width:260px"><label>받는사람 <span class="muted">여러 명은 ; 로 구분</span></label>
-      <input type="text" id="mToBox" placeholder="hong@company.co.kr; kim@company.co.kr" spellcheck="false"></div>
-    <div class="f" style="flex:1.4;min-width:200px"><label>참조 (선택)</label>
-      <input type="text" id="mCcBox" placeholder="team@company.co.kr" spellcheck="false"></div>
-  </div>
-  <div class="row" style="margin-bottom:12px">
-    <div class="f" style="flex:1;min-width:320px"><label>제목 <span class="muted">비워두면 자동으로 만듭니다</span></label>
-      <input type="text" id="mSubj" placeholder="[근태 특이건] 확인 요청"></div>
-    <label class="muted" style="display:flex;align-items:center;gap:6px;align-self:flex-end;padding-bottom:9px;font-size:12.5px;font-weight:600">
-      <input type="checkbox" id="mAtt" checked> 엑셀 파일 첨부</label>
-  </div>
-  <div id="msBox" class="note i" style="margin-bottom:12px;padding:14px 16px">
-    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-      <b style="font-size:13.5px">브라우저에서 바로 보내기</b>
-      <span class="tag g">Microsoft 365</span>
-      <span class="grow"></span>
-      <button class="sm" id="msAsk">IT에 보낼 요청서 복사</button>
-    </div>
-    <p style="margin:8px 0 0;font-size:12.5px;line-height:1.6">
-      회사가 Microsoft 365를 쓰면 <b>이 화면에서 회사 계정으로 로그인해 바로 보낼 수 있습니다.</b>
-      Outlook을 열 필요도, 파일을 내려받을 필요도 없습니다.<br>
-      비밀번호는 <b>회사 로그인 창에만</b> 넣고 이 파일에는 아무것도 저장되지 않습니다. 메일은 <b>회사 메일 서버로만</b> 가고 외부 업체를 거치지 않습니다.<br>
-      <span class="muted">처음 한 번은 회사 IT가 <b>앱 등록</b>을 해줘야 합니다 — 위 「IT에 보낼 요청서 복사」를 눌러 그대로 전달하세요.</span>
-    </p>
-    <div id="msIn" style="margin-top:10px">
-      <div class="row">
-        <div class="f" style="flex:1.4;min-width:260px"><label>애플리케이션(클라이언트) ID <span class="muted">IT가 알려줍니다</span></label>
-          <input type="text" id="msClient" placeholder="11111111-2222-3333-4444-555555555555" spellcheck="false"></div>
-        <div class="f" style="flex:1;min-width:200px"><label>디렉터리(테넌트) ID <span class="muted">비우면 organizations</span></label>
-          <input type="text" id="msTenant" placeholder="organizations" spellcheck="false"></div>
-      </div>
-      <div class="split" style="margin-top:8px">
-        <button class="sm pri" id="msSaveCfg">저장</button>
-        <button class="sm" id="msLoginBtn">회사 계정으로 로그인</button>
-        <span class="muted" style="font-size:11.5px">앱 등록에 넣을 리디렉션 URI : <b class="mono" id="msRedir"></b>
-          <span id="msRedir2"></span></span>
-      </div>
-    </div>
-    <div id="msOut" hidden style="margin-top:10px">
-      <div class="split">
-        <span style="font-size:12.5px;align-self:center" id="msWho"></span>
-        <span class="grow"></span>
-        <button class="pri" id="msNow">이 내용 지금 보내기</button>
-        <button class="pri" id="msNowSplit">담당자별로 지금 보내기</button>
-        <button class="sm" id="msLogout">로그아웃</button>
-      </div>
-    </div>
-    <div id="msStat"></div>
-  </div>
-
-  <div class="split" style="margin-bottom:6px">
-    <b style="font-size:12.5px;align-self:center">Outlook 앱으로 보내기</b>
-    <button class="pri" id="mSend">이 내용 보내기</button>
-    <button class="pri" id="mSendSplit">담당자별로 나눠 보내기</button>
+  <div class="split" style="margin-bottom:12px">
+    <button class="sm pri" data-open="dgAddr">주소록 관리<span class="pill" id="abCount"></span></button>
+    <span class="muted" style="font-size:12px;align-self:center">담당자 <b>이름 · 팀 · 메일 앞부분</b>만 등록해 두시면 됩니다</span>
+    <span class="grow"></span>
     <label class="muted" style="display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600">
       <input type="checkbox" id="mNow" checked> 확인창 한 번 뒤 바로 발송</label>
   </div>
-  <div class="split">
-    <b style="font-size:12.5px;align-self:center;color:var(--ink3)">직접 확인해서 보내기</b>
-    <button class="sm" id="mEml">메일 파일(.eml) 만들기</button>
-    <button class="sm" id="mSplit">담당자별 .eml 만들기</button>
-    <button class="sm" id="mOpen">메일 앱으로 열기</button>
-    <button class="sm" id="mRich">표 서식 복사</button>
+
+  <div id="mNoFile"></div>
+
+  <div class="mh">담당자별로 나눠 보내기 <span class="muted">— 보통 이걸 쓰시면 됩니다</span></div>
+  <div id="ownWarn"></div>
+  <div class="split" style="margin:10px 0 8px">
+    <select id="ownBulk" style="min-width:280px"><option value="">담당자가 빈 인원을 한 번에 지정…</option></select>
+    <button class="sm" id="ownReset">직접 바꾼 것 되돌리기</button>
+    <span class="grow"></span>
+    <button class="pri" id="ownSend">담당자별로 보내기</button>
   </div>
-  <div id="mSendInfo" style="margin-top:10px"></div>
-  <div id="mSplitInfo" style="margin-top:10px"></div>
-  <div class="note i" style="margin-top:10px">
-    <b>보내는 방법이 세 가지입니다 — 위에서부터 편한 순서입니다.</b><br><br>
-    <b>① 브라우저에서 바로 보내기</b> <span class="muted">(Microsoft 365 · IT 앱 등록 한 번 필요)</span> —
-    회사 계정으로 로그인하면 <b>이 화면에서 버튼 한 번으로 발송</b>됩니다. 파일을 내려받지 않고, 담당자별 여러 통도 한 번에 나갑니다.<br>
-    <b>② Outlook 앱으로 보내기</b> <span class="muted">(IT 도움 없이 지금 바로)</span> — 아래 설명대로 스크립트를 내려받아 두 번 누르면 발송됩니다.<br>
-    <b>③ 직접 확인해서 보내기</b> — .eml을 열어 눈으로 보고 보내기를 누릅니다.<br><br>
-    <b>「Outlook 앱으로 보내기」는 이렇게 동작합니다.</b> 브라우저 자체는 메일을 보낼 수 없어서(메일 서버가 없음),
-    <b>이 PC에 설치된 Outlook</b>을 불러 보내는 <b>발송 스크립트(.vbs)</b>를 만들어 드립니다.<br>
-    내려받은 파일을 <b>두 번 누르면</b> 「메일 N통을 보냅니다」 확인창이 한 번 뜨고 <b>발송</b>됩니다.
-    보내는 계정은 <b>지금 Outlook에 로그인된 본인 계정</b>이고, <b>외부 서비스로 나가는 데이터도 비밀번호를 넣는 곳도 없습니다.</b><br>
-    <span class="muted">「확인창 한 번 뒤 바로 발송」을 끄면 메일 창만 띄워 직접 확인하고 보낼 수 있습니다.</span><br><br>
-    <b>담당자별로 나눠 보내기</b> — 주소록에 <b>담당 사번</b>을 넣어두면 담당자마다 <b>자기 인원만</b> 담아 한 번에 여러 통을 보냅니다.<br><br>
-    <b>직접 확인해서 보내기</b> — 스크립트가 회사 정책으로 막혀 있거나, 보내기 전에 꼭 눈으로 보고 싶을 때 쓰세요.
-    <b>.eml</b>은 두 번 누르면 <b>표·첨부까지 채워진 메일</b>이 열리고 보내기만 누르면 됩니다.
+  <div id="ownTbl"></div>
+  <div id="ownInfo" style="margin-top:10px"></div>
+
+  <div class="mh" style="margin-top:24px">한 통으로 직접 보내기 <span class="muted">— 나누지 않고 전체를 한 통으로</span></div>
+  <div class="split" style="margin:10px 0">
+    <select id="mTo" style="min-width:320px"><option value="">주소록에서 고르기…</option></select>
+    <span id="mToMsg" style="font-size:12px;align-self:center"></span>
+  </div>
+  <div class="row" style="margin-bottom:10px">
+    <div class="f" style="flex:2;min-width:260px"><label>받는사람 <span class="muted">여러 명은 ; 로 구분 · 앞부분만 넣어도 됩니다</span></label>
+      <input type="text" id="mToBox" placeholder="hong; kim" spellcheck="false"></div>
+    <div class="f" style="flex:1.4;min-width:200px"><label>참조 (선택)</label>
+      <input type="text" id="mCcBox" placeholder="team" spellcheck="false"></div>
+  </div>
+  <div class="row" style="margin-bottom:12px">
+    <div class="f" style="flex:1;min-width:300px"><label>제목 <span class="muted">비워두면 자동으로 만듭니다</span></label>
+      <input type="text" id="mSubj" placeholder="[근태 특이건] 확인 요청"></div>
+    <button class="pri" id="mSend">이 내용 한 통 보내기</button>
+  </div>
+  <div id="mSendInfo"></div>
+
+  <div class="note i" style="margin-top:14px">
+    <b>어떻게 보내지나요?</b> 브라우저 자체는 메일을 보낼 수 없어서(메일 서버가 없음),
+    <b>이 PC에 설치된 Outlook</b>을 불러 보내는 <b>발송 스크립트(.vbs)</b>를 만들어 드립니다.
+    내려받은 파일을 <b>두 번 누르면</b> 「메일 N통을 보냅니다」 확인창이 <b>한 번</b> 뜨고 발송됩니다.<br>
+    보내는 계정은 <b>지금 Outlook에 로그인된 본인 계정</b>이고, <b>외부 서비스로 나가는 데이터도 비밀번호를 넣는 곳도 없습니다.</b>
+    <b>본문만</b> 보내고 파일은 첨부하지 않습니다.<br>
+    <span class="muted">「확인창 한 번 뒤 바로 발송」을 끄면 메일 창만 띄워 하나씩 확인하고 보낼 수 있습니다.</span>
   </div>
   <div class="note w" style="margin-top:8px">
-    <b>처음에는 본인에게 한 통 보내보세요.</b> 받는사람에 본인 주소를 넣고 보내 표와 첨부가 제대로 오는지 확인한 뒤 실제로 쓰시는 게 안전합니다.<br>
-    회사 PC에서 <b>스크립트 실행이 막혀 있으면</b> 「Outlook을 열지 못했습니다」 창이 뜹니다 — 그때는 아래 <b>.eml</b> 방식을 쓰세요.
+    <b>처음에는 본인에게 한 통 보내보세요.</b> 「한 통으로 직접 보내기」의 받는사람에 <b>본인 메일 앞부분</b>을 넣고 보내
+    내용이 제대로 오는지 확인한 뒤 실제로 쓰시는 게 안전합니다.<br>
+    회사 PC에서 <b>스크립트 실행이 막혀 있으면</b> 「Outlook을 열지 못했습니다」 창이 뜹니다 — 그때는 위 2번 칸의 본문을 복사해 붙여넣어 보내세요.
   </div>
 </div>
 </div><!-- /viewAnom -->
@@ -844,28 +816,30 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
   <div class="dlg-h"><h3>주소록 — 부서 담당자</h3>
     <button class="sm" onclick="document.getElementById('dgAddr').close()">닫기</button></div>
   <div class="dlg-b">
-    <p class="hint">이 브라우저에 저장됩니다. <b>다른 PC에서도 쓰시려면</b> 아래 「주소록 내려받기」로 파일을 받아 그 PC에서 「주소록 불러오기」 하세요.</p>
+    <p class="hint">담당자를 <b>이름 · 팀 · 메일 앞부분</b>만 넣어 등록하세요. 메일 주소는 <b>@shinsegae.com</b>으로 고정입니다.<br>
+      이 브라우저에 저장됩니다. <b>다른 PC에서도 쓰시려면</b> 아래 「주소록 내려받기」로 파일을 받아 그 PC에서 「주소록 불러오기」 하세요.</p>
     <div id="abList" style="margin:12px 0"></div>
     <div class="row">
-      <div class="f" style="min-width:120px"><label>이름 *</label><input type="text" id="abName" placeholder="홍길동"></div>
-      <div class="f" style="min-width:120px"><label>부서</label><input type="text" id="abDept" placeholder="영업1팀"></div>
-      <div class="f" style="flex:1.3;min-width:200px"><label>메일 주소 *</label><input type="text" id="abMail" placeholder="hong@company.co.kr" spellcheck="false"></div>
-      <div class="f" style="flex:1;min-width:170px"><label>참조 (선택)</label><input type="text" id="abCc" placeholder="team@company.co.kr" spellcheck="false"></div>
+      <div class="f" style="flex:1;min-width:140px"><label>이름 * <span class="muted">명단의 담당자 이름과 같게</span></label>
+        <input type="text" id="abName" placeholder="홍길동"></div>
+      <div class="f" style="flex:1;min-width:130px"><label>팀 · 부서 <span class="muted">명단의 부서명과 같게</span></label>
+        <input type="text" id="abDept" placeholder="영업1팀"></div>
+      <div class="f" style="flex:1.2;min-width:210px"><label>메일 주소 *</label>
+        <div class="atbox"><input type="text" id="abMail" placeholder="hong" spellcheck="false"><b>@shinsegae.com</b></div></div>
+      <div class="f" style="flex:1;min-width:190px"><label>참조 (선택)</label>
+        <div class="atbox"><input type="text" id="abCc" placeholder="team" spellcheck="false"><b>@shinsegae.com</b></div></div>
     </div>
-    <div class="f" style="margin-top:10px"><label>담당 사번 (선택) — <span class="muted">엑셀에서 사번 열을 복사해 붙여넣으세요. 줄바꿈·쉼표·공백 모두 됩니다</span></label>
-      <textarea id="abIds" rows="3" placeholder="518800
-519589
-521563" style="width:100%;font-family:ui-monospace,monospace;font-size:12.5px;border:1px solid var(--line);border-radius:8px;padding:9px"></textarea></div>
-    <div class="split" style="margin-top:12px">
+    <div class="split" style="margin-top:14px">
       <button class="pri" id="abAdd">담당자 추가 · 수정</button>
       <span class="grow"></span>
       <button class="sm" id="abExp">주소록 내려받기</button>
       <button class="sm" id="abImpBtn">주소록 불러오기</button>
       <input type="file" id="abImp" accept=".json" hidden>
     </div>
-    <div class="note w" style="margin-top:12px">
-      <b>같은 이름·같은 주소</b>를 다시 추가하면 <b>덮어씁니다</b> (수정하실 때 그렇게 쓰세요).<br>
-      담당 사번을 넣어두면 「담당자별로 나눠 만들기」에서 <b>그 사번의 특이건만</b> 골라 담습니다. 비워두면 그 담당자는 나눠 만들기에서 빠집니다.
+    <div class="note i" style="margin-top:14px">
+      <b>사번은 넣지 않으셔도 됩니다.</b> 대상자 명단에 <b>담당자</b> 열이 있으면 그 이름으로, <b>부서</b> 열만 있으면 여기 적은 <b>팀 · 부서</b>로 자동 배정됩니다.
+      자동으로 안 잡히는 인원은 3번 화면의 표에서 <b>직접 고르시면</b> 됩니다.<br>
+      <span class="muted"><b>같은 이름</b>을 다시 추가하면 덮어씁니다 — 수정하실 때 그렇게 쓰세요.</span>
     </div>
   </div>
 </dialog>
@@ -1060,7 +1034,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
 </div>
 
 <footer>
-  <b>APRS v8.1 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
+  <b>APRS v8.2 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
   ⓘ 이 도구는 업로드한 파일을 브라우저 메모리에서만 계산합니다. 네트워크 전송·서버 저장이 없습니다.<br>
   ⓘ 총근로시간 = 기본(소정) + 연장 + 휴일근로. <b>야간·심야는 가산수당 산정용으로 따로 표시</b>하며 총합에 중복 더하지 않습니다 — 심야 연장은 이미 연장시간에 포함돼 있는 경우가 많아 더하면 이중 계산이 됩니다.<br>
   ⓘ 급여일수 = 평일(월~금, 법정공휴일 제외) + 법정공휴일. 인정 일요일수 = 데이터상 일요일 수 − 결근이 있는 주(월~일)의 일요일 수.<br>
@@ -1460,19 +1434,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
    근태 분석기 — 계산 엔진 + UI
    ========================================================= */
 /* 회사 로그인 창(팝업)이 돌아온 경우 — 부모에게 코드만 넘기고 닫는다 */
-const __APRS_POPUP = (()=>{
-  try{
-    const q=new URLSearchParams(location.search);
-    const code=q.get('code'), err=q.get('error_description')||q.get('error')||'';
-    if(!code && !err) return false;
-    if(window.opener && window.opener!==window){
-      window.opener.postMessage({t:'aprs-ms', code, state:q.get('state'), err}, location.origin);
-      setTimeout(()=>{ try{ window.close(); }catch(e){} }, 300);
-      return true;
-    }
-  }catch(e){}
-  return false;
-})();
+const __APRS_POPUP = false;   /* 예전 브라우저 발송(OAuth)용 — 지금은 쓰지 않습니다 */
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 const CATS = ['근무','휴일근무','출장/교육','휴무','유급휴가','무급/결근','기타','미분류'];
@@ -2655,7 +2617,8 @@ $('#rosClear').onclick=()=>{ A.roster=null; A.rosName='';
   slotDone('dropRos',false); A.rosterUse=null; aStartUI(); runA(); };
 $('#rosFile').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
   readTable(f,{id:/사번|사원번호|직번|emp/i, name:/성명|이름|name/i,
-               w:/시급|단가|시간당|임률|임율|기본급?시급|rate|wage/i},
+               w:/시급|단가|시간당|임률|임율|기본급?시급|rate|wage/i,
+               own:/담당자|담당자명|인사담당|^담당$|manager|owner/i, dept:/부서|부서명|^팀$|팀명|소속|부문|사업부|department|dept|team/i},
     (rowsR,hdr,col,sn,wb)=>{
       A.rosWb=wb; A.rosPick=null;
       const m=new Map(); const lines=[];
@@ -2669,6 +2632,16 @@ $('#rosFile').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
         return;
       }
       A.roster=m; A.rosName=f.name;
+      /* 담당자·부서 열이 있으면 특이건 메일 배정에 그대로 씁니다 */
+      if(col.own>=0 || col.dept>=0){
+        const OWN=new Map(), DEP=new Map();
+        rowsR.forEach(r=>{ const id=idKey(r.id); if(!id) return;
+          if(col.own>=0){ const v=norm(r.own); if(v) OWN.set(id,v); }
+          if(col.dept>=0){ const v=norm(r.dept); if(v) DEP.set(id,v); } });
+        if(OWN.size) P.owner=OWN;
+        if(DEP.size) P.dept=DEP;
+        try{ P.ownMan.clear(); ownRender(); }catch(x){}
+      }
       const named=[...m.values()].filter(Boolean).length;
       if(lines.length){ $('#wgTable').value=lines.join('\n'); A.wgName=f.name; slotDone('dropWg',true);
         const w2=$('#wgInfo2'); if(w2) w2.innerHTML=`✓ 위 파일에서 ${lines.length}명 (따로 안 올려도 됩니다)`; }
@@ -3730,7 +3703,8 @@ if($('#vMap') && !$('#vMap').value.trim()) $('#vMap').value = payMapText();
 const P={att:null, led:null, ledAoa:[], ledHdr:[], hrow:0, diag:null, rosName:'', autoTried:false, autoMsg:'', fitMsg:'', stdFix:null, tmonth:null,
          alias:new Map(), aliasRev:new Map(), rlink:null,
          wage:new Map(), hire:new Map(), quit:new Map(), roster:new Map(),
-         rows:[], anom:[], name:''};
+         rows:[], anom:[], name:'', addr:[], sendMsg:'',
+         owner:new Map(), dept:new Map(), ownMan:new Map(), ownMsg:''};
 
 /* 대조 항목 — 계산기 시트의 열 구성 그대로 */
 const PITEMS=[
@@ -4269,10 +4243,12 @@ function findWageCol(aoa,hrow,skip){
 $('#pFile3').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
   readTable(f,{id:/사번|사원번호|직번|사원.?번호|emp/i, name:/성명|이름|name/i,
                w:/시급|시간급|시간당|단가|임률|임율|임금|rate|wage/i,
-               hire:/입사|입사일|시작일|hire|join/i, quit:/퇴사|퇴사일|종료일|quit|leave.?date/i},
+               hire:/입사|입사일|시작일|hire|join/i, quit:/퇴사|퇴사일|종료일|quit|leave.?date/i,
+               own:/담당자|담당자명|인사담당|^담당$|manager|owner/i, dept:/부서|부서명|^팀$|팀명|소속|부문|사업부|department|dept|team/i},
     (rows,hdr,col,sn,wb,best)=>{
       P.rosWb=wb; P.rosName=f.name;
       P.roster=new Map(); P.wage=new Map(); P.quit=new Map(); P.hire=new Map();
+      const OWN=new Map(), DEP=new Map();
       const YR=+($('#vYear')&&$('#vYear').value) || +($('#yy')&&$('#yy').value) || new Date().getFullYear();
       const aoa=(best&&best.aoa)||[], hrow=(best&&best.hi!=null)?best.hi:0;
 
@@ -4292,7 +4268,13 @@ $('#pFile3').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
         if(wCol>=0){ const w=num(hasRaw? r[wCol] : r.w); if(isFinite(w)&&w>0) P.wage.set(id,w); }
         if(col.hire>=0){ const d=pDate(hasRaw? r[col.hire] : r.hire, YR); if(d) P.hire.set(id,d); }
         if(col.quit>=0){ const d=pDate(hasRaw? r[col.quit] : r.quit, YR); if(d) P.quit.set(id,d); }
+        if(col.own>=0){ const v=norm(hasRaw? r[col.own] : r.own); if(v) OWN.set(id,v); }
+        if(col.dept>=0){ const v=norm(hasRaw? r[col.dept] : r.dept); if(v) DEP.set(id,v); }
       });
+      /* 담당자·부서는 그 열이 있는 파일만 덮어씁니다 (없는 파일이 기존 것을 지우지 않게) */
+      if(OWN.size) P.owner=OWN;
+      if(DEP.size) P.dept=DEP;
+      try{ P.ownMan.clear(); ownRender(); }catch(x){}
 
       /* 입사일·퇴사일·시급은 분석기(주휴 비례 계산)에도 넘겨준다 */
       if(P.wage.size) $('#wTable').value=[...P.wage].map(([i2,w])=>i2+'\t'+w).join('\n');
@@ -4305,7 +4287,9 @@ $('#pFile3').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
 
       $('#pInfo3').innerHTML=`✓ 대상자 ${P.roster.size}명`
         + (P.wage.size? ` · 시급 ${P.wage.size}명` : ' · <span style="color:var(--bad)">시급 없음</span>')
-        + (P.hire.size? ` · 입사일 ${P.hire.size}명`:'') + ` · ${f.name}`;
+        + (P.hire.size? ` · 입사일 ${P.hire.size}명`:'')
+        + (OWN.size? ` · 담당자 ${OWN.size}명`:'') + (DEP.size? ` · 부서 ${DEP.size}명`:'')
+        + ` · ${f.name}`;
       $('#dropP3').classList.toggle('done', P.roster.size>0);
 
       /* 어떤 열을 무엇으로 읽었는지 눈으로 확인 */
@@ -4326,6 +4310,8 @@ $('#pFile3').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
           ${row('시급',wCol)}
           ${row('입사일',col.hire,'<span style="color:var(--warn)">없음 — 입사·퇴사 주 주휴 비례 계산을 못 합니다</span>')}
           ${row('퇴사일',col.quit,'<span class="muted">없음 (선택)</span>')}
+          ${row('담당자',col.own,'<span class="muted">없음 — 특이건 메일을 담당자별로 나누려면 이 열을 넣어주세요</span>')}
+          ${row('부서',col.dept,'<span class="muted">없음 (선택) — 담당자 열이 없을 때 부서로 담당자를 찾습니다</span>')}
         </tbody></table></div>
         ${P.wage.size? '' : `<b style="color:var(--bad)">시급을 한 건도 못 읽었습니다.</b>
           위 「시급」 줄이 <b>찾지 못함</b>이면 머리글을 <b>시급</b>으로 바꿔주세요.
@@ -4349,7 +4335,8 @@ niUI();
 $('#pQ').oninput=()=>pTable();
 $('#pFilter').onchange=()=>pTable();
 
-['mKind','mGroup','mEarly'].forEach(id=>{ const el=$('#'+id); if(el){ el.onchange=mailBuild; el.oninput=mailBuild; } });
+['mKind','mGroup','mEarly'].forEach(id=>{ const el=$('#'+id);
+  if(el){ const f=()=>{ mailBuild(); try{ ownRender(); }catch(e){} }; el.onchange=f; el.oninput=f; } });
 $('#mCopy').onclick=()=>{ const t=$('#mText'); t.select(); t.setSelectionRange(0,999999);
   try{ document.execCommand('copy'); $('#mCopy').textContent='복사됨 ✓'; setTimeout(()=>$('#mCopy').textContent='본문 복사',1500); }
   catch(e){ alert('복사에 실패했습니다. 칸을 클릭하고 Ctrl+A → Ctrl+C 해주세요.'); } };
@@ -4959,7 +4946,10 @@ function anomRefresh(){
   const SRC=anomSrc(), ROS=anomRoster();
   const box=$('#aoSrc'); if(!box) return;
   if(!SRC){
-    $('#ao2').classList.add('off'); $('#ao3').classList.add('off');
+    $('#ao2').classList.add('off');
+    const nf=$('#mNoFile'); if(nf) nf.innerHTML=`<div class="note w"><b>아직 올린 근태 파일이 없습니다.</b>
+      지금은 <b>주소록만</b> 미리 준비하실 수 있습니다 — 파일을 올리면 특이건이 여기에 담깁니다.</div>`;
+    try{ ownRender(); }catch(e){}
     box.innerHTML=`<div class="note w"><b>아직 올린 근태 파일이 없습니다.</b><br>
       왼쪽 <b>근태 검수기</b>나 <b>급여 검수기</b>에서 근태 파일을 올리면 <b>여기에 자동으로 연결</b>됩니다.
       <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
@@ -4969,7 +4959,8 @@ function anomRefresh(){
     $('#navAnom').textContent='';
     return;
   }
-  $('#ao2').classList.remove('off'); $('#ao3').classList.remove('off');
+  $('#ao2').classList.remove('off');
+  const nf=$('#mNoFile'); if(nf) nf.innerHTML='';
   const n=P.anom.filter(a=>(a.kind==='in'||a.kind==='out'||a.kind==='memo')
     && (!ROS.size || ROS.has(a.id) || anomAliasRev().has(a.id))).length;
   box.innerHTML=`<div class="note ${n?'i':'g'}">
@@ -4980,8 +4971,8 @@ function anomRefresh(){
     <br><span class="muted">다른 파일로 보려면 근태 검수기 / 급여 검수기에서 그 파일을 올린 뒤 다시 이 화면으로 오세요.</span></div>`;
   $('#navAnom').textContent = n? String(n) : '';
   const si=$('#mSendInfo'); if(si) si.innerHTML=P.sendMsg||'';
-  if(typeof msUI==='function') msUI();
   mailBuild();
+  try{ ownRender(); }catch(e){}
 }
 function mailRows(){
   const lim=Math.abs(+$('#mEarly').value||30), kind=$('#mKind').value;
@@ -5133,44 +5124,72 @@ function mailSubject(rows){
 }
 
 /* ── 주소록 ─────────────────────────────────────────────────
-   사내 메일 주소를 이 브라우저에 저장해 두고, 이름을 골라 쓰는 기능.
-   담당 사번을 넣어두면 담당자별로 나눠 만들 수 있습니다. */
+   부서 담당자를 이 브라우저에 저장해 둡니다.
+   사번은 넣지 않습니다 — <이름>과 <팀·부서>만으로 대상자 명단과 맞춥니다.
+   메일 주소는 회사 도메인으로 고정이라 앞부분만 넣으면 됩니다. */
 const ABK='aprs.addr.v1';
-function abLoad(){ try{ return JSON.parse(LS.get(ABK)||'[]'); }catch(e){ return []; } }
-function abSave(list){ P.addr=list; if(!LS.set(ABK, JSON.stringify(list))) alert('이 브라우저에 저장하지 못했습니다. 주소록을 파일로 내려받아 보관해 주세요.'); abRender(); }
+const MAILDOM='@shinsegae.com';
+const mailAddr=v=>{ const s=String(v==null?'':v).trim(); return !s? '' : (s.indexOf('@')>=0? s : s+MAILDOM); };
+const mailLocal=v=>{ const s=String(v==null?'':v).trim(); const i=s.indexOf('@'); return i<0? s : s.slice(0,i); };
+function toAddrs(v){ return String(v==null?'':v).split(/[;,]+/).map(x=>x.trim()).filter(Boolean).map(mailAddr); }
+const abFix=x=>({ name:String((x&&x.name)||'').trim(), dept:String((x&&x.dept)||'').trim(),
+  email:mailAddr(mailLocal((x&&x.email)||'')), cc:(x&&x.cc)? mailAddr(mailLocal(x.cc)) : '' });
+function abLoad(){ try{ const l=JSON.parse(LS.get(ABK)||'[]');
+  return Array.isArray(l)? l.map(abFix).filter(x=>x.name&&x.email) : []; }catch(e){ return []; } }
+function abSave(list){
+  P.addr=list;
+  if(!LS.set(ABK, JSON.stringify(list))) alert('이 브라우저에 저장하지 못했습니다. 주소록을 파일로 내려받아 보관해 주세요.');
+  abRender(); try{ ownRender(); }catch(e){}
+}
 function abRender(){
   const list=P.addr||[];
   const sel=$('#mTo');
-  if(sel) sel.innerHTML='<option value="">담당자 고르기…</option>'
-    + list.map((a,i)=>`<option value="${i}">${esc(a.name)}${a.dept?` (${esc(a.dept)})`:''} — ${esc(a.email)}</option>`).join('');
+  if(sel){
+    const keep=sel.value;
+    sel.innerHTML='<option value="">주소록에서 고르기…</option>'
+      + list.map((a,i)=>`<option value="${i}">${esc(a.name)}${a.dept?` · ${esc(a.dept)}`:''} — ${esc(a.email)}</option>`).join('');
+    if(keep!=='' && sel.querySelector(`option[value="${keep}"]`)) sel.value=keep;
+  }
   const box=$('#abList');
-  if(box) box.innerHTML = !list.length
-    ? '<div class="empty">아직 등록한 담당자가 없습니다. 아래에서 추가하세요.</div>'
-    : `<div class="tblwrap" style="max-height:300px"><table class="prev"><thead><tr>
-        <th style="width:110px">이름</th><th style="width:110px">부서</th><th>메일 주소</th>
-        <th style="width:150px">참조(선택)</th><th style="width:170px">담당 사번(선택)</th><th style="width:54px"></th>
-       </tr></thead><tbody>${list.map((a,i)=>`<tr>
-        <td><b>${esc(a.name)}</b></td><td>${esc(a.dept||'')}</td><td class="mono">${esc(a.email)}</td>
-        <td class="mono muted">${esc(a.cc||'')}</td>
-        <td class="muted">${a.ids&&a.ids.length? `${a.ids.length}명` : '<span class="muted">전체</span>'}</td>
-        <td><button class="sm" data-abdel="${i}">삭제</button></td></tr>`).join('')}</tbody></table></div>`;
-  if(box) box.querySelectorAll('[data-abdel]').forEach(b=>b.onclick=()=>{
-    const l=(P.addr||[]).slice(); l.splice(+b.dataset.abdel,1); abSave(l); });
+  if(box){
+    box.innerHTML = !list.length
+      ? '<div class="empty">아직 등록한 담당자가 없습니다. 아래에서 <b>이름 · 팀 · 메일 앞부분</b>만 넣어 추가하세요.</div>'
+      : `<div class="tblwrap" style="max-height:320px"><table class="prev"><thead><tr>
+          <th style="width:110px">이름</th><th style="width:130px">팀 · 부서</th><th>메일 주소</th>
+          <th style="width:170px">참조(선택)</th><th style="width:108px"></th>
+         </tr></thead><tbody>${list.map((a,i)=>`<tr>
+          <td><b>${esc(a.name)}</b></td><td>${esc(a.dept||'')}</td><td class="mono">${esc(a.email)}</td>
+          <td class="mono muted">${esc(a.cc||'')}</td>
+          <td><button class="sm" data-abed="${i}">수정</button> <button class="sm" data-abdel="${i}">삭제</button></td>
+         </tr>`).join('')}</tbody></table></div>`;
+    box.querySelectorAll('[data-abdel]').forEach(b=>b.onclick=()=>{
+      const l=(P.addr||[]).slice(), a=l[+b.dataset.abdel]; if(!a) return;
+      if(!confirm(`「${a.name}」 담당자를 주소록에서 지웁니다.\n계속할까요?`)) return;
+      l.splice(+b.dataset.abdel,1); abSave(l); });
+    box.querySelectorAll('[data-abed]').forEach(b=>b.onclick=()=>{
+      const a=(P.addr||[])[+b.dataset.abed]; if(!a) return;
+      $('#abName').value=a.name; $('#abDept').value=a.dept||'';
+      $('#abMail').value=mailLocal(a.email); $('#abCc').value=mailLocal(a.cc||'');
+      $('#abName').focus(); });
+  }
   const n=list.length, chip=$('#abCount');
   if(chip){ chip.textContent = n? `${n}명` : ''; chip.className='pill '+(n?'ok':''); }
 }
+const abBad=s=>/[^0-9A-Za-z._+\-]/.test(s);
 $('#abAdd').onclick=()=>{
-  const name=$('#abName').value.trim(), email=$('#abMail').value.trim();
-  const dept=$('#abDept').value.trim(), cc=$('#abCc').value.trim();
-  const ids=[...new Set($('#abIds').value.split(/[\s,;]+/).map(idKey).filter(Boolean))];
-  if(!name) return alert('이름을 넣어주세요.');
-  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return alert('메일 주소 형태가 맞지 않습니다.\n예) hong@company.co.kr');
+  const name=$('#abName').value.trim(), dept=$('#abDept').value.trim();
+  const local=mailLocal($('#abMail').value), cc=mailLocal($('#abCc').value);
+  if(!name) return alert('이름을 넣어주세요.\n대상자 명단의 「담당자」 이름과 같게 넣으시면 자동으로 배정됩니다.');
+  if(!local) return alert(`메일 주소 앞부분을 넣어주세요.\n예) hong  →  hong${MAILDOM}`);
+  if(abBad(local)) return alert('메일 주소 앞부분에 쓸 수 없는 글자가 있습니다.\n영문·숫자와 . _ - + 만 넣어주세요.');
+  if(cc && abBad(cc)) return alert('참조 주소 앞부분에 쓸 수 없는 글자가 있습니다.');
   const l=(P.addr||[]).slice();
-  const at=l.findIndex(x=>x.name===name && x.email===email);
-  const rec={name,email,dept,cc,ids};
+  const at=l.findIndex(x=>x.name===name);
+  const rec={name, dept, email:mailAddr(local), cc: cc? mailAddr(cc) : ''};
   if(at>=0) l[at]=rec; else l.push(rec);
   abSave(l);
-  ['abName','abMail','abDept','abCc','abIds'].forEach(k=>$('#'+k).value='');
+  ['abName','abMail','abDept','abCc'].forEach(k=>$('#'+k).value='');
+  $('#abName').focus();
 };
 $('#abExp').onclick=()=>{
   if(!(P.addr||[]).length) return alert('등록된 담당자가 없습니다.');
@@ -5183,302 +5202,30 @@ $('#abImp').onchange=e=>{
   fr.onload=ev=>{ try{
     const l=JSON.parse(ev.target.result);
     if(!Array.isArray(l)) throw new Error('형식이 맞지 않습니다');
-    const clean=l.filter(x=>x&&x.name&&x.email).map(x=>({name:String(x.name),email:String(x.email),
-      dept:String(x.dept||''),cc:String(x.cc||''),ids:Array.isArray(x.ids)?x.ids.map(idKey).filter(Boolean):[]}));
+    const clean=l.map(abFix).filter(x=>x.name&&x.email);
     abSave(clean); alert(`주소록 ${clean.length}명을 불러왔습니다.`);
   }catch(x){ alert('주소록 파일을 읽지 못했습니다: '+x.message); } };
   fr.readAsText(f); e.target.value='';
 };
+/* 골라도 드롭다운이 그대로 남아 있어야 "선택된 것"이 눈에 보입니다 */
 $('#mTo').onchange=()=>{
-  const i=$('#mTo').value; if(i==='') return;
+  const i=$('#mTo').value, msg=$('#mToMsg');
+  if(i===''){ if(msg) msg.innerHTML=''; return; }
   const a=(P.addr||[])[+i]; if(!a) return;
-  const add=(el,v)=>{ if(!v) return; const cur=el.value.trim();
-    const has=cur.split(/[;,]\s*/).filter(Boolean).includes(v);
-    if(!has) el.value = cur? cur.replace(/[;,\s]*$/,'')+'; '+v : v; };
-  add($('#mToBox'), a.email);
+  const add=(el,v)=>{ if(!el||!v) return false;
+    const cur=el.value.trim();
+    if(cur.split(/[;,]+/).map(x=>mailAddr(x.trim())).filter(Boolean).indexOf(v)>=0) return false;
+    el.value = cur? cur.replace(/[;,\s]*$/,'')+'; '+v : v; return true; };
+  const added=add($('#mToBox'), a.email);
   add($('#mCcBox'), a.cc);
-  $('#mTo').value='';
+  if(msg){
+    msg.innerHTML = added
+      ? `<b style="color:var(--ok)">✓ ${esc(a.name)} 님을 받는사람에 넣었습니다</b>`
+      : `<span class="muted">${esc(a.name)} 님은 이미 받는사람에 있습니다</span>`;
+    setTimeout(()=>{ if($('#mToMsg')) $('#mToMsg').innerHTML=''; }, 4000);
+  }
   mailBuild();
 };
-
-/* ── 보내기 ─────────────────────────────────────────────────
-   브라우저 안에서 도는 파일이라 직접 발송은 못 합니다.
-   ① 메일 앱으로 열기 : mailto — 받는사람·제목·본문이 채워진 새 메일이 열립니다
-   ② 메일 파일(.eml) : 두 번 눌러 열면 Outlook에 '보내기만 하면 되는' 메일이 뜹니다 (표 + 엑셀 첨부) */
-function toAddrs(v){ return v.split(/[;,]+/).map(x=>x.trim()).filter(Boolean); }
-$('#mOpen').onclick=()=>{
-  const rows=mailRows(); if(!rows.length) return alert('보낼 특이건이 없습니다.');
-  const to=toAddrs($('#mToBox').value), cc=toAddrs($('#mCcBox').value);
-  if(!to.length) return alert('받는사람을 넣어주세요. 주소록에서 담당자를 고르거나 직접 입력하면 됩니다.');
-  const body=mailText(rows);
-  const url=`mailto:${encodeURIComponent(to.join(';'))}`
-    + `?subject=${encodeURIComponent(mailSubject(rows))}`
-    + (cc.length? `&cc=${encodeURIComponent(cc.join(';'))}` : '')
-    + `&body=${encodeURIComponent(body)}`;
-  if(url.length>1800){
-    if(!confirm('내용이 길어 메일 앱이 본문을 잘라낼 수 있습니다.\n\n「메일 파일(.eml)」로 만들면 표와 엑셀 첨부까지 그대로 들어갑니다. 그래도 메일 앱을 열까요?')) return;
-  }
-  location.href=url;
-};
-/* RFC 2047 — 한글 제목·파일명 */
-function mimeWord(s){
-  const b=btoa(String.fromCharCode(...new TextEncoder().encode(s)));
-  return `=?UTF-8?B?${b}?=`;
-}
-function b64lines(b64){ return (b64.match(/.{1,76}/g)||[]).join('\r\n'); }
-function b64utf8(s){ return btoa(String.fromCharCode(...new TextEncoder().encode(s))); }
-function buildEml(to,cc,subject,html,attName,attB64){
-  const B='----=_APRS_'+Date.now().toString(36);
-  const L=[];
-  L.push('To: '+to.join(', '));
-  if(cc.length) L.push('Cc: '+cc.join(', '));
-  L.push('Subject: '+mimeWord(subject));
-  L.push('Date: '+new Date().toUTCString().replace('GMT','+0000'));
-  L.push('MIME-Version: 1.0');
-  L.push('X-Unsent: 1');                      /* Outlook이 '보내기 전 메일'로 엽니다 */
-  L.push(`Content-Type: multipart/mixed; boundary="${B}"`);
-  L.push('','--'+B);
-  L.push('Content-Type: text/html; charset=UTF-8');
-  L.push('Content-Transfer-Encoding: base64','');
-  L.push(b64lines(b64utf8(html)));
-  if(attB64){
-    L.push('--'+B);
-    L.push(`Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; name="${mimeWord(attName)}"`);
-    L.push('Content-Transfer-Encoding: base64');
-    L.push(`Content-Disposition: attachment; filename="${mimeWord(attName)}"`,'');
-    L.push(b64lines(attB64));
-  }
-  L.push('--'+B+'--','');
-  return L.join('\r\n');
-}
-function emlDown(rows, who, to, cc, fname, attName){
-  const html=mailHtml(rows, who);
-  const att=$('#mAtt').checked ? mailXlsxB64(rows) : null;
-  const eml=buildEml(to, cc, mailSubject(rows), html, attName||mailFileName('xlsx'), att);
-  dlBlob(eml, fname, 'message/rfc822', true);
-}
-$('#mEml').onclick=()=>{
-  const rows=mailRows(); if(!rows.length) return alert('보낼 특이건이 없습니다.');
-  const to=toAddrs($('#mToBox').value), cc=toAddrs($('#mCcBox').value);
-  if(!to.length) return alert('받는사람을 넣어주세요. 주소록에서 담당자를 고르거나 직접 입력하면 됩니다.');
-  emlDown(rows, '', to, cc, mailFileName('eml'));
-};
-/* ── 브라우저에서 바로 보내기 (Microsoft 365 / Outlook) ───────
-   회사가 Microsoft 365를 쓰면, 브라우저가 회사 메일 서버로 직접 보낼 수 있습니다.
-   방식은 Microsoft Graph + OAuth 2.0 (PKCE) — 회사 로그인 창으로 본인이 로그인하고,
-   그 권한으로 본인 계정에서 보냅니다.
-     · 이 파일에 비밀번호나 API 키를 넣지 않습니다 (PKCE라 비밀키가 필요 없음)
-     · 메일은 회사 메일 서버로만 갑니다 — 외부 업체를 거치지 않습니다
-     · 보낸 메일은 Outlook [보낸 항목]에 남습니다
-   대신 회사 IT가 <앱 등록>을 한 번 해줘야 합니다 (아래 「IT에 보낼 요청서」). */
-const MSK='aprs.ms.v1';
-const msCfg=()=>{ try{ return JSON.parse(LS.get(MSK)||'{}'); }catch(e){ return {}; } };
-const msSave=o=>LS.set(MSK, JSON.stringify(o));
-const msTok=()=>{ try{ const t=JSON.parse(SS.get('aprs.ms.tok')||'null');
-  return (t && t.exp>Date.now()+30000)? t : null; }catch(e){ return null; } };
-const msRedirect=()=>location.origin+location.pathname;
-
-function b64url(buf){
-  return btoa(String.fromCharCode(...new Uint8Array(buf)))
-    .replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
-}
-async function pkce(){
-  const v=b64url(crypto.getRandomValues(new Uint8Array(48)));
-  const h=await crypto.subtle.digest('SHA-256', new TextEncoder().encode(v));
-  return {verifier:v, challenge:b64url(h)};
-}
-function jwtName(idToken){
-  try{ const p=idToken.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');
-    const o=JSON.parse(decodeURIComponent(escape(atob(p))));
-    return o.preferred_username || o.email || o.name || '';
-  }catch(e){ return ''; }
-}
-/* 로그인 — 팝업으로 해서 올려둔 파일·결과가 그대로 남습니다 */
-async function msLogin(){
-  const c=msCfg();
-  if(!c.client) { alert('먼저 「애플리케이션(클라이언트) ID」를 넣어주세요.\nIT에서 앱 등록 후 알려줍니다.'); return; }
-  if(!window.crypto || !crypto.subtle){
-    alert('이 브라우저에서는 안전한 로그인을 쓸 수 없습니다.\n\nhttps 주소(GitHub Pages 등)로 열어야 합니다 — 파일을 직접 열면(file://) 동작하지 않습니다.');
-    return;
-  }
-  const {verifier, challenge}=await pkce();
-  const state=b64url(crypto.getRandomValues(new Uint8Array(16)));
-  SS.set('aprs.ms.v', verifier); SS.set('aprs.ms.s', state);
-  const url=`https://login.microsoftonline.com/${encodeURIComponent(c.tenant||'organizations')}/oauth2/v2.0/authorize`
-    + `?client_id=${encodeURIComponent(c.client)}`
-    + `&response_type=code&response_mode=query`
-    + `&redirect_uri=${encodeURIComponent(msRedirect())}`
-    + `&scope=${encodeURIComponent('openid profile https://graph.microsoft.com/Mail.Send')}`
-    + `&code_challenge=${challenge}&code_challenge_method=S256&state=${state}&prompt=select_account`;
-  const w=window.open(url,'aprsMsLogin','width=520,height=680');
-  if(!w){ alert('팝업이 막혀 있습니다. 주소창 오른쪽의 팝업 차단을 풀어주세요.'); return; }
-  msStatus('회사 로그인 창에서 로그인해 주세요…');
-  const onMsg=async ev=>{
-    if(ev.origin!==location.origin || !ev.data || ev.data.t!=='aprs-ms') return;
-    window.removeEventListener('message', onMsg);
-    try{ w.close(); }catch(e){}
-    if(ev.data.err){ msStatus('로그인 실패 — '+ev.data.err, 'b'); return; }
-    if(ev.data.state!==SS.get('aprs.ms.s')){ msStatus('로그인 응답이 맞지 않습니다. 다시 시도해 주세요.', 'b'); return; }
-    await msToken(ev.data.code);
-  };
-  window.addEventListener('message', onMsg);
-}
-/* 받은 code 를 토큰으로 바꾼다 (비밀키 없이 — PKCE) */
-async function msToken(code){
-  const c=msCfg();
-  msStatus('토큰을 받는 중…');
-  try{
-    const body=new URLSearchParams({
-      client_id:c.client, grant_type:'authorization_code', code,
-      redirect_uri:msRedirect(), code_verifier:SS.get('aprs.ms.v')||'',
-      scope:'openid profile https://graph.microsoft.com/Mail.Send'});
-    const res=await fetch(`https://login.microsoftonline.com/${encodeURIComponent(c.tenant||'organizations')}/oauth2/v2.0/token`,
-      {method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body});
-    const j=await res.json();
-    if(!res.ok) throw new Error((j.error_description||j.error||'토큰 실패').split('\n')[0]);
-    SS.set('aprs.ms.tok', JSON.stringify({
-      at:j.access_token, exp:Date.now()+(j.expires_in||3600)*1000, who:jwtName(j.id_token||'')}));
-    msUI(); msStatus('');
-  }catch(e){ msStatus('토큰을 받지 못했습니다 — '+e.message, 'b'); }
-}
-/* Graph 로 실제 발송 */
-async function msSendOne(to, cc, subject, html, attName, attB64){
-  const t=msTok(); if(!t) throw new Error('로그인이 필요합니다');
-  const msg={ message:{ subject,
-      body:{contentType:'HTML', content:html},
-      toRecipients:to.map(a=>({emailAddress:{address:a}})),
-      ccRecipients:(cc||[]).map(a=>({emailAddress:{address:a}})) },
-    saveToSentItems:true };
-  if(attName && attB64) msg.message.attachments=[{
-    '@odata.type':'#microsoft.graph.fileAttachment', name:attName,
-    contentType:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    contentBytes:attB64}];
-  const res=await fetch('https://graph.microsoft.com/v1.0/me/sendMail',
-    {method:'POST', headers:{'Authorization':'Bearer '+t.at,'Content-Type':'application/json'},
-     body:JSON.stringify(msg)});
-  if(!res.ok){
-    let d=''; try{ const j=await res.json(); d=(j.error&&(j.error.message||j.error.code))||''; }catch(e){}
-    throw new Error(`${res.status} ${d}`.trim());
-  }
-}
-function msStatus(txt, kind){
-  const el=$('#msStat'); if(!el) return;
-  el.innerHTML = txt? `<div class="note ${kind||'i'}" style="margin:8px 0 0">${txt}</div>` : '';
-}
-function msUI(){
-  const c=msCfg(), t=msTok();
-  const ci=$('#msClient'), ti=$('#msTenant');
-  if(ci && !ci.value) ci.value=c.client||'';
-  if(ti && !ti.value) ti.value=c.tenant||'';
-  const r=$('#msRedir'); if(r) r.textContent=msRedirect();
-  const r2=$('#msRedir2'), alt=location.origin+location.pathname.replace(/index\.html$/,'');
-  if(r2) r2.innerHTML = (alt!==msRedirect())? ` 와 <b class="mono">${alt}</b> 둘 다` : '';
-  const w=$('#msWho');
-  if(w) w.innerHTML = t? `<b style="color:var(--ok)">${esc(t.who||'로그인됨')}</b> 으로 로그인되어 있습니다`
-                       : '<span class="muted">아직 로그인하지 않았습니다</span>';
-  ['msNow','msNowSplit'].forEach(id=>{ const b=$('#'+id); if(b) b.disabled=!t; });
-  const lo=$('#msOut'); if(lo) lo.hidden=!t;
-  const li=$('#msIn'); if(li) li.hidden=!!t;
-}
-/* 팝업이 막혀 이 창이 직접 돌아온 경우 — 주소를 정리하고 토큰만 받아둔다 */
-(function msSelfReturn(){
-  if(__APRS_POPUP) return;
-  const q=new URLSearchParams(location.search);
-  const code=q.get('code');
-  if(!code) return;
-  try{ history.replaceState(null,'',location.pathname); }catch(e){}
-  if(q.get('state')===SS.get('aprs.ms.s')) setTimeout(()=>msToken(code), 300);
-})();
-$('#msSaveCfg').onclick=()=>{
-  const client=$('#msClient').value.trim(), tenant=$('#msTenant').value.trim();
-  if(!/^[0-9a-f-]{30,40}$/i.test(client)) return alert('애플리케이션(클라이언트) ID 형태가 아닙니다.\n예) 11111111-2222-3333-4444-555555555555');
-  msSave({client, tenant}); msUI();
-  msStatus('저장했습니다. 「회사 계정으로 로그인」을 눌러주세요.', 'g');
-};
-$('#msLoginBtn').onclick=()=>msLogin();
-$('#msLogout').onclick=()=>{ SS.del('aprs.ms.tok'); msUI(); msStatus('로그아웃했습니다.'); };
-$('#msAsk').onclick=()=>{
-  const t=`■ 요청 : 사내 근태 검수 도구에서 메일을 보낼 수 있도록 Azure AD 앱 등록\n\n`
-   +`용도\n`
-   +`  인사팀에서 쓰는 근태 확인 도구에서, 근태 특이건 확인 요청 메일을\n`
-   +`  담당자에게 보내려고 합니다. 보내는 계정은 사용하는 직원 본인 계정입니다.\n\n`
-   +`요청 내용 (Azure Portal > Microsoft Entra ID > 앱 등록)\n`
-   +`  1. 새 등록 — 이름 : APRS 근태 검수 도구\n`
-   +`  2. 플랫폼 : 단일 페이지 애플리케이션(SPA)\n`
-   +`     리디렉션 URI (아래 둘 다 넣어주세요)\n`
-   +`       ${msRedirect()}\n`
-   +`       ${location.origin+location.pathname.replace(/index\.html$/,'')}\n`
-   +`  3. API 권한 : Microsoft Graph > 위임된 권한 > Mail.Send\n`
-   +`     (앱 권한이 아니라 위임된 권한입니다 — 본인 계정으로만 보냅니다)\n`
-   +`  4. 관리자 동의 부여\n`
-   +`  5. 알려주실 값 : 애플리케이션(클라이언트) ID, 디렉터리(테넌트) ID\n\n`
-   +`참고\n`
-   +`  · 클라이언트 비밀키는 필요 없습니다 (PKCE 방식)\n`
-   +`  · 메일은 회사 메일 서버로만 가고 외부 업체를 거치지 않습니다\n`
-   +`  · 보낸 메일은 본인 Outlook [보낸 항목]에 남습니다\n`;
-  const ta=document.createElement('textarea'); ta.value=t;
-  ta.style.cssText='position:fixed;left:-9999px'; document.body.appendChild(ta); ta.select();
-  try{ document.execCommand('copy'); $('#msAsk').textContent='복사됨 ✓'; setTimeout(()=>$('#msAsk').textContent='IT에 보낼 요청서 복사',1800); }
-  catch(e){ alert(t); }
-  ta.remove();
-};
-/* 지금 화면 내용을 한 통 보내기 */
-$('#msNow').onclick=async()=>{
-  const rows=mailRows(); if(!rows.length) return alert('보낼 특이건이 없습니다.');
-  const to=toAddrs($('#mToBox').value), cc=toAddrs($('#mCcBox').value);
-  if(!to.length) return alert('받는사람을 넣어주세요.');
-  if(!confirm(`${to.join(', ')} 에게 지금 보냅니다.\n\n보내는 계정 : ${(msTok()||{}).who||''}\n계속할까요?`)) return;
-  $('#msNow').disabled=true; msStatus('보내는 중…');
-  try{
-    const att=$('#mAtt').checked? mailFileName('xlsx') : '';
-    await msSendOne(to, cc, mailSubject(rows), mailHtml(rows), att, att? mailXlsxB64(rows):'');
-    msStatus(`<b>보냈습니다</b> — ${esc(to.join(', '))}${cc.length?` (참조 ${esc(cc.join(', '))})`:''}. Outlook <b>보낸 항목</b>에서 확인하세요.`,'g');
-  }catch(e){ msStatus(msErr(e),'b'); }
-  $('#msNow').disabled=false; msUI();
-};
-/* 담당자별로 한 번에 보내기 */
-$('#msNowSplit').onclick=async()=>{
-  const rows=mailRows(); if(!rows.length) return alert('보낼 특이건이 없습니다.');
-  const list=(P.addr||[]).filter(a=>a.ids&&a.ids.length);
-  if(!list.length) return alert('담당 사번이 등록된 담당자가 없습니다.\n\n「주소록 관리」에서 담당자마다 담당 사번을 넣어주세요.');
-  const AR=anomAliasRev();
-  const jobs=[], lines=[], used=new Set();
-  list.forEach(a=>{
-    const set=new Set(a.ids);
-    const mine=rows.filter(r=>set.has(r.id)||set.has(AR.get(r.id)));
-    if(!mine.length){ lines.push(`${a.name} — 해당 없음`); return; }
-    mine.forEach(r=>used.add(r.id));
-    jobs.push({a, mine}); lines.push(`${a.name} — ${new Set(mine.map(r=>r.id)).size}명 ${mine.length}건`);
-  });
-  if(!jobs.length) return alert('보낼 대상이 없습니다.');
-  if(!confirm(`담당자 ${jobs.length}명에게 지금 보냅니다.\n\n${lines.join('\n')}\n\n보내는 계정 : ${(msTok()||{}).who||''}\n계속할까요?`)) return;
-  $('#msNowSplit').disabled=true;
-  const ok=[], bad=[];
-  for(let i=0;i<jobs.length;i++){
-    const {a,mine}=jobs[i];
-    msStatus(`보내는 중… ${i+1}/${jobs.length} — ${esc(a.name)}`);
-    try{
-      const att=$('#mAtt').checked? `근태특이건_${(a.name||'').replace(/[\\/:*?"<>|]/g,'')}.xlsx` : '';
-      await msSendOne(toAddrs(a.email), toAddrs(a.cc||''), mailSubject(mine),
-        mailHtml(mine, a.name), att, att? mailXlsxB64(mine):'');
-      ok.push(a.name);
-    }catch(e){ bad.push(`${a.name} (${msErr(e,1)})`); }
-  }
-  const left=[...new Set(rows.map(r=>r.id))].filter(id=>!used.has(id));
-  msStatus(`<b>보냄 ${ok.length}명</b>${ok.length?` — ${esc(ok.join(' · '))}`:''}`
-    + (bad.length? `<br><b style="color:var(--bad)">실패 ${bad.length}명</b> — ${esc(bad.join(' · '))}`:'')
-    + (left.length? `<br><b style="color:var(--warn)">담당자가 정해지지 않은 인원 ${left.length}명</b>은 보내지 않았습니다 — ${left.slice(0,10).map(id=>`${id} ${esc(anomName(id))}`).join(' · ')}${left.length>10?' 외':''}`:'')
-    + `<br><span class="muted">Outlook <b>보낸 항목</b>에서 확인하세요.</span>`,
-    bad.length? 'w':'g');
-  $('#msNowSplit').disabled=false; msUI();
-};
-function msErr(e,short){
-  const m=String(e&&e.message||e);
-  if(/401/.test(m)) return '로그인이 만료되었습니다. 다시 로그인해 주세요.';
-  if(/403/.test(m)) return short?'권한 없음':'권한이 없습니다 — IT에 <b>Mail.Send</b> 위임된 권한과 <b>관리자 동의</b>가 부여됐는지 확인해 주세요.';
-  if(/Failed to fetch|NetworkError/i.test(m)) return short?'연결 실패':'회사 서버에 연결하지 못했습니다. 사내망·프록시나 앱 등록의 <b>리디렉션 URI</b>가 이 주소와 같은지 확인해 주세요.';
-  return (short?'':'보내지 못했습니다 — ')+esc(m);
-}
 
 /* ── Outlook으로 실제 발송 ─────────────────────────────────────
    브라우저는 메일을 직접 보낼 수 없습니다(메일 서버가 없음).
@@ -5486,7 +5233,7 @@ function msErr(e,short){
      · 보내는 계정 = 지금 Outlook에 로그인된 본인 계정
      · 외부 서비스로 나가는 데이터 없음 · 비밀번호를 넣는 곳도 없음
      · 파일을 두 번 누르면 "N통을 보냅니다" 확인창이 한 번 뜨고 발송
-   회사 정책으로 스크립트가 막혀 있으면 .eml 방식을 쓰시면 됩니다. */
+   회사 정책으로 스크립트가 막혀 있으면 2번 칸의 본문을 복사해 붙여넣어 보내시면 됩니다. */
 function vbsQ(str){
   /* VBScript 문자열로 안전하게 — 따옴표는 두 개로, 줄바꿈은 코드로 */
   return String(str==null?'':str).replace(/"/g,'""').replace(/\r?\n/g,'" & vbCrLf & "');
@@ -5530,7 +5277,7 @@ function buildVbs(mails, attName, sendNow){
   L.push(`  MsgBox "Outlook을 열지 못했습니다." & vbCrLf & vbCrLf & _`);
   L.push(`    "· Outlook 데스크톱 앱이 설치되어 실행 중인지 확인하세요." & vbCrLf & _`);
   L.push(`    "· 회사 정책으로 스크립트 실행이 막혀 있을 수도 있습니다." & vbCrLf & vbCrLf & _`);
-  L.push(`    "그럴 때는 같이 내려받은 .eml 파일을 두 번 눌러 보내세요.", 48, "APRS"`);
+  L.push(`    "그럴 때는 도구의 2번 칸 본문을 복사해 메일에 붙여넣어 보내세요.", 48, "APRS"`);
   L.push(`  WScript.Quit`);
   L.push(`End If`);
   L.push(`On Error GoTo 0`);
@@ -5606,102 +5353,158 @@ function xlsxDown(rows, name){
     '차이(분)':a.diff!=null?Math.abs(a.diff):'', '원본 행':a.excelRow}))), '특이건');
   XLSX.writeFile(wb, name);
 }
+/* ── 담당자 배정 ──────────────────────────────────────────────
+   누구에게 보낼지를 사람마다 정합니다. 정해지는 순서는
+     ① 화면 표에서 직접 고른 담당자
+     ② 대상자 명단의 「담당자」 열에 적힌 이름
+     ③ 대상자 명단의 「부서」 열과 주소록의 「팀·부서」가 같은 담당자
+   사번은 쓰지 않습니다 — 이름과 팀만으로 맞춥니다. */
+const ownBook=()=>P.addr||[];
+const ownByName=n=>{ const k=String(n==null?'':n).trim(); return k? (ownBook().find(a=>a.name===k)||null) : null; };
+const ownByDept=d=>{ const k=String(d==null?'':d).trim(); return k? (ownBook().find(a=>(a.dept||'')===k)||null) : null; };
+const ownAlt=id=>{ try{ return anomAliasRev().get(id)||''; }catch(e){ return ''; } };
+function ownNamed(id){ const a=ownAlt(id);
+  return (P.owner&&(P.owner.get(id)||(a&&P.owner.get(a))))||''; }
+function ownDeptOf(id){ const a=ownAlt(id);
+  return (P.dept&&(P.dept.get(id)||(a&&P.dept.get(a))))||''; }
+function ownAuto(id){
+  const w=ownNamed(id); if(w) return w;
+  const h=ownByDept(ownDeptOf(id)); return h? h.name : '';
+}
+const ownOf=id=>P.ownMan.has(id)? P.ownMan.get(id) : ownAuto(id);
+function ownGroups(){
+  const by=new Map();
+  mailRows().forEach(r=>{ const w=ownOf(r.id)||''; if(!by.has(w)) by.set(w,[]); by.get(w).push(r); });
+  return by;
+}
+function ownRender(){
+  const tb=$('#ownTbl'), wbox=$('#ownWarn'); if(!tb||!wbox) return;
+  const book=ownBook(), rows=mailRows();
+  const ids=[...new Set(rows.map(r=>r.id))].sort();
+  const cnt=new Map(); rows.forEach(r=>cnt.set(r.id,(cnt.get(r.id)||0)+1));
+  const hasDept=!!(P.dept&&P.dept.size);
+
+  const bulk=$('#ownBulk');
+  if(bulk){ bulk.innerHTML='<option value="">담당자가 빈 인원을 한 번에 지정…</option>'
+    + book.map(a=>`<option value="${esc(a.name)}">비어 있는 인원 전부 → ${esc(a.name)}${a.dept?` (${esc(a.dept)})`:''}</option>`).join('');
+    bulk.value=''; }
+
+  const known=new Set(book.map(a=>a.name)), orphan=new Set();
+  ids.forEach(id=>{ const w=ownOf(id); if(w && !known.has(w)) orphan.add(w); });
+  const opts=cur=>['<option value="">— 미지정 —</option>']
+    .concat(book.map(a=>`<option value="${esc(a.name)}"${a.name===cur?' selected':''}>${esc(a.name)}${a.dept?` · ${esc(a.dept)}`:''}</option>`))
+    .concat([...orphan].map(w=>`<option value="${esc(w)}"${w===cur?' selected':''}>${esc(w)} (주소록에 없음)</option>`)).join('');
+
+  if(!ids.length){
+    tb.innerHTML='<div class="empty">보낼 특이건이 없습니다.</div>';
+    wbox.innerHTML = book.length? '' :
+      `<div class="note w"><b>주소록에 등록된 담당자가 없습니다.</b> 위 「주소록 관리」에서 <b>이름 · 팀 · 메일 앞부분</b>만 넣어 등록해 두세요.</div>`;
+    const i0=$('#ownInfo'); if(i0) i0.innerHTML=P.ownMsg||'';
+    return;
+  }
+  const done=ids.filter(id=>ownOf(id)).length, none=ids.length-done;
+  const nWho=[...ownGroups().keys()].filter(Boolean).length;
+
+  tb.innerHTML=`<div class="tblwrap" style="max-height:460px"><table class="prev"><thead><tr>
+      <th style="width:88px">사번</th><th style="width:92px">성명</th>
+      ${hasDept?'<th style="width:130px">부서</th>':''}
+      <th style="width:64px">특이건</th><th style="width:240px">담당자</th><th style="width:104px">어떻게 정해졌나</th>
+    </tr></thead><tbody>${ids.map(id=>{
+      const cur=ownOf(id), man=P.ownMan.has(id);
+      const how = man? '<span class="tag">직접 지정</span>'
+        : (cur? (ownNamed(id)? '<span class="tag g">명단 담당자</span>' : '<span class="tag g">명단 부서</span>')
+              : '<span class="tag y">미지정</span>');
+      return `<tr${cur?'':' class="noown"'}>
+        <td class="mono">${esc(id)}</td><td><b>${esc(anomName(id))}</b></td>
+        ${hasDept?`<td class="muted">${esc(ownDeptOf(id))}</td>`:''}
+        <td style="text-align:center">${cnt.get(id)||0}</td>
+        <td><select data-own="${esc(id)}" style="width:100%;min-width:0;padding:5px 8px;font-size:12.5px">${opts(cur)}</select></td>
+        <td style="text-align:center">${how}</td></tr>`;
+    }).join('')}</tbody></table></div>`;
+  tb.querySelectorAll('[data-own]').forEach(s=>s.onchange=()=>{
+    const id=s.dataset.own, v=s.value;
+    if(v===ownAuto(id)) P.ownMan.delete(id); else P.ownMan.set(id,v);
+    P.ownMsg=''; ownRender();
+  });
+
+  const miss=ids.filter(id=>!ownOf(id)), bad=[...orphan];
+  let h=`<div class="note ${none?'w':'g'}"><b>담당자 ${nWho}명 · 배정 ${done}명 · 미지정 ${none}명</b>
+      <span class="muted">(대상 ${ids.length}명 · ${rows.length}건)</span>`;
+  if(!book.length)
+    h+=`<br><b style="color:var(--warn)">주소록에 등록된 담당자가 없습니다.</b> 위 「주소록 관리」에서 <b>이름 · 팀 · 메일 앞부분</b>만 넣어 등록하세요.`;
+  else if(none)
+    h+=`<br>담당자가 비어 있는 인원 — ${miss.slice(0,12).map(id=>`${esc(id)} ${esc(anomName(id))}`).join(' · ')}${miss.length>12?` 외 ${miss.length-12}명`:''}
+        <br><span class="muted">대상자 명단에 <b>담당자</b>(또는 <b>부서</b>) 열을 넣어 올리면 자동으로 채워집니다. 아래 표에서 직접 고르셔도 됩니다.</span>`;
+  h+='</div>';
+  if(bad.length)
+    h+=`<div class="note b" style="margin-top:8px"><b>주소록에 없는 담당자 — ${bad.map(esc).join(' · ')}</b><br>
+        보낼 주소가 없어 이 담당자에게는 메일이 나가지 않습니다. 아래 버튼으로 주소록에 넣어주세요.
+        <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">${
+          bad.map(x=>`<button class="sm pri" data-abnew="${esc(x)}">${esc(x)} 주소록에 넣기</button>`).join('')}</div></div>`;
+  wbox.innerHTML=h;
+  wbox.querySelectorAll('[data-abnew]').forEach(b=>b.onclick=()=>{
+    $('#abName').value=b.dataset.abnew; $('#abDept').value=''; $('#abMail').value=''; $('#abCc').value='';
+    $('#dgAddr').showModal(); setTimeout(()=>$('#abMail').focus(),120);
+  });
+  const i1=$('#ownInfo'); if(i1) i1.innerHTML=P.ownMsg||'';
+}
+$('#ownBulk').onchange=()=>{
+  const v=$('#ownBulk').value; if(!v) return;
+  const ids=[...new Set(mailRows().map(r=>r.id))];
+  let n=0; ids.forEach(id=>{ if(!ownOf(id)){ P.ownMan.set(id,v); n++; } });
+  P.ownMsg = n? `<div class="note g">담당자가 비어 있던 <b>${n}명</b>을 <b>${esc(v)}</b> 님으로 지정했습니다.</div>`
+              : `<div class="note i">담당자가 비어 있는 인원이 없습니다.</div>`;
+  ownRender();
+};
+$('#ownReset').onclick=()=>{
+  if(!P.ownMan.size) return alert('화면에서 직접 바꾼 담당자가 없습니다.');
+  if(!confirm(`직접 바꾼 담당자 ${P.ownMan.size}명을 되돌립니다.\n대상자 명단으로 자동 배정된 것만 남습니다.\n\n계속할까요?`)) return;
+  P.ownMan.clear(); P.ownMsg=''; ownRender();
+};
+/* 담당자별로 — 한 파일에 여러 통 */
+$('#ownSend').onclick=()=>{
+  const rows=mailRows(); if(!rows.length) return alert('보낼 특이건이 없습니다.');
+  if(!ownBook().length) return alert('주소록에 등록된 담당자가 없습니다.\n\n위 「주소록 관리」에서 이름 · 팀 · 메일 앞부분을 넣어 등록해 주세요.');
+  const mails=[], lines=[], nobook=[], miss=[];
+  [...ownGroups().entries()].sort((a,b)=> a[0]<b[0]?-1:1).forEach(([who,list])=>{
+    const n=new Set(list.map(r=>r.id)).size;
+    if(!who){ miss.push(...new Set(list.map(r=>r.id))); return; }
+    const a=ownByName(who);
+    if(!a){ nobook.push(`${who} ${n}명`); return; }
+    mails.push({to:toAddrs(a.email), cc:toAddrs(a.cc||''), subject:mailSubject(list),
+                html:mailHtml(list, a.name), who:a.name});
+    lines.push(`${a.name} — ${n}명 ${list.length}건 → ${a.email}`);
+  });
+  if(!mails.length) return alert('보낼 담당자가 없습니다.\n\n아래 표에서 사람마다 담당자를 고르시거나,\n대상자 명단에 「담당자」 열을 넣어 올려주세요.');
+  const now=$('#mNow').checked;
+  if(!confirm(`Outlook으로 담당자 ${mails.length}명에게 ${now?'바로 보내는':'메일 창을 띄우는'} 스크립트를 만듭니다.\n\n${lines.join('\n')}\n\n계속할까요?`)) return;
+  const fn=`근태특이건_담당자별_${String(P.anomName||P.name||'근태').replace(/[\\/:*?"<>|]/g,'')}.vbs`;
+  dlVbs(buildVbs(mails, '', now), fn);
+  P.ownMsg=`<div class="note ${(miss.length||nobook.length)?'w':'g'}">
+    <b>담당자 ${mails.length}명에게 보내는 스크립트를 만들었습니다</b> — <b>${esc(fn)}</b><br>
+    ${lines.map(esc).join('<br>')}<br>
+    내려받은 <b>.vbs 파일을 두 번 누르면</b> 확인창이 한 번 뜨고 ${now?'<b>전부 발송</b>됩니다':'메일 창이 하나씩 뜹니다'}.
+    ${nobook.length? `<br><b style="color:var(--bad)">주소록에 없어 빠진 담당자</b> — ${nobook.map(esc).join(' · ')}`:''}
+    ${miss.length? `<br><b style="color:var(--warn)">담당자가 비어 있어 빠진 인원 ${miss.length}명</b> — ${
+      miss.slice(0,10).map(id=>`${esc(id)} ${esc(anomName(id))}`).join(' · ')}${miss.length>10?' 외':''}`:''}
+  </div>`;
+  ownRender();
+};
 /* 한 통 — 지금 화면의 받는사람으로 */
 $('#mSend').onclick=()=>{
   const rows=mailRows(); if(!rows.length) return alert('보낼 특이건이 없습니다.');
   const to=toAddrs($('#mToBox').value), cc=toAddrs($('#mCcBox').value);
-  if(!to.length) return alert('받는사람을 넣어주세요.');
+  if(!to.length) return alert('받는사람을 넣어주세요.\n주소록에서 고르시거나, 메일 앞부분만 직접 넣으셔도 됩니다.');
   const now=$('#mNow').checked;
-  if(now && !confirm(`Outlook으로 ${to.join(', ')} 에게 바로 보내는 스크립트를 만듭니다.\n\n내려받은 파일을 두 번 누르면 확인창이 한 번 뜨고 발송됩니다.\n계속할까요?`)) return;
-  const att=$('#mAtt').checked ? mailFileName('xlsx') : '';
-  const vbs=buildVbs([{to,cc,subject:mailSubject(rows),html:mailHtml(rows),who:''}], att, now);
-  dlVbs(vbs, mailFileName('vbs'));
-  if(att) setTimeout(()=>xlsxDown(rows, att), 600);
-  P.sendMsg=`<div class="note g"><b>Outlook 발송 스크립트를 만들었습니다</b> — <b>${mailFileName('vbs')}</b>${att?` · 첨부용 <b>${att}</b>`:''}<br>
-    두 파일을 <b>같은 폴더</b>(보통 다운로드 폴더)에 두고 <b>.vbs 파일을 두 번 누르세요.</b>
-    「메일 ${1}통을 보냅니다」 확인창이 뜨고 ${now?'<b>바로 발송</b>':'<b>메일 창이 뜹니다</b>'}.</div>`;
-  anomRefresh();
-};
-/* 담당자별로 나눠 — 한 파일로 여러 통 */
-$('#mSendSplit').onclick=()=>{
-  const rows=mailRows(); if(!rows.length) return alert('보낼 특이건이 없습니다.');
-  const list=(P.addr||[]).filter(a=>a.ids&&a.ids.length);
-  if(!list.length) return alert('담당 사번이 등록된 담당자가 없습니다.\n\n「주소록 관리」에서 담당자마다 담당 사번을 넣어주세요.');
-  const AR=anomAliasRev();
-  const mails=[], used=new Set(), lines=[];
-  list.forEach(a=>{
-    const set=new Set(a.ids);
-    const mine=rows.filter(r=>set.has(r.id) || set.has(AR.get(r.id)));
-    if(!mine.length){ lines.push(`${a.name} — 해당 없음`); return; }
-    mine.forEach(r=>used.add(r.id));
-    mails.push({to:toAddrs(a.email), cc:toAddrs(a.cc||''), subject:mailSubject(mine),
-                html:mailHtml(mine,a.name), who:a.name});
-    lines.push(`${a.name} — ${new Set(mine.map(r=>r.id)).size}명 ${mine.length}건`);
-  });
-  if(!mails.length) return alert('보낼 대상이 없습니다.');
-  const now=$('#mNow').checked;
-  if(now && !confirm(`Outlook으로 ${mails.length}명에게 바로 보내는 스크립트를 만듭니다.\n\n${lines.join('\n')}\n\n계속할까요?`)) return;
-  const vbs=buildVbs(mails, '', now);            /* 나눠 보낼 때는 첨부 생략(사람마다 다름) */
-  dlVbs(vbs, `근태특이건_담당자별_${(P.anomName||'').replace(/[\\/:*?"<>|]/g,'')}.vbs`);
-  const left=[...new Set(rows.map(r=>r.id))].filter(id=>!used.has(id));
-  P.sendMsg=`<div class="note ${left.length?'w':'g'}"><b>담당자 ${mails.length}명에게 보내는 스크립트를 만들었습니다</b><br>
-    ${lines.map(x=>esc(x)).join(' · ')}<br>
-    내려받은 <b>.vbs 파일을 두 번 누르면</b> 확인창이 한 번 뜨고 ${now?'<b>전부 발송</b>됩니다':'메일 창이 하나씩 뜹니다'}.
-    ${left.length? `<br><b style="color:var(--warn)">담당자가 정해지지 않은 인원 ${left.length}명</b> — ${left.slice(0,12).map(id=>`${id} ${esc(anomName(id))}`).join(' · ')}${left.length>12?' 외':''}<br>
-      <span class="muted">주소록에 사번을 추가하거나, 위에서 받는사람을 직접 넣어 따로 보내세요.</span>`:''}
-  </div>`;
-  anomRefresh();
-};
-
-/* 담당자별로 나눠 만들기 — 담당 사번이 등록된 담당자에게 그 인원만 */
-$('#mSplit').onclick=()=>{
-  const rows=mailRows(); if(!rows.length) return alert('보낼 특이건이 없습니다.');
-  const list=(P.addr||[]).filter(a=>a.ids&&a.ids.length);
-  if(!list.length) return alert('담당 사번이 등록된 담당자가 없습니다.\n\n「주소록 관리」에서 담당자마다 담당 사번을 넣어주세요.\n엑셀에서 사번 열을 복사해 붙여넣으면 됩니다.');
-  const used=new Set(); let made=0, lines=[];
-  list.forEach((a,k)=>{
-    const set=new Set(a.ids);
-    const mine=rows.filter(r=>set.has(r.id) || set.has(anomAliasRev().get(r.id)));
-    if(!mine.length){ lines.push(`${a.name} — 해당 특이건 없음`); return; }
-    mine.forEach(r=>used.add(r.id));
-    const safe=(a.name||'담당자').replace(/[\\/:*?"<>|]/g,'');
-    const per=`근태특이건_${safe}_${(P.anomName||'').replace(/[\\/:*?"<>|]/g,'')}`;
-    setTimeout(()=>emlDown(mine, a.name, toAddrs(a.email), toAddrs(a.cc||''), per+'.eml', per+'.xlsx'), k*700);
-    made++; lines.push(`${a.name} — ${new Set(mine.map(r=>r.id)).size}명 ${mine.length}건`);
-  });
-  const left=[...new Set(rows.map(r=>r.id))].filter(id=>!used.has(id));
-  $('#mSplitInfo').innerHTML=`<div class="note ${left.length?'w':'g'}">
-    <b>담당자별 메일 ${made}개를 만들었습니다</b> — 내려받은 .eml 파일을 두 번 눌러 열고 <b>보내기</b>만 누르면 됩니다.<br>
-    ${lines.map(x=>esc(x)).join(' · ')}
-    ${left.length? `<br><b style="color:var(--warn)">담당자가 정해지지 않은 인원 ${left.length}명</b> — ${left.slice(0,15).map(id=>`${id} ${esc(anomName(id))}`).join(' · ')}${left.length>15?' 외':''}<br>
-      <span class="muted">이 인원은 어느 담당자에게도 사번이 등록돼 있지 않아 빠졌습니다. 주소록에 사번을 추가하거나, 위에서 받는사람을 직접 넣어 전체로 보내세요.</span>`:''}
-  </div>`;
-};
-/* 표 서식 그대로 클립보드에 — Outlook에 붙이면 표가 유지됩니다 */
-$('#mRich').onclick=async()=>{
-  const rows=mailRows(); if(!rows.length) return alert('복사할 특이건이 없습니다.');
-  const html=mailHtml(rows), txt=mailText(rows);
-  try{
-    if(!navigator.clipboard || !window.ClipboardItem) throw new Error('unsupported');
-    await navigator.clipboard.write([new ClipboardItem({
-      'text/html': new Blob([html],{type:'text/html'}),
-      'text/plain': new Blob([txt],{type:'text/plain'})})]);
-    $('#mRich').textContent='복사됨 ✓'; setTimeout(()=>$('#mRich').textContent='표 서식 복사',1600);
-  }catch(e){
-    const d=document.createElement('div');
-    d.setAttribute('contenteditable','true');
-    d.style.cssText='position:fixed;left:-9999px;top:0';
-    d.innerHTML=html; document.body.appendChild(d);
-    const r=document.createRange(); r.selectNodeContents(d);
-    const sel=window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
-    let ok=false; try{ ok=document.execCommand('copy'); }catch(x){}
-    sel.removeAllRanges(); d.remove();
-    if(ok){ $('#mRich').textContent='복사됨 ✓'; setTimeout(()=>$('#mRich').textContent='표 서식 복사',1600); }
-    else alert('이 브라우저에서는 표 서식 복사가 막혀 있습니다.\n「메일 파일(.eml)」을 쓰시면 표가 그대로 들어갑니다.');
-  }
+  if(!confirm(`Outlook으로 ${to.join(', ')} 에게 ${now?'바로 보내는':'메일 창을 띄우는'} 스크립트를 만듭니다.\n\n계속할까요?`)) return;
+  const fn=mailFileName('vbs');
+  dlVbs(buildVbs([{to,cc,subject:mailSubject(rows),html:mailHtml(rows),who:''}], '', now), fn);
+  P.sendMsg=`<div class="note g"><b>발송 스크립트를 만들었습니다</b> — <b>${esc(fn)}</b><br>
+    받는사람 ${esc(to.join(', '))}${cc.length?` · 참조 ${esc(cc.join(', '))}`:''} · 대상 ${new Set(rows.map(r=>r.id)).size}명 ${rows.length}건<br>
+    내려받은 <b>.vbs 파일을 두 번 누르면</b> 확인창이 한 번 뜨고 ${now?'<b>발송</b>됩니다':'메일 창이 뜹니다'}.</div>`;
+  const si=$('#mSendInfo'); if(si) si.innerHTML=P.sendMsg;
 };
 P.addr=abLoad(); abRender();
-try{ msUI(); }catch(e){}
 
 
 /* ── 계산기 양식 내보내기 ──────────────────────────────────────
