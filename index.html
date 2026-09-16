@@ -629,7 +629,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
     <button data-v="anom"><span class="ni"><svg viewBox="0 0 18 18"><path d="M2.6 4.2h12.8a1 1 0 0 1 1 1v8.1a1 1 0 0 1-1 1H2.6a1 1 0 0 1-1-1V5.2a1 1 0 0 1 1-1m.7 2 5.7 3.7 5.7-3.7z"/></svg></span>근태 특이건<span class="navp" id="navAnom"></span></button>
   </nav>
   <div class="side-foot">
-    <b>APRS</b><span class="ver">v8.9 · 2026-09</span>
+    <b>APRS</b><span class="ver">v9.0 · 2026-09</span>
     <span class="who" id="gWho"></span>
     <button class="sfout" id="btnOut" title="로그아웃">로그아웃</button>
   </div>
@@ -764,6 +764,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
 
   <div class="split" style="margin-bottom:10px">
     <button class="sm pri" data-open="dgAddr">주소록 관리<span class="pill" id="abCount"></span></button>
+    <button class="sm" data-open="dgCode">부서코드표<span class="pill" id="dcCount"></span></button>
     <span class="muted" style="font-size:12px;align-self:center">대상자 명단에 <b>담당자 · 메일</b> 열을 넣으면 여기에 <b>자동으로 등록</b>됩니다</span>
     <span class="grow"></span>
     <label class="muted" style="display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600">
@@ -832,6 +833,36 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
 </div>
 </div><!-- /viewAnom -->
 
+<dialog id="dgCode">
+  <div class="dlg-h"><h3>부서코드표</h3>
+    <button class="sm" onclick="document.getElementById('dgCode').close()">닫기</button></div>
+  <div class="dlg-b">
+    <p class="hint">대상자 명단의 <b>부서코드</b>와 담당자를 잇는 표입니다. 코드가 같으면 부서 이름이 어떻게 적혀 있든 정확히 이어집니다.<br>
+      팀만 있을 때는 <b>F01</b>, 그 팀 안에 부서명이 더 있으면 <b>F011 · F012</b> 처럼 뒤에 한 자리를 붙입니다.</p>
+    <div id="dcList" style="margin:12px 0"></div>
+    <div class="row">
+      <div class="f" style="min-width:110px"><label>코드 *</label><input type="text" id="dcCode" placeholder="F09" spellcheck="false"></div>
+      <div class="f" style="flex:1.4;min-width:220px"><label>부서명 * <span class="muted">명단에 적는 이름과 같게</span></label>
+        <input type="text" id="dcName" placeholder="식품팀 델리"></div>
+      <button class="pri" id="dcAdd" style="align-self:flex-end">코드 추가 · 수정</button>
+    </div>
+    <div class="split" style="margin-top:14px">
+      <button class="sm" id="dcStampBtn">주소록에 코드 채우기</button>
+      <span class="grow"></span>
+      <button class="sm" id="dcExp">코드표 내려받기</button>
+      <button class="sm" id="dcImpBtn">코드표 불러오기</button>
+      <input type="file" id="dcImp" accept=".json" hidden>
+      <button class="sm" id="dcReset">기본 코드표로 되돌리기</button>
+    </div>
+    <div id="dcInfo" style="margin-top:12px"></div>
+    <div class="note i" style="margin-top:12px">
+      <b>담당자</b> 칸에서 사람을 고르면 그 담당자에게 이 코드가 붙습니다 — 주소록에 바로 반영됩니다.
+      담당자 목록이 비어 있으면 먼저 「주소록 관리」에서 등록하거나, 대상자 명단에 담당자·메일을 넣어 올려주세요.<br>
+      <span class="muted">코드표는 이 브라우저에 저장됩니다. 다른 PC에서도 쓰시려면 「코드표 내려받기 → 불러오기」 하세요.</span>
+    </div>
+  </div>
+</dialog>
+
 <dialog id="dgPrev">
   <div class="dlg-h"><h3 id="dgPrevT">보낼 내용 미리보기</h3>
     <button class="sm" onclick="document.getElementById('dgPrev').close()">닫기</button></div>
@@ -863,6 +894,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
     <div class="split" style="margin-top:14px">
       <button class="pri" id="abAdd">담당자 추가 · 수정</button>
       <span class="grow"></span>
+      <button class="sm" data-open="dgCode">부서코드표 열기</button>
       <button class="sm" id="abExp">주소록 내려받기</button>
       <button class="sm" id="abImpBtn">주소록 불러오기</button>
       <input type="file" id="abImp" accept=".json" hidden>
@@ -1080,7 +1112,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
 </div>
 
 <footer>
-  <b>APRS v8.9 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
+  <b>APRS v9.0 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
   ⓘ 이 도구는 업로드한 파일을 브라우저 메모리에서만 계산합니다. 네트워크 전송·서버 저장이 없습니다.<br>
   ⓘ 총근로시간 = 기본(소정) + 연장 + 휴일근로. <b>야간·심야는 가산수당 산정용으로 따로 표시</b>하며 총합에 중복 더하지 않습니다 — 심야 연장은 이미 연장시간에 포함돼 있는 경우가 많아 더하면 이중 계산이 됩니다.<br>
   ⓘ 급여일수 = 평일(월~금, 법정공휴일 제외) + 법정공휴일. 인정 일요일수 = 데이터상 일요일 수 − 결근이 있는 주(월~일)의 일요일 수.<br>
@@ -3745,7 +3777,16 @@ function renderRank(){
 }
 
 /* ── 대시보드 모달 · 버튼 배선 ─────────────────────────────── */
-$$('[data-open]').forEach(b=>b.onclick=()=>{ const d=$('#'+b.dataset.open); if(d) d.showModal(); });
+/* 창을 열 때 안쪽 목록을 다시 그립니다 (주소록·코드표가 바뀐 뒤에도 최신으로) */
+function openDlg(id){
+  const d=$('#'+id); if(!d) return;
+  try{
+    if(id==='dgCode' && typeof dcRender==='function') dcRender();
+    if(id==='dgAddr'){ if(typeof abRender==='function') abRender(); if(typeof ccRender==='function') ccRender(); }
+  }catch(e){}
+  d.showModal();
+}
+$$('[data-open]').forEach(b=>b.onclick=()=>openDlg(b.dataset.open));
 $$('[data-close]').forEach(b=>b.onclick=()=>b.closest('dialog').close());
 $$('#viewAudit dialog').forEach(d=>d.addEventListener('click',e=>{ if(e.target===d) d.close(); }));
 $('#aNew').onclick=()=>{ $('#fileA').value=''; $('#dash').hidden=true; $('#vUp').hidden=false;
@@ -3764,7 +3805,7 @@ const P={att:null, led:null, ledAoa:[], ledHdr:[], hrow:0, diag:null, rosName:''
          wage:new Map(), hire:new Map(), quit:new Map(), roster:new Map(),
          rows:[], anom:[], name:'', addr:[], sendMsg:'',
          owner:new Map(), dept:new Map(), ownMan:new Map(), ownMsg:'', ownMsg2:'', fixcc:[], omail:new Map(),
-         ownNm:new Map(), deptNm:new Map(), code:new Map(), cmap:new Map()};
+         ownNm:new Map(), deptNm:new Map(), code:new Map(), cmap:new Map(), dcode:[]};
 
 /* 대조 항목 — 계산기 시트의 열 구성 그대로 */
 const PITEMS=[
@@ -5499,7 +5540,7 @@ function abLoad(){ try{ const l=JSON.parse(LS.get(ABK)||'[]');
 function abSave(list){
   P.addr=list;
   if(!LS.set(ABK, JSON.stringify(list))) alert('이 브라우저에 저장하지 못했습니다. 주소록을 파일로 내려받아 보관해 주세요.');
-  abRender(); try{ ownRender(); }catch(e){}
+  abRender(); try{ dcRender(); }catch(e){} try{ ownRender(); }catch(e){}
 }
 function abRender(){
   const list=P.addr||[];
@@ -5857,22 +5898,30 @@ function ownAuto(id){
   if(cd){
     const byBook=ownByCode(cd); if(byBook) return byBook.name;          /* ① 주소록의 부서코드 */
     const byMap=P.cmap && P.cmap.get(codeK(cd)); if(byMap) return byMap; /* ② 명단의 코드표 */
+    const dc=(typeof dcByCode==='function')? dcByCode(cd) : null;         /* ③ 부서코드표의 부서명 */
+    if(dc){ const h2=ownByDept(dc.name)||ownByDeptText(dc.name); if(h2) return h2.name; }
   }
   const w=ownNamed(id); if(w) return w;                                  /* ③ 사원마다 적은 담당자 */
   const d=ownDeptOf(id);
   const h=ownByDept(d) || ownByDeptText(d);                              /* ④ 부서 이름 */
   return h? h.name : '';
 }
-/* 어떻게 정해졌는지 — 화면에 그대로 보여줍니다 */
+/* 어떻게 정해졌는지 — ownAuto 와 같은 순서로 따라갑니다 */
 function ownHow(id){
   if(P.ownMan.has(id)) return '직접 지정';
   const cd=ownCodeOf(id);
-  if(cd && (ownByCode(cd) || (P.cmap && P.cmap.get(codeK(cd))))) return '부서코드';
+  if(cd){
+    if(ownByCode(cd)) return '부서코드';
+    if(P.cmap && P.cmap.get(codeK(cd))) return '부서코드';
+    const dc=(typeof dcByCode==='function')? dcByCode(cd) : null;
+    if(dc && (ownByDept(dc.name)||ownByDeptText(dc.name))) return '부서코드';
+  }
   const a=ownAlt(id);
   if(P.owner&&(P.owner.get(id)||(a&&P.owner.get(a)))) return '명단 담당자(사번)';
   const nk=nmKey(anomName(id));
   if(nk && P.ownNm && P.ownNm.get(nk)) return '명단 담당자(성명)';
-  if(ownOf(id)) return '명단 부서';
+  const d=ownDeptOf(id);
+  if(d && (ownByDept(d)||ownByDeptText(d))) return '명단 부서';
   return '';
 }
 const ownOf=id=>P.ownMan.has(id)? P.ownMan.get(id) : ownAuto(id);
@@ -5950,15 +5999,23 @@ function ownRender(){
     h+=`<br>담당자가 비어 있는 인원 — ${miss.slice(0,12).map(id=>`${esc(id)} ${esc(anomName(id))}`).join(' · ')}${miss.length>12?` 외 ${miss.length-12}명`:''}
         <br><span class="muted">대상자 명단에 <b>담당자</b>(또는 <b>부서</b>) 열을 넣어 올리면 자동으로 채워집니다. 아래 표에서 직접 고르셔도 됩니다.</span>`;
   h+='</div>';
+  const noCode=[...new Set(ids.filter(id=>!ownOf(id) && ownCodeOf(id)).map(id=>ownCodeOf(id)))];
+  if(noCode.length)
+    h+=`<div class="note b" style="margin-top:8px"><b>담당자가 정해지지 않은 부서코드 — ${noCode.map(c=>{
+        const d=(typeof dcByCode==='function')? dcByCode(c):null;
+        return `<span class="chip"><b>${esc(c)}</b>${d?' '+esc(d.name):''}</span>`; }).join('')}</b><br>
+      이 코드의 인원은 메일이 나가지 않습니다. <b>부서코드표</b>를 열어 그 코드의 담당자를 골라주세요.
+      <div style="margin-top:8px"><button class="sm pri" data-open="dgCode">부서코드표 열기</button></div></div>`;
   if(bad.length)
     h+=`<div class="note b" style="margin-top:8px"><b>주소록에 없는 담당자 — ${bad.map(esc).join(' · ')}</b><br>
         보낼 주소가 없어 이 담당자에게는 메일이 나가지 않습니다. 아래 버튼으로 주소록에 넣어주세요.
         <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">${
           bad.map(x=>`<button class="sm pri" data-abnew="${esc(x)}">${esc(x)} 주소록에 넣기</button>`).join('')}</div></div>`;
   wbox.innerHTML=h;
+  wbox.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>openDlg(b.dataset.open));
   wbox.querySelectorAll('[data-abnew]').forEach(b=>b.onclick=()=>{
     $('#abName').value=b.dataset.abnew; $('#abDept').value=''; $('#abMail').value=''; $('#abCc').value='';
-    $('#dgAddr').showModal(); setTimeout(()=>$('#abMail').focus(),120);
+    openDlg('dgAddr'); setTimeout(()=>$('#abMail').focus(),120);
   });
   const i1=$('#ownInfo'); if(i1) i1.innerHTML=P.ownMsg||'';
   try{ ownCardsRender(); }catch(e){}
@@ -6104,7 +6161,7 @@ function ownDiagText(){
   push('   특이건 사번 : ', ex(ids,6));
   const byId=ids.filter(id=>OW.get(id)||OW.get(AR.get(id)||'')).length;
   push('   사번으로 담당자가 잡힌 인원 : ', byId, ' / ', ids.length, '명');
-  const byCode=ids.filter(id=>{ const c=ownCodeOf(id); return !!(c && (ownByCode(c)||CM.get(codeK(c)))); }).length;
+  const byCode=ids.filter(id=>ownHow(id)==='부서코드').length;
   push('   부서코드로 담당자가 잡힌 인원 : ', byCode, ' / ', ids.length, '명');
   push('');
   push('④ 성명 맞추기');
@@ -6131,11 +6188,20 @@ function ownDiagText(){
   else if(done===ids.length){
     if(bad.length) why.push('전원 배정됐지만 주소록에 없는 담당자가 '+bad.length+'명 있습니다 ('+ex(bad,6)+') — 그만큼 메일이 나가지 않습니다.');
   }else{
-    const noDept=ids.filter(i=>!ownOf(i) && !ownDeptOf(i)).length;
+    /* 부서코드는 있는데 그 코드의 담당자가 없는 경우 */
+    const noOwnCode=ids.filter(i=>!ownOf(i) && ownCodeOf(i));
+    if(noOwnCode.length){
+      const cs=[...new Set(noOwnCode.map(i=>ownCodeOf(i)))];
+      why.push('담당자가 없는 '+(ids.length-done)+'명 중 '+noOwnCode.length+'명은 부서코드는 있는데 그 코드의 담당자가 정해지지 않았습니다 — 코드 '
+        + cs.map(c=>{ const d=(typeof dcByCode==='function')? dcByCode(c):null; return c+(d? '('+d.name+')':''); }).join(' · ')
+        + '. 3번 화면의 「부서코드표」를 열어 그 코드의 <담당자> 칸에서 사람을 골라주시면 됩니다.');
+    }
+    const noDept=ids.filter(i=>!ownOf(i) && !ownDeptOf(i) && !ownCodeOf(i)).length;
     if(noDept)
       why.push('담당자가 없는 '+(ids.length-done)+'명 중 '+noDept+'명은 소속(부서)이 비어 있습니다. '
         +'명단에 사원마다 소속을 적은 열이 있어야 「부서별 담당자 표」와 이어집니다 — 위 ②의 열 목록에서 '+RS.size+'줄이 모두 채워진 소속 열을 찾아 '
         +'급여 검수기의 「담당자 열 직접 고르기」에서 <부서>로 골라 「이 열로 다시 읽기」를 눌러주세요. 그런 열이 없으면 명단에 한 열을 만들어 사원마다 소속을 적어주세요.');
+    else if(noOwnCode.length){ /* 위에서 이미 말했습니다 */ }
     else if(!book.length)
       why.push('주소록에 담당자가 한 명도 없습니다 — 「주소록 관리」에서 등록하거나, 명단에 담당자메일 열을 넣어 다시 올려주세요.');
     else
@@ -6223,6 +6289,132 @@ $('#mSend').onclick=()=>{
 };
 P.addr=abLoad(); abRender();
 P.fixcc=ccLoad(); ccRender();
+
+/* ── 부서코드표 ───────────────────────────────────────────────
+   대상자 명단의 <부서코드>와 담당자를 잇는 표입니다.
+   팀만 있을 때는 F01, 그 팀 안에 부서명이 더 있으면 F011·F012 처럼 한 자리를 붙입니다.
+   코드가 같으면 부서 이름이 어떻게 적혀 있든 정확히 이어집니다. */
+const DCK='aprs.dcode.v1';
+const DCODE_SEED=[
+  {code:'F01',  name:'식품팀'},
+  {code:'F011', name:'식품팀 자주한상'},
+  {code:'F012', name:'식품팀 와인셀라'},
+  {code:'F021', name:'여성팀 아트스페이스'},
+  {code:'F03',  name:'CX팀'},
+  {code:'F041', name:'경리팀 상품관리'},
+  {code:'F042', name:'경리팀 POS운영'},
+  {code:'F05',  name:'영업기획팀'},
+  {code:'F051', name:'영업기획팀 아카데미'},
+  {code:'F061', name:'법인영업 B2B이커머스'},
+  {code:'F07',  name:'도곡팀'},
+  {code:'F08',  name:'HOS청담'}
+];
+/* 부서 이름 맞추기 — 「식품팀 / 자주한상」과 「식품팀 자주한상」을 같게 봅니다 */
+const dcK=v=>String(v==null?'':v).replace(/[\s\/|,·>《》\-–~()]+/g,'').toUpperCase();
+function dcLoad(){
+  let l=null; try{ l=JSON.parse(LS.get(DCK)||'null'); }catch(e){}
+  if(!Array.isArray(l)) l=DCODE_SEED.slice();
+  return l.map(x=>({code:String((x&&x.code)||'').trim(), name:String((x&&x.name)||'').trim()}))
+          .filter(x=>x.code && x.name);
+}
+function dcSave(l){
+  P.dcode=l;
+  if(!LS.set(DCK, JSON.stringify(l))) alert('이 브라우저에 저장하지 못했습니다.');
+  dcRender(); try{ ownRender(); }catch(e){}
+}
+const dcByName=n=>{ const k=dcK(n); return k? ((P.dcode||[]).find(x=>dcK(x.name)===k)||null) : null; };
+const dcByCode=c=>{ const k=codeK(c); return k? ((P.dcode||[]).find(x=>codeK(x.code)===k)||null) : null; };
+/* 주소록의 「팀 · 부서」 이름으로 부서코드를 채웁니다 (비어 있는 것만) */
+function dcStamp(){
+  const l=(P.addr||[]).slice(); let n=0;
+  l.forEach(a=>{ if(a.code) return; const d=dcByName(a.dept); if(d){ a.code=d.code; n++; } });
+  if(n){ P.addr=l; LS.set(ABK, JSON.stringify(l)); abRender(); try{ dcRender(); }catch(e){} }
+  return n;
+}
+function dcRender(){
+  const l=P.dcode||[], book=ownBook();
+  const chip=$('#dcCount');
+  if(chip){ chip.textContent = l.length? `${l.length}개` : ''; chip.className='pill '+(l.length?'ok':''); }
+  const box=$('#dcList'); if(!box) return;
+  const who=c=>book.filter(a=>codeK(a.code)===codeK(c));
+  box.innerHTML = !l.length
+    ? '<div class="empty" style="padding:26px 14px">코드표가 비어 있습니다. 아래에서 추가하거나 「기본 코드표로 되돌리기」를 누르세요.</div>'
+    : `<div class="tblwrap" style="max-height:340px"><table class="prev"><thead><tr>
+        <th style="width:84px">코드</th><th style="width:190px">부서명</th><th>담당자</th><th style="width:62px"></th>
+       </tr></thead><tbody>${l.map((x,i)=>{
+        const w=who(x.code);
+        return `<tr><td class="mono"><b>${esc(x.code)}</b></td><td>${esc(x.name)}</td>
+          <td><select data-dcw="${esc(x.code)}" style="width:100%;min-width:0;padding:4px 8px;font-size:12.5px">
+            <option value="">${w.length? '' : '— 담당자 고르기 —'}</option>
+            ${book.map(a=>`<option value="${esc(a.name)}"${w.some(y=>y.name===a.name)?' selected':''}>${esc(a.name)}${a.title?' '+esc(a.title):''}${a.dept?` · ${esc(a.dept)}`:''}</option>`).join('')}
+          </select>${w.length>1? `<div class="muted" style="font-size:11px;margin-top:3px">이 코드를 가진 사람 ${w.length}명 — ${w.map(y=>esc(y.name)).join(' · ')}</div>`:''}</td>
+          <td><button class="sm" data-dcdel="${i}">삭제</button></td></tr>`;
+       }).join('')}</tbody></table></div>`;
+  box.querySelectorAll('[data-dcdel]').forEach(b=>b.onclick=()=>{
+    const l2=(P.dcode||[]).slice(), x=l2[+b.dataset.dcdel]; if(!x) return;
+    if(!confirm(`코드 「${x.code} ${x.name}」을 지웁니다.\n계속할까요?`)) return;
+    l2.splice(+b.dataset.dcdel,1); dcSave(l2);
+  });
+  box.querySelectorAll('[data-dcw]').forEach(s=>s.onchange=()=>{
+    const code=s.dataset.dcw, nm=s.value;
+    const l2=(P.addr||[]).slice();
+    l2.forEach(a=>{ if(codeK(a.code)===codeK(code)) a.code=''; });   /* 이 코드를 떼고 */
+    if(nm){ const t=l2.find(a=>a.name===nm); if(t) t.code=code; }    /* 고른 사람에게 붙인다 */
+    P.addr=l2; LS.set(ABK, JSON.stringify(l2)); abRender(); dcRender();
+    const info=$('#dcInfo');
+    if(info) info.innerHTML=`<div class="note g">${nm? `<b>${esc(code)}</b> 담당자를 <b>${esc(nm)}</b> 님으로 정했습니다.` : `<b>${esc(code)}</b> 담당자를 비웠습니다.`}</div>`;
+    try{ ownRender(); }catch(e){}
+  });
+}
+$('#dcAdd').onclick=()=>{
+  const code=$('#dcCode').value.trim().toUpperCase(), name=$('#dcName').value.trim();
+  if(!code) return alert('코드를 넣어주세요.\n예) F09');
+  if(!name) return alert('부서명을 넣어주세요.\n대상자 명단에 적는 이름과 같게 넣으시면 됩니다.');
+  const l=(P.dcode||[]).slice();
+  const at=l.findIndex(x=>codeK(x.code)===codeK(code));
+  const dup=l.findIndex(x=>dcK(x.name)===dcK(name));
+  if(dup>=0 && dup!==at && !confirm(`「${l[dup].name}」은 이미 ${l[dup].code} 로 등록돼 있습니다.\n같은 부서명을 ${code} 로도 두시겠습니까?`)) return;
+  if(at>=0) l[at]={code,name}; else l.push({code,name});
+  l.sort((a,b)=>a.code<b.code?-1:(a.code>b.code?1:0));
+  dcSave(l);
+  $('#dcCode').value=''; $('#dcName').value='';
+  const n=dcStamp();
+  $('#dcInfo').innerHTML=`<div class="note g"><b>${esc(code)} ${esc(name)}</b> 를 코드표에 넣었습니다.${n? ` 주소록 ${n}명에 코드를 채웠습니다.`:''}</div>`;
+};
+$('#dcStampBtn').onclick=()=>{
+  const n=dcStamp();
+  const miss=(P.addr||[]).filter(a=>!a.code);
+  $('#dcInfo').innerHTML=`<div class="note ${n?'g':'i'}">
+    ${n? `<b>주소록 ${n}명</b>에 부서코드를 채웠습니다.` : '새로 채울 것이 없습니다.'}
+    ${miss.length? `<br><b style="color:var(--warn)">코드가 비어 있는 담당자 ${miss.length}명</b> — ${miss.slice(0,10).map(a=>esc(a.name)+(a.dept?`(${esc(a.dept)})`:'')).join(' · ')}
+      <br><span class="muted">위 표의 담당자 칸에서 직접 골라주시거나, 코드표에 그 부서명을 추가해 주세요.</span>`:''}</div>`;
+  dcRender();
+};
+$('#dcExp').onclick=()=>{
+  if(!(P.dcode||[]).length) return alert('코드표가 비어 있습니다.');
+  dlBlob(JSON.stringify(P.dcode,null,2),'APRS_부서코드표.json','application/json');
+};
+$('#dcImpBtn').onclick=()=>$('#dcImp').click();
+$('#dcImp').onchange=e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const fr=new FileReader();
+  fr.onload=ev=>{ try{
+    const l=JSON.parse(ev.target.result);
+    if(!Array.isArray(l)) throw new Error('형식이 맞지 않습니다');
+    const clean=l.map(x=>({code:String((x&&x.code)||'').trim(), name:String((x&&x.name)||'').trim()})).filter(x=>x.code&&x.name);
+    dcSave(clean);
+    const n=dcStamp();
+    $('#dcInfo').innerHTML=`<div class="note g">코드 <b>${clean.length}개</b>를 불러왔습니다.${n?` 주소록 ${n}명에 코드를 채웠습니다.`:''}</div>`;
+  }catch(x){ alert('코드표 파일을 읽지 못했습니다: '+x.message); } };
+  fr.readAsText(f); e.target.value='';
+};
+$('#dcReset').onclick=()=>{
+  if(!confirm('기본 코드표로 되돌립니다.\n지금 코드표에 직접 넣은 내용은 사라집니다. (주소록은 그대로입니다)\n\n계속할까요?')) return;
+  dcSave(DCODE_SEED.slice());
+  const n=dcStamp();
+  $('#dcInfo').innerHTML=`<div class="note g">기본 코드표 <b>${DCODE_SEED.length}개</b>로 되돌렸습니다.${n?` 주소록 ${n}명에 코드를 채웠습니다.`:''}</div>`;
+};
+P.dcode=dcLoad(); dcRender(); dcStamp();
 
 
 /* ── 계산기 양식 내보내기 ──────────────────────────────────────
