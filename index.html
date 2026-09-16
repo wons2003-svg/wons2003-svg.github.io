@@ -629,7 +629,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
     <button data-v="anom"><span class="ni"><svg viewBox="0 0 18 18"><path d="M2.6 4.2h12.8a1 1 0 0 1 1 1v8.1a1 1 0 0 1-1 1H2.6a1 1 0 0 1-1-1V5.2a1 1 0 0 1 1-1m.7 2 5.7 3.7 5.7-3.7z"/></svg></span>근태 특이건<span class="navp" id="navAnom"></span></button>
   </nav>
   <div class="side-foot">
-    <b>APRS</b><span class="ver">v9.2 · 2026-09</span>
+    <b>APRS</b><span class="ver">v9.4 · 2026-09</span>
     <span class="who" id="gWho"></span>
     <button class="sfout" id="btnOut" title="로그아웃">로그아웃</button>
   </div>
@@ -1113,7 +1113,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
 </div>
 
 <footer>
-  <b>APRS v9.2 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
+  <b>APRS v9.4 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
   ⓘ 이 도구는 업로드한 파일을 브라우저 메모리에서만 계산합니다. 네트워크 전송·서버 저장이 없습니다.<br>
   ⓘ 총근로시간 = 기본(소정) + 연장 + 휴일근로. <b>야간·심야는 가산수당 산정용으로 따로 표시</b>하며 총합에 중복 더하지 않습니다 — 심야 연장은 이미 연장시간에 포함돼 있는 경우가 많아 더하면 이중 계산이 됩니다.<br>
   ⓘ 급여일수 = 평일(월~금, 법정공휴일 제외) + 법정공휴일. 인정 일요일수 = 데이터상 일요일 수 − 결근이 있는 주(월~일)의 일요일 수.<br>
@@ -2424,6 +2424,9 @@ function pDate(v,Y){
   const t=String(v??'').trim(); if(!t) return null;
   let m=t.match(/(\d{4})\D{1,2}(\d{1,2})\D{1,2}(\d{1,2})/);
   if(m) return new Date(+m[1],+m[2]-1,+m[3]);
+  /* 24.11.08 · 25/04/15 처럼 연도를 두 자리로 적은 경우 */
+  m=t.match(/^(\d{2})\D{1,2}(\d{1,2})\D{1,2}(\d{1,2})$/);
+  if(m){ const y=+m[1]; return new Date(y+(y<70?2000:1900), +m[2]-1, +m[3]); }
   m=t.match(/^(\d{1,2})\D{1,2}(\d{1,2})$/);
   if(m&&Y) return new Date(Y,+m[1]-1,+m[2]);
   return null;
@@ -4375,6 +4378,22 @@ $('#pFile3').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
       const mKey = col.omail>=0? 'omail' : 'omail2';
       const YR=+($('#vYear')&&$('#vYear').value) || +($('#yy')&&$('#yy').value) || new Date().getFullYear();
       const aoa=(best&&best.aoa)||[], hrow=(best&&best.hi!=null)?best.hi:0;
+      /* 머리글이 서로 바뀐 파일 대응 — 근태 파일의 사번과 실제로 맞는 열을 씁니다
+         (「이름」 칸에 사번이, 「사번」 칸에 성명이 들어 있는 경우) */
+      let idSwap=null;
+      if(P.att && P.att.length && aoa.length){
+        const attIds=new Set(P.att.map(e=>e.empId));
+        const hitOf=i=> i>=0? aoa.slice(hrow+1).filter(r=>attIds.has(idKey(r[i]))).length : 0;
+        const cur=hitOf(col.id);
+        const g=scanIdCol(aoa, hrow, attIds);
+        if(g && g.i>=0 && g.i!==col.id && g.hit>=3 && g.hit > Math.max(2, cur*1.5)){
+          const was=col.id;
+          col.id=g.i;
+          if(col.name===g.i) col.name=was;          /* 사번 ↔ 성명이 맞바뀐 경우 */
+          idSwap={was, now:g.i, hit:g.hit, cur};
+          P.rosIdCol=col.id; P.rosNmCol=col.name;
+        }
+      }
       /* 같은 뜻의 머리글이 여러 개면 값이 가장 많이 찬 열을 씁니다.
          (부서별 담당자 표가 사원 표 옆에 붙어 있는 양식 대응) */
       {
@@ -4396,10 +4415,15 @@ $('#pFile3').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
         col.ownPer = col.own>=0 && bodyN>0 &&
           aoa.slice(hrow+1).filter(r=>idKey(r[col.id]) && norm(r[col.own])!=='').length >= bodyN*0.9;
         /* 담당자 표의 부서 열 (사원 소속 열과 다름) — 열을 바꿔 다시 읽을 때도 씁니다 */
-        /* 담당자 열이 있는데 일부 줄만 차 있을 때만 「부서별 담당자 표」로 봅니다 */
+        /* 담당자 열이 있는데 일부 줄만 차 있을 때만 「부서별 담당자 표」로 봅니다.
+           단, 값이 거의 다 찬 열은 언제나 사원 개인의 것으로 봅니다
+           (부서코드는 62줄 다 차 있는데 담당자 표에는 코드가 없는 양식 대응) */
         const isMap = col.own>=0 && !col.ownPer;
-        P.rosMDept = isMap? (col.mdept>=0? col.mdept : col.dept) : -1;
-        P.rosMCode = isMap? (col.mcode>=0? col.mcode : col.code) : -1;
+        const fillOf=i=> i>=0? aoa.slice(hrow+1).filter(r=>idKey(r[col.id]) && norm(r[i])!=='').length : 0;
+        const deptFull = col.dept>=0 && bodyN>0 && fillOf(col.dept) >= bodyN*0.9;
+        const codeFull = col.code>=0 && bodyN>0 && fillOf(col.code) >= bodyN*0.9;
+        P.rosMDept = (col.mdept>=0)? col.mdept : ((isMap && !deptFull)? col.dept : -1);
+        P.rosMCode = (col.mcode>=0)? col.mcode : ((isMap && !codeFull)? col.code : -1);
         P.rosCodeCol = (col.code>=0 && P.rosMCode===col.code)? -1 : col.code;
       }
 
@@ -4497,6 +4521,9 @@ $('#pFile3').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
         <td class="muted">${smp(i2)}</td></tr>`;
       $('#pRosDiag').innerHTML=`<div class="note ${P.wage.size? (P.hire.size?'g':'i') : 'b'}" style="margin-top:12px">
         <b>대상자 명단을 이렇게 읽었습니다</b> — ${f.name}${sn?` · 시트 「${sn}」`:''} · ${hrow<0? '머리글 없는 표' : `머리글 ${hrow+1}행`}
+        ${idSwap? `<br><b style="color:var(--warn)">머리글과 값이 서로 어긋나 있어 값으로 바로잡았습니다</b> —
+          「${esc((hdr&&hdr[idSwap.was])||'?')}」 대신 <b>「${esc((hdr&&hdr[idSwap.now])||'?')}」</b> 칸을 사번으로 읽었습니다
+          <span class="muted">(근태 파일과 ${idSwap.hit}명 일치 · 원래 칸은 ${idSwap.cur}명)</span>`:''}
         ${guess? `<br>시급은 머리글 이름으로 못 찾아 <b>값으로 찾았습니다</b> (${guess.n}칸이 시급처럼 보임).`:''}
         <div class="tblwrap" style="margin-top:8px;max-height:none">
         <table class="prev" style="background:transparent"><tbody>
@@ -4785,15 +4812,22 @@ function pLink(){
         if(m2.size && (newHit>curHit || (newHit===curHit && newJunk<curJunk))){
           /* 사번 열이 바뀌면 같은 행의 시급·입사일·퇴사일도 새 사번으로 다시 붙여야 한다 */
           const old=[...P.roster.keys()], W=new Map(), H=new Map(), Q=new Map();
+          const C=new Map(), OW=new Map(), DP=new Map();
           const nk=[...m2.keys()];
           if(nk.length===old.length){
             nk.forEach((k,ix)=>{ const o=old[ix];
               if(P.wage.has(o)) W.set(k,P.wage.get(o));
               if(P.hire.has(o)) H.set(k,P.hire.get(o));
-              if(P.quit.has(o)) Q.set(k,P.quit.get(o)); });
+              if(P.quit.has(o)) Q.set(k,P.quit.get(o));
+              if(P.code && P.code.has(o))  C.set(k, P.code.get(o));
+              if(P.owner && P.owner.has(o)) OW.set(k, P.owner.get(o));
+              if(P.dept && P.dept.has(o))  DP.set(k, P.dept.get(o)); });
             if(W.size) P.wage=W;
             if(H.size) P.hire=H;
             if(Q.size) P.quit=Q;
+            if(C.size) P.code=C;      /* 부서코드도 새 사번으로 */
+            if(OW.size) P.owner=OW;
+            if(DP.size) P.dept=DP;
           }
           P.rlink={was:curHit, now:newHit, sheet:b.sheet, col:hdr[b.col]||`(열${XLSX.utils.encode_col(b.col)})`, size:m2.size, moved:W.size};
           P.roster=m2; miss=[...P.roster.keys()].filter(id=>!attIds.has(id));
@@ -6165,6 +6199,13 @@ function ownDiagText(){
   const CD=P.code||new Map(), CM=P.cmap||new Map();
   push('   부서코드 열 : ', cov(CD.size), ' · 종류 ', new Set([...CD.values()]).size, '개 — ', ex([...new Set([...CD.values()])],10));
   push('   코드 → 담당자 표 : ', CM.size, '개 — ', ex([...CM.entries()].map(([k,v])=>k+'→'+v),10));
+  {
+    const used=[...new Set([...CD.values()])];
+    const unk=used.filter(c=>{ const k=codeK(c);
+      return !(ownByCode(c) || CM.get(k) || (typeof dcByCode==='function' && dcByCode(c))); });
+    push('   도구가 아는 코드 : ', (P.dcode||[]).length, '개 — ', ex((P.dcode||[]).map(x=>x.code),14));
+    push('   명단에 있는데 도구가 모르는 코드 : ', unk.length, '개 — ', ex(unk,14));
+  }
   push('');
   push('② 명단 파일의 모든 열  (사번이 있는 ', (P.rosAoa? P.rosAoa.slice((P.rosHrow||0)+1).filter(r=>idKey(r[P.rosIdCol])).length : 0), '줄 기준)');
   {
