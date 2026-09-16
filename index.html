@@ -629,7 +629,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
     <button data-v="anom"><span class="ni"><svg viewBox="0 0 18 18"><path d="M2.6 4.2h12.8a1 1 0 0 1 1 1v8.1a1 1 0 0 1-1 1H2.6a1 1 0 0 1-1-1V5.2a1 1 0 0 1 1-1m.7 2 5.7 3.7 5.7-3.7z"/></svg></span>근태 특이건<span class="navp" id="navAnom"></span></button>
   </nav>
   <div class="side-foot">
-    <b>APRS</b><span class="ver">v9.0 · 2026-09</span>
+    <b>APRS</b><span class="ver">v9.2 · 2026-09</span>
     <span class="who" id="gWho"></span>
     <button class="sfout" id="btnOut" title="로그아웃">로그아웃</button>
   </div>
@@ -848,6 +848,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
     </div>
     <div class="split" style="margin-top:14px">
       <button class="sm" id="dcStampBtn">주소록에 코드 채우기</button>
+      <button class="sm" id="dcSeedBtn">회사 담당자표 다시 넣기</button>
       <span class="grow"></span>
       <button class="sm" id="dcExp">코드표 내려받기</button>
       <button class="sm" id="dcImpBtn">코드표 불러오기</button>
@@ -879,15 +880,15 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
     <div class="row">
       <div class="f" style="flex:1;min-width:140px"><label>이름 * <span class="muted">명단의 담당자 이름과 같게</span></label>
         <input type="text" id="abName" placeholder="홍길동"></div>
-      <div class="f" style="min-width:110px"><label>직급 · 호칭 <span class="muted">메일에 「○○ 파트너님」</span></label>
+      <div class="f" style="min-width:126px"><label>직급 · 호칭 <span class="muted">여럿이면 이름 순서대로 파트너/CP</span></label>
         <input type="text" id="abTitle" placeholder="파트너" list="dlTitle">
         <datalist id="dlTitle"><option value="파트너"></option><option value="CP"></option><option value="매니저"></option><option value="팀장"></option><option value="점장"></option></datalist></div>
       <div class="f" style="flex:1;min-width:120px"><label>팀 · 부서 <span class="muted">명단의 부서명과 같게</span></label>
         <input type="text" id="abDept" placeholder="영업1팀"></div>
       <div class="f" style="min-width:100px"><label>부서코드 <span class="muted">가장 확실</span></label>
         <input type="text" id="abCode" placeholder="F01" spellcheck="false"></div>
-      <div class="f" style="flex:1.2;min-width:210px"><label>메일 주소 *</label>
-        <div class="atbox"><input type="text" id="abMail" placeholder="hong" spellcheck="false"><b>@shinsegae.com</b></div></div>
+      <div class="f" style="flex:1.3;min-width:230px"><label>메일 주소 * <span class="muted">여러 명은 ; 로</span></label>
+        <div class="atbox"><input type="text" id="abMail" placeholder="hong; kim" spellcheck="false"><b>@shinsegae.com</b></div></div>
       <div class="f" style="flex:1;min-width:190px"><label>참조 (선택)</label>
         <div class="atbox"><input type="text" id="abCc" placeholder="team" spellcheck="false"><b>@shinsegae.com</b></div></div>
     </div>
@@ -1112,7 +1113,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
 </div>
 
 <footer>
-  <b>APRS v9.0 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
+  <b>APRS v9.2 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
   ⓘ 이 도구는 업로드한 파일을 브라우저 메모리에서만 계산합니다. 네트워크 전송·서버 저장이 없습니다.<br>
   ⓘ 총근로시간 = 기본(소정) + 연장 + 휴일근로. <b>야간·심야는 가산수당 산정용으로 따로 표시</b>하며 총합에 중복 더하지 않습니다 — 심야 연장은 이미 연장시간에 포함돼 있는 경우가 많아 더하면 이중 계산이 됩니다.<br>
   ⓘ 급여일수 = 평일(월~금, 법정공휴일 제외) + 법정공휴일. 인정 일요일수 = 데이터상 일요일 수 − 결근이 있는 주(월~일)의 일요일 수.<br>
@@ -1515,6 +1516,20 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
 const __APRS_POPUP = false;   /* 예전 브라우저 발송(OAuth)용 — 지금은 쓰지 않습니다 */
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
+/* 저장소 — 주소록·코드표·계정이 모두 쓰므로 맨 앞에 둡니다
+   (뒤에 두면 먼저 쓰는 쪽에서 읽지 못해 저장한 내용이 사라집니다) */
+const AK='aprs.acct.v1', AK2='aprs.users.v1', SK='aprs.saveid.v1', TK='aprs.session.v1';
+const LS={
+  get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } },
+  set(k,v){ try{ localStorage.setItem(k,v); return true; }catch(e){ return false; } },
+  del(k){ try{ localStorage.removeItem(k); }catch(e){} },
+  ok(){ try{ localStorage.setItem('aprs.t','1'); localStorage.removeItem('aprs.t'); return true; }catch(e){ return false; } }
+};
+const SS={
+  get(k){ try{ return sessionStorage.getItem(k); }catch(e){ return null; } },
+  set(k,v){ try{ sessionStorage.setItem(k,v); }catch(e){} },
+  del(k){ try{ sessionStorage.removeItem(k); }catch(e){} }
+};
 const CATS = ['근무','휴일근무','출장/교육','휴무','유급휴가','무급/결근','기타','미분류'];
 const WORKCATS = ['근무','휴일근무','출장/교육'];
 
@@ -5446,13 +5461,22 @@ function anomPeriod(rows){
   return {label:`${f(mn)} ~ ${f(mx)}`, month:`${mx.getMonth()+1}월`, m:mx.getMonth()+1};
 }
 /* 담당자 호칭 — 주소록의 직급을 붙입니다 (예 : 홍길동 파트너님) */
+/* 호칭 — 「전은영/윤남경」처럼 묶여 있으면 사람마다 따로 붙입니다.
+   직급을 「파트너/CP」 처럼 이름 순서대로 적어두면 그대로 따라갑니다. */
 function ownCall(who){
   const w=String(who==null?'':who).trim(); if(!w) return '';
   let a=null; try{ a=ownByName(w); }catch(e){}
-  /* 명단에 「홍길동 파트너」처럼 직급이 붙어 있으면 한 번만 붙게 떼어냅니다 */
-  const nm = a? a.name : w.replace(/\s*(파트너|CP|매니저|팀장|점장|과장|차장|부장|대리|사원|주임|책임)\s*$/,'').trim() || w;
-  const t  = (a && a.title)? String(a.title).trim() : '';
-  return t? `${nm} ${t}님` : `${nm}님`;
+  const raw = a? a.name : w;
+  const tRaw = (a && a.title)? String(a.title).trim() : '';
+  const SPL=/\s*[\/·,]\s*/;
+  const strip=x=>String(x).replace(/\s*(파트너|CP|매니저|팀장|점장|과장|차장|부장|대리|사원|주임|책임)\s*$/,'').trim();
+  const names=raw.split(SPL).map(strip).filter(Boolean);
+  const titles=tRaw? tRaw.split(SPL).map(x=>x.trim()).filter(Boolean) : [];
+  if(!names.length) return w+'님';
+  if(names.length>1 && titles.length===names.length)
+    return names.map((n,i)=>`${n} ${titles[i]}님`).join(', ');
+  const t1=titles[0]||'';
+  return names.map(n=>t1? `${n} ${t1}님` : `${n}님`).join(', ');
 }
 function mailBodyText(rows){
   const pr=anomPeriod(rows);
@@ -5527,14 +5551,17 @@ const ABK='aprs.addr.v1';
 const MAILDOM='@shinsegae.com';
 const mailAddr=v=>{ const s=String(v==null?'':v).trim(); return !s? '' : (s.indexOf('@')>=0? s : s+MAILDOM); };
 const mailLocal=v=>{ const s=String(v==null?'':v).trim(); const i=s.indexOf('@'); return i<0? s : s.slice(0,i); };
+/* 한 칸에 여러 주소를 넣을 수 있습니다 — 「jangkyum; pluto1527」 처럼 ; 로 이어 적으면 모두에게 갑니다 */
+const mailList=v=>String(v==null?'':v).split(/[;,]+/).map(x=>x.trim()).filter(Boolean).map(x=>mailAddr(mailLocal(x))).join('; ');
+const mailLocals=v=>String(v==null?'':v).split(/[;,]+/).map(x=>mailLocal(x)).filter(Boolean).join('; ');
 function toAddrs(v){ return String(v==null?'':v).split(/[;,]+/).map(x=>x.trim()).filter(Boolean).map(mailAddr); }
 /* 직급이 비어 있으면 파트너로, 아래 두 분은 CP 로 채워둡니다 (언제든 고치실 수 있습니다) */
-const CPNAMES=new Set(['윤남겸','이상미']);
+const CPNAMES=new Set(['윤남겸','윤남경','이상미']);
 const abFix=x=>{ const name=String((x&&x.name)||'').trim();
   return { name, dept:String((x&&x.dept)||'').trim(),
     title:String((x&&x.title)||'').trim() || (CPNAMES.has(name)? 'CP' : '파트너'),
     code:String((x&&x.code)||'').trim(),
-    email:mailAddr(mailLocal((x&&x.email)||'')), cc:(x&&x.cc)? mailAddr(mailLocal(x.cc)) : '' }; };
+    email:mailList((x&&x.email)||''), cc:(x&&x.cc)? mailList(x.cc) : '' }; };
 function abLoad(){ try{ const l=JSON.parse(LS.get(ABK)||'[]');
   return Array.isArray(l)? l.map(abFix).filter(x=>x.name&&x.email) : []; }catch(e){ return []; } }
 function abSave(list){
@@ -5570,7 +5597,7 @@ function abRender(){
     box.querySelectorAll('[data-abed]').forEach(b=>b.onclick=()=>{
       const a=(P.addr||[])[+b.dataset.abed]; if(!a) return;
       $('#abName').value=a.name; $('#abDept').value=a.dept||''; $('#abTitle').value=a.title||''; $('#abCode').value=a.code||'';
-      $('#abMail').value=mailLocal(a.email); $('#abCc').value=mailLocal(a.cc||'');
+      $('#abMail').value=mailLocals(a.email); $('#abCc').value=mailLocals(a.cc||'');
       $('#abName').focus(); });
   }
   const n=list.length, chip=$('#abCount');
@@ -5655,14 +5682,15 @@ $('#abAdd').onclick=()=>{
   const name=$('#abName').value.trim(), dept=$('#abDept').value.trim();
   const title=$('#abTitle').value.trim() || (CPNAMES.has(name)? 'CP' : '파트너');
   const code=$('#abCode').value.trim();
-  const local=mailLocal($('#abMail').value), cc=mailLocal($('#abCc').value);
+  const locals=String($('#abMail').value).split(/[;,]+/).map(x=>mailLocal(x)).filter(Boolean);
+  const ccs=String($('#abCc').value).split(/[;,]+/).map(x=>mailLocal(x)).filter(Boolean);
   if(!name) return alert('이름을 넣어주세요.\n대상자 명단의 「담당자」 이름과 같게 넣으시면 자동으로 배정됩니다.');
-  if(!local) return alert(`메일 주소 앞부분을 넣어주세요.\n예) hong  →  hong${MAILDOM}`);
-  if(abBad(local)) return alert('메일 주소 앞부분에 쓸 수 없는 글자가 있습니다.\n영문·숫자와 . _ - + 만 넣어주세요.');
-  if(cc && abBad(cc)) return alert('참조 주소 앞부분에 쓸 수 없는 글자가 있습니다.');
+  if(!locals.length) return alert(`메일 주소 앞부분을 넣어주세요.\n예) hong  →  hong${MAILDOM}\n여러 명이면 ; 로 이어 적으세요 — hong; kim`);
+  if(locals.some(abBad)) return alert('메일 주소 앞부분에 쓸 수 없는 글자가 있습니다.\n영문·숫자와 . _ - + 만 넣고, 여러 명은 ; 로 나눠주세요.');
+  if(ccs.some(abBad)) return alert('참조 주소 앞부분에 쓸 수 없는 글자가 있습니다.');
   const l=(P.addr||[]).slice();
   const at=l.findIndex(x=>x.name===name);
-  const rec={name, dept, title, code, email:mailAddr(local), cc: cc? mailAddr(cc) : ''};
+  const rec={name, dept, title, code, email:locals.map(mailAddr).join('; '), cc: ccs.map(mailAddr).join('; ')};
   if(at>=0) l[at]=rec; else l.push(rec);
   abSave(l);
   ['abName','abMail','abDept','abCc','abTitle','abCode'].forEach(k=>$('#'+k).value='');
@@ -5760,7 +5788,7 @@ function buildVbs(mails, attName, sendNow){
   L.push(`On Error GoTo 0`);
   L.push(``);
   const lines = mails.map(m=>`${m.who? m.who+' — ':''}${m.to.join(', ')}`).join('\n');
-  L.push(`msgs = "${vbsQ(lines)}"`);
+  L.push(vbsBody('msgs', lines));   /* 한 줄이 길어지지 않게 나눠 담습니다 */
   L.push(`If MODE = "send" Then`);
   L.push(`  ans = MsgBox("메일 ${mails.length}통을 보냅니다." & vbCrLf & vbCrLf & msgs & vbCrLf & vbCrLf & _`);
   L.push(`    "보내는 계정 : Outlook에 로그인된 본인 계정" & vbCrLf & vbCrLf & "계속할까요?", 36, "APRS 근태 특이건")`);
@@ -6290,6 +6318,44 @@ $('#mSend').onclick=()=>{
 P.addr=abLoad(); abRender();
 P.fixcc=ccLoad(); ccRender();
 
+/* ── 기본 담당자표 (회사에서 받은 팀별 담당자·메일·코드) ─────
+   한 코드에 담당자가 여럿이면 메일 주소를 ; 로 이어 적습니다 — 그 분들 모두에게 한 통이 갑니다. */
+const OWNER_SEED=[
+  {code:'F01',  dept:'식품팀',                name:'민도혜',              email:'dohyemin'},
+  {code:'F011', dept:'식품팀 / 자주한상',      name:'김장겸/최성규',        email:'jangkyum; pluto1527'},
+  {code:'F012', dept:'식품팀 / 와인셀라',      name:'전한해/노윤수',        email:'jeon2h2; nys831005'},
+  {code:'F021', dept:'여성팀 / 아트스페이스',   name:'소현영',              email:'hysoh'},
+  {code:'F03',  dept:'CX팀',                  name:'전은영/윤남경',        email:'jeon3052; cayyoon',   title:'파트너/CP'},
+  {code:'F041', dept:'경리팀 / 상품관리',      name:'정태섭',              email:'jts2848'},
+  {code:'F042', dept:'경리팀 / POS운영',       name:'이장미',              email:'jangmilee'},
+  {code:'F05',  dept:'영업기획팀',             name:'문예지/김정주',        email:'12moon18'},
+  {code:'F051', dept:'영업기획팀 / 아카데미',   name:'오세미/정신혜/한혜원',  email:'ohsm0906; jungsh'},
+  {code:'F061', dept:'법인영업 / B2B이커머스', name:'이상미/허나연',        email:'sama232; lumierena', title:'CP/파트너'},
+  {code:'F07',  dept:'도곡팀',                name:'김주영/이경애',        email:'jykim1212; melanine'},
+  {code:'F08',  dept:'HOS신세계청담',          name:'이현경',              email:'gusrud96'}
+];
+/* 기본 담당자표를 주소록에 넣습니다. 이름이나 코드가 같으면 갱신, 없으면 추가합니다. */
+function abSeed(){
+  const l=(P.addr||[]).slice(), add=[], upd=[];
+  OWNER_SEED.forEach(s=>{
+    const mail=mailList(s.email);
+    let at=l.findIndex(a=>ownNmK(a.name)===ownNmK(s.name));
+    if(at<0) at=l.findIndex(a=>a.code && codeK(a.code)===codeK(s.code));
+    if(at<0){ l.push(abFix({name:s.name, dept:s.dept, code:s.code, email:mail, title:s.title||''})); add.push(s.name); return; }
+    const c=l[at]; let ch=false;
+    if(c.name!==s.name){ c.name=s.name; ch=true; }
+    if(c.dept!==s.dept){ c.dept=s.dept; ch=true; }
+    if(codeK(c.code)!==codeK(s.code)){ c.code=s.code; ch=true; }
+    if(c.email!==mail){ c.email=mail; ch=true; }
+    /* 직급 : 회사 표에 적힌 것이 있으면 기본값(빈칸·파트너)만 덮어씁니다 */
+    if(s.title && (!c.title || c.title==='파트너') && c.title!==s.title){ c.title=s.title; ch=true; }
+    if(!c.title) c.title = CPNAMES.has(s.name)? 'CP' : '파트너';
+    if(ch) upd.push(s.name);
+  });
+  if(add.length||upd.length){ P.addr=l.map(abFix); LS.set(ABK, JSON.stringify(P.addr)); abRender(); }
+  return {add, upd};
+}
+
 /* ── 부서코드표 ───────────────────────────────────────────────
    대상자 명단의 <부서코드>와 담당자를 잇는 표입니다.
    팀만 있을 때는 F01, 그 팀 안에 부서명이 더 있으면 F011·F012 처럼 한 자리를 붙입니다.
@@ -6297,17 +6363,17 @@ P.fixcc=ccLoad(); ccRender();
 const DCK='aprs.dcode.v1';
 const DCODE_SEED=[
   {code:'F01',  name:'식품팀'},
-  {code:'F011', name:'식품팀 자주한상'},
-  {code:'F012', name:'식품팀 와인셀라'},
-  {code:'F021', name:'여성팀 아트스페이스'},
+  {code:'F011', name:'식품팀 / 자주한상'},
+  {code:'F012', name:'식품팀 / 와인셀라'},
+  {code:'F021', name:'여성팀 / 아트스페이스'},
   {code:'F03',  name:'CX팀'},
-  {code:'F041', name:'경리팀 상품관리'},
-  {code:'F042', name:'경리팀 POS운영'},
+  {code:'F041', name:'경리팀 / 상품관리'},
+  {code:'F042', name:'경리팀 / POS운영'},
   {code:'F05',  name:'영업기획팀'},
-  {code:'F051', name:'영업기획팀 아카데미'},
-  {code:'F061', name:'법인영업 B2B이커머스'},
+  {code:'F051', name:'영업기획팀 / 아카데미'},
+  {code:'F061', name:'법인영업 / B2B이커머스'},
   {code:'F07',  name:'도곡팀'},
-  {code:'F08',  name:'HOS청담'}
+  {code:'F08',  name:'HOS신세계청담'}
 ];
 /* 부서 이름 맞추기 — 「식품팀 / 자주한상」과 「식품팀 자주한상」을 같게 봅니다 */
 const dcK=v=>String(v==null?'':v).replace(/[\s\/|,·>《》\-–~()]+/g,'').toUpperCase();
@@ -6390,6 +6456,13 @@ $('#dcStampBtn').onclick=()=>{
       <br><span class="muted">위 표의 담당자 칸에서 직접 골라주시거나, 코드표에 그 부서명을 추가해 주세요.</span>`:''}</div>`;
   dcRender();
 };
+$('#dcSeedBtn').onclick=()=>{
+  if(!confirm('회사에서 받은 팀별 담당자·메일·코드를 주소록에 다시 넣습니다.\n\n같은 이름이나 같은 코드가 있으면 그 내용으로 덮어씁니다.\n계속할까요?')) return;
+  const r=abSeed(); dcStamp(); dcRender();
+  $('#dcInfo').innerHTML=`<div class="note g"><b>회사 담당자표를 넣었습니다</b> — 새로 ${r.add.length}명 · 갱신 ${r.upd.length}명
+    ${(r.add.length||r.upd.length)? `<br>${[...r.add,...r.upd].map(x=>esc(x)).join(' · ')}`:''}</div>`;
+  try{ ownRender(); }catch(e){}
+};
 $('#dcExp').onclick=()=>{
   if(!(P.dcode||[]).length) return alert('코드표가 비어 있습니다.');
   dlBlob(JSON.stringify(P.dcode,null,2),'APRS_부서코드표.json','application/json');
@@ -6414,7 +6487,13 @@ $('#dcReset').onclick=()=>{
   const n=dcStamp();
   $('#dcInfo').innerHTML=`<div class="note g">기본 코드표 <b>${DCODE_SEED.length}개</b>로 되돌렸습니다.${n?` 주소록 ${n}명에 코드를 채웠습니다.`:''}</div>`;
 };
-P.dcode=dcLoad(); dcRender(); dcStamp();
+P.dcode=dcLoad(); dcRender();
+/* 회사 담당자표를 처음 한 번 넣습니다 (그 뒤 고치신 내용은 건드리지 않습니다) */
+if(!LS.get('aprs.seed.v2')){
+  try{ const r=abSeed(); LS.set('aprs.seed.v2','1'); LS.set('aprs.seed.v1','1');
+    if(r.add.length||r.upd.length) console.log('APRS 기본 담당자표 반영:', r.add.length+'명 추가 · '+r.upd.length+'명 갱신'); }catch(e){}
+}
+dcStamp(); dcRender();
 
 
 /* ── 계산기 양식 내보내기 ──────────────────────────────────────
@@ -6673,18 +6752,6 @@ function rnd(n){
   for(let i=0;i<n;i++) o+=A[u[i]%A.length];
   return o;
 }
-const AK='aprs.acct.v1', AK2='aprs.users.v1', SK='aprs.saveid.v1', TK='aprs.session.v1';
-const LS={
-  get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } },
-  set(k,v){ try{ localStorage.setItem(k,v); return true; }catch(e){ return false; } },
-  del(k){ try{ localStorage.removeItem(k); }catch(e){} },
-  ok(){ try{ localStorage.setItem('aprs.t','1'); localStorage.removeItem('aprs.t'); return true; }catch(e){ return false; } }
-};
-const SS={
-  get(k){ try{ return sessionStorage.getItem(k); }catch(e){ return null; } },
-  set(k,v){ try{ sessionStorage.setItem(k,v); }catch(e){} },
-  del(k){ try{ sessionStorage.removeItem(k); }catch(e){} }
-};
 /* ── 계정 여러 개 ───────────────────────────────────────────────
    한 PC(브라우저)를 여러 사람이 쓸 수 있게 계정을 목록으로 보관합니다.
    비밀번호는 원문이 아니라 소금 섞은 해시로만 저장합니다. */
