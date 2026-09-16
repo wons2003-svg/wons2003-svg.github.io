@@ -623,13 +623,14 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
   <div class="sl">도구</div>
   <nav id="nav">
     <button data-v="home" class="on"><span class="ni"><svg viewBox="0 0 18 18"><path d="M9 2.2 2.6 7.3v8.1h4.3v-4.6h4.2v4.6h4.3V7.3z"/></svg></span>홈</button>
+    <button data-v="load"><span class="ni"><svg viewBox="0 0 18 18"><path d="M9 1.9a1 1 0 0 1 .71.29l3.2 3.2a1 1 0 0 1-1.42 1.42L10 5.32V11a1 1 0 1 1-2 0V5.32L6.51 6.81A1 1 0 0 1 5.09 5.39l3.2-3.2A1 1 0 0 1 9 1.9M3.2 10.6a1 1 0 0 1 1 1v2.3h9.6v-2.3a1 1 0 1 1 2 0v2.8a1.5 1.5 0 0 1-1.5 1.5H3.7a1.5 1.5 0 0 1-1.5-1.5v-2.8a1 1 0 0 1 1-1"/></svg></span>파일 올리기<span class="navp" id="navLoad"></span></button>
     <button data-v="analyze"><span class="ni"><svg viewBox="0 0 18 18"><rect x="2.2" y="9.6" width="3" height="6" rx="1"/><rect x="7.5" y="4.4" width="3" height="11.2" rx="1"/><rect x="12.8" y="7" width="3" height="8.6" rx="1"/></svg></span>근태 분석기</button>
     <button data-v="audit"><span class="ni"><svg viewBox="0 0 18 18"><path d="M8 2.2a5.8 5.8 0 1 0 3.5 10.4l3 3a1.1 1.1 0 0 0 1.6-1.6l-3-3A5.8 5.8 0 0 0 8 2.2m0 2.2a3.6 3.6 0 1 1 0 7.2 3.6 3.6 0 0 1 0-7.2"/></svg></span>근태 검수기</button>
     <button data-v="pay"><span class="ni"><svg viewBox="0 0 18 18"><path d="M9 1.6a1 1 0 0 1 1 1v.7c1.9.24 3.3 1.3 3.3 2.8a1 1 0 0 1-2 0c0-.42-.9-1.1-2.3-1.1s-2.3.68-2.3 1.1c0 .38.63.74 2.5 1.08 2.2.4 4.1 1.05 4.1 3 0 1.55-1.4 2.6-3.3 2.85v.7a1 1 0 1 1-2 0v-.7c-1.9-.25-3.3-1.3-3.3-2.85a1 1 0 1 1 2 0c0 .42.9 1.1 2.3 1.1s2.3-.68 2.3-1.1c0-.38-.63-.74-2.5-1.08-2.2-.4-4.1-1.05-4.1-3C6.7 4.6 8.1 3.54 10 3.3v-.7a1 1 0 0 1-1-1"/></svg></span>급여 검수기</button>
     <button data-v="anom"><span class="ni"><svg viewBox="0 0 18 18"><path d="M2.6 4.2h12.8a1 1 0 0 1 1 1v8.1a1 1 0 0 1-1 1H2.6a1 1 0 0 1-1-1V5.2a1 1 0 0 1 1-1m.7 2 5.7 3.7 5.7-3.7z"/></svg></span>근태 특이건<span class="navp" id="navAnom"></span></button>
   </nav>
   <div class="side-foot">
-    <b>APRS</b><span class="ver">v9.5 · 2026-09</span>
+    <b>APRS</b><span class="ver">v9.6 · 2026-09</span>
     <span class="who" id="gWho"></span>
     <button class="sfout" id="btnOut" title="로그아웃">로그아웃</button>
   </div>
@@ -710,6 +711,54 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
   </div></div>
 </div>
 
+
+<!-- ================= 파일 한 번에 올리기 ================= -->
+<div class="view" id="viewLoad" hidden>
+<div class="card">
+  <h2><span class="n">1</span>파일 올리기</h2>
+  <p class="hint">여기 올린 파일이 <b>근태 분석기 · 근태 검수기 · 급여 검수기 · 근태 특이건</b> 네 화면에 <b>한 번에</b> 들어갑니다. 화면마다 따로 올리지 않으셔도 됩니다.</p>
+  <div class="slots">
+    <div class="slot" id="dropU1">
+      <div class="sl-h"><span class="sl-n">근태</span> 일근태 파일 <span style="color:var(--bad);font-size:11px">필수</span></div>
+      <div class="sl-d">사번 · 성명 · 일자 · 근태 · 급여요일 · 개별연장(분)이 든 파일<br><span class="muted">여기에 놓거나 클릭해서 선택</span></div>
+      <div class="sl-s" id="uInfo1">아직 넣지 않음</div>
+    </div>
+    <div class="slot" id="dropU2">
+      <div class="sl-h"><span class="sl-n">명단</span> 대상자 명단</div>
+      <div class="sl-d">사번 · 성명 · 시급 · 입사일 · <b>부서코드</b><br><span class="muted">여기에 놓거나 클릭해서 선택</span></div>
+      <div class="sl-s" id="uInfo2">아직 넣지 않음</div>
+    </div>
+    <div class="slot" id="dropU3">
+      <div class="sl-h"><span class="sl-n">급여대장</span> 급여대장 파일 <span class="muted" style="font-size:11px">급여 대조할 때만</span></div>
+      <div class="sl-d">사번과 <b>지급 항목 금액</b>이 든 파일 (기본급 · 연장수당 등)<br><span class="muted">여기에 놓거나 클릭해서 선택</span></div>
+      <div class="sl-s" id="uInfo3">아직 넣지 않음</div>
+    </div>
+  </div>
+  <input type="file" id="uFile1" accept=".xlsx,.xlsm,.xls,.csv" hidden>
+  <input type="file" id="uFile2" accept=".xlsx,.xlsm,.xls,.csv" hidden>
+  <input type="file" id="uFile3" accept=".xlsx,.xlsm,.xls,.csv" hidden>
+
+  <div class="split" style="margin-top:18px">
+    <span style="font-size:12.5px;font-weight:660;align-self:center">검수 기준</span>
+    <select id="uMode" style="min-width:210px">
+      <option value="both">일근태 + 대상자 명단</option>
+      <option value="att">일근태만</option>
+    </select>
+    <span class="grow"></span>
+    <button class="sm" id="uClear">비우기</button>
+    <button class="pri" id="uGo" disabled>네 화면에 한 번에 넣기</button>
+  </div>
+  <div id="uProg" style="margin-top:14px"></div>
+  <div id="uDone" style="margin-top:10px"></div>
+
+  <div class="note i" style="margin-top:14px">
+    파일은 <b>이 브라우저 안에서만</b> 계산되며 어디로도 전송되지 않습니다.
+    한 번 넣으면 왼쪽 네 화면에서 바로 결과를 보실 수 있습니다.<br>
+    <span class="muted">같은 근태 파일을 네 기능이 각각 읽기 때문에 파일 크기에 따라 <b>몇 초</b> 걸립니다 — 진행 상황이 위에 표시됩니다.
+    화면마다 따로 올리시던 방식도 그대로 쓰실 수 있습니다.</span>
+  </div>
+</div>
+</div>
 
 <!-- ================= 근태 특이건 ================= -->
 <div class="view" id="viewAnom" hidden>
@@ -1116,7 +1165,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
 </div>
 
 <footer>
-  <b>APRS v9.5 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
+  <b>APRS v9.6 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
   ⓘ 이 도구는 업로드한 파일을 브라우저 메모리에서만 계산합니다. 네트워크 전송·서버 저장이 없습니다.<br>
   ⓘ 총근로시간 = 기본(소정) + 연장 + 휴일근로. <b>야간·심야는 가산수당 산정용으로 따로 표시</b>하며 총합에 중복 더하지 않습니다 — 심야 연장은 이미 연장시간에 포함돼 있는 경우가 많아 더하면 이중 계산이 됩니다.<br>
   ⓘ 급여일수 = 평일(월~금, 법정공휴일 제외) + 법정공휴일. 인정 일요일수 = 데이터상 일요일 수 − 결근이 있는 주(월~일)의 일요일 수.<br>
@@ -2360,9 +2409,10 @@ $('#exp').onclick=()=>{
 /* =========================================================
    뷰 전환
    ========================================================= */
-const VIEWS={home:'viewHome',analyze:'viewAnalyze',audit:'viewAudit',pay:'viewPay',anom:'viewAnom'};
+const VIEWS={home:'viewHome',load:'viewLoad',analyze:'viewAnalyze',audit:'viewAudit',pay:'viewPay',anom:'viewAnom'};
 const VTXT={
   home:['APRS · 근태·급여 검수 시스템','근태 엑셀을 올리면 집계 · 검수 · 급여 대조를 자동으로 처리합니다. 파일은 브라우저 안에서만 처리되며 어디로도 전송되지 않습니다.'],
+  load:['파일 올리기','근태 파일 · 대상자 명단 · 급여대장을 한 번만 올리면 네 화면에 모두 들어갑니다.'],
   analyze:['근태 분석기','사번·성명 기준으로 출근일수 · 급여일수 · 개별 연장시간(분)을 집계합니다.'],
   audit:['근태 검수기','사번·성명 기준으로 근태 입력값의 정합성을 규칙으로 검사합니다.'],
   pay:['급여 확인 검수기','근태로 계산한 금액과 급여대장 금액을 인원별·항목별로 대조합니다.'],
@@ -3885,10 +3935,18 @@ function anomSrc(){
 }
 /* 대상자 명단도 어느 쪽이든 있으면 쓴다 */
 function anomRoster(){
-  if(A.rosterUse && A.rosterUse.size) return A.rosterUse;
-  if(A.roster && A.roster.size) return A.roster;
-  if(P.roster && P.roster.size) return P.roster;
-  return new Map();
+  const cand=[A.rosterUse, A.roster, P.roster].filter(m=>m&&m.size);
+  if(!cand.length) return new Map();
+  /* 사번이 근태 파일과 실제로 맞는 명단을 고릅니다 (머리글이 뒤바뀐 파일 대응) */
+  try{
+    const ids=new Set((P.att||[]).map(e=>e.empId));
+    if(ids.size){
+      let best=null, bh=-1;
+      cand.forEach(m=>{ const h=[...m.keys()].filter(k=>ids.has(k)).length; if(h>bh){ bh=h; best=m; } });
+      if(best && bh>0) return best;
+    }
+  }catch(e){}
+  return cand[0];
 }
 function anomAliasRev(){
   if(A.lk && A.lk.aliasRev && A.lk.aliasRev.size) return A.lk.aliasRev;
@@ -6399,6 +6457,124 @@ $('#mSend').onclick=()=>{
     내려받은 <b>.vbs 파일을 두 번 누르면</b> 확인창이 한 번 뜨고 ${now?'<b>발송</b>됩니다':'메일 창이 뜹니다'}.</div>`;
   const si=$('#mSendInfo'); if(si) si.innerHTML=P.sendMsg;
 };
+/* ── 파일 한 번에 올리기 ──────────────────────────────────────
+   여기 올린 파일을 네 화면의 원래 입력칸에 그대로 넣어 줍니다.
+   각 화면의 읽기·검수 로직은 손대지 않고 그대로 씁니다. */
+const U={att:null, ros:null, led:null, modeTouched:false};
+[['dropU1','uFile1','att','uInfo1'],['dropU2','uFile2','ros','uInfo2'],['dropU3','uFile3','led','uInfo3']]
+.forEach(([d,f,k,info])=>{
+  const el=$('#'+d); if(!el) return;
+  el.onclick=()=>$('#'+f).click();
+  ['dragenter','dragover'].forEach(e=>el.addEventListener(e,ev=>{ev.preventDefault();el.classList.add('on')}));
+  ['dragleave','drop'].forEach(e=>el.addEventListener(e,ev=>{ev.preventDefault();el.classList.remove('on')}));
+  el.addEventListener('drop',ev=>{ const file=ev.dataTransfer.files[0]; if(file) uSet(k,file,info,d); });
+  const inp=$('#'+f); if(inp) inp.onchange=ev=>{ const file=ev.target.files[0]; if(file) uSet(k,file,info,d); ev.target.value=''; };
+});
+function uSet(k,file,info,d){
+  U[k]=file;
+  const el=$('#'+info);
+  if(el) el.innerHTML=`✓ <b>${esc(file.name)}</b> <span class="muted">· ${(file.size/1024).toFixed(0)} KB</span>`;
+  const sl=$('#'+d); if(sl) sl.classList.add('done');
+  uReady();
+}
+function uReady(){
+  const b=$('#uGo'); if(b) b.disabled=!U.att;
+  const m=$('#uMode'); if(m && !U.modeTouched) m.value = U.ros? 'both' : 'att';
+  const n=$('#navLoad');
+  const c=[U.att,U.ros,U.led].filter(Boolean).length;
+  if(n) n.textContent = c? String(c) : '';
+}
+/* 원래 입력칸에 파일을 그대로 넣어 준다 */
+function feedFile(id,file){
+  const el=$('#'+id); if(!el||!file) return false;
+  try{ const dt=new DataTransfer(); dt.items.add(file);
+    el.files=dt.files; el.dispatchEvent(new Event('change',{bubbles:true})); return true; }catch(e){ return false; }
+}
+const waitFor=(fn,ms)=>new Promise(res=>{ const t0=Date.now();
+  (function tick(){ let ok=false; try{ ok=!!fn(); }catch(e){}
+    if(ok) return res(true);
+    if(Date.now()-t0>(ms||30000)) return res(false);
+    setTimeout(tick,120); })(); });
+function uProg(rows,busy){
+  const p=$('#uProg'); if(!p) return;
+  p.innerHTML=`<div class="note ${busy?'i':'g'}"><b>${busy? '넣는 중…' : '다 넣었습니다'}</b>
+    <div style="margin-top:8px;display:flex;flex-direction:column;gap:5px;font-size:12.5px">${
+      rows.map(r=>`<div>${r.ok===true?'<span style="color:var(--ok)">✓</span>':(r.ok===false?'<span style="color:var(--bad)">✕</span>':'<span class="muted">…</span>')}
+        <b>${esc(r.t)}</b>${r.s? ` <span class="muted">— ${esc(r.s)}</span>`:''}</div>`).join('')}</div>
+    ${busy? '<div class="muted" style="margin-top:8px;font-size:12px">잠시만 기다려 주세요 — 화면을 옮기셔도 계속 진행됩니다.</div>':''}</div>`;
+}
+if($('#uMode')) $('#uMode').onchange=()=>{ U.modeTouched=true; };
+$('#uClear').onclick=()=>{
+  U.att=U.ros=U.led=null;
+  [['uInfo1','dropU1'],['uInfo2','dropU2'],['uInfo3','dropU3']].forEach(([i,d])=>{
+    const e=$('#'+i); if(e) e.textContent='아직 넣지 않음';
+    const s=$('#'+d); if(s) s.classList.remove('done'); });
+  $('#uProg').innerHTML=''; $('#uDone').innerHTML='';
+  uReady();
+};
+$('#uGo').onclick=async()=>{
+  if(!U.att) return alert('일근태 파일을 먼저 넣어주세요.');
+  const btn=$('#uGo'); btn.disabled=true; $('#uDone').innerHTML='';
+  const mode = (U.ros && $('#uMode').value==='both')? 'both' : 'att';
+  const R=[{t:'근태 분석기'},{t:'근태 검수기'},{t:'급여 검수기'},{t:'근태 특이건'}];
+  const draw=()=>uProg(R,true);
+  draw();
+  const fmt=n=>Number(n||0).toLocaleString();
+  try{
+    /* ① 근태 분석기 */
+    feedFile('file', U.att);
+    R[0].ok = await waitFor(()=>S.sum && S.sum.length);
+    R[0].s = R[0].ok? `${S.sum.length}명 · 근무일수 ${fmt(S.sum.reduce((a,x)=>a+(x.근무일수||0),0))}일` : '근태 파일을 읽지 못했습니다';
+    draw();
+
+    /* ② 근태 검수기 — 파일 → 명단 → 시작 */
+    feedFile('fileA', U.att);
+    let ok = await waitFor(()=>A.ready);
+    if(ok && U.ros){ feedFile('rosFile', U.ros); await waitFor(()=>A.roster && A.roster.size, 20000); }
+    if(ok){
+      const useBoth = mode==='both' && A.roster && A.roster.size;
+      try{ aStart(useBoth? 'both' : 'att'); }catch(e){}
+      ok = await waitFor(()=>A.rows && A.rows.length);
+      R[1].ok=ok;
+      R[1].s = ok? `${fmt(A.find? A.find.length : 0)}건 · ${A.rows.length? fmt(A.rows.length)+'행':''}${useBoth? ' · 대상자 기준':' · 일근태만'}` : '검수를 끝내지 못했습니다';
+    } else { R[1].ok=false; R[1].s='근태 파일을 읽지 못했습니다'; }
+    draw();
+
+    /* ③ 급여 검수기 */
+    feedFile('pFile1', U.att);
+    let okp = await waitFor(()=>P.att && P.att.length);
+    if(okp && U.ros){ feedFile('pFile3', U.ros); await waitFor(()=>P.roster && P.roster.size, 20000); }
+    if(okp && U.led){ feedFile('pFile2', U.led); await waitFor(()=>P.ledAoa && P.ledAoa.length, 25000); }
+    R[2].ok=okp;
+    R[2].s = okp? `근태 ${fmt(P.att.length)}명${P.roster&&P.roster.size? ` · 대상자 ${P.roster.size}명`:''}${P.ledAoa&&P.ledAoa.length? ` · 급여대장 ${fmt(P.ledAoa.length)}행`:' · 급여대장 없음'}`
+               : '근태 파일을 읽지 못했습니다';
+    draw();
+
+    /* ④ 근태 특이건 */
+    try{ scanAnom(); anomBadge(); }catch(e){}
+    const n = (()=>{ try{ const ROS=anomRoster(), AR=anomAliasRev();
+      return P.anom.filter(x=>(x.kind==='in'||x.kind==='out'||x.kind==='memo') && (!ROS.size||ROS.has(x.id)||AR.has(x.id))).length; }catch(e){ return 0; } })();
+    R[3].ok = true; R[3].s = `${fmt(n)}건`;
+    uProg(R,false);
+
+    const done=R.filter(x=>x.ok).length;
+    $('#uDone').innerHTML=`<div class="note ${done===4?'g':'w'}">
+      <b>${done===4? '네 화면에 모두 들어갔습니다' : `${done}개 화면에 들어갔습니다`}</b>
+      ${U.led? '' : '<br><span class="muted">급여대장을 넣지 않으셔서 급여 대조는 비어 있습니다 — 근태 집계와 특이건은 그대로 보실 수 있습니다.</span>'}
+      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="sm" onclick="go('analyze')">근태 분석기</button>
+        <button class="sm" onclick="go('audit')">근태 검수기</button>
+        <button class="sm" onclick="go('pay')">급여 검수기</button>
+        <button class="sm pri" onclick="go('anom')">근태 특이건 ${n? `(${fmt(n)}건)`:''}</button>
+      </div></div>`;
+  }catch(e){
+    $('#uDone').innerHTML=`<div class="note b"><b>넣는 중에 막혔습니다</b> — ${esc(String(e&&e.message||e))}<br>
+      <span class="muted">화면마다 따로 올리는 방식으로도 쓰실 수 있습니다.</span></div>`;
+  }
+  btn.disabled=false;
+};
+uReady();
+
 P.addr=abLoad(); abRender();
 P.fixcc=ccLoad(); ccRender();
 
