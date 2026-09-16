@@ -629,7 +629,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
     <button data-v="anom"><span class="ni"><svg viewBox="0 0 18 18"><path d="M2.6 4.2h12.8a1 1 0 0 1 1 1v8.1a1 1 0 0 1-1 1H2.6a1 1 0 0 1-1-1V5.2a1 1 0 0 1 1-1m.7 2 5.7 3.7 5.7-3.7z"/></svg></span>근태 특이건<span class="navp" id="navAnom"></span></button>
   </nav>
   <div class="side-foot">
-    <b>APRS</b><span class="ver">v8.7 · 2026-09</span>
+    <b>APRS</b><span class="ver">v8.9 · 2026-09</span>
     <span class="who" id="gWho"></span>
     <button class="sfout" id="btnOut" title="로그아웃">로그아웃</button>
   </div>
@@ -853,6 +853,8 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
         <datalist id="dlTitle"><option value="파트너"></option><option value="CP"></option><option value="매니저"></option><option value="팀장"></option><option value="점장"></option></datalist></div>
       <div class="f" style="flex:1;min-width:120px"><label>팀 · 부서 <span class="muted">명단의 부서명과 같게</span></label>
         <input type="text" id="abDept" placeholder="영업1팀"></div>
+      <div class="f" style="min-width:100px"><label>부서코드 <span class="muted">가장 확실</span></label>
+        <input type="text" id="abCode" placeholder="F01" spellcheck="false"></div>
       <div class="f" style="flex:1.2;min-width:210px"><label>메일 주소 *</label>
         <div class="atbox"><input type="text" id="abMail" placeholder="hong" spellcheck="false"><b>@shinsegae.com</b></div></div>
       <div class="f" style="flex:1;min-width:190px"><label>참조 (선택)</label>
@@ -1078,7 +1080,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
 </div>
 
 <footer>
-  <b>APRS v8.7 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
+  <b>APRS v8.9 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
   ⓘ 이 도구는 업로드한 파일을 브라우저 메모리에서만 계산합니다. 네트워크 전송·서버 저장이 없습니다.<br>
   ⓘ 총근로시간 = 기본(소정) + 연장 + 휴일근로. <b>야간·심야는 가산수당 산정용으로 따로 표시</b>하며 총합에 중복 더하지 않습니다 — 심야 연장은 이미 연장시간에 포함돼 있는 경우가 많아 더하면 이중 계산이 됩니다.<br>
   ⓘ 급여일수 = 평일(월~금, 법정공휴일 제외) + 법정공휴일. 인정 일요일수 = 데이터상 일요일 수 − 결근이 있는 주(월~일)의 일요일 수.<br>
@@ -2662,8 +2664,8 @@ $('#rosClear').onclick=()=>{ A.roster=null; A.rosName='';
 $('#rosFile').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
   readTable(f,{id:/사번|사원번호|직번|emp/i, name:/성명|이름|name/i,
                w:/시급|단가|시간당|임률|임율|기본급?시급|rate|wage/i,
-               own:/담당자|담당자명|담당자성명|담당성명|담당이름|인사담당|관리책임|책임자|담당매니저|담당파트너|^담당$|manager|owner/i,
-               dept:/부서|담당팀|^팀$|팀명|소속|부문|사업부|점포|매장|department|dept|team/i,
+               own:/담당자(?!.*(코드|메일|이메일|주소|mail|code))|^담당(?!.*(코드|메일|팀|부서))|인사담당|관리책임|책임자|담당매니저|담당파트너|manager|owner/i,
+               dept:/부서(?!코드)|담당팀(?!코드)|^팀$|팀명(?!코드)|소속(?!코드)|부문(?!코드)|사업부|점포|매장|department(?!code)|^dept$|^team$/i,
                omail:/담당.*(메일|이메일|mail)/i, omail2:/^(메일|이메일|메일주소|이메일주소|mail|e-?mail|emailaddress)$/i},
     (rowsR,hdr,col,sn,wb)=>{
       A.rosWb=wb; A.rosPick=null;
@@ -3762,7 +3764,7 @@ const P={att:null, led:null, ledAoa:[], ledHdr:[], hrow:0, diag:null, rosName:''
          wage:new Map(), hire:new Map(), quit:new Map(), roster:new Map(),
          rows:[], anom:[], name:'', addr:[], sendMsg:'',
          owner:new Map(), dept:new Map(), ownMan:new Map(), ownMsg:'', ownMsg2:'', fixcc:[], omail:new Map(),
-         ownNm:new Map(), deptNm:new Map()};
+         ownNm:new Map(), deptNm:new Map(), code:new Map(), cmap:new Map()};
 
 /* 대조 항목 — 계산기 시트의 열 구성 그대로 */
 const PITEMS=[
@@ -4302,15 +4304,17 @@ $('#pFile3').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
   readTable(f,{id:/사번|사원번호|직번|사원.?번호|emp/i, name:/성명|이름|name/i,
                w:/시급|시간급|시간당|단가|임률|임율|임금|rate|wage/i,
                hire:/입사|입사일|시작일|hire|join/i, quit:/퇴사|퇴사일|종료일|quit|leave.?date/i,
-               own:/담당자|담당자명|담당자성명|담당성명|담당이름|인사담당|관리책임|책임자|담당매니저|담당파트너|^담당$|manager|owner/i,
-               dept:/부서|담당팀|^팀$|팀명|소속|부문|사업부|점포|매장|department|dept|team/i,
-               omail:/담당.*(메일|이메일|mail)/i, omail2:/^(메일|이메일|메일주소|이메일주소|mail|e-?mail|emailaddress)$/i},
+               own:/담당자(?!.*(코드|메일|이메일|주소|mail|code))|^담당(?!.*(코드|메일|팀|부서))|인사담당|관리책임|책임자|담당매니저|담당파트너|manager|owner/i,
+               dept:/부서(?!코드)|담당팀(?!코드)|^팀$|팀명(?!코드)|소속(?!코드)|부문(?!코드)|사업부|점포|매장|department(?!code)|^dept$|^team$/i,
+               omail:/담당.*(메일|이메일|mail)/i, omail2:/^(메일|이메일|메일주소|이메일주소|mail|e-?mail|emailaddress)$/i,
+               code:/부서코드|팀코드|조직코드|부문코드|소속코드|근무처코드|담당코드|담당자코드|코드$|^코드|dept.?code|team.?code|org.?code/i},
     (rows,hdr,col,sn,wb,best)=>{
       P.rosWb=wb; P.rosName=f.name;
       P.rosAoa=(best&&best.aoa)||[]; P.rosHrow=(best&&best.hi!=null)?best.hi:0;
       P.rosHdr=hdr||[]; P.rosIdCol=col.id; P.rosNmCol=col.name;
       P.roster=new Map(); P.wage=new Map(); P.quit=new Map(); P.hire=new Map();
       const OWN=new Map(), DEP=new Map(), OMAIL=new Map(), ONM=new Map(), DNM=new Map();
+      const CODE=new Map(), CMAP=new Map();   /* 사번→부서코드, 부서코드→담당자 */
       const mCol = col.omail>=0? col.omail : (col.omail2>=0? col.omail2 : -1);
       const mKey = col.omail>=0? 'omail' : 'omail2';
       const YR=+($('#vYear')&&$('#vYear').value) || +($('#yy')&&$('#yy').value) || new Date().getFullYear();
@@ -4318,18 +4322,29 @@ $('#pFile3').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
       /* 같은 뜻의 머리글이 여러 개면 값이 가장 많이 찬 열을 씁니다.
          (부서별 담당자 표가 사원 표 옆에 붙어 있는 양식 대응) */
       {
-        const P2=/부서|담당팀|^팀$|팀명|소속|부문|사업부|점포|매장|department|dept|team/i;
-        const P1=/담당자|담당자명|담당자성명|담당성명|담당이름|인사담당|관리책임|책임자|담당매니저|담당파트너|^담당$|manager|owner/i;
+        const P2=/부서(?!코드)|담당팀(?!코드)|^팀$|팀명(?!코드)|소속(?!코드)|부문(?!코드)|사업부|점포|매장|department(?!code)|^dept$|^team$/i;
+        const P1=/담당자(?!.*(코드|메일|이메일|주소|mail|code))|^담당(?!.*(코드|메일|팀|부서))|인사담당|관리책임|책임자|담당매니저|담당파트너|manager|owner/i;
+        const P3=/부서코드|팀코드|조직코드|부문코드|소속코드|근무처코드|담당코드|담당자코드|코드$|^코드|dept.?code|team.?code|org.?code/i;
         const b1=bestFilled(P1, aoa, hrow, col.id, col.own);
         const b2=bestFilled(P2, aoa, hrow, col.id, col.dept);
+        const b3=bestFilled(P3, aoa, hrow, col.id, col.code);
         if(b1>=0) col.own=b1;
         if(b2>=0) col.dept=b2;
+        if(b3>=0) col.code=b3;
+        /* 담당자와 같은 줄에만 값이 있는 코드 열 = 담당자 표의 부서코드 */
+        col.mcode = pairCol(P3, aoa, hrow, col.id, col.own, col.code);
         /* 담당자와 같은 줄에만 값이 있는 부서 열 = 「담당자 표」의 부서 (사원 소속과 다름) */
         col.mdept = pairCol(P2, aoa, hrow, col.id, col.own, col.dept);
         /* 담당자 열이 거의 다 차 있으면 사원마다 적은 것, 일부만이면 담당자 표 */
         const bodyN=aoa.slice(hrow+1).filter(r=>idKey(r[col.id])).length;
         col.ownPer = col.own>=0 && bodyN>0 &&
           aoa.slice(hrow+1).filter(r=>idKey(r[col.id]) && norm(r[col.own])!=='').length >= bodyN*0.9;
+        /* 담당자 표의 부서 열 (사원 소속 열과 다름) — 열을 바꿔 다시 읽을 때도 씁니다 */
+        /* 담당자 열이 있는데 일부 줄만 차 있을 때만 「부서별 담당자 표」로 봅니다 */
+        const isMap = col.own>=0 && !col.ownPer;
+        P.rosMDept = isMap? (col.mdept>=0? col.mdept : col.dept) : -1;
+        P.rosMCode = isMap? (col.mcode>=0? col.mcode : col.code) : -1;
+        P.rosCodeCol = (col.code>=0 && P.rosMCode===col.code)? -1 : col.code;
       }
 
       /* 시급 열을 머리글로 못 찾았으면 값으로 찾아본다 */
@@ -4351,10 +4366,17 @@ $('#pFile3').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
         const who = col.own>=0? norm(hasRaw? r[col.own] : r.own) : '';
         const dp  = col.dept>=0? norm(hasRaw? r[col.dept] : r.dept) : '';
         const mdp = (hasRaw && col.mdept>=0)? norm(r[col.mdept]) : dp;   /* 담당자 표의 부서 */
+        const cd  = col.code>=0? norm(hasRaw? r[col.code] : r.code) : '';
+        const mcd = (hasRaw && col.mcode>=0)? norm(r[col.mcode]) : (col.ownPer? cd : (P.rosMCode===col.code? cd : ''));
+        /* 사원의 부서코드 — 담당자 표의 코드 칸은 쓰지 않습니다 */
+        if(cd && !(col.code>=0 && P.rosMCode===col.code)) CODE.set(id, cd);
+        /* 부서코드 → 담당자 (담당자 표 한 줄) */
+        if(who && (mcd||cd) && !CMAP.has(codeK(mcd||cd))) CMAP.set(codeK(mcd||cd), who);
         /* 담당자가 사원마다 적혀 있을 때만 그 사람의 담당자로 씁니다.
            일부 줄에만 있으면 「부서별 담당자 표」이므로 부서로 찾습니다. */
         if(who && col.ownPer!==false) OWN.set(id,who);
-        if(dp)  DEP.set(id,dp);
+        /* 담당자 표의 부서 칸을 사원 소속으로 잘못 쓰지 않도록 */
+        if(dp && !(col.dept>=0 && P.rosMDept===col.dept)) DEP.set(id,dp);
         /* 성명으로도 이어둡니다 — 두 파일의 사번 형식이 다를 때 씁니다 */
         const nk = nmKey(hasRaw ? (col.name>=0?norm(r[col.name]):'') : norm(r.name));
         /* 담당자 표(일부 줄)일 때는 그 줄의 사원 이름과 담당자를 묶으면 안 됩니다 */
@@ -4363,15 +4385,19 @@ $('#pFile3').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
         if(mCol>=0){
           const em=norm(hasRaw? r[mCol] : r[mKey]);
           const key=who||mdp;                      /* 담당자 이름이 없으면 부서 이름으로 */
-          if(key && em && !OMAIL.has(key)) OMAIL.set(key,{email:em, dept:mdp});
+          if(key && em && !OMAIL.has(key)) OMAIL.set(key,{email:em, dept:mdp, code:(mcd||cd)});
         }
       });
       /* 담당자·부서는 그 열이 있는 파일만 덮어씁니다 (없는 파일이 기존 것을 지우지 않게) */
-      if(OWN.size) P.owner=OWN;
-      if(DEP.size) P.dept=DEP;
-      if(ONM.size) P.ownNm=ONM;
-      if(DNM.size) P.deptNm=DNM;
-      if(OMAIL.size) P.omail=OMAIL;
+      /* 대상자 명단이 기준이므로 새로 올리면 통째로 바꿉니다 (앞 파일 값이 남지 않게) */
+      /* 다른 시트의 담당자 표를 합칩니다 */
+      let extra=0;
+      try{ const ES=rosOwnerSheets(wb, sn);
+        ES.found.forEach((v,k)=>{ if(!OMAIL.has(k)){ OMAIL.set(k,v); extra++; } });
+        ES.cmap.forEach((v,k)=>{ if(!CMAP.has(k)) CMAP.set(k,v); });
+      }catch(x){}
+      P.owner=OWN; P.dept=DEP; P.ownNm=ONM; P.deptNm=DNM; P.omail=OMAIL;
+      P.code=CODE; P.cmap=CMAP;
       /* 명단에 담당자 메일이 있으면 주소록에 자동으로 넣습니다 */
       let abs=null; try{ abs=ownAbsorb(OMAIL); }catch(x){}
       /* 부서 열이 일부 줄만 차 있으면 = 「부서별 담당자 표」가 따로 들어 있는 양식.
@@ -4400,6 +4426,7 @@ $('#pFile3').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
         + (P.wage.size? ` · 시급 ${P.wage.size}명` : ' · <span style="color:var(--bad)">시급 없음</span>')
         + (P.hire.size? ` · 입사일 ${P.hire.size}명`:'')
         + (OWN.size? ` · 담당자 ${OWN.size}명`:'') + (DEP.size? ` · 부서 ${DEP.size}명`:'')
+        + (CODE.size? ` · 부서코드 ${CODE.size}명`:'') + (CMAP.size? ` · 코드표 ${CMAP.size}개`:'')
         + (OMAIL.size? ` · <b style="color:var(--ok)">담당자 메일 ${OMAIL.size}명</b>`:'')
         + ` · ${f.name}`;
       $('#dropP3').classList.toggle('done', P.roster.size>0);
@@ -4425,6 +4452,8 @@ $('#pFile3').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
           ${row('담당자',col.own,'<span class="muted">없음 — 특이건 메일을 담당자별로 나누려면 이 열을 넣어주세요</span>')}
           ${row('부서',col.dept,'<span class="muted">없음 (선택) — 담당자 열이 없을 때 부서로 담당자를 찾습니다</span>')}
           ${row('담당자메일',mCol,'<span class="muted">없음 (선택) — 넣어두면 주소록에 자동으로 등록됩니다</span>')}
+          ${row('부서코드',col.code,'<span class="muted">없음 (권장) — 사원과 담당자에 같은 코드를 주면 가장 확실하게 이어집니다</span>')}
+          ${row('담당자 표의 코드',col.mcode,'<span class="muted">없음 — 담당자 옆에 부서코드를 적으면 그 코드로 이어 붙입니다</span>')}
         </tbody></table></div>
         ${mapFix? `<div class="note g" style="margin-top:10px"><b>부서별 담당자 표로 보고 이어 붙였습니다</b> —
             「${esc((hdr&&hdr[mapFix.i])||('열'+XLSX.utils.encode_col(mapFix.i)))}」 열을 사원 소속으로 읽어 <b>${mapFix.n}명</b>에 부서를 붙였습니다.</div>`:''}
@@ -4445,7 +4474,7 @@ $('#pFile3').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
           위 「시급」 줄이 <b>찾지 못함</b>이면 머리글을 <b>시급</b>으로 바꿔주세요.
           열은 맞는데 값이 비었다면 그 칸이 <b>빈칸이거나 글자</b>로 들어가 있는지 확인하세요 (10,400 · 10400 · 10,400원 은 모두 읽힙니다).`}
       </div>`;
-      try{ rosPickUI({own:col.own, dept:col.dept, mail:mCol}); }catch(x){}
+      try{ rosPickUI({own:col.own, dept:col.dept, mail:mCol, code:(P.rosCodeCol!=null?P.rosCodeCol:col.code)}); }catch(x){}
       runP();
     }, ['id']);
   e.target.value=''; };
@@ -4494,6 +4523,36 @@ function colFill(i){
   return {n:body.filter(r=>norm(r[i])!=='').length, of:body.length};
 }
 /* 담당자 표의 부서명과 값이 맞는 열 찾기 (사원 개인의 소속 열) */
+/* 다른 시트에 담당자 표(담당자 + 메일 [+ 코드/부서])가 있으면 그것도 읽습니다 */
+function rosOwnerSheets(wb, skip){
+  const found=new Map(), cmap=new Map();
+  if(!wb || !wb.SheetNames) return {found, cmap};
+  const hk=h=>norm(h).replace(/\s+/g,'');
+  const PO=/담당자(?!.*(코드|메일|이메일|주소|mail|code))|^담당(?!.*(코드|메일|팀|부서))|인사담당|관리책임|책임자|manager|owner/i;
+  const PM=/담당.*(메일|이메일|mail)|^(메일|이메일|메일주소|이메일주소|mail|e-?mail)$/i;
+  const PC=/부서코드|팀코드|조직코드|부문코드|소속코드|담당코드|담당자코드|코드$|^코드/i;
+  const PD=/부서(?!코드)|^팀$|팀명(?!코드)|소속(?!코드)|부문(?!코드)|사업부|department(?!code)|^team$/i;
+  const PT=/직급|호칭|직책|title|grade/i;
+  wb.SheetNames.forEach(sn=>{
+    if(sn===skip) return;
+    let aoa=[]; try{ aoa=XLSX.utils.sheet_to_json(wb.Sheets[sn],{header:1,defval:null,blankrows:false,raw:true}); }catch(e){ return; }
+    for(let hi=0; hi<Math.min(8,aoa.length); hi++){
+      const kh=(aoa[hi]||[]).map(hk);
+      const io=kh.findIndex(h=>h&&PO.test(h)), im=kh.findIndex(h=>h&&PM.test(h));
+      if(io<0 || im<0) continue;
+      const ic=kh.findIndex(h=>h&&PC.test(h)), idp=kh.findIndex(h=>h&&PD.test(h)), it=kh.findIndex(h=>h&&PT.test(h));
+      aoa.slice(hi+1).forEach(r=>{
+        const nm=norm(r[io]), em=norm(r[im]);
+        if(!nm || !em) return;
+        const cd=ic>=0? norm(r[ic]) : '', dp=idp>=0? norm(r[idp]) : '', tt=it>=0? norm(r[it]) : '';
+        if(!found.has(nm)) found.set(nm,{email:em, dept:dp, code:cd, title:tt});
+        if(cd && !cmap.has(codeK(cd))) cmap.set(codeK(cd), nm);
+      });
+      break;
+    }
+  });
+  return {found, cmap};
+}
 function rosDeptByMap(deptNames){
   const aoa=P.rosAoa||[], hrow=P.rosHrow||0, ci=P.rosIdCol;
   if(!aoa.length || !(ci>=0)) return -1;
@@ -4511,27 +4570,41 @@ function rosDeptByMap(deptNames){
   }
   return best.hit>=Math.max(3, Math.round(body.length*0.5))? best.i : -1;
 }
-function rosBuildOwn(oi, di, mi){
+function rosBuildOwn(oi, di, mi, mdi, ki){
   const aoa=P.rosAoa||[], hrow=P.rosHrow||0, ci=P.rosIdCol, ni=P.rosNmCol;
   if(!aoa.length || !(ci>=0)) return null;
+  if(mdi===undefined) mdi = (P.rosMDept!=null? P.rosMDept : -1);
+  if(ki===undefined) ki = (P.rosCodeCol!=null? P.rosCodeCol : -1);
+  const mki = (P.rosMCode!=null && P.rosMCode!==ki)? P.rosMCode : -1;
   const OWN=new Map(), DEP=new Map(), ONM=new Map(), DNM=new Map(), OMAIL=new Map();
+  const CODE=new Map(), CMAP=new Map();
+  const rows0=aoa.slice(hrow+1).filter(r=>idKey(r[ci]));
+  /* 담당자가 사원마다 적혀 있는지(=개인별), 일부 줄에만 있는지(=부서별 담당자 표) */
+  const ownPer = oi>=0 && rows0.length>0 &&
+    rows0.filter(r=>norm(r[oi])!=='').length >= rows0.length*0.9;
   aoa.slice(hrow+1).forEach(r=>{
     const id=idKey(r[ci]); if(!id) return;
     const who = oi>=0? norm(r[oi]) : '';
     const dp  = di>=0? norm(r[di]) : '';
-    if(who) OWN.set(id,who);
+    const mdp = mdi>=0? norm(r[mdi]) : dp;
+    const cd  = ki>=0? norm(r[ki]) : '';
+    const mcd = mki>=0? norm(r[mki]) : (ownPer? cd : '');
+    if(cd) CODE.set(id,cd);
+    if(who && (mcd||cd) && !CMAP.has(codeK(mcd||cd))) CMAP.set(codeK(mcd||cd), who);
+    if(who && ownPer) OWN.set(id,who);
     if(dp)  DEP.set(id,dp);
     const nk = nmKey(ni>=0? norm(r[ni]) : '');
-    if(nk && who && !ONM.has(nk)) ONM.set(nk,who);
+    if(nk && who && ownPer && !ONM.has(nk)) ONM.set(nk,who);
     if(nk && dp  && !DNM.has(nk)) DNM.set(nk,dp);
-    if(mi>=0){ const em=norm(r[mi]), key=who||dp;
-      if(key && em && !OMAIL.has(key)) OMAIL.set(key,{email:em, dept:dp}); }
+    if(mi>=0){ const em=norm(r[mi]), key=who||mdp;
+      if(key && em && !OMAIL.has(key)) OMAIL.set(key,{email:em, dept:mdp, code:(mcd||cd)}); }
   });
   P.owner=OWN; P.dept=DEP; P.ownNm=ONM; P.deptNm=DNM; P.omail=OMAIL;
+  P.code=CODE; P.cmap=CMAP;
   P.ownMan.clear();
   let abs=null; try{ abs=ownAbsorb(OMAIL); }catch(x){}
   try{ ownRender(); anomBadge(); }catch(x){}
-  return {OWN, DEP, OMAIL, abs};
+  return {OWN, DEP, OMAIL, CODE, CMAP, abs};
 }
 function rosPickUI(sel){
   const box=$('#pRosDiag'); if(!box) return;
@@ -4560,17 +4633,18 @@ function rosPickUI(sel){
       <div class="f" style="flex:1;min-width:180px"><label>담당자</label><select id="rpOwn">${opts(sel.own)}</select></div>
       <div class="f" style="flex:1;min-width:180px"><label>부서 <span class="muted">사원 개인의 소속</span></label><select id="rpDept">${opts(sel.dept)}</select></div>
       <div class="f" style="flex:1;min-width:180px"><label>담당자메일 <span class="muted">(선택)</span></label><select id="rpMail">${opts(sel.mail)}</select></div>
+      <div class="f" style="flex:1;min-width:180px"><label>부서코드 <span class="muted">사원 개인의 코드</span></label><select id="rpCode">${opts(sel.code)}</select></div>
       <button class="pri" id="rpGo">이 열로 다시 읽기</button>
     </div>
     <div id="rpOut" style="margin-top:8px"></div>`;
   box.appendChild(d);
   $('#rpGo').onclick=()=>{
-    const r=rosBuildOwn(+$('#rpOwn').value, +$('#rpDept').value, +$('#rpMail').value);
+    const r=rosBuildOwn(+$('#rpOwn').value, +$('#rpDept').value, +$('#rpMail').value, undefined, +$('#rpCode').value);
     const out=$('#rpOut'); if(!out) return;
     out.innerHTML = !r
       ? `<div class="note b">다시 읽지 못했습니다 — 사번 열을 찾지 못했습니다. 위 미리보기에서 시트·머리글 행을 확인해 주세요.</div>`
       : `<div class="note ${(r.OWN.size||r.DEP.size)?'g':'b'}"><b>${(r.OWN.size||r.DEP.size)?'다시 읽었습니다':'고른 열에서 값을 못 읽었습니다'}</b>
-          — 담당자 <b>${r.OWN.size}명</b> · 부서 <b>${r.DEP.size}명</b>${r.OMAIL.size?` · 담당자 메일 <b>${r.OMAIL.size}명</b>`:''}
+          — 담당자 <b>${r.OWN.size}명</b> · 부서 <b>${r.DEP.size}명</b>${r.CODE.size?` · 부서코드 <b>${r.CODE.size}명</b>`:''}${r.CMAP.size?` · 코드표 <b>${r.CMAP.size}개</b>`:''}${r.OMAIL.size?` · 담당자 메일 <b>${r.OMAIL.size}명</b>`:''}
           ${r.abs? `<br>주소록에 <b>${r.abs.add.length+r.abs.upd.length}명</b>을 넣었습니다 — ${[...r.abs.add,...r.abs.upd].map(x=>esc(x)).join(' · ')}`:''}
           <br><span class="muted">왼쪽 <b>근태 특이건</b> 화면에서 분류 결과를 확인하세요.</span></div>`;
   };
@@ -5418,6 +5492,7 @@ const CPNAMES=new Set(['윤남겸','이상미']);
 const abFix=x=>{ const name=String((x&&x.name)||'').trim();
   return { name, dept:String((x&&x.dept)||'').trim(),
     title:String((x&&x.title)||'').trim() || (CPNAMES.has(name)? 'CP' : '파트너'),
+    code:String((x&&x.code)||'').trim(),
     email:mailAddr(mailLocal((x&&x.email)||'')), cc:(x&&x.cc)? mailAddr(mailLocal(x.cc)) : '' }; };
 function abLoad(){ try{ const l=JSON.parse(LS.get(ABK)||'[]');
   return Array.isArray(l)? l.map(abFix).filter(x=>x.name&&x.email) : []; }catch(e){ return []; } }
@@ -5440,10 +5515,10 @@ function abRender(){
     box.innerHTML = !list.length
       ? '<div class="empty">아직 등록한 담당자가 없습니다. 아래에서 <b>이름 · 팀 · 메일 앞부분</b>만 넣어 추가하세요.</div>'
       : `<div class="tblwrap" style="max-height:320px"><table class="prev"><thead><tr>
-          <th style="width:96px">이름</th><th style="width:76px">직급</th><th style="width:116px">팀 · 부서</th><th>메일 주소</th>
-          <th style="width:146px">참조(선택)</th><th style="width:108px"></th>
+          <th style="width:92px">이름</th><th style="width:70px">직급</th><th style="width:108px">팀 · 부서</th><th style="width:84px">부서코드</th><th>메일 주소</th>
+          <th style="width:124px">참조(선택)</th><th style="width:108px"></th>
          </tr></thead><tbody>${list.map((a,i)=>`<tr>
-          <td><b>${esc(a.name)}</b></td><td>${esc(a.title||'')}</td><td>${esc(a.dept||'')}</td><td class="mono">${esc(a.email)}</td>
+          <td><b>${esc(a.name)}</b></td><td>${esc(a.title||'')}</td><td>${esc(a.dept||'')}</td><td class="mono">${esc(a.code||'')}</td><td class="mono">${esc(a.email)}</td>
           <td class="mono muted">${esc(a.cc||'')}</td>
           <td><button class="sm" data-abed="${i}">수정</button> <button class="sm" data-abdel="${i}">삭제</button></td>
          </tr>`).join('')}</tbody></table></div>`;
@@ -5453,7 +5528,7 @@ function abRender(){
       l.splice(+b.dataset.abdel,1); abSave(l); });
     box.querySelectorAll('[data-abed]').forEach(b=>b.onclick=()=>{
       const a=(P.addr||[])[+b.dataset.abed]; if(!a) return;
-      $('#abName').value=a.name; $('#abDept').value=a.dept||''; $('#abTitle').value=a.title||'';
+      $('#abName').value=a.name; $('#abDept').value=a.dept||''; $('#abTitle').value=a.title||''; $('#abCode').value=a.code||'';
       $('#abMail').value=mailLocal(a.email); $('#abCc').value=mailLocal(a.cc||'');
       $('#abName').focus(); });
   }
@@ -5520,11 +5595,14 @@ function ownAbsorb(found){
     if(!name) return;
     const mail=v.email? mailAddr(mailLocal(v.email)) : '';
     const at=l.findIndex(x=>x.name===name);
-    if(at<0){ if(!mail) return; l.push(abFix({name, dept:v.dept||'', email:mail})); add.push(name); }
+    if(at<0){ if(!mail) return;
+      l.push(abFix({name, dept:v.dept||'', code:v.code||'', title:v.title||'', email:mail})); add.push(name); }
     else{
       const c=l[at]; let ch=false;
       if(mail && c.email!==mail){ c.email=mail; ch=true; }
       if(v.dept && c.dept!==v.dept){ c.dept=v.dept; ch=true; }
+      if(v.code && c.code!==v.code){ c.code=v.code; ch=true; }
+      if(v.title && c.title!==v.title){ c.title=v.title; ch=true; }
       if(ch) upd.push(name);
     }
   });
@@ -5535,6 +5613,7 @@ function ownAbsorb(found){
 $('#abAdd').onclick=()=>{
   const name=$('#abName').value.trim(), dept=$('#abDept').value.trim();
   const title=$('#abTitle').value.trim() || (CPNAMES.has(name)? 'CP' : '파트너');
+  const code=$('#abCode').value.trim();
   const local=mailLocal($('#abMail').value), cc=mailLocal($('#abCc').value);
   if(!name) return alert('이름을 넣어주세요.\n대상자 명단의 「담당자」 이름과 같게 넣으시면 자동으로 배정됩니다.');
   if(!local) return alert(`메일 주소 앞부분을 넣어주세요.\n예) hong  →  hong${MAILDOM}`);
@@ -5542,10 +5621,10 @@ $('#abAdd').onclick=()=>{
   if(cc && abBad(cc)) return alert('참조 주소 앞부분에 쓸 수 없는 글자가 있습니다.');
   const l=(P.addr||[]).slice();
   const at=l.findIndex(x=>x.name===name);
-  const rec={name, dept, title, email:mailAddr(local), cc: cc? mailAddr(cc) : ''};
+  const rec={name, dept, title, code, email:mailAddr(local), cc: cc? mailAddr(cc) : ''};
   if(at>=0) l[at]=rec; else l.push(rec);
   abSave(l);
-  ['abName','abMail','abDept','abCc','abTitle'].forEach(k=>$('#'+k).value='');
+  ['abName','abMail','abDept','abCc','abTitle','abCode'].forEach(k=>$('#'+k).value='');
   $('#abName').focus();
 };
 $('#abExp').onclick=()=>{
@@ -5718,6 +5797,7 @@ function xlsxDown(rows, name){
    사번은 쓰지 않습니다 — 이름과 팀만으로 맞춥니다. */
 const ownBook=()=>P.addr||[];
 /* 「홍길동 파트너」처럼 직급이 붙어 있거나 띄어쓰기가 달라도 같은 사람으로 봅니다 */
+const codeK=v=>String(v==null?'':v).replace(/\s+/g,'').replace(/\.0+$/,'').toUpperCase();
 const ownNmK=v=>String(v==null?'':v).replace(/\s+/g,'').replace(/(파트너|CP|매니저|팀장|점장|과장|차장|부장|대리|사원|주임|책임|님)+$/,'').toUpperCase();
 const ownDpK=v=>String(v==null?'':v).replace(/\s+/g,'').toUpperCase();
 const ownByName=n=>{ const k=String(n==null?'':n).trim(); if(!k) return null;
@@ -5740,13 +5820,54 @@ function ownDeptOf(id){ const a=ownAlt(id);
   const nk=nmKey(anomName(id));
   return (nk && P.deptNm && P.deptNm.get(nk))||'';
 }
+/* 부서 이름 색인 — 전체 이름은 그대로, 「식품팀 / 자주한상」처럼 나뉜 이름은
+   조각(자주한상)으로도 찾을 수 있게 합니다. 조각이 겹치면(식품팀) 쓰지 않습니다. */
+function ownDeptIndex(){
+  const full=new Map(), part=new Map(), dup=new Set();
+  ownBook().forEach(a=>{
+    const d=String(a.dept||'').trim(); if(!d) return;
+    const fk=ownDpK(d); if(fk && !full.has(fk)) full.set(fk, a.name);
+    d.split(/[\/|,·>《》\-–~]+/).forEach(x=>{
+      const t=ownDpK(x); if(!t || t===fk) return;
+      if(part.has(t) && part.get(t)!==a.name) dup.add(t); else part.set(t, a.name);
+    });
+  });
+  dup.forEach(t=>part.delete(t));
+  return {full, part};
+}
+/* 사원의 소속 글자로 담당자 찾기 — 통째로, 안 되면 조각으로 */
+function ownByDeptText(v){
+  const s=String(v==null?'':v).trim(); if(!s) return null;
+  const IX=ownDeptIndex(), k=ownDpK(s);
+  let nm = IX.full.get(k) || IX.part.get(k);
+  if(!nm){
+    const toks=s.split(/[\/|,·>《》\-–~\s]+/).map(x=>ownDpK(x)).filter(Boolean);
+    for(const t of toks){ if(IX.full.has(t)){ nm=IX.full.get(t); break; } }
+    if(!nm) for(const t of toks){ if(IX.part.has(t)){ nm=IX.part.get(t); break; } }
+  }
+  return nm? ownByName(nm) : null;
+}
+/* 부서코드로 찾기 — 이름이 어떻게 적혀 있든 코드가 같으면 확실히 이어집니다 */
+const ownByCode=c=>{ const k=codeK(c); if(!k) return null;
+  return ownBook().find(a=>codeK(a.code)===k) || null; };
+function ownCodeOf(id){ const a=ownAlt(id);
+  return (P.code&&(P.code.get(id)||(a&&P.code.get(a))))||''; }
 function ownAuto(id){
-  const w=ownNamed(id); if(w) return w;
-  const h=ownByDept(ownDeptOf(id)); return h? h.name : '';
+  const cd=ownCodeOf(id);
+  if(cd){
+    const byBook=ownByCode(cd); if(byBook) return byBook.name;          /* ① 주소록의 부서코드 */
+    const byMap=P.cmap && P.cmap.get(codeK(cd)); if(byMap) return byMap; /* ② 명단의 코드표 */
+  }
+  const w=ownNamed(id); if(w) return w;                                  /* ③ 사원마다 적은 담당자 */
+  const d=ownDeptOf(id);
+  const h=ownByDept(d) || ownByDeptText(d);                              /* ④ 부서 이름 */
+  return h? h.name : '';
 }
 /* 어떻게 정해졌는지 — 화면에 그대로 보여줍니다 */
 function ownHow(id){
   if(P.ownMan.has(id)) return '직접 지정';
+  const cd=ownCodeOf(id);
+  if(cd && (ownByCode(cd) || (P.cmap && P.cmap.get(codeK(cd))))) return '부서코드';
   const a=ownAlt(id);
   if(P.owner&&(P.owner.get(id)||(a&&P.owner.get(a)))) return '명단 담당자(사번)';
   const nk=nmKey(anomName(id));
@@ -5956,20 +6077,43 @@ function ownDiagText(){
   push('   담당자 열 : ', cov(OW.size), ' · 종류 ', ownVals.length, '개 — ', ex(ownVals,8));
   push('   부서 열   : ', cov(DP.size), ' · 종류 ', depVals.length, '개 — ', ex(depVals,8));
   push('   담당자메일 열 : ', OM.size, '명 — ', ex([...OM.entries()].map(([k,v])=>k+'='+v.email),6));
+  const CD=P.code||new Map(), CM=P.cmap||new Map();
+  push('   부서코드 열 : ', cov(CD.size), ' · 종류 ', new Set([...CD.values()]).size, '개 — ', ex([...new Set([...CD.values()])],10));
+  push('   코드 → 담당자 표 : ', CM.size, '개 — ', ex([...CM.entries()].map(([k,v])=>k+'→'+v),10));
   push('');
-  push('② 사번 맞추기');
+  push('② 명단 파일의 모든 열  (사번이 있는 ', (P.rosAoa? P.rosAoa.slice((P.rosHrow||0)+1).filter(r=>idKey(r[P.rosIdCol])).length : 0), '줄 기준)');
+  {
+    const aoa=P.rosAoa||[], hrow=P.rosHrow||0, ci=P.rosIdCol, hdr=P.rosHdr||[];
+    const body=aoa.slice(hrow+1).filter(r=>idKey(r[ci]));
+    if(!body.length) push('   (명단을 읽지 못했습니다)');
+    else{
+      const width=Math.max(hdr.length, 0, ...body.map(r=>r.length));
+      for(let i=0;i<width;i++){
+        const h=(hdr[i]!=null && String(hdr[i]).trim())? String(hdr[i]).trim() : '(머리글 없음)';
+        const n=body.filter(r=>norm(r[i])!=='').length;
+        const smp=body.filter(r=>norm(r[i])!=='').slice(0,3).map(r=>{ const v=r[i];
+          return (v instanceof Date? dKey(v) : norm(v)).slice(0,20); }).join(' · ');
+        push('   ', XLSX.utils.encode_col(i), ' ', (h+'                    ').slice(0,18), ' ',
+             String(n).padStart(3), '/', body.length, '줄  ', smp);
+      }
+    }
+  }
+  push('');
+  push('③ 사번 맞추기');
   push('   명단 사번   : ', ex([...RS.keys()],6));
   push('   특이건 사번 : ', ex(ids,6));
   const byId=ids.filter(id=>OW.get(id)||OW.get(AR.get(id)||'')).length;
   push('   사번으로 담당자가 잡힌 인원 : ', byId, ' / ', ids.length, '명');
+  const byCode=ids.filter(id=>{ const c=ownCodeOf(id); return !!(c && (ownByCode(c)||CM.get(codeK(c)))); }).length;
+  push('   부서코드로 담당자가 잡힌 인원 : ', byCode, ' / ', ids.length, '명');
   push('');
-  push('③ 성명 맞추기');
+  push('④ 성명 맞추기');
   push('   명단 성명   : ', ex([...RS.values()],6));
   push('   특이건 성명 : ', ex(ids.map(i=>anomName(i)),6));
   const byNm=ids.filter(id=>{ const k=nmKey(anomName(id)); return !!(k && ON.get(k)); }).length;
   push('   성명으로 담당자가 잡힌 인원 : ', byNm, ' / ', ids.length, '명');
   push('');
-  push('④ 주소록');
+  push('⑤ 주소록');
   push('   등록 ', book.length, '명 — ', ex(book.map(a=>`${a.name}${a.title?' '+a.title:''} <${a.email}>${a.dept?' ['+a.dept+']':''}`),8));
   const used=[...new Set(ids.map(i=>ownOf(i)).filter(Boolean))];
   const ok=used.filter(w=>ownByName(w)), bad=used.filter(w=>!ownByName(w));
@@ -5977,25 +6121,30 @@ function ownDiagText(){
   if(bad.length) push('   주소록에 없는 이름 : ', ex(bad,8));
   push('');
   const done=ids.filter(i=>ownOf(i)).length;
-  push('⑤ 결과 : 대상 ', ids.length, '명 · 배정 ', done, '명 · 미지정 ', ids.length-done, '명 · 보낼 메일 ', ok.length, '통');
+  push('⑥ 결과 : 대상 ', ids.length, '명 · 배정 ', done, '명 · 미지정 ', ids.length-done, '명 · 보낼 메일 ', ok.length, '통');
   push('');
   push('■ 걸리는 점');
   const why=[];
+  const partial = RS.size && (OW.size+DP.size) < RS.size*0.7;
   if(!RS.size) why.push('대상자 명단을 아직 올리지 않았습니다 — 급여 검수기 3번 칸에 올려주세요.');
-  else{
-    if(!OW.size && !DP.size) why.push('명단에서 담당자·부서 열을 읽지 못했습니다 — 급여 검수기의 「담당자 열 직접 고르기」에서 열을 골라 「이 열로 다시 읽기」를 눌러주세요.');
-    else if(!ids.length) why.push('특이건이 0건입니다 — 근태 파일을 확인해 주세요.');
-    else if(byId===0 && byNm===0 && RS.size && (OW.size+DP.size) < RS.size*0.7)
-      why.push('명단이 「부서별 담당자 표」 양식으로 보입니다 — 담당자·부서 값이 '+RS.size+'명 중 일부 줄에만 들어 있습니다.'
-        +' 사원마다 소속이 적힌 열이 따로 있어야 부서로 담당자를 찾을 수 있습니다.'
-        +' 급여 검수기의 「담당자 열 직접 고르기」에서 <부서> 칸을 열어 '+RS.size+'줄이 모두 채워진 열을 골라 「이 열로 다시 읽기」를 눌러주세요.'
-        +' 그런 열이 없으면 명단에 <부서> 열을 하나 만들어 사원마다 소속을 적어주시면 됩니다.');
-    else if(byId===0 && byNm===0) why.push('명단의 사번·성명이 근태 파일과 하나도 맞지 않습니다 — 두 파일의 사번 형식(앞자리 0·문자 섞임)이나 성명 표기를 확인해 주세요.');
-    if(!book.length) why.push('주소록에 담당자가 한 명도 없습니다 — 「주소록 관리」에서 등록하거나, 명단에 담당자메일 열을 넣어 다시 올려주세요.');
-    else if(used.length && !ok.length) why.push('명단의 담당자 이름이 주소록 이름과 하나도 같지 않습니다 — 위 ④의 이름을 서로 맞춰주세요.');
-    else if(bad.length) why.push('주소록에 없는 담당자가 '+bad.length+'명 있습니다 ('+ex(bad,6)+') — 그만큼 메일이 나가지 않습니다. 「주소록 관리」에 넣거나 명단의 담당자메일 열을 채워주세요.');
+  else if(!ids.length) why.push('특이건이 0건입니다 — 근태 파일을 확인해 주세요.');
+  else if(done===ids.length){
+    if(bad.length) why.push('전원 배정됐지만 주소록에 없는 담당자가 '+bad.length+'명 있습니다 ('+ex(bad,6)+') — 그만큼 메일이 나가지 않습니다.');
+  }else{
+    const noDept=ids.filter(i=>!ownOf(i) && !ownDeptOf(i)).length;
+    if(noDept)
+      why.push('담당자가 없는 '+(ids.length-done)+'명 중 '+noDept+'명은 소속(부서)이 비어 있습니다. '
+        +'명단에 사원마다 소속을 적은 열이 있어야 「부서별 담당자 표」와 이어집니다 — 위 ②의 열 목록에서 '+RS.size+'줄이 모두 채워진 소속 열을 찾아 '
+        +'급여 검수기의 「담당자 열 직접 고르기」에서 <부서>로 골라 「이 열로 다시 읽기」를 눌러주세요. 그런 열이 없으면 명단에 한 열을 만들어 사원마다 소속을 적어주세요.');
+    else if(!book.length)
+      why.push('주소록에 담당자가 한 명도 없습니다 — 「주소록 관리」에서 등록하거나, 명단에 담당자메일 열을 넣어 다시 올려주세요.');
+    else
+      why.push('담당자가 없는 '+(ids.length-done)+'명은 소속은 있는데 그 소속의 담당자를 찾지 못했습니다 — '
+        +'주소록의 「팀 · 부서」 이름과 명단의 소속 이름이 같은지 확인해 주세요. (위 ⑤의 [대괄호] 안이 주소록의 부서명입니다)');
+    if(bad.length) why.push('주소록에 없는 담당자 '+bad.length+'명 ('+ex(bad,6)+') — 그만큼 메일이 나가지 않습니다.');
   }
-  if(!why.length) why.push('특별히 걸리는 점이 없습니다. ⑤ 결과를 확인해 주세요.');
+  if(partial && RS.size) why.push('참고 : 담당자·부서 값이 '+RS.size+'명 중 일부 줄에만 있습니다 — 「부서별 담당자 표」가 따로 들어 있는 양식으로 읽었습니다.');
+  if(!why.length) why.push('특별히 걸리는 점이 없습니다. ⑥ 결과를 확인해 주세요.');
   why.forEach((w,i)=>push('   ', i+1, '. ', w));
   return L.join('\n');
 }
