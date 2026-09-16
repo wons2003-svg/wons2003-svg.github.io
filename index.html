@@ -76,6 +76,8 @@ body{padding:0}
 @media (prefers-color-scheme:dark){.tl i{box-shadow:inset 0 0 0 .5px rgba(0,0,0,.2)}}
 .sl{font-size:11.5px;font-weight:640;color:var(--ink3);padding:0 10px 7px;letter-spacing:.01em}
 #nav{display:flex;flex-direction:column;gap:2px;margin:0}
+#nav .sl{padding:14px 10px 5px}
+#nav .sl:first-child{padding-top:2px}
 #nav button{
   display:flex;align-items:center;gap:9px;width:100%;text-align:left;
   border:0;background:none;color:var(--ink);padding:7px 10px;border-radius:8px;
@@ -355,7 +357,7 @@ dialog::backdrop{background:rgba(0,0,0,.35);-webkit-backdrop-filter:blur(4px);ba
 .hnote span{font-size:12.5px;color:var(--ink3);line-height:1.45}
 .pcard .pi svg{width:26px;height:26px}
 .pick{display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:16px;margin:8px 0 24px}
-@media (min-width:1100px){.pick{grid-template-columns:repeat(4,1fr)}}
+@media (min-width:1100px){.pick{grid-template-columns:repeat(3,1fr)}}
 @media (max-width:1099px) and (min-width:640px){.pick{grid-template-columns:repeat(2,1fr)}}
 .pcard{
   background:var(--panel); border:0; border-radius:var(--r-xl); padding:24px 22px 20px; cursor:pointer;
@@ -620,17 +622,21 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
 <div class="macwin">
 <aside class="macside">
   <div class="tl"><i class="r"></i><i class="y"></i><i class="g"></i></div>
-  <div class="sl">도구</div>
   <nav id="nav">
+    <div class="sl">시작</div>
     <button data-v="home" class="on"><span class="ni"><svg viewBox="0 0 18 18"><path d="M9 2.2 2.6 7.3v8.1h4.3v-4.6h4.2v4.6h4.3V7.3z"/></svg></span>홈</button>
-    <button data-v="load"><span class="ni"><svg viewBox="0 0 18 18"><path d="M9 1.9a1 1 0 0 1 .71.29l3.2 3.2a1 1 0 0 1-1.42 1.42L10 5.32V11a1 1 0 1 1-2 0V5.32L6.51 6.81A1 1 0 0 1 5.09 5.39l3.2-3.2A1 1 0 0 1 9 1.9M3.2 10.6a1 1 0 0 1 1 1v2.3h9.6v-2.3a1 1 0 1 1 2 0v2.8a1.5 1.5 0 0 1-1.5 1.5H3.7a1.5 1.5 0 0 1-1.5-1.5v-2.8a1 1 0 0 1 1-1"/></svg></span>파일 올리기<span class="navp" id="navLoad"></span></button>
-    <button data-v="analyze"><span class="ni"><svg viewBox="0 0 18 18"><rect x="2.2" y="9.6" width="3" height="6" rx="1"/><rect x="7.5" y="4.4" width="3" height="11.2" rx="1"/><rect x="12.8" y="7" width="3" height="8.6" rx="1"/></svg></span>근태 분석기</button>
-    <button data-v="audit"><span class="ni"><svg viewBox="0 0 18 18"><path d="M8 2.2a5.8 5.8 0 1 0 3.5 10.4l3 3a1.1 1.1 0 0 0 1.6-1.6l-3-3A5.8 5.8 0 0 0 8 2.2m0 2.2a3.6 3.6 0 1 1 0 7.2 3.6 3.6 0 0 1 0-7.2"/></svg></span>근태 검수기</button>
-    <button data-v="pay"><span class="ni"><svg viewBox="0 0 18 18"><path d="M9 1.6a1 1 0 0 1 1 1v.7c1.9.24 3.3 1.3 3.3 2.8a1 1 0 0 1-2 0c0-.42-.9-1.1-2.3-1.1s-2.3.68-2.3 1.1c0 .38.63.74 2.5 1.08 2.2.4 4.1 1.05 4.1 3 0 1.55-1.4 2.6-3.3 2.85v.7a1 1 0 1 1-2 0v-.7c-1.9-.25-3.3-1.3-3.3-2.85a1 1 0 1 1 2 0c0 .42.9 1.1 2.3 1.1s2.3-.68 2.3-1.1c0-.38-.63-.74-2.5-1.08-2.2-.4-4.1-1.05-4.1-3C6.7 4.6 8.1 3.54 10 3.3v-.7a1 1 0 0 1-1-1"/></svg></span>급여 검수기</button>
-    <button data-v="anom"><span class="ni"><svg viewBox="0 0 18 18"><path d="M2.6 4.2h12.8a1 1 0 0 1 1 1v8.1a1 1 0 0 1-1 1H2.6a1 1 0 0 1-1-1V5.2a1 1 0 0 1 1-1m.7 2 5.7 3.7 5.7-3.7z"/></svg></span>근태 특이건<span class="navp" id="navAnom"></span></button>
+    <button data-v="load"><span class="ni"><svg viewBox="0 0 18 18"><path d="M9 1.9a1 1 0 0 1 .71.29l3.2 3.2a1 1 0 0 1-1.42 1.42L10 5.32V11a1 1 0 1 1-2 0V5.32L6.51 6.81A1 1 0 0 1 5.09 5.39l3.2-3.2A1 1 0 0 1 9 1.9M3.2 10.6a1 1 0 0 1 1 1v2.3h9.6v-2.3a1 1 0 1 1 2 0v2.8a1.5 1.5 0 0 1-1.5 1.5H3.7a1.5 1.5 0 0 1-1.5-1.5v-2.8a1 1 0 0 1 1-1"/></svg></span>자료 올리기<span class="navp" id="navLoad"></span></button>
+    <div class="sl">근태 · 급여 확인</div>
+    <button data-v="analyze"><span class="ni"><svg viewBox="0 0 18 18"><rect x="2.2" y="9.6" width="3" height="6" rx="1"/><rect x="7.5" y="4.4" width="3" height="11.2" rx="1"/><rect x="12.8" y="7" width="3" height="8.6" rx="1"/></svg></span>근태 집계</button>
+    <button data-v="audit"><span class="ni"><svg viewBox="0 0 18 18"><path d="M8 2.2a5.8 5.8 0 1 0 3.5 10.4l3 3a1.1 1.1 0 0 0 1.6-1.6l-3-3A5.8 5.8 0 0 0 8 2.2m0 2.2a3.6 3.6 0 1 1 0 7.2 3.6 3.6 0 0 1 0-7.2"/></svg></span>근태 점검</button>
+    <button data-v="pay"><span class="ni"><svg viewBox="0 0 18 18"><path d="M9 1.6a1 1 0 0 1 1 1v.7c1.9.24 3.3 1.3 3.3 2.8a1 1 0 0 1-2 0c0-.42-.9-1.1-2.3-1.1s-2.3.68-2.3 1.1c0 .38.63.74 2.5 1.08 2.2.4 4.1 1.05 4.1 3 0 1.55-1.4 2.6-3.3 2.85v.7a1 1 0 1 1-2 0v-.7c-1.9-.25-3.3-1.3-3.3-2.85a1 1 0 1 1 2 0c0 .42.9 1.1 2.3 1.1s2.3-.68 2.3-1.1c0-.38-.63-.74-2.5-1.08-2.2-.4-4.1-1.05-4.1-3C6.7 4.6 8.1 3.54 10 3.3v-.7a1 1 0 0 1-1-1"/></svg></span>급여 대조</button>
+    <button data-v="anom"><span class="ni"><svg viewBox="0 0 18 18"><path d="M2.6 4.2h12.8a1 1 0 0 1 1 1v8.1a1 1 0 0 1-1 1H2.6a1 1 0 0 1-1-1V5.2a1 1 0 0 1 1-1m.7 2 5.7 3.7 5.7-3.7z"/></svg></span>특이건 확인<span class="navp" id="navAnom"></span></button>
+    <div class="sl">메일 · 담당자</div>
+    <button data-v="mail"><span class="ni"><svg viewBox="0 0 18 18"><path d="M9 1.3a1 1 0 0 1 .71.29l3.2 3.2a1 1 0 0 1-1.42 1.42L10 4.72V11a1 1 0 1 1-2 0V4.72L6.51 6.21A1 1 0 0 1 5.09 4.79l3.2-3.2A1 1 0 0 1 9 1.3M2.6 8.4h3.1a1 1 0 1 1 0 2H3.6v3.9h10.8v-3.9h-2.1a1 1 0 1 1 0-2h3.1a1 1 0 0 1 1 1v5.4a1 1 0 0 1-1 1H2.6a1 1 0 0 1-1-1V9.4a1 1 0 0 1 1-1"/></svg></span>특이건 메일</button>
+    <button data-v="owner"><span class="ni"><svg viewBox="0 0 18 18"><path d="M6.6 2.2a3.2 3.2 0 1 1 0 6.4 3.2 3.2 0 0 1 0-6.4m0 2a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4M13.1 3.4a2.4 2.4 0 1 1 0 4.8 2.4 2.4 0 0 1 0-4.8M6.6 9.7c2.7 0 4.9 1.4 4.9 3.1v2.1a1 1 0 0 1-1 1H2.7a1 1 0 0 1-1-1v-2.1c0-1.7 2.2-3.1 4.9-3.1m6.5.4c2 0 3.6 1.1 3.6 2.5v1.6a1 1 0 0 1-1 1h-2.3v-2.4c0-1-.5-1.9-1.4-2.6z"/></svg></span>담당자 관리<span class="navp" id="navOwner"></span></button>
   </nav>
   <div class="side-foot">
-    <b>APRS</b><span class="ver">v9.6 · 2026-09</span>
+    <b>APRS</b><span class="ver">v9.7 · 2026-09</span>
     <span class="who" id="gWho"></span>
     <button class="sfout" id="btnOut" title="로그아웃">로그아웃</button>
   </div>
@@ -655,7 +661,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
   <div class="pick">
     <div class="pcard" data-go="analyze">
       <div class="pi"><svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 22V13"/><path d="M11.7 22V6"/><path d="M18.3 22v-6"/><path d="M25 22V10"/></svg></div>
-      <h3>근태 분석기</h3>
+      <h3>근태 집계</h3>
       <p>일근태 파일을 사번·성명 기준으로 집계합니다.</p>
       <div class="pdet"><ul>
         <li>출근일수 · 급여일수(평일+법정공휴일)</li>
@@ -663,11 +669,11 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
         <li>개별 연장시간(분) · 기본(소정)시간</li>
         <li>근태코드 규칙을 직접 정의 · 재사용</li>
       </ul></div>
-      <button class="pri">분석기 열기</button>
+      <button class="pri">근태 집계 열기</button>
     </div>
     <div class="pcard" data-go="audit">
       <div class="pi"><svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12.5" cy="12.5" r="7.5"/><path d="M18.2 18.2 24 24"/></svg></div>
-      <h3>근태 검수기</h3>
+      <h3>근태 점검</h3>
       <p>근태 파일의 입력 오류를 규칙으로 찾아냅니다.</p>
       <div class="pdet"><ul>
         <li>휴가·예비군·법일의 급여요일 / 시간 입력 오류</li>
@@ -675,11 +681,11 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
         <li>개별연장 시작·종료 시각 불일치</li>
         <li>연장(분) 0 / 비0 판정 오류, 출퇴근 센싱 30분 이상 차이</li>
       </ul></div>
-      <button class="pri">검수기 열기</button>
+      <button class="pri">근태 점검 열기</button>
     </div>
     <div class="pcard" data-go="pay">
       <div class="pi"><svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4v20"/><path d="M19 8.5c0-1.9-2.2-3-5-3s-5 1.1-5 3 2.2 2.7 5 3.2 5 1.3 5 3.3-2.2 3.2-5 3.2-5-1.3-5-3.2"/></svg></div>
-      <h3>급여 확인 검수기</h3>
+      <h3>급여 대조</h3>
       <p>근태로 계산한 금액과 급여대장 금액을 맞춰봅니다.</p>
       <div class="pdet"><ul>
         <li>근태 파일 + <b>급여대장</b> 파일을 함께 올리기</li>
@@ -687,26 +693,52 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
         <li>인원별 차액과 <b>어디서 얼마나 벌어졌는지</b> 표시</li>
         <li>대상자 명단으로 <b>대장 누락 인원</b> 찾기</li>
       </ul></div>
-      <button class="pri">급여 검수기 열기</button>
+      <button class="pri">급여 대조 열기</button>
     </div>
     <div class="pcard" data-go="anom">
-      <div class="pi"><svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="22" height="16" rx="2.5"/><path d="M4 7.5 14 15 24 7.5"/></svg></div>
-      <h3>근태 특이건</h3>
-      <p>지문 누락·조기센싱을 모아 메일 문구로 만듭니다.</p>
+      <div class="pi"><svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3.6 24.8 22.4H3.2z"/><path d="M14 11v5"/><path d="M14 19.4h.01"/></svg></div>
+      <h3>특이건 확인</h3>
+      <p>지문 누락·조기센싱을 모아 목록으로 보여줍니다.</p>
       <div class="pdet"><ul>
         <li>출근·퇴근 <b>지문(센싱) 누락</b>일 찾기</li>
         <li>근태 「비고」란의 <b>조기센싱 · 지각</b> 표기 그대로 모으기</li>
-        <li>사번 · 성명 · 날짜 · 내용 순으로 <b>메일 문구</b> 생성</li>
-        <li><b>담당자별로 자동으로 나눠</b> Outlook으로 보내기</li>
+        <li>사번 · 성명 · 날짜 · 내용 순으로 <b>목록 문구</b> 생성</li>
         <li><b>.txt · .html · .xlsx</b> 파일로 내려받기</li>
+        <li><span class="muted">보내는 일은 「특이건 메일」에서 합니다</span></li>
       </ul></div>
-      <button class="pri">특이건 열기</button>
+      <button class="pri">특이건 확인 열기</button>
+    </div>
+    <div class="pcard" data-go="mail">
+      <div class="pi"><svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="22" height="16" rx="2.5"/><path d="M4 7.5 14 15 24 7.5"/></svg></div>
+      <h3>특이건 메일</h3>
+      <p>확인된 특이건을 담당자별로 나눠 보냅니다.</p>
+      <div class="pdet"><ul>
+        <li>대상자 명단의 <b>부서코드</b>로 담당자 자동 배정</li>
+        <li>담당자가 여러 명인 부서는 <b>주소마다 한 통씩</b></li>
+        <li>본문 호칭도 <b>그 분 이름 · 직급</b>으로 자동 작성</li>
+        <li><b>항상 참조</b>는 모든 메일에 자동으로 들어감</li>
+        <li>이 PC의 <b>Outlook</b>으로 발송 (외부 전송 없음)</li>
+      </ul></div>
+      <button class="pri">특이건 메일 열기</button>
+    </div>
+    <div class="pcard" data-go="owner">
+      <div class="pi"><svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="9.5" r="4.2"/><path d="M3.6 23.2c0-3.6 3.3-6.1 7.4-6.1s7.4 2.5 7.4 6.1"/><circle cx="21" cy="8.6" r="3.2"/><path d="M19.2 15.6c3.4.3 5.6 2.4 5.6 5.2"/></svg></div>
+      <h3>담당자 관리</h3>
+      <p>담당자가 바뀌면 여기서 고치면 됩니다.</p>
+      <div class="pdet"><ul>
+        <li>담당자 <b>이름 · 직급 · 팀 · 부서코드 · 메일</b> 등록</li>
+        <li><b>부서코드표</b> 추가 · 수정 (F01 · F011 …)</li>
+        <li>모든 메일에 들어갈 <b>항상 참조</b> 등록</li>
+        <li>주소록 · 코드표 <b>내려받기 / 불러오기</b>로 다른 PC와 공유</li>
+        <li><span class="muted">이 브라우저에 저장됩니다</span></li>
+      </ul></div>
+      <button class="pri">담당자 관리 열기</button>
     </div>
   </div>
   <div class="hdet"><div class="hnote">
     <div><b>사번 기준 · 성명 표시</b><span>네 도구 모두 사번으로 사람을 맞추고, 사번이 다르면 성명으로 이어 맞춥니다</span></div>
     <div><b>엑셀로 내려받기</b><span>화면에 보이는 결과는 언제든 파일로 저장됩니다</span></div>
-    <div><b>파일은 한 번만</b><span>검수기·급여 검수기에 올린 파일이 특이건 화면까지 그대로 이어집니다</span></div>
+    <div><b>파일은 한 번만</b><span>「자료 올리기」에 한 번 올리면 집계·점검·대조·특이건까지 그대로 이어집니다</span></div>
     <div><b>완전 로컬 처리</b><span>파일은 브라우저 안에서만 계산되며 어디로도 전송되지 않습니다</span></div>
   </div></div>
 </div>
@@ -716,7 +748,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
 <div class="view" id="viewLoad" hidden>
 <div class="card">
   <h2><span class="n">1</span>파일 올리기</h2>
-  <p class="hint">여기 올린 파일이 <b>근태 분석기 · 근태 검수기 · 급여 검수기 · 근태 특이건</b> 네 화면에 <b>한 번에</b> 들어갑니다. 화면마다 따로 올리지 않으셔도 됩니다.</p>
+  <p class="hint">여기 올린 파일이 <b>근태 집계 · 근태 점검 · 급여 대조 · 특이건 확인</b> 네 화면에 <b>한 번에</b> 들어갑니다. 화면마다 따로 올리지 않으셔도 됩니다.</p>
   <div class="slots">
     <div class="slot" id="dropU1">
       <div class="sl-h"><span class="sl-n">근태</span> 일근태 파일 <span style="color:var(--bad);font-size:11px">필수</span></div>
@@ -763,17 +795,17 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
 <!-- ================= 근태 특이건 ================= -->
 <div class="view" id="viewAnom" hidden>
 <div class="card" id="ao1">
-  <h2><span class="n">1</span>어느 파일로 볼지</h2>
-  <p class="hint"><b>근태 검수기</b>나 <b>급여 검수기</b>에 이미 올린 파일을 그대로 씁니다. 따로 올리지 않아도 됩니다.</p>
+  <h2><span class="n">1</span>어느 파일로 보고 있는지</h2>
+  <p class="hint"><b>자료 올리기</b>(또는 근태 점검 · 급여 대조)에 이미 올린 파일을 그대로 씁니다. 따로 올리지 않아도 됩니다.</p>
   <div id="aoSrc"></div>
 </div>
 <div class="card off" id="ao2">
-  <h2><span class="n">2</span>특이건 · 메일 만들기</h2>
-  <p class="hint">지문 센싱이 빠진 날과 근태 「비고」란에 적힌 내용(조기센싱·지각 등)을 모아 메일 문구로 만듭니다.</p>
+  <h2><span class="n">2</span>특이건 목록</h2>
+  <p class="hint">지문 센싱이 빠진 날과 근태 「비고」란에 적힌 내용(조기센싱·지각 등)을 모아 한 눈에 보여줍니다. 보내는 일은 왼쪽 <b>「특이건 메일」</b>에서 합니다.</p>
     <div class="cards" id="mKpi"></div>
     <div class="split">
       <select id="mKind" style="min-width:260px">
-        <option value="all">지문 누락 + 비고 표기 (메일용)</option>
+        <option value="all">지문 누락 + 비고 표기 (기본)</option>
         <option value="in">출근 지문 누락만</option>
         <option value="out">퇴근 지문 누락만</option>
         <option value="memo">비고 표기만 (조기센싱·지각 등)</option>
@@ -795,7 +827,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
     <textarea id="mText" style="width:100%;height:420px;font-family:ui-monospace,monospace;font-size:12.5px;
       border:1px solid var(--line);border-radius:10px;padding:12px;line-height:1.7"></textarea>
     <div class="note i" style="margin-top:10px">
-      <b>대상자 명단에 있는 인원만</b> 담습니다. 위 칸을 복사해 붙여넣거나, <b>파일로 내려받아</b> 메일에 첨부하세요.<br>
+      <b>대상자 명단에 있는 인원만</b> 담습니다. 담당자별로 나눠 보내시려면 왼쪽 <b>「특이건 메일」</b>로 가세요.<br>
       <b>메일 본문 (.txt)</b> 위 내용 그대로의 텍스트 파일 ·
       <b>메일 서식 (.html)</b> 표로 정리된 파일 (브라우저에서 열어 전체 선택 후 메일에 붙여넣으면 표가 그대로 들어갑니다) ·
       <b>특이건 엑셀 (.xlsx)</b> 사번·성명·일자·구분이 열로 정리된 파일
@@ -804,17 +836,26 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
       <b>비고 표기</b>는 근태 파일 「비고」란에 시스템이 적어 둔 내용(조기센싱 등)을 <b>그대로</b> 옮긴 것이라 가장 정확합니다.
       <b>시간차 조기센싱</b>은 출근(센싱)이 근무시작보다 기준 분 이상 빠른 경우를 도구가 직접 계산한 것으로, 비고에 없는 건도 잡힙니다.
     </div>
+    <div class="split" style="margin-top:14px">
+      <button class="pri" onclick="go('mail')">담당자별로 메일 보내러 가기</button>
+      <button class="sm" onclick="go('owner')">담당자 관리</button>
+    </div>
 </div>
 
-<div class="card" id="ao3">
-  <h2><span class="n">3</span>담당자에게 메일 보내기</h2>
-  <p class="hint">특이건을 <b>담당자별로 자동으로 나눠</b> 보냅니다. 대상자 명단에 <b>담당자</b>(또는 <b>부서</b>) 열을 넣어 올리면 사람마다 자동으로 배정되고,
-    화면에서 <b>직접 바꿀 수도</b> 있습니다. 메일 주소는 <b>@shinsegae.com</b>으로 고정이라 <b>앞부분만</b> 넣으시면 됩니다.</p>
+</div><!-- /viewAnom -->
+
+<!-- ================= 특이건 메일 ================= -->
+<div class="view" id="viewMail" hidden>
+<div class="card">
+  <h2><span class="n">1</span>담당자별 자동 분류</h2>
+  <p class="hint">「특이건 확인」에서 잡힌 건을 <b>담당자별로 자동으로 나눕니다.</b>
+    대상자 명단에 <b>부서코드</b>(또는 담당자 · 부서) 열을 넣어 올리면 사람마다 자동 배정되고, 아래 2번에서 <b>직접 바꿀 수도</b> 있습니다.
+    부서에 담당자가 여러 분이면 <b>주소마다 한 통씩</b> 나가고, 본문 호칭도 그 분 이름만 들어갑니다.</p>
 
   <div class="split" style="margin-bottom:10px">
-    <button class="sm pri" data-open="dgAddr">주소록 관리<span class="pill" id="abCount"></span></button>
-    <button class="sm" data-open="dgCode">부서코드표<span class="pill" id="dcCount"></span></button>
-    <span class="muted" style="font-size:12px;align-self:center">대상자 명단에 <b>담당자 · 메일</b> 열을 넣으면 여기에 <b>자동으로 등록</b>됩니다</span>
+    <button class="sm pri" onclick="go('owner')">담당자 관리로 가기<span class="pill" id="abCount"></span></button>
+    <button class="sm" onclick="go('owner')">부서코드표<span class="pill" id="dcCount"></span></button>
+    <button class="sm" onclick="go('anom')">특이건 목록 다시 보기</button>
     <span class="grow"></span>
     <label class="muted" style="display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600">
       <input type="checkbox" id="mNow" checked> 확인창 한 번 뒤 바로 발송</label>
@@ -822,8 +863,6 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
   <div id="ccBar" class="note i" style="margin-bottom:12px;padding:10px 14px"></div>
 
   <div id="mNoFile"></div>
-
-  <div class="mh">담당자별 자동 분류 <span class="muted">— 명단의 담당자로 묶은 결과입니다. 확인하고 보내시면 됩니다</span></div>
   <div id="ownWarn"></div>
   <div class="split" style="margin:10px 0 2px">
     <button class="pri" id="ownSend2">이대로 담당자별 메일 보내기</button>
@@ -835,8 +874,12 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
   <div id="ownDiagBox"></div>
   <div id="ownCards"></div>
   <div id="ownInfo2" style="margin-top:8px"></div>
+</div>
 
-  <div class="mh" style="margin-top:24px">사람마다 직접 고치기 <span class="muted">— 자동으로 안 잡힌 인원만 손보시면 됩니다</span></div>
+<div class="card">
+  <h2><span class="n">2</span>사람마다 직접 고치기</h2>
+  <p class="hint">자동으로 안 잡힌 인원만 손보시면 됩니다. 여기서 바꾼 내용은 <b>이번 발송에만</b> 적용됩니다 —
+    담당자가 아예 바뀌었다면 왼쪽 <b>「담당자 관리」</b>에서 고쳐주세요.</p>
   <div class="split" style="margin:10px 0 8px">
     <span style="font-size:12.5px;font-weight:660;align-self:center">한 번에 지정</span>
     <select id="ownScope" style="min-width:210px"></select>
@@ -847,8 +890,11 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
   </div>
   <div id="ownTbl"></div>
   <div id="ownInfo" style="margin-top:10px"></div>
+</div>
 
-  <div class="mh" style="margin-top:24px">한 통으로 직접 보내기 <span class="muted">— 나누지 않고 전체를 한 통으로</span></div>
+<div class="card">
+  <h2><span class="n">3</span>한 통으로 직접 보내기</h2>
+  <p class="hint">나누지 않고 전체를 한 통으로 보냅니다. 메일 주소는 <b>@shinsegae.com</b>으로 고정이라 <b>앞부분만</b> 넣으시면 됩니다.</p>
   <div class="split" style="margin:10px 0">
     <select id="mTo" style="min-width:320px"><option value="">주소록에서 고르기…</option></select>
     <span id="mToMsg" style="font-size:12px;align-self:center"></span>
@@ -875,43 +921,101 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
     <span class="muted">「확인창 한 번 뒤 바로 발송」을 끄면 메일 창만 띄워 하나씩 확인하고 보낼 수 있습니다.</span>
   </div>
   <div class="note w" style="margin-top:8px">
-    <b>처음에는 본인에게 한 통 보내보세요.</b> 「한 통으로 직접 보내기」의 받는사람에 <b>본인 메일 앞부분</b>을 넣고 보내
+    <b>처음에는 본인에게 한 통 보내보세요.</b> 위 받는사람에 <b>본인 메일 앞부분</b>을 넣고 보내
     내용이 제대로 오는지 확인한 뒤 실제로 쓰시는 게 안전합니다.<br>
-    회사 PC에서 <b>스크립트 실행이 막혀 있으면</b> 「Outlook을 열지 못했습니다」 창이 뜹니다 — 그때는 위 2번 칸의 본문을 복사해 붙여넣어 보내세요.
+    회사 PC에서 <b>스크립트 실행이 막혀 있으면</b> 「Outlook을 열지 못했습니다」 창이 뜹니다 — 그때는 <b>「특이건 확인」</b> 화면의 본문을 복사해 붙여넣어 보내세요.
   </div>
 </div>
-</div><!-- /viewAnom -->
+</div><!-- /viewMail -->
 
-<dialog id="dgCode">
-  <div class="dlg-h"><h3>부서코드표</h3>
-    <button class="sm" onclick="document.getElementById('dgCode').close()">닫기</button></div>
-  <div class="dlg-b">
-    <p class="hint">대상자 명단의 <b>부서코드</b>와 담당자를 잇는 표입니다. 코드가 같으면 부서 이름이 어떻게 적혀 있든 정확히 이어집니다.<br>
-      팀만 있을 때는 <b>F01</b>, 그 팀 안에 부서명이 더 있으면 <b>F011 · F012</b> 처럼 뒤에 한 자리를 붙입니다.</p>
-    <div id="dcList" style="margin:12px 0"></div>
-    <div class="row">
-      <div class="f" style="min-width:110px"><label>코드 *</label><input type="text" id="dcCode" placeholder="F09" spellcheck="false"></div>
-      <div class="f" style="flex:1.4;min-width:220px"><label>부서명 * <span class="muted">명단에 적는 이름과 같게</span></label>
-        <input type="text" id="dcName" placeholder="식품팀 델리"></div>
-      <button class="pri" id="dcAdd" style="align-self:flex-end">코드 추가 · 수정</button>
-    </div>
-    <div class="split" style="margin-top:14px">
-      <button class="sm" id="dcStampBtn">주소록에 코드 채우기</button>
-      <button class="sm" id="dcSeedBtn">회사 담당자표 다시 넣기</button>
-      <span class="grow"></span>
-      <button class="sm" id="dcExp">코드표 내려받기</button>
-      <button class="sm" id="dcImpBtn">코드표 불러오기</button>
-      <input type="file" id="dcImp" accept=".json" hidden>
-      <button class="sm" id="dcReset">기본 코드표로 되돌리기</button>
-    </div>
-    <div id="dcInfo" style="margin-top:12px"></div>
-    <div class="note i" style="margin-top:12px">
-      <b>담당자</b> 칸에서 사람을 고르면 그 담당자에게 이 코드가 붙습니다 — 주소록에 바로 반영됩니다.
-      담당자 목록이 비어 있으면 먼저 「주소록 관리」에서 등록하거나, 대상자 명단에 담당자·메일을 넣어 올려주세요.<br>
-      <span class="muted">코드표는 이 브라우저에 저장됩니다. 다른 PC에서도 쓰시려면 「코드표 내려받기 → 불러오기」 하세요.</span>
-    </div>
-  </div>
-</dialog>
+<!-- ================= 담당자 관리 ================= -->
+<div class="view" id="viewOwner" hidden>
+<div class="card">
+  <h2><span class="n">1</span>담당자 주소록</h2>
+      <p class="hint">담당자를 <b>이름 · 팀 · 메일 앞부분</b>만 넣어 등록하세요. 메일 주소는 <b>@shinsegae.com</b>으로 고정입니다.<br>
+        이 브라우저에 저장됩니다. <b>다른 PC에서도 쓰시려면</b> 아래 「주소록 내려받기」로 파일을 받아 그 PC에서 「주소록 불러오기」 하세요.</p>
+      <div id="abList" style="margin:12px 0"></div>
+      <div class="row">
+        <div class="f" style="flex:1;min-width:140px"><label>이름 * <span class="muted">명단의 담당자 이름과 같게</span></label>
+          <input type="text" id="abName" placeholder="홍길동"></div>
+        <div class="f" style="min-width:126px"><label>직급 · 호칭 <span class="muted">여럿이면 이름 순서대로 파트너/CP</span></label>
+          <input type="text" id="abTitle" placeholder="파트너" list="dlTitle">
+          <datalist id="dlTitle"><option value="파트너"></option><option value="CP"></option><option value="매니저"></option><option value="팀장"></option><option value="점장"></option></datalist></div>
+        <div class="f" style="flex:1;min-width:120px"><label>팀 · 부서 <span class="muted">명단의 부서명과 같게</span></label>
+          <input type="text" id="abDept" placeholder="영업1팀"></div>
+        <div class="f" style="min-width:100px"><label>부서코드 <span class="muted">가장 확실</span></label>
+          <input type="text" id="abCode" placeholder="F01" spellcheck="false"></div>
+        <div class="f" style="flex:1.3;min-width:230px"><label>메일 주소 * <span class="muted">여러 명은 ; 로</span></label>
+          <div class="atbox"><input type="text" id="abMail" placeholder="hong; kim" spellcheck="false"><b>@shinsegae.com</b></div></div>
+        <div class="f" style="flex:1;min-width:190px"><label>참조 (선택)</label>
+          <div class="atbox"><input type="text" id="abCc" placeholder="team" spellcheck="false"><b>@shinsegae.com</b></div></div>
+      </div>
+      <div class="split" style="margin-top:14px">
+        <button class="pri" id="abAdd">담당자 추가 · 수정</button>
+        <span class="grow"></span>
+        <button class="sm" onclick="document.getElementById('dcCode').focus()">아래 부서코드표로</button>
+        <button class="sm" id="abExp">주소록 내려받기</button>
+        <button class="sm" id="abImpBtn">주소록 불러오기</button>
+        <input type="file" id="abImp" accept=".json" hidden>
+      </div>
+      <div class="note i" style="margin-top:14px">
+        <b>한 항목에 여러 분을 넣으실 수 있습니다.</b> 이름을 <b>오세미/정신혜/한혜원</b>, 메일을 <b>ohsm0906; jungsh; kim</b> 처럼
+        <b>같은 순서로</b> 적으시면 <b>주소마다 한 통씩</b> 나가고, 본문 호칭도 그 분 이름만 들어갑니다.
+        같은 주소를 쓰는 분들은 한 통에 함께 담깁니다.<br><br>
+        <b>사번은 넣지 않으셔도 됩니다.</b> 대상자 명단에 <b>담당자</b> 열이 있으면 그 이름으로, <b>부서</b> 열만 있으면 여기 적은 <b>팀 · 부서</b>로 자동 배정됩니다.
+        명단에 <b>담당자메일</b> 열까지 넣으시면 <b>여기에 자동으로 등록</b>되어 따로 넣지 않으셔도 됩니다.
+        자동으로 안 잡히는 인원은 <b>「특이건 메일」</b> 화면의 2번 표에서 <b>직접 고르시면</b> 됩니다.<br>
+        <span class="muted"><b>같은 이름</b>을 다시 추가하면 덮어씁니다 — 수정하실 때 그렇게 쓰세요.</span>
+      </div>
+</div>
+
+<div class="card">
+  <h2><span class="n">2</span>항상 참조</h2>
+  <p class="hint">여기 등록한 사람은 <b>모든 메일에 자동으로 참조</b>로 들어갑니다. 담당자별로 나눠 보낼 때도, 한 통으로 보낼 때도 똑같이 들어갑니다.</p>
+      <div id="ccList" style="margin:12px 0"></div>
+      <div class="row">
+        <div class="f" style="flex:1;min-width:150px"><label>이름 · 설명 <span class="muted">예) 인사팀 · 김과장</span></label>
+          <input type="text" id="ccName" placeholder="인사팀"></div>
+        <div class="f" style="flex:1.2;min-width:210px"><label>메일 주소 *</label>
+          <div class="atbox"><input type="text" id="ccMail" placeholder="hrteam" spellcheck="false"><b>@shinsegae.com</b></div></div>
+        <button class="pri" id="ccAdd" style="align-self:flex-end">참조 추가</button>
+      </div>
+      <div class="note w" style="margin-top:12px">
+        담당자별로 나눠 보낼 때도, 한 통으로 보낼 때도 <b>모든 메일에 똑같이</b> 들어갑니다.
+        이번 한 번만 빼고 싶으시면 <b>「특이건 메일」</b> 화면 위쪽의 <b>「항상 참조 넣기」 체크를 끄시면</b> 됩니다.
+      </div>
+</div>
+
+<div class="card">
+  <h2><span class="n">3</span>부서코드표</h2>
+      <p class="hint">대상자 명단의 <b>부서코드</b>와 담당자를 잇는 표입니다. 코드가 같으면 부서 이름이 어떻게 적혀 있든 정확히 이어집니다.<br>
+        팀만 있을 때는 <b>F01</b>, 그 팀 안에 부서명이 더 있으면 <b>F011 · F012</b> 처럼 뒤에 한 자리를 붙입니다.</p>
+      <div id="dcList" style="margin:12px 0"></div>
+      <div class="row">
+        <div class="f" style="min-width:110px"><label>코드 *</label><input type="text" id="dcCode" placeholder="F09" spellcheck="false"></div>
+        <div class="f" style="flex:1.4;min-width:220px"><label>부서명 * <span class="muted">명단에 적는 이름과 같게</span></label>
+          <input type="text" id="dcName" placeholder="식품팀 델리"></div>
+        <button class="pri" id="dcAdd" style="align-self:flex-end">코드 추가 · 수정</button>
+      </div>
+      <div class="split" style="margin-top:14px">
+        <button class="sm" id="dcStampBtn">주소록에 코드 채우기</button>
+        <button class="sm" id="dcSeedBtn">회사 담당자표 다시 넣기</button>
+        <span class="grow"></span>
+        <button class="sm" id="dcExp">코드표 내려받기</button>
+        <button class="sm" id="dcImpBtn">코드표 불러오기</button>
+        <input type="file" id="dcImp" accept=".json" hidden>
+        <button class="sm" id="dcReset">기본 코드표로 되돌리기</button>
+      </div>
+      <div id="dcInfo" style="margin-top:12px"></div>
+      <div class="note i" style="margin-top:12px">
+        <b>담당자</b> 칸에서 사람을 고르면 그 담당자에게 이 코드가 붙습니다 — 주소록에 바로 반영됩니다.
+        담당자 목록이 비어 있으면 먼저 <b>위 1번 「담당자 주소록」</b>에서 등록하거나, 대상자 명단에 담당자·메일을 넣어 올려주세요.<br>
+        <span class="muted">코드표는 이 브라우저에 저장됩니다. 다른 PC에서도 쓰시려면 「코드표 내려받기 → 불러오기」 하세요.</span>
+      </div>
+  
+</div>
+</div><!-- /viewOwner -->
+
 
 <dialog id="dgPrev">
   <div class="dlg-h"><h3 id="dgPrevT">보낼 내용 미리보기</h3>
@@ -919,61 +1023,6 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
   <div class="dlg-b" id="dgPrevB"></div>
 </dialog>
 
-<dialog id="dgAddr">
-  <div class="dlg-h"><h3>주소록 — 부서 담당자</h3>
-    <button class="sm" onclick="document.getElementById('dgAddr').close()">닫기</button></div>
-  <div class="dlg-b">
-    <p class="hint">담당자를 <b>이름 · 팀 · 메일 앞부분</b>만 넣어 등록하세요. 메일 주소는 <b>@shinsegae.com</b>으로 고정입니다.<br>
-      이 브라우저에 저장됩니다. <b>다른 PC에서도 쓰시려면</b> 아래 「주소록 내려받기」로 파일을 받아 그 PC에서 「주소록 불러오기」 하세요.</p>
-    <div id="abList" style="margin:12px 0"></div>
-    <div class="row">
-      <div class="f" style="flex:1;min-width:140px"><label>이름 * <span class="muted">명단의 담당자 이름과 같게</span></label>
-        <input type="text" id="abName" placeholder="홍길동"></div>
-      <div class="f" style="min-width:126px"><label>직급 · 호칭 <span class="muted">여럿이면 이름 순서대로 파트너/CP</span></label>
-        <input type="text" id="abTitle" placeholder="파트너" list="dlTitle">
-        <datalist id="dlTitle"><option value="파트너"></option><option value="CP"></option><option value="매니저"></option><option value="팀장"></option><option value="점장"></option></datalist></div>
-      <div class="f" style="flex:1;min-width:120px"><label>팀 · 부서 <span class="muted">명단의 부서명과 같게</span></label>
-        <input type="text" id="abDept" placeholder="영업1팀"></div>
-      <div class="f" style="min-width:100px"><label>부서코드 <span class="muted">가장 확실</span></label>
-        <input type="text" id="abCode" placeholder="F01" spellcheck="false"></div>
-      <div class="f" style="flex:1.3;min-width:230px"><label>메일 주소 * <span class="muted">여러 명은 ; 로</span></label>
-        <div class="atbox"><input type="text" id="abMail" placeholder="hong; kim" spellcheck="false"><b>@shinsegae.com</b></div></div>
-      <div class="f" style="flex:1;min-width:190px"><label>참조 (선택)</label>
-        <div class="atbox"><input type="text" id="abCc" placeholder="team" spellcheck="false"><b>@shinsegae.com</b></div></div>
-    </div>
-    <div class="split" style="margin-top:14px">
-      <button class="pri" id="abAdd">담당자 추가 · 수정</button>
-      <span class="grow"></span>
-      <button class="sm" data-open="dgCode">부서코드표 열기</button>
-      <button class="sm" id="abExp">주소록 내려받기</button>
-      <button class="sm" id="abImpBtn">주소록 불러오기</button>
-      <input type="file" id="abImp" accept=".json" hidden>
-    </div>
-    <div class="note i" style="margin-top:14px">
-      <b>한 항목에 여러 분을 넣으실 수 있습니다.</b> 이름을 <b>오세미/정신혜/한혜원</b>, 메일을 <b>ohsm0906; jungsh; kim</b> 처럼
-      <b>같은 순서로</b> 적으시면 <b>주소마다 한 통씩</b> 나가고, 본문 호칭도 그 분 이름만 들어갑니다.
-      같은 주소를 쓰는 분들은 한 통에 함께 담깁니다.<br><br>
-      <b>사번은 넣지 않으셔도 됩니다.</b> 대상자 명단에 <b>담당자</b> 열이 있으면 그 이름으로, <b>부서</b> 열만 있으면 여기 적은 <b>팀 · 부서</b>로 자동 배정됩니다.
-      명단에 <b>담당자메일</b> 열까지 넣으시면 <b>여기에 자동으로 등록</b>되어 따로 넣지 않으셔도 됩니다.
-      자동으로 안 잡히는 인원은 3번 화면의 표에서 <b>직접 고르시면</b> 됩니다.<br>
-      <span class="muted"><b>같은 이름</b>을 다시 추가하면 덮어씁니다 — 수정하실 때 그렇게 쓰세요.</span>
-    </div>
-
-    <div class="mh" style="margin-top:26px">항상 참조 <span class="muted">— 여기 등록한 사람은 모든 메일에 자동으로 참조로 들어갑니다</span></div>
-    <div id="ccList" style="margin:12px 0"></div>
-    <div class="row">
-      <div class="f" style="flex:1;min-width:150px"><label>이름 · 설명 <span class="muted">예) 인사팀 · 김과장</span></label>
-        <input type="text" id="ccName" placeholder="인사팀"></div>
-      <div class="f" style="flex:1.2;min-width:210px"><label>메일 주소 *</label>
-        <div class="atbox"><input type="text" id="ccMail" placeholder="hrteam" spellcheck="false"><b>@shinsegae.com</b></div></div>
-      <button class="pri" id="ccAdd" style="align-self:flex-end">참조 추가</button>
-    </div>
-    <div class="note w" style="margin-top:12px">
-      담당자별로 나눠 보낼 때도, 한 통으로 보낼 때도 <b>모든 메일에 똑같이</b> 들어갑니다.
-      이번 한 번만 빼고 싶으시면 3번 화면의 <b>「항상 참조 넣기」 체크를 끄시면</b> 됩니다.
-    </div>
-  </div>
-</dialog>
 
 <!-- ================= 분석기 ================= -->
 <div class="view" id="viewAnalyze" hidden>
@@ -994,7 +1043,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
   <div class="slots">
     <div class="slot" id="dropRos2">
       <div class="sl-h"><span class="sl-n">한 파일</span> 급여 대상자 명단 <span class="muted" style="font-size:11px;font-weight:600">사번 · 성명 · 시급 · 입사일 · 퇴사일</span></div>
-      <div class="sl-d">엑셀/CSV · <b>사번</b> 열만 있으면 됩니다. <b>검수기에 올리는 그 파일을 그대로</b> 쓰시면 됩니다.<br>
+      <div class="sl-d">엑셀/CSV · <b>사번</b> 열만 있으면 됩니다. <b>「자료 올리기」에 올리는 그 파일을 그대로</b> 쓰시면 됩니다.<br>
         <span class="muted">여기에 파일을 놓거나 클릭해서 선택</span></div>
       <div class="sl-ex">사번 &nbsp;|&nbsp; 성명 &nbsp;|&nbsp; 시급 &nbsp;|&nbsp; 입사일<br>521563 &nbsp;|&nbsp; 정규연 &nbsp;|&nbsp; 10,400 &nbsp;|&nbsp; 2024-05-02</div>
       <div class="sl-w">넣으면 → <b>시급</b>이 6단계 표에 자동 입력 · <b>입사일·퇴사일</b>이 있으면 그 달 부분 주만 주휴 비례 계산</div>
@@ -1165,7 +1214,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
 </div>
 
 <footer>
-  <b>APRS v9.6 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
+  <b>APRS v9.7 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
   ⓘ 이 도구는 업로드한 파일을 브라우저 메모리에서만 계산합니다. 네트워크 전송·서버 저장이 없습니다.<br>
   ⓘ 총근로시간 = 기본(소정) + 연장 + 휴일근로. <b>야간·심야는 가산수당 산정용으로 따로 표시</b>하며 총합에 중복 더하지 않습니다 — 심야 연장은 이미 연장시간에 포함돼 있는 경우가 많아 더하면 이중 계산이 됩니다.<br>
   ⓘ 급여일수 = 평일(월~금, 법정공휴일 제외) + 법정공휴일. 인정 일요일수 = 데이터상 일요일 수 − 결근이 있는 주(월~일)의 일요일 수.<br>
@@ -1422,7 +1471,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
 
 <div class="card" id="p1">
   <h2><span class="n">1</span>파일 올리기</h2>
-  <p class="hint">근태 집계는 <b>근태 분석기와 같은 기준</b>으로 계산합니다 (근무일수 = 출근 + 유급휴무, 주휴, 연장·심야 분).</p>
+  <p class="hint">근태 집계는 <b>「근태 집계」 화면과 같은 기준</b>으로 계산합니다 (근무일수 = 출근 + 유급휴무, 주휴, 연장·심야 분).</p>
   <div class="slots">
     <div class="slot" id="dropP1">
       <div class="sl-h"><span class="sl-n">근태</span> 일근태 파일 <span style="color:var(--bad);font-size:11px">필수</span></div>
@@ -1483,7 +1532,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
     <b>심야수당</b> = <span id="niFormula">시급 × 0.5</span> × 심야(분) ÷ 60 &nbsp;·&nbsp;
     <b>교육수당</b> = 시급 × 1 <span class="muted">(그 달 입사자만)</span><br>
     <span class="muted">근태로 계산할 수 없는 항목(심야1·휴근·휴연·연차)은 <b>대장 값을 그대로 인정</b>해 합계에만 반영합니다.
-    일수 = 근무일수(출근 + 유급휴무), 주휴·연장·심야는 근태 분석기 집계를 그대로 씁니다.</span>
+    일수 = 근무일수(출근 + 유급휴무), 주휴·연장·심야는 「근태 집계」 결과를 그대로 씁니다.</span>
   </div>
 </div>
 
@@ -1491,7 +1540,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
   <h2><span class="n">4</span>결과</h2>
   <div id="pNeedLed" class="note w" hidden style="margin-bottom:12px">
     <b>급여 대조는 급여대장 파일이 있어야 합니다.</b> 위 1단계에서 <b>급여대장</b>을 넣어주세요.<br>
-    <span class="muted">지문 누락·조기센싱 같은 근태 특이건은 왼쪽 <b>「근태 특이건」</b>에서 봅니다 — 파일을 다시 올릴 필요 없이 연결됩니다.</span>
+    <span class="muted">지문 누락·조기센싱은 왼쪽 <b>「특이건 확인」</b>에서 보고, 보내는 일은 <b>「특이건 메일」</b>에서 합니다 — 파일을 다시 올릴 필요 없이 연결됩니다.</span>
   </div>
 
   <div id="ptabPay">
@@ -2409,14 +2458,17 @@ $('#exp').onclick=()=>{
 /* =========================================================
    뷰 전환
    ========================================================= */
-const VIEWS={home:'viewHome',load:'viewLoad',analyze:'viewAnalyze',audit:'viewAudit',pay:'viewPay',anom:'viewAnom'};
+const VIEWS={home:'viewHome',load:'viewLoad',analyze:'viewAnalyze',audit:'viewAudit',pay:'viewPay',
+             anom:'viewAnom',mail:'viewMail',owner:'viewOwner'};
 const VTXT={
-  home:['APRS · 근태·급여 검수 시스템','근태 엑셀을 올리면 집계 · 검수 · 급여 대조를 자동으로 처리합니다. 파일은 브라우저 안에서만 처리되며 어디로도 전송되지 않습니다.'],
-  load:['파일 올리기','근태 파일 · 대상자 명단 · 급여대장을 한 번만 올리면 네 화면에 모두 들어갑니다.'],
-  analyze:['근태 분석기','사번·성명 기준으로 출근일수 · 급여일수 · 개별 연장시간(분)을 집계합니다.'],
-  audit:['근태 검수기','사번·성명 기준으로 근태 입력값의 정합성을 규칙으로 검사합니다.'],
-  pay:['급여 확인 검수기','근태로 계산한 금액과 급여대장 금액을 인원별·항목별로 대조합니다.'],
-  anom:['근태 특이건','지문 센싱 누락과 근태 「비고」 표기를 모아 메일 문구와 파일로 만들어 줍니다.']
+  home:['APRS · 근태·급여 검수 시스템','근태 엑셀을 올리면 집계 · 점검 · 급여 대조를 자동으로 처리합니다. 파일은 브라우저 안에서만 처리되며 어디로도 전송되지 않습니다.'],
+  load:['자료 올리기','근태 파일 · 대상자 명단 · 급여대장을 한 번만 올리면 아래 네 화면에 모두 들어갑니다.'],
+  analyze:['근태 집계','사번·성명 기준으로 출근일수 · 급여일수 · 개별 연장시간(분)을 집계합니다.'],
+  audit:['근태 점검','사번·성명 기준으로 근태 입력값의 정합성을 규칙으로 검사합니다.'],
+  pay:['급여 대조','근태로 계산한 금액과 급여대장 금액을 인원별·항목별로 대조합니다.'],
+  anom:['특이건 확인','지문 센싱 누락과 근태 「비고」 표기를 모아 목록과 파일로 만들어 줍니다.'],
+  mail:['특이건 메일','특이건을 담당자별로 나눠 Outlook으로 보냅니다. 부서에 담당자가 여럿이면 주소마다 한 통씩 나갑니다.'],
+  owner:['담당자 관리','담당자 주소록 · 항상 참조 · 부서코드표를 등록하고 고칩니다. 담당자가 바뀌면 여기서 바꿔주세요.']
 };
 function go(v,syncHash){
   if(!VIEWS[v]) v='home';
@@ -2424,7 +2476,9 @@ function go(v,syncHash){
   $$('#nav button').forEach(b=>b.classList.toggle('on', b.dataset.v===v));
   document.body.classList.toggle('audit', v==='audit');
   $('#hTitle').textContent=VTXT[v][0]; $('#hSub').textContent=VTXT[v][1];
-  if(v==='anom') anomRefresh();
+  if(v==='anom'||v==='mail') anomRefresh();
+  if(v==='owner'){ try{ abRender(); ccRender(); dcRender(); }catch(e){} }
+  if(typeof ownBadge==='function') ownBadge();
   if(syncHash!==false){ try{ history.replaceState(null,'', v==='home'? location.pathname+location.search : '#'+v); }catch(e){} }
   window.scrollTo({top:0,behavior:'instant'});
 }
@@ -3448,6 +3502,7 @@ function renderA(cnt){
   $('#offBox').innerHTML = offBoxHTML();
   $$('[data-off]').forEach(el=>el.onclick=offDetail);
   if(typeof anomBadge==='function') anomBadge();
+  if(typeof ownBadge==='function') ownBadge();
   $('#cmpBox').innerHTML = mapWarnHTML() + linkWarnHTML() + rowWarnHTML() + floodWarnHTML(cnt) + (!A.prev ? '' :
     `<div class="note i"><b>이전 검수(${A.prev.저장시각||'저장 시각 미상'}, 이상 ${A.prev.이상건수}건)와 비교 중</b> —
      해결 ${(A.resolved||[]).length}건 · 남음 ${A.find.filter(f=>f.status==='남음').length}건 · 신규 ${A.find.filter(f=>f.status==='신규').length}건.</div>`);
@@ -3850,11 +3905,9 @@ function renderRank(){
 /* ── 대시보드 모달 · 버튼 배선 ─────────────────────────────── */
 /* 창을 열 때 안쪽 목록을 다시 그립니다 (주소록·코드표가 바뀐 뒤에도 최신으로) */
 function openDlg(id){
+  /* 주소록 · 부서코드표는 창이 아니라 「담당자 관리」 화면으로 옮겼습니다 */
+  if(id==='dgAddr'||id==='dgCode'){ go('owner'); return; }
   const d=$('#'+id); if(!d) return;
-  try{
-    if(id==='dgCode' && typeof dcRender==='function') dcRender();
-    if(id==='dgAddr'){ if(typeof abRender==='function') abRender(); if(typeof ccRender==='function') ccRender(); }
-  }catch(e){}
   d.showModal();
 }
 $$('[data-open]').forEach(b=>b.onclick=()=>openDlg(b.dataset.open));
@@ -3928,9 +3981,9 @@ $('#pFile1').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
 /* 이미 올라와 있는 근태 파일을 찾는다 — 검수기 → 급여 검수기(=분석기) 순 */
 function anomSrc(){
   if(A.aoa && A.aoa.length && A.headers && A.headers.length)
-    return {aoa:A.aoa, hdr:A.headers, hrow:A.hrow||0, name:A.fname||'근태', from:'근태 검수기', year:+$('#vYear').value};
+    return {aoa:A.aoa, hdr:A.headers, hrow:A.hrow||0, name:A.fname||'근태', from:'근태 점검', year:+$('#vYear').value};
   if(S.aoa && S.aoa.length && S.headers && S.headers.length)
-    return {aoa:S.aoa, hdr:S.headers, hrow:S.headerRow||0, name:P.name||'근태', from:'급여 검수기', year:+$('#yy').value};
+    return {aoa:S.aoa, hdr:S.headers, hrow:S.headerRow||0, name:P.name||'근태', from:'급여 대조', year:+$('#yy').value};
   return null;
 }
 /* 대상자 명단도 어느 쪽이든 있으면 쓴다 */
@@ -4242,7 +4295,7 @@ function ledDiagText(withSample){
   const body=P.ledAoa? P.ledAoa.slice(P.hrow+1) : [];
   const attMap=new Map((P.att||[]).map(e=>[e.empId,e]));
   const push=(...a)=>out.push(a.join(''));
-  push('■ APRS 급여 검수기 — 연결 진단');
+  push('■ APRS 급여 대조 — 연결 진단');
   push('만든 때 : ', new Date().toLocaleString('ko-KR'));
   push('');
   push('[1] 근태 파일');
@@ -4607,7 +4660,7 @@ $('#pFile3').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
             <br><span class="muted">이제 3번 「담당자별로 나눠 보내기」에서 바로 보내실 수 있습니다.</span></div>`:''}
         ${(col.own<0 && col.dept<0)? `<div class="note w" style="margin-top:10px">
             <b>담당자·부서 열을 찾지 못했습니다.</b> 머리글을 <b>담당자</b> · <b>부서</b> · <b>담당자메일</b> 로 적어 다시 올리시면
-            특이건 메일이 <b>자동으로 나뉩니다.</b> 지금도 3번 화면 표에서 직접 고르실 수는 있습니다.
+            특이건 메일이 <b>자동으로 나뉩니다.</b> 지금도 「특이건 메일」 화면의 표에서 직접 고르실 수는 있습니다.
             ${(()=>{ const used=new Set([col.id,col.name,wCol,col.hire,col.quit].filter(x=>x>=0));
                const cand=(hdr||[]).map((h,i)=>({h,i})).filter(x=>!used.has(x.i) && x.h &&
                  body.slice(0,20).some(r=>{ const v=norm(r[x.i]); return v && !/^[0-9,.\-]+$/.test(v); }));
@@ -4790,7 +4843,7 @@ function rosPickUI(sel){
       : `<div class="note ${(r.OWN.size||r.DEP.size)?'g':'b'}"><b>${(r.OWN.size||r.DEP.size)?'다시 읽었습니다':'고른 열에서 값을 못 읽었습니다'}</b>
           — 담당자 <b>${r.OWN.size}명</b> · 부서 <b>${r.DEP.size}명</b>${r.CODE.size?` · 부서코드 <b>${r.CODE.size}명</b>`:''}${r.CMAP.size?` · 코드표 <b>${r.CMAP.size}개</b>`:''}${r.OMAIL.size?` · 담당자 메일 <b>${r.OMAIL.size}명</b>`:''}
           ${r.abs? `<br>주소록에 <b>${r.abs.add.length+r.abs.upd.length}명</b>을 넣었습니다 — ${[...r.abs.add,...r.abs.upd].map(x=>esc(x)).join(' · ')}`:''}
-          <br><span class="muted">왼쪽 <b>근태 특이건</b> 화면에서 분류 결과를 확인하세요.</span></div>`;
+          <br><span class="muted">왼쪽 <b>특이건 메일</b> 화면에서 분류 결과를 확인하세요.</span></div>`;
   };
 }
 
@@ -5307,7 +5360,7 @@ function explainDiff(r,it){
       if(Math.abs(gotR-S.OTR)>0.02 && tidy)
         return t+`대장은 <b>연장 배율 ${Math.round(gotR*100)/100}</b>로 계산했는데 이 도구 기준은 <b>${S.OTR}</b>입니다. <b>연장 ${Math.round(r.연장분)}분은 양쪽이 같습니다</b> — 3단계의 <b>연장 배율</b>을 회사 기준으로 바꾸면 맞습니다.`;
     }
-    if(mins!=null) t+=`차액 ${wonF(d)}원은 <b>개별연장 ${Math.abs(Math.round(mins))}분</b>에 해당합니다 (1분 ${Math.round(perMin).toLocaleString()}원) — 대장은 연장을 <b>${Math.round((r.연장분??0)+mins)}분</b>으로 본 것 같습니다. 근태 검수기의 <b>R10·R12</b>(개별연장 분이 기준과 다름)와 <b>R16</b>(퇴근 센싱 없는데 연장 값 있음)을 확인하세요.`;
+    if(mins!=null) t+=`차액 ${wonF(d)}원은 <b>개별연장 ${Math.abs(Math.round(mins))}분</b>에 해당합니다 (1분 ${Math.round(perMin).toLocaleString()}원) — 대장은 연장을 <b>${Math.round((r.연장분??0)+mins)}분</b>으로 본 것 같습니다. 「근태 점검」의 <b>R10·R12</b>(개별연장 분이 기준과 다름)와 <b>R16</b>(퇴근 센싱 없는데 연장 값 있음)을 확인하세요.`;
     return t;
   }
   if(it.k==='ni'){
@@ -5407,7 +5460,7 @@ function pDetail(r){
       일수 = 근무일수(출근 + 유급휴무) <b>${r.일수}일</b> · 주휴 <b>${r.주휴}개</b> ·
       연장 <b>${(r.연장분??0).toLocaleString()}분</b> · 심야 <b>${(r.심야분??0).toLocaleString()}분</b> ·
       교육 <b>${r.교육시간||0}시간</b>${r.입사일?` · 입사일 <b>${r.입사일}</b>`:''}<br>
-      <span class="muted">이 숫자는 근태 분석기 집계와 같습니다. 숫자 자체가 틀렸다면 근태 파일이나 근태코드 분류를 고쳐야 합니다.</span>
+      <span class="muted">이 숫자는 「근태 집계」 결과와 같습니다. 숫자 자체가 틀렸다면 근태 파일이나 근태코드 분류를 고쳐야 합니다.</span>
     </div>`;
   $('#dlg').showModal();
 }
@@ -5421,6 +5474,11 @@ function anomBadge(){
     const el=$('#navAnom'); if(el) el.textContent = n? String(n) : '';
   }catch(e){}
 }
+function ownBadge(){
+  try{ const n=(typeof abLoad==='function')? abLoad().length : 0;
+    const el=$('#navOwner'); if(el) el.textContent = n? String(n) : '';
+  }catch(e){}
+}
 function anomRefresh(){
   scanAnom();
   const SRC=anomSrc(), ROS=anomRoster();
@@ -5428,13 +5486,18 @@ function anomRefresh(){
   if(!SRC){
     $('#ao2').classList.add('off');
     const nf=$('#mNoFile'); if(nf) nf.innerHTML=`<div class="note w"><b>아직 올린 근태 파일이 없습니다.</b>
-      지금은 <b>주소록만</b> 미리 준비하실 수 있습니다 — 파일을 올리면 특이건이 여기에 담깁니다.</div>`;
+      보낼 특이건이 없어 아래 분류는 비어 있습니다 — 먼저 왼쪽 <b>「자료 올리기」</b>에서 근태 파일을 올려주세요.
+      지금은 <b>담당자 관리</b>만 미리 해두실 수 있습니다.
+      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="sm pri" onclick="go('load')">자료 올리기로 가기</button>
+        <button class="sm" onclick="go('owner')">담당자 관리로 가기</button>
+      </div></div>`;
     try{ ownRender(); }catch(e){}
     box.innerHTML=`<div class="note w"><b>아직 올린 근태 파일이 없습니다.</b><br>
-      왼쪽 <b>근태 검수기</b>나 <b>급여 검수기</b>에서 근태 파일을 올리면 <b>여기에 자동으로 연결</b>됩니다.
+      왼쪽 <b>자료 올리기</b>에서 근태 파일을 올리면 <b>여기에 자동으로 연결</b>됩니다.
       <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
-        <button class="sm pri" onclick="go('audit')">근태 검수기로 가기</button>
-        <button class="sm" onclick="go('pay')">급여 검수기로 가기</button>
+        <button class="sm pri" onclick="go('load')">자료 올리기로 가기</button>
+        <button class="sm" onclick="go('audit')">근태 점검으로 가기</button>
       </div></div>`;
     $('#navAnom').textContent='';
     return;
@@ -5448,7 +5511,7 @@ function anomRefresh(){
     ${(SRC.aoa.length-SRC.hrow-1).toLocaleString()}행
     ${ROS.size? ` · 대상자 명단 <b>${ROS.size}명</b>` : ' · <span style="color:var(--warn)">대상자 명단 없음 (파일에 있는 전원을 대상으로 봅니다)</span>'}
     <br>특이건 <b>${n}건</b> — 지문 누락 + 비고 표기 기준
-    <br><span class="muted">다른 파일로 보려면 근태 검수기 / 급여 검수기에서 그 파일을 올린 뒤 다시 이 화면으로 오세요.</span></div>`;
+    <br><span class="muted">다른 파일로 보려면 「자료 올리기」에서 그 파일을 올린 뒤 다시 이 화면으로 오세요.</span></div>`;
   $('#navAnom').textContent = n? String(n) : '';
   const si=$('#mSendInfo'); if(si) si.innerHTML=P.sendMsg||'';
   mailBuild();
@@ -5697,6 +5760,7 @@ function abRender(){
   }
   const n=list.length, chip=$('#abCount');
   if(chip){ chip.textContent = n? `${n}명` : ''; chip.className='pill '+(n?'ok':''); }
+  try{ ownBadge(); }catch(e){}
 }
 const abBad=s=>/[^0-9A-Za-z._+\-]/.test(s);
 const uniqAddr=a=>[...new Set(a.filter(Boolean))];
@@ -5732,9 +5796,9 @@ function ccRender(){
       ? `<label style="display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:660;cursor:pointer">
            <input type="checkbox" id="ccUse" ${on?'checked':''}> 항상 참조 넣기</label>
          <span style="font-size:12.5px">${l.map(x=>`<span class="chip">${esc(x.name||x.email)} · <span class="mono">${esc(x.email)}</span></span>`).join('')}</span>
-         <span class="muted" style="font-size:11.5px">— 보내는 모든 메일에 참조로 들어갑니다. 바꾸시려면 「주소록 관리」에서.</span>`
+         <span class="muted" style="font-size:11.5px">— 보내는 모든 메일에 참조로 들어갑니다. 바꾸시려면 왼쪽 「담당자 관리」에서.</span>`
       : `<span style="font-size:12.5px"><b>항상 참조</b>가 비어 있습니다.</span>
-         <span class="muted" style="font-size:12px">— 모든 메일에 늘 넣을 참조가 있으시면 「주소록 관리」 아래쪽에서 등록하세요.</span>`;
+         <span class="muted" style="font-size:12px">— 모든 메일에 늘 넣을 참조가 있으시면 왼쪽 「담당자 관리」의 2번에서 등록하세요.</span>`;
     bar.style.display='flex'; bar.style.gap='10px'; bar.style.flexWrap='wrap'; bar.style.alignItems='center';
     const u=$('#ccUse'); if(u) u.onchange=()=>{ try{ ownRender(); }catch(e){} };
   }
@@ -5833,7 +5897,7 @@ $('#mTo').onchange=()=>{
      · 보내는 계정 = 지금 Outlook에 로그인된 본인 계정
      · 외부 서비스로 나가는 데이터 없음 · 비밀번호를 넣는 곳도 없음
      · 파일을 두 번 누르면 "N통을 보냅니다" 확인창이 한 번 뜨고 발송
-   회사 정책으로 스크립트가 막혀 있으면 2번 칸의 본문을 복사해 붙여넣어 보내시면 됩니다. */
+   회사 정책으로 스크립트가 막혀 있으면 「특이건 확인」 화면의 본문을 복사해 붙여넣어 보내시면 됩니다. */
 function vbsQ(str){
   /* VBScript 문자열로 안전하게 — 따옴표는 두 개로, 줄바꿈은 코드로 */
   return String(str==null?'':str).replace(/"/g,'""').replace(/\r?\n/g,'" & vbCrLf & "');
@@ -5877,7 +5941,7 @@ function buildVbs(mails, attName, sendNow){
   L.push(`  MsgBox "Outlook을 열지 못했습니다." & vbCrLf & vbCrLf & _`);
   L.push(`    "· Outlook 데스크톱 앱이 설치되어 실행 중인지 확인하세요." & vbCrLf & _`);
   L.push(`    "· 회사 정책으로 스크립트 실행이 막혀 있을 수도 있습니다." & vbCrLf & vbCrLf & _`);
-  L.push(`    "그럴 때는 도구의 2번 칸 본문을 복사해 메일에 붙여넣어 보내세요.", 48, "APRS"`);
+  L.push(`    "그럴 때는 「특이건 확인」 화면의 본문을 복사해 메일에 붙여넣어 보내세요.", 48, "APRS"`);
   L.push(`  WScript.Quit`);
   L.push(`End If`);
   L.push(`On Error GoTo 0`);
@@ -6109,7 +6173,7 @@ function ownRender(){
   if(!ids.length){
     tb.innerHTML='<div class="empty">보낼 특이건이 없습니다.</div>';
     wbox.innerHTML = book.length? '' :
-      `<div class="note w"><b>주소록에 등록된 담당자가 없습니다.</b> 위 「주소록 관리」에서 <b>이름 · 팀 · 메일 앞부분</b>만 넣어 등록해 두세요.</div>`;
+      `<div class="note w"><b>주소록에 등록된 담당자가 없습니다.</b> 왼쪽 <b>「담당자 관리」</b>에서 <b>이름 · 팀 · 메일 앞부분</b>만 넣어 등록해 두세요.</div>`;
     const i0=$('#ownInfo'); if(i0) i0.innerHTML=P.ownMsg||'';
     try{ ownCardsRender(); }catch(e){}
     return;
@@ -6143,7 +6207,7 @@ function ownRender(){
   let h=`<div class="note ${none?'w':'g'}"><b>담당자 ${nWho}명 · 배정 ${done}명 · 미지정 ${none}명</b>
       <span class="muted">(대상 ${ids.length}명 · ${rows.length}건)</span>`;
   if(!book.length)
-    h+=`<br><b style="color:var(--warn)">주소록에 등록된 담당자가 없습니다.</b> 위 「주소록 관리」에서 <b>이름 · 팀 · 메일 앞부분</b>만 넣어 등록하세요.`;
+    h+=`<br><b style="color:var(--warn)">주소록에 등록된 담당자가 없습니다.</b> 왼쪽 「담당자 관리」에서 <b>이름 · 팀 · 메일 앞부분</b>만 넣어 등록하세요.`;
   else if(none)
     h+=`<br>담당자가 비어 있는 인원 — ${miss.slice(0,12).map(id=>`${esc(id)} ${esc(anomName(id))}`).join(' · ')}${miss.length>12?` 외 ${miss.length-12}명`:''}
         <br><span class="muted">대상자 명단에 <b>담당자</b>(또는 <b>부서</b>) 열을 넣어 올리면 자동으로 채워집니다. 아래 표에서 직접 고르셔도 됩니다.</span>`;
@@ -6154,7 +6218,7 @@ function ownRender(){
         const d=(typeof dcByCode==='function')? dcByCode(c):null;
         return `<span class="chip"><b>${esc(c)}</b>${d?' '+esc(d.name):''}</span>`; }).join('')}</b><br>
       이 코드의 인원은 메일이 나가지 않습니다. <b>부서코드표</b>를 열어 그 코드의 담당자를 골라주세요.
-      <div style="margin-top:8px"><button class="sm pri" data-open="dgCode">부서코드표 열기</button></div></div>`;
+      <div style="margin-top:8px"><button class="sm pri" onclick="go('owner')">부서코드표 열기</button></div></div>`;
   if(bad.length)
     h+=`<div class="note b" style="margin-top:8px"><b>주소록에 없는 담당자 — ${bad.map(esc).join(' · ')}</b><br>
         보낼 주소가 없어 이 담당자에게는 메일이 나가지 않습니다. 아래 버튼으로 주소록에 넣어주세요.
@@ -6347,7 +6411,7 @@ function ownDiagText(){
   push('■ 걸리는 점');
   const why=[];
   const partial = RS.size && (OW.size+DP.size) < RS.size*0.7;
-  if(!RS.size) why.push('대상자 명단을 아직 올리지 않았습니다 — 급여 검수기 3번 칸에 올려주세요.');
+  if(!RS.size) why.push('대상자 명단을 아직 올리지 않았습니다 — 「자료 올리기」의 <명단> 칸에 올려주세요.');
   else if(!ids.length) why.push('특이건이 0건입니다 — 근태 파일을 확인해 주세요.');
   else if(done===ids.length){
     if(bad.length) why.push('전원 배정됐지만 주소록에 없는 담당자가 '+bad.length+'명 있습니다 ('+ex(bad,6)+') — 그만큼 메일이 나가지 않습니다.');
@@ -6358,16 +6422,16 @@ function ownDiagText(){
       const cs=[...new Set(noOwnCode.map(i=>ownCodeOf(i)))];
       why.push('담당자가 없는 '+(ids.length-done)+'명 중 '+noOwnCode.length+'명은 부서코드는 있는데 그 코드의 담당자가 정해지지 않았습니다 — 코드 '
         + cs.map(c=>{ const d=(typeof dcByCode==='function')? dcByCode(c):null; return c+(d? '('+d.name+')':''); }).join(' · ')
-        + '. 3번 화면의 「부서코드표」를 열어 그 코드의 <담당자> 칸에서 사람을 골라주시면 됩니다.');
+        + '. 왼쪽 「담당자 관리」의 「부서코드표」에서 그 코드의 <담당자> 칸에서 사람을 골라주시면 됩니다.');
     }
     const noDept=ids.filter(i=>!ownOf(i) && !ownDeptOf(i) && !ownCodeOf(i)).length;
     if(noDept)
       why.push('담당자가 없는 '+(ids.length-done)+'명 중 '+noDept+'명은 소속(부서)이 비어 있습니다. '
         +'명단에 사원마다 소속을 적은 열이 있어야 「부서별 담당자 표」와 이어집니다 — 위 ②의 열 목록에서 '+RS.size+'줄이 모두 채워진 소속 열을 찾아 '
-        +'급여 검수기의 「담당자 열 직접 고르기」에서 <부서>로 골라 「이 열로 다시 읽기」를 눌러주세요. 그런 열이 없으면 명단에 한 열을 만들어 사원마다 소속을 적어주세요.');
+        +'「급여 대조」의 「담당자 열 직접 고르기」에서 <부서>로 골라 「이 열로 다시 읽기」를 눌러주세요. 그런 열이 없으면 명단에 한 열을 만들어 사원마다 소속을 적어주세요.');
     else if(noOwnCode.length){ /* 위에서 이미 말했습니다 */ }
     else if(!book.length)
-      why.push('주소록에 담당자가 한 명도 없습니다 — 「주소록 관리」에서 등록하거나, 명단에 담당자메일 열을 넣어 다시 올려주세요.');
+      why.push('주소록에 담당자가 한 명도 없습니다 — 왼쪽 「담당자 관리」에서 등록하거나, 명단에 담당자메일 열을 넣어 다시 올려주세요.');
     else
       why.push('담당자가 없는 '+(ids.length-done)+'명은 소속은 있는데 그 소속의 담당자를 찾지 못했습니다 — '
         +'주소록의 「팀 · 부서」 이름과 명단의 소속 이름이 같은지 확인해 주세요. (위 ⑤의 [대괄호] 안이 주소록의 부서명입니다)');
@@ -6406,7 +6470,7 @@ $('#ownPrevAll').onclick=()=>{
 $('#ownSend2').onclick=()=>$('#ownSend').click();
 $('#ownSend').onclick=()=>{
   const rows=mailRows(); if(!rows.length) return alert('보낼 특이건이 없습니다.');
-  if(!ownBook().length) return alert('주소록에 등록된 담당자가 없습니다.\n\n위 「주소록 관리」에서 이름 · 팀 · 메일 앞부분을 넣어 등록해 주세요.');
+  if(!ownBook().length) return alert('주소록에 등록된 담당자가 없습니다.\n\n왼쪽 「담당자 관리」에서 이름 · 팀 · 메일 앞부분을 넣어 등록해 주세요.');
   const mails=[], lines=[], nobook=[], miss=[];
   [...ownGroups().entries()].sort((a,b)=> a[0]<b[0]?-1:1).forEach(([who,list])=>{
     const n=new Set(list.map(r=>r.id)).size;
@@ -6516,7 +6580,7 @@ $('#uGo').onclick=async()=>{
   if(!U.att) return alert('일근태 파일을 먼저 넣어주세요.');
   const btn=$('#uGo'); btn.disabled=true; $('#uDone').innerHTML='';
   const mode = (U.ros && $('#uMode').value==='both')? 'both' : 'att';
-  const R=[{t:'근태 분석기'},{t:'근태 검수기'},{t:'급여 검수기'},{t:'근태 특이건'}];
+  const R=[{t:'근태 집계'},{t:'근태 점검'},{t:'급여 대조'},{t:'특이건 확인'}];
   const draw=()=>uProg(R,true);
   draw();
   const fmt=n=>Number(n||0).toLocaleString();
@@ -6562,10 +6626,11 @@ $('#uGo').onclick=async()=>{
       <b>${done===4? '네 화면에 모두 들어갔습니다' : `${done}개 화면에 들어갔습니다`}</b>
       ${U.led? '' : '<br><span class="muted">급여대장을 넣지 않으셔서 급여 대조는 비어 있습니다 — 근태 집계와 특이건은 그대로 보실 수 있습니다.</span>'}
       <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
-        <button class="sm" onclick="go('analyze')">근태 분석기</button>
-        <button class="sm" onclick="go('audit')">근태 검수기</button>
-        <button class="sm" onclick="go('pay')">급여 검수기</button>
-        <button class="sm pri" onclick="go('anom')">근태 특이건 ${n? `(${fmt(n)}건)`:''}</button>
+        <button class="sm" onclick="go('analyze')">근태 집계</button>
+        <button class="sm" onclick="go('audit')">근태 점검</button>
+        <button class="sm" onclick="go('pay')">급여 대조</button>
+        <button class="sm pri" onclick="go('anom')">특이건 확인 ${n? `(${fmt(n)}건)`:''}</button>
+        <button class="sm" onclick="go('mail')">특이건 메일</button>
       </div></div>`;
   }catch(e){
     $('#uDone').innerHTML=`<div class="note b"><b>넣는 중에 막혔습니다</b> — ${esc(String(e&&e.message||e))}<br>
