@@ -640,7 +640,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
     <button data-v="owner"><span class="ni"><svg viewBox="0 0 18 18"><path d="M6.6 2.2a3.2 3.2 0 1 1 0 6.4 3.2 3.2 0 0 1 0-6.4m0 2a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4M13.1 3.4a2.4 2.4 0 1 1 0 4.8 2.4 2.4 0 0 1 0-4.8M6.6 9.7c2.7 0 4.9 1.4 4.9 3.1v2.1a1 1 0 0 1-1 1H2.7a1 1 0 0 1-1-1v-2.1c0-1.7 2.2-3.1 4.9-3.1m6.5.4c2 0 3.6 1.1 3.6 2.5v1.6a1 1 0 0 1-1 1h-2.3v-2.4c0-1-.5-1.9-1.4-2.6z"/></svg></span>담당자 관리<span class="navp" id="navOwner"></span></button>
   </nav>
   <div class="side-foot">
-    <b>APRS</b><span class="ver">v9.9 · 2026-09</span>
+    <b>APRS</b><span class="ver">v10.0 · 2026-09</span>
     <span class="who" id="gWho"></span>
     <button class="sfout" id="btnOut" title="로그아웃">로그아웃</button>
   </div>
@@ -1093,7 +1093,14 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
 
 <div class="card off" id="sc4">
   <h2><span class="n">4</span>미리보기 · 내려받기</h2>
-  <p class="hint">아래 내용이 그대로 파일로 만들어집니다. 시스템의 <b>일근태현황관리</b> 화면에 이 파일을 올리시면 됩니다.</p>
+  <p class="hint">아래 내용이 그대로 파일로 만들어집니다. 시스템의 <b>일근태현황관리 → 업로드</b> 창에 이 파일을 올리시면 됩니다.</p>
+  <div class="split" style="margin:10px 0 6px">
+    <span style="font-size:12.5px;font-weight:660;align-self:center">내보낼 양식</span>
+    <select id="scFormSel" style="min-width:300px"></select>
+    <button class="sm" id="scTplBtn">업로드 창에서 받은 양식 넣기</button>
+    <input type="file" id="scTpl" accept=".xlsx,.xlsm,.xls,.csv" hidden>
+  </div>
+  <div id="scFormInfo" style="margin-bottom:10px"></div>
   <div class="split" style="margin:10px 0 12px">
     <span id="scSum" style="font-size:13px;align-self:center"></span>
     <span class="grow"></span>
@@ -1107,11 +1114,11 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
     특히 <b>검진 · 경조휴가 · 공가</b>처럼 드물게 쓰는 항목은 <b>시스템에서 쓰는 정확한 이름</b>과 같은지 한 번 맞춰보시는 것이 안전합니다.
   </div>
   <div class="note i" style="margin-top:8px">
-    <b>근태종류만 안 올라간다면</b> — 시스템이 그 이름을 <b>모르는 값</b>으로 보고 있을 가능성이 큽니다.
-    2번에서 <b>한 종류만</b>(예: 연차휴가) 남기고 나머지를 「넣지 않음」으로 바꿔 <b>몇 줄짜리로 시험 업로드</b>해 보세요.
-    그 한 종류가 올라가면 <b>다른 이름이 문제</b>입니다 — 특히 <b>정일 · 휴일</b>은 근태가 아니라
-    <b>근무일정 쪽에서 따로 관리</b>하는 회사가 많아 근태 업로드에서는 거부될 수 있습니다.<br>
-    <span class="muted">시스템이 보여주는 오류 문구를 그대로 적어두시면 원인을 더 빨리 좁힐 수 있습니다.</span>
+    <b>어떤 칸만 비어서 올라간다면</b> — 시스템은 <b>머리글 이름</b>으로 칸을 찾기 때문에,
+    이름이 한 글자라도 다르면 그 칸만 비워둡니다. (「근태종류」로 적었더니 업로드 창의 「근태명」 칸이 비었던 경우가 그것입니다.)<br>
+    <b>가장 확실한 방법</b> — 업로드 창의 <b>「다운로드」</b>를 눌러 받은 파일을 위 <b>「업로드 창에서 받은 양식 넣기」</b>에 넣으세요.
+    그 파일의 머리글을 그대로 써서 만들어 드립니다.<br>
+    <span class="muted">그래도 근태 칸이 비면 <b>값</b>이 문제입니다 — 2번에서 한 종류만 남겨 몇 줄로 시험해 보시면 어느 값이 거부되는지 알 수 있습니다.</span>
   </div>
 </div>
 </div><!-- /viewSched -->
@@ -1314,7 +1321,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
 </div>
 
 <footer>
-  <b>APRS v9.9 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
+  <b>APRS v10.0 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
   ⓘ 이 도구는 업로드한 파일을 브라우저 메모리에서만 계산합니다. 네트워크 전송·서버 저장이 없습니다.<br>
   ⓘ 총근로시간 = 기본(소정) + 연장 + 휴일근로. <b>야간·심야는 가산수당 산정용으로 따로 표시</b>하며 총합에 중복 더하지 않습니다 — 심야 연장은 이미 연장시간에 포함돼 있는 경우가 많아 더하면 이중 계산이 됩니다.<br>
   ⓘ 급여일수 = 평일(월~금, 법정공휴일 제외) + 법정공휴일. 인정 일요일수 = 데이터상 일요일 수 − 결근이 있는 주(월~일)의 일요일 수.<br>
@@ -7127,7 +7134,36 @@ $('#pExp').onclick=()=>{
    부서마다 양식이 다르므로 머리글 이름을 믿지 않고
    '날짜가 실제로 들어 있는 줄'과 '이름이 실제로 들어 있는 열'을 찾습니다.
    ========================================================= */
-const SCK='aprs.scmap.v1', SFK='aprs.scfix.v1', SPK='aprs.scppl.v1';
+const SCK='aprs.scmap.v1', SFK='aprs.scfix.v1', SPK='aprs.scppl.v1', SLK='aprs.scform.v1';
+
+/* 내보낼 양식 — 회사 시스템은 '머리글 이름'으로 칸을 찾습니다.
+   업로드 창의 열 이름과 한 글자라도 다르면 그 칸만 비어서 올라갑니다.
+   (실제로 「근태종류」로 적었더니 업로드 창의 「근태명」 칸이 비었습니다) */
+const SC_FIELD=[
+  {k:'date', re:/^(일자|날짜|근무일|근태일)/,              g:r=>r.date},
+  {k:'wd',   re:/^요일/,                                  g:r=>r.wd},
+  {k:'id',   re:/^(사번|사원번호|직번|사원No)/,            g:r=>r.id},
+  {k:'name', re:/^(성명|이름|사원명)/,                     g:r=>r.name},
+  {k:'dept', re:/^(소속|부서|팀)/,                        g:r=>r.dept},
+  {k:'site', re:/^(사업장|근태사업장|점포|매장)/,          g:r=>r.site},
+  {k:'rank', re:/^(직급|직위)/,                           g:r=>r.rank},
+  {k:'etype',re:/^(직원구분|사원구분|고용구분|직원유형)/,   g:r=>r.etype},
+  {k:'kind', re:/^(근태명|근태종류|근태구분|근태유형|근태코드|근태|근태항목)$/, g:r=>r.kind},
+  {k:'memo', re:/^(비고|메모|적요)/,                      g:r=>r.memo}
+];
+const scHK=h=>String(h==null?'':h).replace(/[\s●○◎*★・·()（）\[\]{}<>]/g,'');
+function scField(h){ const t=scHK(h); return SC_FIELD.find(f=>f.re.test(t)) || null; }
+
+const SC_FORM={
+  up:  {t:'업로드 양식 — 업로드 창의 칸 그대로', head:['일자','사번','성명','근태명','비고']},
+  view:{t:'조회 양식 — 조회 화면에서 내려받는 모양', head:['일자(*)','요일','사번','성명(*)','소속','사업장명','직급','직원구분','근태종류(*)','비고']}
+};
+function scForm(){
+  let f=null; try{ f=JSON.parse(LS.get(SLK)||'null'); }catch(e){}
+  if(f && f.head && f.head.length) return f;
+  return {key:'up', t:SC_FORM.up.t, head:SC_FORM.up.head.slice()};
+}
+function scFormSet(f){ LS.set(SLK, JSON.stringify(f)); }
 
 /* 시스템에 넣는 근태종류 — 「일근태현황관리」 양식의 근태종류(*) 칸 값 */
 const SC_KINDS=['정일','휴일','법일','연차휴가','연중휴가','예비군','검진','결근','조퇴','지각','경조휴가','병가','공가'];
@@ -7346,7 +7382,7 @@ function scRender(){
     <b>${SC.people.length}명</b> · ${scDot(d0)} ~ ${scDot(d1)} <b>${SC.dates.length}일</b>
     <span class="muted">(${esc(SC.sheet)} 시트 · ${SC.hrow+1}번째 줄이 날짜)</span>
     ${miss? `<br><span style="color:var(--warn)">사번을 못 찾은 인원 <b>${miss}명</b> — 아래 3번 표에서 넣어주세요 (대상자 명단을 올리시면 자동으로 채워집니다)</span>`:''}</div>`;
-  scMapRender(); scFixRender(); scPrev();
+  scMapRender(); scFixRender(); scFormRender(); scPrev();
 }
 function scMapRender(){
   const box=$('#scMapTbl'); if(!box) return;
@@ -7419,24 +7455,75 @@ function scPrev(){
   const b=$('#scExp'); if(b) b.disabled=!rows.length;
   if(!rows.length){ box.innerHTML=`<div class="empty" style="padding:30px 14px">
     만들어질 줄이 없습니다 — 2번에서 표기를 근태종류로 이었는지, 3번의 기간이 맞는지 확인해 주세요.</div>`; return; }
-  const H=['일자(*)','요일','사번','성명(*)','소속','사업장명','직급','직원구분','근태종류(*)','비고'];
+  const FM=scForm(), H=FM.head.slice();
+  const pick=H.map(h=>{ const f=scField(h); return f? f : null; });
   const show=rows.slice(0,40);
+  const unk=H.filter(h=>!scField(h));
   box.innerHTML=(noId.length? `<div class="note w"><b>사번이 빈 인원이 있습니다</b> — ${esc(noId.join(', '))}.
       위 3번 표에 사번을 넣으시거나, 왼쪽 <b>「자료 올리기」</b>에 대상자 명단을 올리시면 자동으로 채워집니다.</div>`:'')
-    + `<div class="tblwrap"><table><thead><tr>${H.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${
-      show.map(r=>`<tr><td>${esc(r.date)}</td><td>${esc(r.wd)}</td>
-        <td${r.id?'':' style="color:var(--bad)"'}>${esc(r.id||'없음')}</td><td><b>${esc(r.name)}</b></td>
-        <td>${esc(r.dept)}</td><td>${esc(r.site)}</td><td>${esc(r.rank)}</td><td>${esc(r.etype)}</td>
-        <td><b>${esc(r.kind)}</b> <span class="muted">← ${esc(r.raw)}</span></td><td></td></tr>`).join('')}</tbody></table></div>`
+    + (unk.length? `<div class="note w"><b>채울 값을 모르는 칸이 있습니다</b> — ${esc(unk.join(', '))}. 그 칸은 빈 채로 나갑니다.</div>`:'')
+    + `<div class="tblwrap"><table><thead><tr>${H.map((h,i)=>
+        `<th${pick[i]&&pick[i].k==='kind'?' style="color:var(--pri)"':''}>${esc(h)}</th>`).join('')}</tr></thead><tbody>${
+      show.map(r=>`<tr>${pick.map((f,i)=>{
+        if(!f) return '<td></td>';
+        const v=f.g(r);
+        if(f.k==='id')   return `<td${v?'':' style="color:var(--bad)"'}>${esc(v||'없음')}</td>`;
+        if(f.k==='name') return `<td><b>${esc(v)}</b></td>`;
+        if(f.k==='kind') return `<td><b>${esc(v)}</b> <span class="muted">← ${esc(r.raw)}</span></td>`;
+        return `<td>${esc(v)}</td>`;
+      }).join('')}</tr>`).join('')}</tbody></table></div>`
     + (rows.length>show.length? `<div class="muted" style="font-size:12px;margin-top:8px">위 ${show.length}줄만 보여드립니다 — 파일에는 ${rows.length}줄이 모두 들어갑니다.</div>`:'');
+}
+
+/* ---- 내보낼 양식 고르기 ---- */
+function scFormRender(){
+  const sel=$('#scFormSel'); if(!sel) return;
+  const cur=scForm();
+  const opts=[['up',SC_FORM.up.t],['view',SC_FORM.view.t]];
+  if(cur.key==='file') opts.push(['file','가져온 양식 — '+(cur.from||'양식 파일')]);
+  sel.innerHTML=opts.map(([k,t])=>`<option value="${k}"${k===cur.key?' selected':''}>${esc(t)}</option>`).join('');
+  const bad=cur.head.filter(h=>!scField(h));
+  const kind=cur.head.find(h=>{ const f=scField(h); return f&&f.k==='kind'; });
+  const box=$('#scFormInfo');
+  if(box) box.innerHTML=`<div class="note ${kind?'i':'b'}" style="margin:0">
+    <b>머리글</b> <span class="mono">${cur.head.map(esc).join(' · ')}</span><br>
+    ${kind? `근태 값은 <b>${esc(kind)}</b> 칸에 들어갑니다.`
+          : `<b>근태를 담을 칸이 없습니다.</b> 업로드 창의 근태 칸 이름(예: <b>근태명</b>)이 머리글에 있어야 합니다.`}
+    ${bad.length? `<br><span class="muted">채울 값을 모르는 칸 : ${bad.map(esc).join(' · ')} (빈 칸으로 나갑니다)</span>`:''}
+    <br><span class="muted">시스템은 <b>머리글 이름</b>으로 칸을 찾습니다 — 업로드 창의 칸 이름과 다르면 그 칸만 비어서 올라갑니다.
+    가장 확실한 방법은 업로드 창의 <b>「다운로드」</b>로 받은 파일을 위 <b>「업로드 창에서 받은 양식 넣기」</b>에 넣는 것입니다.</span></div>`;
+}
+/* 회사가 내려준 양식 파일에서 머리글만 읽어 온다 */
+function scTplLoad(file){
+  const fr=new FileReader();
+  fr.onload=ev=>{
+    try{
+      const wb=XLSX.read(new Uint8Array(ev.target.result),{type:'array',cellDates:true});
+      let head=null;
+      wb.SheetNames.forEach(sn=>{
+        const aoa=XLSX.utils.sheet_to_json(wb.Sheets[sn],{header:1,defval:null,blankrows:false,raw:true});
+        for(let i=0;i<Math.min(6,aoa.length);i++){
+          const r=(aoa[i]||[]).map(v=>String(v==null?'':v).trim());
+          while(r.length && !r[r.length-1]) r.pop();
+          const hit=r.filter(h=>h && scField(h)).length;
+          if(r.length>=3 && hit>=2 && (!head || hit>head.hit)) head={hit, row:r};
+        }
+      });
+      if(!head) return alert('양식 파일에서 머리글 줄을 찾지 못했습니다.\n\n업로드 창의 「다운로드」로 받은 파일인지 확인해 주세요.');
+      scFormSet({key:'file', t:'가져온 양식', from:file.name, head:head.row});
+      scFormRender(); scPrev();
+    }catch(err){ alert('양식 파일을 열지 못했습니다. '+(err.message||err)); }
+  };
+  fr.readAsArrayBuffer(file);
 }
 
 /* ---- 내려받기 ---- */
 function scExport(){
   const rows=scRows();
   if(!rows.length) return alert('만들어질 줄이 없습니다.');
-  const H=['일자(*)','요일','사번','성명(*)','소속','사업장명','직급','직원구분','근태종류(*)','비고'];
-  const aoa=[H].concat(rows.map(r=>[r.date,r.wd,String(r.id||''),r.name,r.dept,r.site,r.rank,r.etype,r.kind,r.memo]));
+  const FM=scForm(), H=FM.head.slice();
+  const pick=H.map(h=>{ const f=scField(h); return f? f.g : (()=>''); });
+  const aoa=[H].concat(rows.map(r=>pick.map(g=>String(g(r)==null?'':g(r)))));
   const ws=XLSX.utils.aoa_to_sheet(aoa.map(r=>r.map(v=>String(v==null?'':v))));
   /* 모든 칸을 '진짜 글자 셀'로 만듭니다.
      ※ 중요 — 엑셀 파일에서 글자 셀은 t="s"(공유문자열)여야 합니다.
@@ -7473,6 +7560,13 @@ function scExport(){
     el.onchange=()=>{ const pk=$('#scPick'); if(pk) pk.hidden = $('#scPeriod').value!=='pick';
       scPplRender(); scPrev(); }; });
   const e=$('#scExp'); if(e) e.onclick=scExport;
+  const fs=$('#scFormSel');
+  if(fs) fs.onchange=()=>{ const k=fs.value;
+    if(k==='up'||k==='view') scFormSet({key:k, t:SC_FORM[k].t, head:SC_FORM[k].head.slice()});
+    scFormRender(); scPrev(); };
+  const tb=$('#scTplBtn'), tf=$('#scTpl');
+  if(tb&&tf){ tb.onclick=()=>tf.click();
+    tf.onchange=ev=>{ const f=ev.target.files[0]; if(f) scTplLoad(f); ev.target.value=''; }; }
   const r=$('#scReset'); if(r) r.onclick=()=>{
     if(!confirm('표기 잇기와 함께 넣을 값을 처음 상태로 되돌릴까요?')) return;
     LS.del(SCK); LS.del(SFK); LS.del(SPK); scRender(); };
