@@ -640,7 +640,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
     <button data-v="owner"><span class="ni"><svg viewBox="0 0 18 18"><path d="M6.6 2.2a3.2 3.2 0 1 1 0 6.4 3.2 3.2 0 0 1 0-6.4m0 2a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4M13.1 3.4a2.4 2.4 0 1 1 0 4.8 2.4 2.4 0 0 1 0-4.8M6.6 9.7c2.7 0 4.9 1.4 4.9 3.1v2.1a1 1 0 0 1-1 1H2.7a1 1 0 0 1-1-1v-2.1c0-1.7 2.2-3.1 4.9-3.1m6.5.4c2 0 3.6 1.1 3.6 2.5v1.6a1 1 0 0 1-1 1h-2.3v-2.4c0-1-.5-1.9-1.4-2.6z"/></svg></span>담당자 관리<span class="navp" id="navOwner"></span></button>
   </nav>
   <div class="side-foot">
-    <b>APRS</b><span class="ver">v9.8 · 2026-09</span>
+    <b>APRS</b><span class="ver">v9.9 · 2026-09</span>
     <span class="who" id="gWho"></span>
     <button class="sfout" id="btnOut" title="로그아웃">로그아웃</button>
   </div>
@@ -1106,6 +1106,13 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
     <b>올리기 전에 확인하세요.</b> 사번 · 소속 · 직급 · 직원구분은 근무표에 없는 값이라 <b>여기서 넣은 값</b>이 그대로 들어갑니다.
     특히 <b>검진 · 경조휴가 · 공가</b>처럼 드물게 쓰는 항목은 <b>시스템에서 쓰는 정확한 이름</b>과 같은지 한 번 맞춰보시는 것이 안전합니다.
   </div>
+  <div class="note i" style="margin-top:8px">
+    <b>근태종류만 안 올라간다면</b> — 시스템이 그 이름을 <b>모르는 값</b>으로 보고 있을 가능성이 큽니다.
+    2번에서 <b>한 종류만</b>(예: 연차휴가) 남기고 나머지를 「넣지 않음」으로 바꿔 <b>몇 줄짜리로 시험 업로드</b>해 보세요.
+    그 한 종류가 올라가면 <b>다른 이름이 문제</b>입니다 — 특히 <b>정일 · 휴일</b>은 근태가 아니라
+    <b>근무일정 쪽에서 따로 관리</b>하는 회사가 많아 근태 업로드에서는 거부될 수 있습니다.<br>
+    <span class="muted">시스템이 보여주는 오류 문구를 그대로 적어두시면 원인을 더 빨리 좁힐 수 있습니다.</span>
+  </div>
 </div>
 </div><!-- /viewSched -->
 
@@ -1307,7 +1314,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
 </div>
 
 <footer>
-  <b>APRS v9.8 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
+  <b>APRS v9.9 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
   ⓘ 이 도구는 업로드한 파일을 브라우저 메모리에서만 계산합니다. 네트워크 전송·서버 저장이 없습니다.<br>
   ⓘ 총근로시간 = 기본(소정) + 연장 + 휴일근로. <b>야간·심야는 가산수당 산정용으로 따로 표시</b>하며 총합에 중복 더하지 않습니다 — 심야 연장은 이미 연장시간에 포함돼 있는 경우가 많아 더하면 이중 계산이 됩니다.<br>
   ⓘ 급여일수 = 평일(월~금, 법정공휴일 제외) + 법정공휴일. 인정 일요일수 = 데이터상 일요일 수 − 결근이 있는 주(월~일)의 일요일 수.<br>
@@ -7431,17 +7438,21 @@ function scExport(){
   const H=['일자(*)','요일','사번','성명(*)','소속','사업장명','직급','직원구분','근태종류(*)','비고'];
   const aoa=[H].concat(rows.map(r=>[r.date,r.wd,String(r.id||''),r.name,r.dept,r.site,r.rank,r.etype,r.kind,r.memo]));
   const ws=XLSX.utils.aoa_to_sheet(aoa.map(r=>r.map(v=>String(v==null?'':v))));
-  /* 모든 칸을 글자로 — 사번 앞의 0 과 일자 표기를 시스템이 그대로 읽게 합니다 */
+  /* 모든 칸을 '진짜 글자 셀'로 만듭니다.
+     ※ 중요 — 엑셀 파일에서 글자 셀은 t="s"(공유문자열)여야 합니다.
+        t="str" 은 규격상 '수식이 계산한 값'이라, 회사 시스템처럼 서버에서 파일을 읽는 쪽이
+        수식 셀로 보고 값을 비워버리는 일이 생깁니다. 그래서 bookSST 로 저장합니다. */
   const rng=XLSX.utils.decode_range(ws['!ref']);
   for(let R=rng.s.r;R<=rng.e.r;R++) for(let C=rng.s.c;C<=rng.e.c;C++){
-    const cell=ws[XLSX.utils.encode_cell({r:R,c:C})];
-    if(cell){ cell.t='s'; cell.z='@'; delete cell.w; }
+    const ref=XLSX.utils.encode_cell({r:R,c:C}), cell=ws[ref];
+    if(cell){ cell.t='s'; cell.v=String(cell.v==null?'':cell.v); delete cell.z; delete cell.w; delete cell.f; }
+    else ws[ref]={t:'s', v:''};                   /* 빈 칸도 빈 글자로 채워 열이 밀리지 않게 */
   }
   ws['!cols']=[{wch:12},{wch:6},{wch:10},{wch:10},{wch:18},{wch:12},{wch:8},{wch:10},{wch:12},{wch:14}];
   const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,'Sheet');
   const t=new Date(), st=`${t.getFullYear()}${String(t.getMonth()+1).padStart(2,'0')}${String(t.getDate()).padStart(2,'0')}`;
   const who=$('#scWho').value;
-  XLSX.writeFile(wb, `일근태현황관리_${who? who+'_' : ''}${st}.xlsx`);
+  XLSX.writeFile(wb, `일근태현황관리_${who? who+'_' : ''}${st}.xlsx`, {bookSST:true});
   const i=$('#scDone');
   if(i) i.innerHTML=`<div class="note g"><b>${rows.length}줄</b>을 담은 파일을 내려받았습니다 —
     <b>일근태현황관리_${esc(who? who+'_' : '')}${st}.xlsx</b><br>
