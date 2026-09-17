@@ -420,8 +420,8 @@ input.auto{background:var(--ok-w);border-color:rgba(52,199,89,.45)}
   background:var(--fill);color:var(--ink2);vertical-align:1px}
 .pill.bad{background:var(--bad-w);color:var(--bad)}
 .pill.ok{background:rgba(52,199,89,.16);color:var(--ok)}
-.pill.y{background:var(--warn-w);color:var(--warn)}
-@media (prefers-color-scheme:dark){.pill.bad,.pill.ok,.pill.y{color:var(--ink)}}
+.pill.y,.pill.warn{background:var(--warn-w);color:var(--warn)}
+@media (prefers-color-scheme:dark){.pill.bad,.pill.ok,.pill.y,.pill.warn{color:var(--ink)}}
 
 .dgrid{display:grid;grid-template-columns:268px minmax(0,1fr) 296px;gap:14px;margin-bottom:14px;align-items:start}
 @media(max-width:1240px){.dgrid{grid-template-columns:248px minmax(0,1fr)}}
@@ -635,12 +635,14 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
     <button data-v="anom"><span class="ni"><svg viewBox="0 0 18 18"><path d="M2.6 4.2h12.8a1 1 0 0 1 1 1v8.1a1 1 0 0 1-1 1H2.6a1 1 0 0 1-1-1V5.2a1 1 0 0 1 1-1m.7 2 5.7 3.7 5.7-3.7z"/></svg></span>특이건 확인<span class="navp" id="navAnom"></span></button>
     <div class="sl">근무표</div>
     <button data-v="sched"><span class="ni"><svg viewBox="0 0 18 18"><path d="M5.6 1.4a1 1 0 0 1 1 1v.8h4.8v-.8a1 1 0 1 1 2 0v.8h1.1a1.5 1.5 0 0 1 1.5 1.5v10.4a1.5 1.5 0 0 1-1.5 1.5H3.5A1.5 1.5 0 0 1 2 15.1V4.7a1.5 1.5 0 0 1 1.5-1.5h1.1v-.8a1 1 0 0 1 1-1M4 7.6v7.1h10V7.6zm2 1.7h2v2H6zm4 0h2v2h-2zM6 12.3h2v1.8H6zm4 0h2v1.8h-2z"/></svg></span>근태코드 만들기<span class="navp" id="navSched"></span></button>
-    <div class="sl">메일 · 담당자</div>
+    <div class="sl">메일</div>
     <button data-v="mail"><span class="ni"><svg viewBox="0 0 18 18"><path d="M9 1.3a1 1 0 0 1 .71.29l3.2 3.2a1 1 0 0 1-1.42 1.42L10 4.72V11a1 1 0 1 1-2 0V4.72L6.51 6.21A1 1 0 0 1 5.09 4.79l3.2-3.2A1 1 0 0 1 9 1.3M2.6 8.4h3.1a1 1 0 1 1 0 2H3.6v3.9h10.8v-3.9h-2.1a1 1 0 1 1 0-2h3.1a1 1 0 0 1 1 1v5.4a1 1 0 0 1-1 1H2.6a1 1 0 0 1-1-1V9.4a1 1 0 0 1 1-1"/></svg></span>특이건 메일</button>
+    <div class="sl">기준 정보</div>
+    <button data-v="emp"><span class="ni"><svg viewBox="0 0 18 18"><path d="M3.4 1.8h11.2a1.5 1.5 0 0 1 1.5 1.5v11.4a1.5 1.5 0 0 1-1.5 1.5H3.4a1.5 1.5 0 0 1-1.5-1.5V3.3a1.5 1.5 0 0 1 1.5-1.5m.5 2v10.4h10.2V3.8zM9 5.2a2 2 0 1 1 0 4 2 2 0 0 1 0-4m0 4.9c2 0 3.6 1 3.6 2.2v.6H5.4v-.6c0-1.2 1.6-2.2 3.6-2.2"/></svg></span>사원 명부<span class="navp" id="navEmp"></span></button>
     <button data-v="owner"><span class="ni"><svg viewBox="0 0 18 18"><path d="M6.6 2.2a3.2 3.2 0 1 1 0 6.4 3.2 3.2 0 0 1 0-6.4m0 2a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4M13.1 3.4a2.4 2.4 0 1 1 0 4.8 2.4 2.4 0 0 1 0-4.8M6.6 9.7c2.7 0 4.9 1.4 4.9 3.1v2.1a1 1 0 0 1-1 1H2.7a1 1 0 0 1-1-1v-2.1c0-1.7 2.2-3.1 4.9-3.1m6.5.4c2 0 3.6 1.1 3.6 2.5v1.6a1 1 0 0 1-1 1h-2.3v-2.4c0-1-.5-1.9-1.4-2.6z"/></svg></span>담당자 관리<span class="navp" id="navOwner"></span></button>
   </nav>
   <div class="side-foot">
-    <b>APRS</b><span class="ver">v10.0 · 2026-09</span>
+    <b>APRS</b><span class="ver">v10.1 · 2026-09</span>
     <span class="who" id="gWho"></span>
     <button class="sfout" id="btnOut" title="로그아웃">로그아웃</button>
   </div>
@@ -737,6 +739,19 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
         <li><b>일근태현황관리 양식 (.xlsx)</b>으로 내려받기</li>
       </ul></div>
       <button class="pri">근태코드 만들기 열기</button>
+    </div>
+    <div class="pcard" data-go="emp">
+      <div class="pi"><svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="20" height="22" rx="2.6"/><circle cx="14" cy="11.4" r="3.2"/><path d="M8.4 20.6c0-2.4 2.5-4 5.6-4s5.6 1.6 5.6 4"/></svg></div>
+      <h3>사원 명부</h3>
+      <p>근무 중인 사원을 한 번 등록해 모든 화면에서 씁니다.</p>
+      <div class="pdet"><ul>
+        <li>명단 파일로 <b>한 번에 등록</b> · 중간 투입은 한 명씩 추가</li>
+        <li><b>사번 · 소속 · 직급 · 직원구분 · 부서코드 · 시급</b> 보관</li>
+        <li>근무표에 <b>사번이 없어도</b> 이름으로 채워 넣기</li>
+        <li><b>재직 · 퇴사</b> 구분, 동명이인 표시</li>
+        <li>명부 <b>내려받기 · 불러오기</b>로 다른 PC와 공유</li>
+      </ul></div>
+      <button class="pri">사원 명부 열기</button>
     </div>
     <div class="pcard" data-go="owner">
       <div class="pi"><svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="9.5" r="4.2"/><path d="M3.6 23.2c0-3.6 3.3-6.1 7.4-6.1s7.4 2.5 7.4 6.1"/><circle cx="21" cy="8.6" r="3.2"/><path d="M19.2 15.6c3.4.3 5.6 2.4 5.6 5.2"/></svg></div>
@@ -1087,7 +1102,9 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
     <div class="f" style="min-width:120px"><label>직급</label><input type="text" id="scRank" placeholder="35A"></div>
     <div class="f" style="min-width:130px"><label>직원구분</label><input type="text" id="scType" placeholder="기간제"></div>
   </div>
-  <div class="mh" style="margin-top:20px">사람마다 <span class="muted">— 사번은 대상자 명단에서 자동으로 채웁니다. 비어 있으면 직접 넣어주세요</span></div>
+  <div class="mh" style="margin-top:20px">사람마다
+    <span class="muted">— 사번 · 소속 · 직급은 <b>사원 명부</b>에서 자동으로 채웁니다 (<span class="pill ok">명부</span> 표시).
+    비어 있으면 직접 넣으시거나 명부에 등록해 주세요</span></div>
   <div id="scPeople" style="margin-top:10px"></div>
 </div>
 
@@ -1122,6 +1139,81 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
   </div>
 </div>
 </div><!-- /viewSched -->
+
+<!-- ================= 사원 명부 ================= -->
+<div class="view" id="viewEmp" hidden>
+<div class="card">
+  <h2><span class="n">1</span>명단 파일로 한 번에 등록</h2>
+  <p class="hint">지금 근무 중인 사원을 <b>한 번만</b> 등록해 두면, 이후에는 <b>근무표에 사번이 없어도</b> 이름만으로
+    사번 · 소속 · 직급 · 직원구분이 자동으로 채워집니다. 대상자 명단 · 인사 명단 등 <b>사번이나 성명이 있는 파일</b>이면 됩니다.</p>
+  <div class="row" style="margin-bottom:12px">
+    <div class="f" style="min-width:230px"><label>넣는 방법</label>
+      <select id="emMode">
+        <option value="merge">기존 명부에 더하기 (같은 사람은 갱신)</option>
+        <option value="replace">명부를 이 명단으로 바꾸기</option>
+      </select></div>
+  </div>
+  <div class="slots">
+    <div class="slot" id="dropEm">
+      <div class="sl-h"><span class="sl-n">명단</span> 사원 명단 파일</div>
+      <div class="sl-d">사번 · 성명 · 소속 · 직급 · 직원구분 · 부서코드 · 시급 · 입사일 · 퇴사일<br>
+        <span class="muted">있는 열만 읽습니다 · 여기에 놓거나 클릭해서 선택</span></div>
+      <div class="sl-s">퇴사일이 적힌 사람은 <b>퇴사</b>로 들어갑니다</div>
+    </div>
+  </div>
+  <input type="file" id="emFile" accept=".xlsx,.xlsm,.xls,.csv" hidden>
+  <div id="emImpInfo" style="margin-top:14px"></div>
+</div>
+
+<div class="card">
+  <h2><span class="n">2</span>사원 목록</h2>
+  <div class="split" style="margin:10px 0 12px">
+    <input type="text" id="emQ" placeholder="이름 · 사번 · 소속 · 코드로 찾기" style="min-width:250px" spellcheck="false">
+    <select id="emOnly" style="min-width:150px">
+      <option value="on">재직자만</option>
+      <option value="all">전체</option>
+      <option value="off">퇴사자만</option>
+    </select>
+    <span class="grow"></span>
+    <span id="emSum" style="font-size:12.5px;align-self:center"></span>
+  </div>
+  <div id="emList"></div>
+</div>
+
+<div class="card" id="emForm">
+  <h2><span class="n">3</span>사원 추가 · 수정</h2>
+  <p class="hint"><b>중간에 투입된 사원</b>은 여기서 한 명씩 넣으시면 됩니다.
+    같은 사번(사번이 없으면 같은 이름)을 다시 넣으면 <b>덮어씁니다</b> — 수정하실 때 그렇게 쓰세요.</p>
+  <div class="row">
+    <div class="f" style="min-width:120px"><label>사번</label><input type="text" id="em_id" placeholder="519589" spellcheck="false"></div>
+    <div class="f" style="min-width:120px"><label>성명 *</label><input type="text" id="em_name" placeholder="홍길동"></div>
+    <div class="f" style="flex:1;min-width:180px"><label>소속</label><input type="text" id="em_dept" placeholder="강남점 식품팀"></div>
+    <div class="f" style="min-width:120px"><label>사업장명</label><input type="text" id="em_site" placeholder="강남점"></div>
+    <div class="f" style="min-width:100px"><label>직급</label><input type="text" id="em_rank" placeholder="35A"></div>
+    <div class="f" style="min-width:120px"><label>직원구분</label><input type="text" id="em_etype" placeholder="기간제"></div>
+  </div>
+  <div class="row" style="margin-top:4px">
+    <div class="f" style="min-width:110px"><label>부서코드</label><input type="text" id="em_code" placeholder="F01" spellcheck="false"></div>
+    <div class="f" style="min-width:110px"><label>시급</label><input type="text" id="em_wage" placeholder="11000" spellcheck="false"></div>
+    <div class="f" style="min-width:150px"><label>입사일</label><input type="date" id="em_hire"></div>
+    <div class="f" style="min-width:150px"><label>퇴사일 <span class="muted">넣으면 퇴사 처리</span></label><input type="date" id="em_quit"></div>
+    <button class="pri" id="emAdd" style="align-self:flex-end">사원 추가 · 수정</button>
+  </div>
+  <div id="emAddInfo" style="margin-top:12px"></div>
+  <div class="split" style="margin-top:14px">
+    <span class="grow"></span>
+    <button class="sm" id="emExp">명부 내려받기 (.xlsx)</button>
+    <button class="sm" id="emReset">명부 모두 지우기</button>
+  </div>
+  <div class="note i" style="margin-top:14px">
+    <b>어디에 쓰이나요?</b> <b>「근태코드 만들기」</b>에서 근무표의 이름을 이 명부와 맞춰 <b>사번 · 소속 · 직급 · 직원구분</b>을 자동으로 채웁니다.
+    근무표에 사번 열이 없어도 되는 이유가 이것입니다.<br>
+    <b>동명이인</b>이 있으면 표에 표시해 드립니다 — 그럴 때는 근무표에 사번 열을 넣으시거나,
+    「근태코드 만들기」 3번 표에서 그 사람만 사번을 직접 고르시면 됩니다.<br>
+    <span class="muted">명부는 이 브라우저에 저장됩니다. 다른 PC에서도 쓰시려면 「명부 내려받기」로 받아 그 PC의 1번에 올리세요.</span>
+  </div>
+</div>
+</div><!-- /viewEmp -->
 
 
 <dialog id="dgPrev">
@@ -1321,7 +1413,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
 </div>
 
 <footer>
-  <b>APRS v10.0 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
+  <b>APRS v10.1 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
   ⓘ 이 도구는 업로드한 파일을 브라우저 메모리에서만 계산합니다. 네트워크 전송·서버 저장이 없습니다.<br>
   ⓘ 총근로시간 = 기본(소정) + 연장 + 휴일근로. <b>야간·심야는 가산수당 산정용으로 따로 표시</b>하며 총합에 중복 더하지 않습니다 — 심야 연장은 이미 연장시간에 포함돼 있는 경우가 많아 더하면 이중 계산이 됩니다.<br>
   ⓘ 급여일수 = 평일(월~금, 법정공휴일 제외) + 법정공휴일. 인정 일요일수 = 데이터상 일요일 수 − 결근이 있는 주(월~일)의 일요일 수.<br>
@@ -1857,7 +1949,7 @@ function readFile(f){
   const fr = new FileReader();
   fr.onload = e => {
     try{
-      S.wb = XLSX.read(new Uint8Array(e.target.result), {type:'array', cellDates:true, cellText:false});
+      S.wb = XLSX.read(new Uint8Array(e.target.result), {type:'array', cellText:false});
       $('#fileInfo').innerHTML = `<b>${f.name}</b> · 시트 ${S.wb.SheetNames.length}개 · ${(f.size/1024).toFixed(0)} KB`;
       $('#sheet').innerHTML = S.wb.SheetNames.map(n=>`<option>${n}</option>`).join('');
       $('#c2').classList.remove('off');
@@ -2566,7 +2658,7 @@ $('#exp').onclick=()=>{
    뷰 전환
    ========================================================= */
 const VIEWS={home:'viewHome',load:'viewLoad',analyze:'viewAnalyze',audit:'viewAudit',pay:'viewPay',
-             anom:'viewAnom',mail:'viewMail',owner:'viewOwner',sched:'viewSched'};
+             anom:'viewAnom',mail:'viewMail',owner:'viewOwner',sched:'viewSched',emp:'viewEmp'};
 const VTXT={
   home:['APRS · 근태·급여 검수 시스템','근태 엑셀을 올리면 집계 · 점검 · 급여 대조를 자동으로 처리합니다. 파일은 브라우저 안에서만 처리되며 어디로도 전송되지 않습니다.'],
   load:['자료 올리기','근태 파일 · 대상자 명단 · 급여대장을 한 번만 올리면 아래 네 화면에 모두 들어갑니다.'],
@@ -2576,7 +2668,8 @@ const VTXT={
   anom:['특이건 확인','지문 센싱 누락과 근태 「비고」 표기를 모아 목록과 파일로 만들어 줍니다.'],
   mail:['특이건 메일','특이건을 담당자별로 나눠 Outlook으로 보냅니다. 부서에 담당자가 여럿이면 주소마다 한 통씩 나갑니다.'],
   owner:['담당자 관리','담당자 주소록 · 항상 참조 · 부서코드표를 등록하고 고칩니다. 담당자가 바뀌면 여기서 바꿔주세요.'],
-  sched:['근태코드 만들기','부서 근무표(휴무표)를 읽어 「일근태현황관리」 업로드 양식 엑셀로 바꿔 줍니다.']
+  sched:['근태코드 만들기','부서 근무표(휴무표)를 읽어 「일근태현황관리」 업로드 양식 엑셀로 바꿔 줍니다.'],
+  emp:['사원 명부','지금 근무 중인 사원을 한 번 등록해 두면 모든 화면이 그 정보를 씁니다. 중간 투입 인원은 따로 추가하시면 됩니다.']
 };
 function go(v,syncHash){
   if(!VIEWS[v]) v='home';
@@ -2587,6 +2680,7 @@ function go(v,syncHash){
   if(v==='anom'||v==='mail') anomRefresh();
   if(v==='owner'){ try{ abRender(); ccRender(); dcRender(); }catch(e){} }
   if(v==='sched'){ try{ scRender(); }catch(e){} }
+  if(v==='emp'){ try{ empRender(); }catch(e){} }
   if(typeof ownBadge==='function') ownBadge();
   if(syncHash!==false){ try{ history.replaceState(null,'', v==='home'? location.pathname+location.search : '#'+v); }catch(e){} }
   window.scrollTo({top:0,behavior:'instant'});
@@ -2635,8 +2729,24 @@ function durOf(st,en,wrap){ if(st==null||en==null) return null; let d=en-st;
   if(d<=0) d+= wrap?1440:0; return d; }
 const csv=s=>String(s||'').split(/[,;\n]/).map(x=>x.trim()).filter(Boolean);
 /* 검수기: 일자 문자열 → Date / YYYY-MM-DD */
+/* 엑셀 일련번호 → 날짜 (우리가 직접 계산)
+   ※ 왜 직접 하나 — 엑셀 읽기 라이브러리(SheetJS)는 '서울'처럼
+     1908년 이전 표준시(UTC+8:27:52)가 지금(UTC+9:00)과 다른 지역에서
+     날짜를 하루 앞당겨 만듭니다. 그래서 라이브러리가 만든 Date 를 믿지 않고
+     엑셀이 저장한 숫자를 그대로 받아 우리가 날짜로 바꿉니다.
+     기준일은 1899-12-30 (엑셀의 1900년 윤년 버그까지 맞춘 값)입니다. */
+const XLEPOCH=Date.UTC(1899,11,30);
+function xlSerial(n){
+  if(typeof n!=='number' || !isFinite(n) || n<1 || n>60000) return null;
+  const t=new Date(XLEPOCH + Math.floor(n)*86400000);
+  return new Date(t.getUTCFullYear(), t.getUTCMonth(), t.getUTCDate());
+}
+/* 엑셀 일련번호로 볼 범위 — 1954-10 ~ 2064-06.
+   시급 11000 이나 일자 15 같은 숫자를 날짜로 오해하지 않기 위한 울타리입니다. */
+const xlDateNum=n=>(typeof n==='number' && n>=20000 && n<60000)? xlSerial(n) : null;
 function pDate(v,Y){
-  if(v instanceof Date) return v;
+  if(v instanceof Date) return new Date(v.getFullYear(),v.getMonth(),v.getDate());
+  if(typeof v==='number'){ const d=xlDateNum(v); if(d) return d; }
   const t=String(v??'').trim(); if(!t) return null;
   let m=t.match(/(\d{4})\D{1,2}(\d{1,2})\D{1,2}(\d{1,2})/);
   if(m) return new Date(+m[1],+m[2]-1,+m[3]);
@@ -2653,7 +2763,7 @@ const dKey=d=>d? `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-$
 function readTable(file, pats, done, req){
   const fr=new FileReader();
   fr.onload=e=>{ try{
-    const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array',cellDates:true});
+    const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array'});
     const keys=Object.keys(pats);
     const need=(req&&req.length)?req:keys;
     let best=null;
@@ -2824,7 +2934,7 @@ function readA(f){
   A.fname=f.name.replace(/\.[^.]+$/,'');
   const fr=new FileReader();
   fr.onload=e=>{ try{
-      A.wb=XLSX.read(new Uint8Array(e.target.result),{type:'array',cellDates:true});
+      A.wb=XLSX.read(new Uint8Array(e.target.result),{type:'array'});
       $('#fileInfoA').innerHTML=`<b>${f.name}</b> · 시트 ${A.wb.SheetNames.length}개 · ${(f.size/1024).toFixed(0)} KB`;
       $('#sheetA').innerHTML=A.wb.SheetNames.map(n=>`<option>${n}</option>`).join('');
       $('#tbName').textContent=f.name; $('#tbName').title=f.name;
@@ -3612,6 +3722,7 @@ function renderA(cnt){
   $$('[data-off]').forEach(el=>el.onclick=offDetail);
   if(typeof anomBadge==='function') anomBadge();
   if(typeof ownBadge==='function') ownBadge();
+  if(typeof empBadge==='function') empBadge();
   $('#cmpBox').innerHTML = mapWarnHTML() + linkWarnHTML() + rowWarnHTML() + floodWarnHTML(cnt) + (!A.prev ? '' :
     `<div class="note i"><b>이전 검수(${A.prev.저장시각||'저장 시각 미상'}, 이상 ${A.prev.이상건수}건)와 비교 중</b> —
      해결 ${(A.resolved||[]).length}건 · 남음 ${A.find.filter(f=>f.status==='남음').length}건 · 신규 ${A.find.filter(f=>f.status==='신규').length}건.</div>`);
@@ -4169,7 +4280,7 @@ function scanAnom(){
 $('#pFile2').onchange=e=>{ const f=e.target.files[0]; if(!f) return;
   const fr=new FileReader();
   fr.onload=ev=>{ try{
-    P.led=XLSX.read(new Uint8Array(ev.target.result),{type:'array',cellDates:true});
+    P.led=XLSX.read(new Uint8Array(ev.target.result),{type:'array'});
     $('#pSheet').innerHTML=P.led.SheetNames.map(n=>`<option>${n}</option>`).join('');
     $('#pInfo2').innerHTML=`✓ ${f.name} · 시트 ${P.led.SheetNames.length}개`;
     $('#dropP2').classList.add('done'); $('#p2').classList.remove('off');
@@ -7203,13 +7314,7 @@ function scPplSet(name,k,v){ const p=scPpl(); p[name]=Object.assign({},p[name]);
   LS.set(SPK, JSON.stringify(p)); }
 
 /* ---- 날짜 읽기 ---- */
-function scDate(v,Y){
-  if(v instanceof Date) return new Date(v.getFullYear(),v.getMonth(),v.getDate());
-  if(typeof v==='number' && v>20000 && v<60000){
-    try{ const d=XLSX.SSF.parse_date_code(v); if(d&&d.y) return new Date(d.y,d.m-1,d.d); }catch(e){}
-  }
-  return pDate(v,Y);
-}
+function scDate(v,Y){ return pDate(v,Y); }
 /* 한 줄에서 날짜 칸을 모은다 */
 function scRowDates(row,Y){
   const out=[];
@@ -7309,18 +7414,30 @@ function scIdByName(){
   }catch(e){}
   return m;
 }
-function scIdOf(p){
-  if(p.id) return p.id;
-  const saved=(scPpl()[p.name]||{}).id; if(saved) return saved;
-  const byRos=scIdByName().get(p.name.replace(/\s+/g,'')); return byRos||'';
+/* 근무표에 적힌 이름을 사원 명부에서 찾는다 — 근무표에 사번이 없어도 되는 이유 */
+function scEmp(p){
+  try{
+    if(p.id && typeof empFindId==='function'){ const e=empFindId(p.id); if(e) return e; }
+    if(typeof empFind==='function') return empFind(p.name);
+  }catch(e){}
+  return null;
 }
-/* 대상자 명단에 부서가 적혀 있으면 그 값을 소속으로 쓴다 */
+function scIdOf(p){
+  if(p.id) return p.id;                                   /* ① 근무표에 사번 열이 있으면 그것 */
+  const saved=(scPpl()[p.name]||{}).id; if(saved) return saved;   /* ② 화면에서 직접 넣은 값 */
+  const e=scEmp(p); if(e && e.id) return e.id;                    /* ③ 사원 명부 */
+  const byRos=scIdByName().get(p.name.replace(/\s+/g,'')); return byRos||'';  /* ④ 대상자 명단 */
+}
+/* 소속 — 사원 명부 → 대상자 명단의 부서 순 */
 function scDeptOf(p){
+  const e=scEmp(p); if(e && e.dept) return e.dept;
   try{ const id=scIdOf(p);
     if(id && typeof ownDeptOf==='function'){ const d=ownDeptOf(idKey(id)); if(d) return d; }
   }catch(e){}
   return '';
 }
+/* 사업장명 · 직급 · 직원구분도 명부에 있으면 그 사람 값을 쓴다 */
+const scEmpV=(p,k)=>{ const e=scEmp(p); return (e&&e[k])? e[k] : ''; };
 
 /* ---- 기간 ---- */
 function scRange(){
@@ -7348,6 +7465,7 @@ function scRows(){
     if(who && who!==p.name) return;
     const own=ppl[p.name]||{};
     const id=scIdOf(p), rosDept=scDeptOf(p);
+    const eSite=scEmpV(p,'site'), eRank=scEmpV(p,'rank'), eType=scEmpV(p,'etype');
     SC.dates.forEach(x=>{
       if(x.d<d0 || x.d>d1) return;
       const raw=String((SC.aoa[p.r]||[])[x.c]==null?'':(SC.aoa[p.r]||[])[x.c]).trim();
@@ -7355,8 +7473,8 @@ function scRows(){
       const kind=map[scK(raw)];
       if(!kind) return;                      /* 「넣지 않음」 이거나 아직 안 이은 표기 */
       out.push({ date:scDot(x.d), wd:SC_WD[x.d.getDay()], id, name:p.name,
-                 dept:(own.dept||rosDept||fix.dept||SC.dept), site:fix.site,
-                 rank:(own.rank||fix.rank), etype:fix.etype, kind, memo:'', raw });
+                 dept:(own.dept||rosDept||fix.dept||SC.dept), site:(eSite||fix.site),
+                 rank:(own.rank||eRank||fix.rank), etype:(eType||fix.etype), kind, memo:'', raw });
     });
   });
   out.sort((a,b)=> a.name===b.name? (a.date<b.date?-1:1) : (a.name<b.name?-1:1));
@@ -7381,7 +7499,10 @@ function scRender(){
   box.innerHTML=`<div class="note g"><b>${esc(SC.dept)}</b> 근무표를 읽었습니다 —
     <b>${SC.people.length}명</b> · ${scDot(d0)} ~ ${scDot(d1)} <b>${SC.dates.length}일</b>
     <span class="muted">(${esc(SC.sheet)} 시트 · ${SC.hrow+1}번째 줄이 날짜)</span>
-    ${miss? `<br><span style="color:var(--warn)">사번을 못 찾은 인원 <b>${miss}명</b> — 아래 3번 표에서 넣어주세요 (대상자 명단을 올리시면 자동으로 채워집니다)</span>`:''}</div>`;
+    ${miss? `<br><span style="color:var(--warn)">사번을 못 찾은 인원 <b>${miss}명</b></span> —
+      왼쪽 <b>「사원 명부」</b>에 그 분들을 등록해 두시면 다음부터 이름만으로 자동으로 채워집니다.
+      지금 당장은 아래 3번 표에 직접 넣으셔도 됩니다.
+      <button class="sm" style="margin-left:6px" onclick="go('emp')">사원 명부 열기</button>`:''}</div>`;
   scMapRender(); scFixRender(); scFormRender(); scPrev();
 }
 function scMapRender(){
@@ -7428,8 +7549,9 @@ function scPplRender(){
   const cnt=new Map(); rows.forEach(r=>cnt.set(r.name,(cnt.get(r.name)||0)+1));
   box.innerHTML=`<div class="tblwrap"><table><thead><tr>
       <th>성명</th><th>사번</th><th>소속</th><th>직급</th><th class="num">줄 수</th></tr></thead><tbody>${
-    SC.people.map(p=>{ const own=ppl[p.name]||{}, id=scIdOf(p), rd=scDeptOf(p);
-      return `<tr><td><b>${esc(p.name)}</b></td>
+    SC.people.map(p=>{ const own=ppl[p.name]||{}, id=scIdOf(p), rd=scDeptOf(p), em=scEmp(p);
+      return `<tr><td><b>${esc(p.name)}</b>${em? (em.__dup? ' <span class="pill warn">동명이인</span>'
+          : (em.__quit? ' <span class="pill warn">퇴사자</span>' : ' <span class="pill ok">명부</span>')) : ''}</td>
         <td><input type="text" data-scid="${esc(p.name)}" value="${esc(id)}" placeholder="사번"
              style="width:110px;padding:4px 8px"${id&&!own.id?' class="auto"':''}></td>
         <td><input type="text" data-scdept="${esc(p.name)}" value="${esc(own.dept||'')}"
@@ -7498,7 +7620,7 @@ function scTplLoad(file){
   const fr=new FileReader();
   fr.onload=ev=>{
     try{
-      const wb=XLSX.read(new Uint8Array(ev.target.result),{type:'array',cellDates:true});
+      const wb=XLSX.read(new Uint8Array(ev.target.result),{type:'array'});
       let head=null;
       wb.SheetNames.forEach(sn=>{
         const aoa=XLSX.utils.sheet_to_json(wb.Sheets[sn],{header:1,defval:null,blankrows:false,raw:true});
@@ -7580,7 +7702,7 @@ function scLoad(file){
   const fr=new FileReader();
   fr.onload=ev=>{
     try{
-      const wb=XLSX.read(new Uint8Array(ev.target.result),{type:'array',cellDates:true});
+      const wb=XLSX.read(new Uint8Array(ev.target.result),{type:'array'});
       const g=scParse(wb);
       if(g) Object.assign(SC,g); else { SC.people=[]; SC.dates=[]; SC.marks=[]; }
     }catch(err){ SC.people=[]; SC.dates=[]; SC.marks=[];
@@ -7589,6 +7711,197 @@ function scLoad(file){
   };
   fr.readAsArrayBuffer(file);
 }
+
+/* =========================================================
+   사원 명부 — 이 도구 전체가 함께 쓰는 사람 정보
+   여기 한 번 등록해 두면 근무표에 사번이 없어도,
+   대상자 명단을 올리지 않아도 이름만으로 사번·소속·직급이 채워집니다.
+   ========================================================= */
+const EMK='aprs.emp.v1';
+const empS=v=>String(v==null?'':v).trim().replace(/\.0+$/,'');
+function empFix(x){
+  return { id:empS(x&&x.id), name:empS(x&&x.name), dept:empS(x&&x.dept), site:empS(x&&x.site),
+    rank:empS(x&&x.rank), etype:empS(x&&x.etype), code:empS(x&&x.code),
+    wage:empS(x&&x.wage), hire:empS(x&&x.hire), quit:empS(x&&x.quit),
+    on:(x&&x.on)===false? false : true };
+}
+function empLoad(){ try{ const l=JSON.parse(LS.get(EMK)||'[]');
+  return Array.isArray(l)? l.map(empFix).filter(e=>e.id||e.name) : []; }catch(e){ return []; } }
+function empSave(l){ P.emp=l.map(empFix);
+  if(!LS.set(EMK, JSON.stringify(P.emp))) alert('이 브라우저에 저장하지 못했습니다.');
+  empRender(); empBadge();
+  try{ if(typeof scRender==='function' && SC.people.length) scRender(); }catch(e){}
+}
+function empBook(){ if(!P.emp) P.emp=empLoad(); return P.emp; }
+const empNK=v=>String(v==null?'':v).replace(/\s+/g,'').toUpperCase();
+
+/* 이름으로 찾기 — 재직자를 먼저 보고, 같은 이름이 둘이면 알려준다 */
+function empFind(name){
+  const k=empNK(name); if(!k) return null;
+  const hit=empBook().filter(e=>empNK(e.name)===k);
+  if(!hit.length) return null;
+  const live=hit.filter(e=>e.on);
+  const use=live.length? live : hit;
+  const r=Object.assign({}, use[0]);
+  r.__dup = use.length>1;            /* 같은 이름이 여럿 */
+  r.__quit = !live.length;           /* 퇴사자만 있음 */
+  return r;
+}
+const empFindId=id=>{ const k=idKey(id); return empBook().find(e=>e.id&&idKey(e.id)===k)||null; };
+
+/* ---- 화면 ---- */
+function empBadge(){ try{ const n=empBook().filter(e=>e.on).length;
+  const el=$('#navEmp'); if(el) el.textContent = n? String(n) : ''; }catch(e){} }
+
+function empRender(){
+  const box=$('#emList'); if(!box) return;
+  const all=empBook();
+  const q=empNK($('#emQ')? $('#emQ').value : '');
+  const only=$('#emOnly')? $('#emOnly').value : 'on';
+  let list=all.map((e,i)=>({e,i}));
+  if(only==='on')   list=list.filter(x=>x.e.on);
+  if(only==='off')  list=list.filter(x=>!x.e.on);
+  if(q) list=list.filter(x=>empNK(x.e.name).indexOf(q)>=0 || idKey(x.e.id).indexOf(q)>=0
+                          || empNK(x.e.dept).indexOf(q)>=0 || empNK(x.e.code).indexOf(q)>=0);
+  const nOn=all.filter(e=>e.on).length;
+  const chip=$('#emCount');
+  if(chip){ chip.textContent = all.length? `재직 ${nOn}명` : ''; chip.className='pill '+(nOn?'ok':''); }
+  const sum=$('#emSum');
+  if(sum) sum.innerHTML = all.length
+    ? `모두 <b>${all.length}명</b> · 재직 <b>${nOn}명</b> · 퇴사 ${all.length-nOn}명
+       <span class="muted">— 보이는 줄 ${list.length}명</span>`
+    : '<span class="muted">아직 등록된 사원이 없습니다</span>';
+
+  if(!list.length){ box.innerHTML=`<div class="empty" style="padding:30px 14px">${
+    all.length? '조건에 맞는 사원이 없습니다.' : '아래 1번에서 명단 파일을 올리시거나, 3번에서 한 명씩 넣어주세요.'}</div>`; return; }
+
+  /* 같은 이름이 둘 이상이면 표시해 준다 — 이름으로 사번을 찾을 때 헷갈리는 원인 */
+  const cnt=new Map(); all.filter(e=>e.on).forEach(e=>cnt.set(empNK(e.name),(cnt.get(empNK(e.name))||0)+1));
+  box.innerHTML=`<div class="tblwrap"><table><thead><tr>
+      <th>상태</th><th>사번</th><th>성명</th><th>소속</th><th>직급</th><th>직원구분</th>
+      <th>부서코드</th><th class="num">시급</th><th>입사일</th><th></th></tr></thead><tbody>${
+    list.map(({e,i})=>`<tr>
+      <td>${e.on? '<span class="pill ok">재직</span>' : '<span class="pill">퇴사</span>'}</td>
+      <td class="mono"${e.id?'':' style="color:var(--bad)"'}>${esc(e.id||'없음')}</td>
+      <td><b>${esc(e.name)}</b>${(e.on&&cnt.get(empNK(e.name))>1)? ' <span class="pill warn">동명이인</span>':''}</td>
+      <td>${esc(e.dept)}</td><td>${esc(e.rank)}</td><td>${esc(e.etype)}</td>
+      <td class="mono">${esc(e.code)}</td>
+      <td class="num">${e.wage? Number(String(e.wage).replace(/[^\d.]/g,'')).toLocaleString() : ''}</td>
+      <td>${esc(e.hire)}</td>
+      <td><button class="sm" data-emed="${i}">수정</button>
+          <button class="sm" data-emtg="${i}">${e.on?'퇴사로':'재직으로'}</button>
+          <button class="sm" data-emdel="${i}">삭제</button></td></tr>`).join('')}</tbody></table></div>`;
+
+  box.querySelectorAll('[data-emed]').forEach(b=>b.onclick=()=>{
+    const e=empBook()[+b.dataset.emed]; if(!e) return;
+    ['id','name','dept','site','rank','etype','code','wage','hire','quit'].forEach(k=>{
+      const el=$('#em_'+k); if(el) el.value=e[k]||''; });
+    $('#em_id').focus();
+    $('#emAdd').textContent='이 사원 고치기';
+    window.scrollTo({top:$('#emForm').offsetTop-80, behavior:'smooth'});
+  });
+  box.querySelectorAll('[data-emtg]').forEach(b=>b.onclick=()=>{
+    const l=empBook().slice(); const i=+b.dataset.emtg; if(!l[i]) return;
+    l[i]=Object.assign({},l[i],{on:!l[i].on}); empSave(l); });
+  box.querySelectorAll('[data-emdel]').forEach(b=>b.onclick=()=>{
+    const l=empBook().slice(); const i=+b.dataset.emdel; if(!l[i]) return;
+    if(!confirm(`${l[i].name} 님을 명부에서 지울까요?\n\n퇴사자는 지우지 말고 「퇴사로」를 쓰시면 기록이 남습니다.`)) return;
+    l.splice(i,1); empSave(l); });
+}
+
+/* ---- 명단 파일로 한 번에 등록 ---- */
+function empImport(file, mode){
+  readTable(file, {
+    id:/사번|사원번호|직번|사원.?번호|emp/i,
+    name:/성명|이름|name/i,
+    dept:/소속|부서(?!코드)|담당팀(?!코드)|^팀$|팀명(?!코드)|부문(?!코드)|department/i,
+    site:/사업장|점포|매장|근무처|근태사업장/i,
+    rank:/직급|직위|grade/i,
+    etype:/직원구분|사원구분|고용구분|직원유형|employ/i,
+    code:/부서코드|팀코드|조직코드|부문코드|소속코드|코드$|^코드|dept.?code/i,
+    wage:/시급|시간급|시간당|단가|임률|임율|rate|wage/i,
+    hire:/입사|입사일|시작일|hire|join/i,
+    quit:/퇴사|퇴사일|종료일|quit|leave.?date/i
+  }, (rows,hdr,col,sn)=>{
+    const got=rows.map(r=>empFix({
+      id:r.id, name:r.name, dept:r.dept, site:r.site, rank:r.rank, etype:r.etype, code:r.code,
+      wage:r.wage, hire:fmtD(r.hire), quit:fmtD(r.quit), on:!norm(r.quit)
+    })).filter(e=>e.id||e.name);
+    if(!got.length){ $('#emImpInfo').innerHTML=
+      `<div class="note b"><b>사람을 찾지 못했습니다.</b> <b>사번</b> 또는 <b>성명</b> 열이 있는 파일인지 확인해 주세요.</div>`; return; }
+    const before=empBook();
+    let add=0, upd=0, out;
+    if(mode==='replace'){ out=got; add=got.length; }
+    else {
+      out=before.slice();
+      got.forEach(g=>{
+        const j=out.findIndex(e=>(g.id && e.id && idKey(e.id)===idKey(g.id)) ||
+                                (!g.id && empNK(e.name)===empNK(g.name)));
+        if(j>=0){ /* 빈 칸은 덮지 않는다 — 손으로 넣어둔 값을 지우지 않기 위해 */
+          const m=Object.assign({}, out[j]);
+          Object.keys(g).forEach(k=>{ if(k==='on') return; if(g[k]) m[k]=g[k]; });
+          m.on=g.on; out[j]=m; upd++;
+        } else { out.push(g); add++; }
+      });
+    }
+    empSave(out);
+    const noId=got.filter(e=>!e.id).length;
+    $('#emImpInfo').innerHTML=`<div class="note g">
+      <b>${esc(file.name)}</b> 에서 <b>${got.length}명</b>을 읽었습니다 —
+      ${mode==='replace'? `명부를 <b>이 명단으로 바꿨습니다</b>` : `새로 <b>${add}명</b> 추가 · <b>${upd}명</b> 갱신`}
+      <span class="muted">(${esc(sn)} 시트)</span>
+      ${noId? `<br><span style="color:var(--warn)">사번이 빈 사람 <b>${noId}명</b> — 아래 표에서 넣어주세요</span>`:''}
+      <br><span class="muted">찾은 열 : ${['id','name','dept','site','rank','etype','code','wage','hire','quit']
+        .filter(k=>col[k]>=0).map(k=>esc(String(hdr[col[k]]||k))).join(' · ')||'없음'}</span></div>`;
+  }, ['id']);
+}
+const fmtD=v=>{ const d=pDate(v); return d? `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}` : empS(v); };
+
+/* ---- 배선 ---- */
+(function emWire(){
+  const drop=$('#dropEm'), inp=$('#emFile'); if(!drop||!inp) return;
+  drop.onclick=()=>inp.click();
+  ['dragenter','dragover'].forEach(e=>drop.addEventListener(e,ev=>{ev.preventDefault();drop.classList.add('on')}));
+  ['dragleave','drop'].forEach(e=>drop.addEventListener(e,ev=>{ev.preventDefault();drop.classList.remove('on')}));
+  drop.addEventListener('drop',ev=>{ const f=ev.dataTransfer.files[0];
+    if(f){ drop.classList.add('done'); empImport(f, $('#emMode').value); } });
+  inp.onchange=ev=>{ const f=ev.target.files[0];
+    if(f){ drop.classList.add('done'); empImport(f, $('#emMode').value); } ev.target.value=''; };
+
+  ['emQ','emOnly'].forEach(id=>{ const el=$('#'+id); if(el){ el.oninput=empRender; el.onchange=empRender; } });
+
+  const add=$('#emAdd');
+  if(add) add.onclick=()=>{
+    const g=k=>empS($('#em_'+k)? $('#em_'+k).value : '');
+    const rec=empFix({ id:g('id'), name:g('name'), dept:g('dept'), site:g('site'), rank:g('rank'),
+      etype:g('etype'), code:g('code'), wage:g('wage'), hire:g('hire'), quit:g('quit'), on:!g('quit') });
+    if(!rec.name && !rec.id) return alert('사번이나 성명 중 하나는 넣어주세요.');
+    const l=empBook().slice();
+    const j=l.findIndex(e=>(rec.id && e.id && idKey(e.id)===idKey(rec.id)) ||
+                           (!rec.id && empNK(e.name)===empNK(rec.name)));
+    if(j>=0) l[j]=rec; else l.push(rec);
+    empSave(l);
+    ['id','name','dept','rank','code','wage','hire','quit'].forEach(k=>{ const el=$('#em_'+k); if(el) el.value=''; });
+    $('#emAdd').textContent='사원 추가 · 수정';
+    $('#em_id').focus();
+    $('#emAddInfo').innerHTML=`<div class="note g"><b>${esc(rec.name||rec.id)}</b> 님을 ${j>=0?'고쳤':'넣었'}습니다.
+      <span class="muted">사업장 · 직원구분은 그대로 두었으니 다음 분도 바로 넣으실 수 있습니다.</span></div>`;
+  };
+
+  const exp=$('#emExp');
+  if(exp) exp.onclick=()=>{
+    const l=empBook(); if(!l.length) return alert('내보낼 사원이 없습니다.');
+    const H=['사번','성명','소속','사업장명','직급','직원구분','부서코드','시급','입사일','퇴사일','상태'];
+    const aoa=[H].concat(l.map(e=>[e.id,e.name,e.dept,e.site,e.rank,e.etype,e.code,e.wage,e.hire,e.quit,e.on?'재직':'퇴사']));
+    const ws=XLSX.utils.aoa_to_sheet(aoa.map(r=>r.map(v=>String(v==null?'':v))));
+    ws['!cols']=[{wch:10},{wch:10},{wch:18},{wch:12},{wch:8},{wch:10},{wch:10},{wch:9},{wch:12},{wch:12},{wch:7}];
+    const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,'사원명부');
+    const t=new Date();
+    XLSX.writeFile(wb, `사원명부_${t.getFullYear()}${String(t.getMonth()+1).padStart(2,'0')}${String(t.getDate()).padStart(2,'0')}.xlsx`, {bookSST:true});
+  };
+  const rst=$('#emReset');
+  if(rst) rst.onclick=()=>{ if(!confirm('사원 명부를 모두 지울까요? 되돌릴 수 없습니다.')) return; empSave([]); };
+})();
 
 renderRules(null);
 go(hashView(), false);
