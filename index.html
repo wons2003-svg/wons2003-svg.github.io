@@ -398,6 +398,13 @@ dialog::backdrop{background:rgba(0,0,0,.35);-webkit-backdrop-filter:blur(4px);ba
 .slot.done{border-style:solid;border-color:rgba(52,199,89,.55);background:rgba(52,199,89,.07)}
 input.auto{background:var(--ok-w);border-color:rgba(52,199,89,.45)}
 .f[hidden],.row[hidden],.split[hidden]{display:none}
+
+/* ── 근무확인서 : 스캔을 왼쪽에 띄우고 오른쪽에 입력 ────────── */
+.wgrid{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+.wpdf{display:none}
+body.wsplit .wgrid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+body.wsplit .wpdf{display:block;height:700px;border:.5px solid var(--line);border-radius:12px;overflow:hidden;background:var(--panel2);position:sticky;top:64px}
+@media (max-width:1180px){ body.wsplit .wgrid{grid-template-columns:minmax(0,1fr)} body.wsplit .wpdf{height:520px;position:static} }
 .sl-h{font-size:14.5px;font-weight:640;display:flex;align-items:center;gap:8px;margin-bottom:7px;letter-spacing:-.02em}
 .sl-n{background:var(--pri);color:#fff;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:640}
 .slot.done .sl-n{background:var(--green)}
@@ -633,8 +640,9 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
     <button data-v="audit"><span class="ni"><svg viewBox="0 0 18 18"><path d="M8 2.2a5.8 5.8 0 1 0 3.5 10.4l3 3a1.1 1.1 0 0 0 1.6-1.6l-3-3A5.8 5.8 0 0 0 8 2.2m0 2.2a3.6 3.6 0 1 1 0 7.2 3.6 3.6 0 0 1 0-7.2"/></svg></span>근태 점검</button>
     <button data-v="pay"><span class="ni"><svg viewBox="0 0 18 18"><path d="M9 1.6a1 1 0 0 1 1 1v.7c1.9.24 3.3 1.3 3.3 2.8a1 1 0 0 1-2 0c0-.42-.9-1.1-2.3-1.1s-2.3.68-2.3 1.1c0 .38.63.74 2.5 1.08 2.2.4 4.1 1.05 4.1 3 0 1.55-1.4 2.6-3.3 2.85v.7a1 1 0 1 1-2 0v-.7c-1.9-.25-3.3-1.3-3.3-2.85a1 1 0 1 1 2 0c0 .42.9 1.1 2.3 1.1s2.3-.68 2.3-1.1c0-.38-.63-.74-2.5-1.08-2.2-.4-4.1-1.05-4.1-3C6.7 4.6 8.1 3.54 10 3.3v-.7a1 1 0 0 1-1-1"/></svg></span>급여 대조</button>
     <button data-v="anom"><span class="ni"><svg viewBox="0 0 18 18"><path d="M2.6 4.2h12.8a1 1 0 0 1 1 1v8.1a1 1 0 0 1-1 1H2.6a1 1 0 0 1-1-1V5.2a1 1 0 0 1 1-1m.7 2 5.7 3.7 5.7-3.7z"/></svg></span>특이건 확인<span class="navp" id="navAnom"></span></button>
-    <div class="sl">근무표</div>
-    <button data-v="sched"><span class="ni"><svg viewBox="0 0 18 18"><path d="M5.6 1.4a1 1 0 0 1 1 1v.8h4.8v-.8a1 1 0 1 1 2 0v.8h1.1a1.5 1.5 0 0 1 1.5 1.5v10.4a1.5 1.5 0 0 1-1.5 1.5H3.5A1.5 1.5 0 0 1 2 15.1V4.7a1.5 1.5 0 0 1 1.5-1.5h1.1v-.8a1 1 0 0 1 1-1M4 7.6v7.1h10V7.6zm2 1.7h2v2H6zm4 0h2v2h-2zM6 12.3h2v1.8H6zm4 0h2v1.8h-2z"/></svg></span>근태코드 만들기<span class="navp" id="navSched"></span></button>
+    <div class="sl">근태코드 만들기</div>
+    <button data-v="sched"><span class="ni"><svg viewBox="0 0 18 18"><path d="M5.6 1.4a1 1 0 0 1 1 1v.8h4.8v-.8a1 1 0 1 1 2 0v.8h1.1a1.5 1.5 0 0 1 1.5 1.5v10.4a1.5 1.5 0 0 1-1.5 1.5H3.5A1.5 1.5 0 0 1 2 15.1V4.7a1.5 1.5 0 0 1 1.5-1.5h1.1v-.8a1 1 0 0 1 1-1M4 7.6v7.1h10V7.6zm2 1.7h2v2H6zm4 0h2v2h-2zM6 12.3h2v1.8H6zm4 0h2v1.8h-2z"/></svg></span>근무표에서<span class="navp" id="navSched"></span></button>
+    <button data-v="wcf"><span class="ni"><svg viewBox="0 0 18 18"><path d="M4.4 1.6h6.3a1 1 0 0 1 .71.29l3.3 3.3a1 1 0 0 1 .29.71v8.5a1.5 1.5 0 0 1-1.5 1.5H4.4a1.5 1.5 0 0 1-1.5-1.5V3.1a1.5 1.5 0 0 1 1.5-1.5m.5 2v11h8.2V6.6h-2.7a1 1 0 0 1-1-1V3.6zm1.5 4.2h3.2a.9.9 0 1 1 0 1.8H6.4a.9.9 0 1 1 0-1.8m0 3.1h5.2a.9.9 0 1 1 0 1.8H6.4a.9.9 0 1 1 0-1.8"/></svg></span>근무확인서에서<span class="navp" id="navWcf"></span></button>
     <div class="sl">메일</div>
     <button data-v="mail"><span class="ni"><svg viewBox="0 0 18 18"><path d="M9 1.3a1 1 0 0 1 .71.29l3.2 3.2a1 1 0 0 1-1.42 1.42L10 4.72V11a1 1 0 1 1-2 0V4.72L6.51 6.21A1 1 0 0 1 5.09 4.79l3.2-3.2A1 1 0 0 1 9 1.3M2.6 8.4h3.1a1 1 0 1 1 0 2H3.6v3.9h10.8v-3.9h-2.1a1 1 0 1 1 0-2h3.1a1 1 0 0 1 1 1v5.4a1 1 0 0 1-1 1H2.6a1 1 0 0 1-1-1V9.4a1 1 0 0 1 1-1"/></svg></span>특이건 메일</button>
     <div class="sl">기준 정보</div>
@@ -642,7 +650,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
     <button data-v="owner"><span class="ni"><svg viewBox="0 0 18 18"><path d="M6.6 2.2a3.2 3.2 0 1 1 0 6.4 3.2 3.2 0 0 1 0-6.4m0 2a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4M13.1 3.4a2.4 2.4 0 1 1 0 4.8 2.4 2.4 0 0 1 0-4.8M6.6 9.7c2.7 0 4.9 1.4 4.9 3.1v2.1a1 1 0 0 1-1 1H2.7a1 1 0 0 1-1-1v-2.1c0-1.7 2.2-3.1 4.9-3.1m6.5.4c2 0 3.6 1.1 3.6 2.5v1.6a1 1 0 0 1-1 1h-2.3v-2.4c0-1-.5-1.9-1.4-2.6z"/></svg></span>담당자 관리<span class="navp" id="navOwner"></span></button>
   </nav>
   <div class="side-foot">
-    <b>APRS</b><span class="ver">v10.1 · 2026-09</span>
+    <b>APRS</b><span class="ver">v10.6 · 2026-09</span>
     <span class="who" id="gWho"></span>
     <button class="sfout" id="btnOut" title="로그아웃">로그아웃</button>
   </div>
@@ -739,6 +747,19 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
         <li><b>일근태현황관리 양식 (.xlsx)</b>으로 내려받기</li>
       </ul></div>
       <button class="pri">근태코드 만들기 열기</button>
+    </div>
+    <div class="pcard" data-go="wcf">
+      <div class="pi"><svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.4 2.8h10l5.2 5.2v17.2H6.4z"/><path d="M16.4 2.8V8h5.2"/><path d="M10.4 14h7.2"/><path d="M10.4 18.4h7.2"/><path d="M10.4 22h4"/></svg></div>
+      <h3>근무확인서</h3>
+      <p>수기 확인서를 보며 입력하면 주휴까지 계산합니다.</p>
+      <div class="pdet"><ul>
+        <li>스캔 PDF를 <b>옆에 띄워</b> 보며 출퇴근만 입력</li>
+        <li><b>파일로 된 확인서(엑셀)</b>는 그대로 올리면 자동</li>
+        <li>확인서 상단 <b>주 기준</b>으로 주를 나눠 <b>주휴</b> 계산</li>
+        <li><b>출근일수 · 교육시간(7+1) · 연장 분/일수</b> 집계</li>
+        <li>여러 명 담아 <b>한 파일</b>로 근태코드 + 집계 내려받기</li>
+      </ul></div>
+      <button class="pri">근무확인서 열기</button>
     </div>
     <div class="pcard" data-go="emp">
       <div class="pi"><svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="20" height="22" rx="2.6"/><circle cx="14" cy="11.4" r="3.2"/><path d="M8.4 20.6c0-2.4 2.5-4 5.6-4s5.6 1.6 5.6 4"/></svg></div>
@@ -1215,6 +1236,111 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
 </div>
 </div><!-- /viewEmp -->
 
+<!-- ================= 근무확인서 → 근태코드 ================= -->
+<div class="view" id="viewWcf" hidden>
+<div class="card">
+  <h2><span class="n">1</span>확인서 넣기</h2>
+  <p class="hint">수기 확인서는 <b>스캔 PDF를 옆에 띄워</b> 보면서 입력하시고, <b>파일로 된 확인서(엑셀)</b>는 그대로 올리시면 자동으로 읽습니다.
+    계산(주 나누기 · 주휴 · 출근일수 · 교육시간 · 연장)은 <b>전부 자동</b>입니다.</p>
+  <div class="slots">
+    <div class="slot" id="dropWx">
+      <div class="sl-h"><span class="sl-n">엑셀</span> 파일로 된 확인서 <span class="muted" style="font-size:11px">자동</span></div>
+      <div class="sl-d"><b>일자 · 출근시간 · 퇴근시간 · 연장시간(분) · 비고</b>가 있는 확인서<br>
+        <span class="muted">여러 장을 한 번에 고르시면 <b>이어붙입니다</b> — 8월 입사자는 8월 것까지 함께</span></div>
+      <div class="sl-s">사번 · 이름 · 주 기준도 상단에서 찾아 채웁니다</div>
+    </div>
+    <div class="slot" id="dropWp">
+      <div class="sl-h"><span class="sl-n">스캔</span> 수기 확인서 PDF <span class="muted" style="font-size:11px">보면서 입력</span></div>
+      <div class="sl-d">스캔한 PDF를 넣으면 <b>아래 3번 왼쪽에 띄워</b> 드립니다<br>
+        <span class="muted">여기에 놓거나 클릭해서 선택</span></div>
+      <div class="sl-s" id="wPdfInfo">아직 넣지 않음</div>
+    </div>
+  </div>
+  <input type="file" id="wxFile" accept=".xlsx,.xlsm,.xls,.csv" multiple hidden>
+  <input type="file" id="wpFile" accept=".pdf" hidden>
+  <div id="wRead" style="margin-top:14px"></div>
+  <div class="note w" style="margin-top:8px">
+    <b>스캔한 손글씨는 자동으로 읽지 못합니다.</b> 브라우저 안에서 손글씨를 인식하면 틀려도 틀린 줄 모르고 넘어가는데,
+    급여에 바로 들어가는 숫자라 그 위험을 지지 않는 쪽으로 만들었습니다.
+    대신 <b>출퇴근 시각만</b> 치시면 나머지는 도구가 계산합니다.<br>
+    <span class="muted">파일은 이 브라우저 안에서만 열리며 어디로도 전송되지 않습니다.</span>
+  </div>
+</div>
+
+<div class="card">
+  <h2><span class="n">2</span>사원 · 기간 · 주 기준</h2>
+  <div class="row">
+    <div class="f" style="min-width:130px"><label>사번</label><input type="text" id="wId" placeholder="522045" spellcheck="false"></div>
+    <div class="f" style="min-width:130px"><label>이름 *</label><input type="text" id="wName" placeholder="이정희"></div>
+    <div class="f" style="min-width:150px"><label>입사일 *</label><input type="date" id="wHire"></div>
+    <div class="f" style="min-width:150px"><label>마지막 근무일 * <span class="muted">퇴사일 · 기록 끝</span></label><input type="date" id="wLast"></div>
+  </div>
+  <div class="row" style="margin-top:4px">
+    <div class="f" style="min-width:210px"><label>주 기준 * <span class="muted">확인서 <b>맨 위에 적힌 요일</b></span></label>
+      <select id="wWk">
+        <option value="">— 확인서 상단에 적힌 대로 골라주세요</option>
+        <option value="0">일요일 시작 (일~토)</option>
+        <option value="1">월요일 시작 (월~일)</option>
+        <option value="2">화요일 시작 (화~월)</option>
+        <option value="3">수요일 시작 (수~화)</option>
+        <option value="4">목요일 시작 (목~수)</option>
+        <option value="5">금요일 시작 (금~목)</option>
+        <option value="6">토요일 시작 (토~금)</option>
+      </select></div>
+    <div class="f" style="min-width:150px"><label>기간 시작 <span class="muted">년·월</span></label><input type="month" id="wYm1"></div>
+    <div class="f" style="min-width:150px"><label>기간 끝 <span class="muted">한 달이면 비워두세요</span></label><input type="month" id="wYm2"></div>
+    <span class="grow"></span>
+    <button class="sm" id="wClear" style="align-self:flex-end">입력 비우기</button>
+  </div>
+  <div id="wEmp" style="margin-top:10px;font-size:12.5px"></div>
+  <div class="note i" style="margin-top:12px">
+    <b>주 기준은 확인서 맨 위에 적힌 요일</b>을 그대로 골라주세요 (예 「수-화」 → <b>수요일 시작</b>).
+    입사일 요일과 같은 경우가 많지만 항상 그렇지는 않아서, 안 고르시면 입사일 요일로 짐작하고 경고를 띄웁니다.<br>
+    <b>8월에 입사한 사원</b>은 <b>기간 시작을 8월로</b> 두고 8월 확인서까지 같이 올려주세요 —
+    그래야 첫 주가 온전한 주인지 잘린 주인지 제대로 갈립니다.<br>
+    <span class="muted">사번을 넣으면 <b>사원 명부</b>에서 이름 · 입사일 · 소속 · 직급을 끌어옵니다.</span>
+  </div>
+</div>
+
+<div class="card" id="wc3">
+  <h2><span class="n">3</span>날짜별 입력</h2>
+  <p class="hint"><b>출근 · 퇴근</b>만 치시면 됩니다. 연장(분)은 <b>퇴근 − (출근 + 8시간)</b>으로 자동 계산되고, 확인서에 적힌 값이 다르면 그 칸에 직접 쓰시면 그 값을 씁니다.
+    <b>휴무 · 법일 · 교육 · 결근 · 예비군 · 지각</b>은 「근태」 칸에서 고르세요.
+    확인서에 <b>정일 · 휴일 · 휴무일 · 백화점 휴일</b>로 적혀 있으면 <b>정일</b>,
+    <b>법일 · 법정휴무 · 대체공휴일 · 대체 휴무</b>로 적혀 있으면 <b>법일</b>로 읽습니다
+    (대체공휴일 휴무를 다른 날로 옮겨 받은 것도 법일입니다). 교육은 비고에 <b>4시간</b>처럼 적어주시면 됩니다.
+    파란 굵은 선이 <b>주가 시작되는 줄</b>입니다.</p>
+  <div class="wgrid">
+    <div class="wpdf" id="wPdfBox"><div class="empty" style="padding:40px 14px">위 1번에 스캔 PDF를 넣으면 여기에 띄웁니다</div></div>
+    <div id="wTbl"></div>
+  </div>
+</div>
+
+<div class="card">
+  <h2><span class="n">4</span>집계 · 만들어질 근태코드</h2>
+  <div id="wSum"></div>
+</div>
+
+<div class="card">
+  <h2><span class="n">5</span>사원 담기 · 내려받기</h2>
+  <p class="hint">한 명 입력이 끝나면 <b>담기</b>를 누르고 다음 사원으로 넘어가세요. 다 담은 뒤 <b>한 파일로</b> 내려받으시면 됩니다.
+    담아둔 목록은 이 브라우저에 저장돼 창을 닫아도 남습니다.</p>
+  <div class="split" style="margin:10px 0 12px">
+    <button class="pri" id="wAdd">이 사원 담기</button>
+    <span class="grow"></span>
+    <button class="sm" id="wWipe">목록 비우기</button>
+    <button class="pri" id="wExp" disabled>근태코드 + 집계 (.xlsx)</button>
+  </div>
+  <div id="wDone"></div>
+  <div id="wList" style="margin-top:10px"></div>
+  <div class="note i" style="margin-top:14px">
+    내려받는 파일은 <b>세 장</b>입니다 — <b>근태코드</b>(시스템 업로드용) · <b>사원별 집계</b>(출근일수 · 연장 · 주 · 주휴) · <b>주별 상세</b>.
+    근태코드 시트의 머리글은 <b>「근무표 → 근태코드」 화면 4번에서 고른 양식</b>을 그대로 씁니다.<br>
+    <span class="muted">휴무 → <b>정일</b>, 법일 → <b>법일</b>, 결근 → <b>결근</b>으로 만들어집니다. 근무한 날은 근태코드를 만들지 않습니다.</span>
+  </div>
+</div>
+</div><!-- /viewWcf -->
+
 
 <dialog id="dgPrev">
   <div class="dlg-h"><h3 id="dgPrevT">보낼 내용 미리보기</h3>
@@ -1413,7 +1539,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
 </div>
 
 <footer>
-  <b>APRS v10.1 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
+  <b>APRS v10.6 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
   ⓘ 이 도구는 업로드한 파일을 브라우저 메모리에서만 계산합니다. 네트워크 전송·서버 저장이 없습니다.<br>
   ⓘ 총근로시간 = 기본(소정) + 연장 + 휴일근로. <b>야간·심야는 가산수당 산정용으로 따로 표시</b>하며 총합에 중복 더하지 않습니다 — 심야 연장은 이미 연장시간에 포함돼 있는 경우가 많아 더하면 이중 계산이 됩니다.<br>
   ⓘ 급여일수 = 평일(월~금, 법정공휴일 제외) + 법정공휴일. 인정 일요일수 = 데이터상 일요일 수 − 결근이 있는 주(월~일)의 일요일 수.<br>
@@ -2658,7 +2784,8 @@ $('#exp').onclick=()=>{
    뷰 전환
    ========================================================= */
 const VIEWS={home:'viewHome',load:'viewLoad',analyze:'viewAnalyze',audit:'viewAudit',pay:'viewPay',
-             anom:'viewAnom',mail:'viewMail',owner:'viewOwner',sched:'viewSched',emp:'viewEmp'};
+             anom:'viewAnom',mail:'viewMail',owner:'viewOwner',sched:'viewSched',emp:'viewEmp',
+             wcf:'viewWcf'};
 const VTXT={
   home:['APRS · 근태·급여 검수 시스템','근태 엑셀을 올리면 집계 · 점검 · 급여 대조를 자동으로 처리합니다. 파일은 브라우저 안에서만 처리되며 어디로도 전송되지 않습니다.'],
   load:['자료 올리기','근태 파일 · 대상자 명단 · 급여대장을 한 번만 올리면 아래 네 화면에 모두 들어갑니다.'],
@@ -2669,7 +2796,8 @@ const VTXT={
   mail:['특이건 메일','특이건을 담당자별로 나눠 Outlook으로 보냅니다. 부서에 담당자가 여럿이면 주소마다 한 통씩 나갑니다.'],
   owner:['담당자 관리','담당자 주소록 · 항상 참조 · 부서코드표를 등록하고 고칩니다. 담당자가 바뀌면 여기서 바꿔주세요.'],
   sched:['근태코드 만들기','부서 근무표(휴무표)를 읽어 「일근태현황관리」 업로드 양식 엑셀로 바꿔 줍니다.'],
-  emp:['사원 명부','지금 근무 중인 사원을 한 번 등록해 두면 모든 화면이 그 정보를 씁니다. 중간 투입 인원은 따로 추가하시면 됩니다.']
+  emp:['사원 명부','지금 근무 중인 사원을 한 번 등록해 두면 모든 화면이 그 정보를 씁니다. 중간 투입 인원은 따로 추가하시면 됩니다.'],
+  wcf:['근무확인서','수기 확인서를 보며 입력하거나 파일 확인서를 올리면 주휴 · 출근일수 · 연장을 계산해 근태코드를 만듭니다.']
 };
 function go(v,syncHash){
   if(!VIEWS[v]) v='home';
@@ -2681,6 +2809,7 @@ function go(v,syncHash){
   if(v==='owner'){ try{ abRender(); ccRender(); dcRender(); }catch(e){} }
   if(v==='sched'){ try{ scRender(); }catch(e){} }
   if(v==='emp'){ try{ empRender(); }catch(e){} }
+  if(v==='wcf'){ try{ wcfRender(); }catch(e){} }
   if(typeof ownBadge==='function') ownBadge();
   if(syncHash!==false){ try{ history.replaceState(null,'', v==='home'? location.pathname+location.search : '#'+v); }catch(e){} }
   window.scrollTo({top:0,behavior:'instant'});
@@ -2753,6 +2882,9 @@ function pDate(v,Y){
   /* 24.11.08 · 25/04/15 처럼 연도를 두 자리로 적은 경우 */
   m=t.match(/^(\d{2})\D{1,2}(\d{1,2})\D{1,2}(\d{1,2})$/);
   if(m){ const y=+m[1]; return new Date(y+(y<70?2000:1900), +m[2]-1, +m[3]); }
+  /* 「26년 09월 01일」 「2026년 9월 1일」 처럼 글자가 섞인 표기 */
+  m=t.match(/(\d{2,4})\s*[년.\-\/]\s*(\d{1,2})\s*[월.\-\/]\s*(\d{1,2})/);
+  if(m){ let y=+m[1]; if(y<100) y+=(y<70?2000:1900); return new Date(y, +m[2]-1, +m[3]); }
   m=t.match(/^(\d{1,2})\D{1,2}(\d{1,2})$/);
   if(m&&Y) return new Date(Y,+m[1]-1,+m[2]);
   return null;
@@ -3723,6 +3855,7 @@ function renderA(cnt){
   if(typeof anomBadge==='function') anomBadge();
   if(typeof ownBadge==='function') ownBadge();
   if(typeof empBadge==='function') empBadge();
+  if(typeof wcfListRender==='function') wcfListRender();
   $('#cmpBox').innerHTML = mapWarnHTML() + linkWarnHTML() + rowWarnHTML() + floodWarnHTML(cnt) + (!A.prev ? '' :
     `<div class="note i"><b>이전 검수(${A.prev.저장시각||'저장 시각 미상'}, 이상 ${A.prev.이상건수}건)와 비교 중</b> —
      해결 ${(A.resolved||[]).length}건 · 남음 ${A.find.filter(f=>f.status==='남음').length}건 · 신규 ${A.find.filter(f=>f.status==='신규').length}건.</div>`);
@@ -7902,6 +8035,547 @@ const fmtD=v=>{ const d=pDate(v); return d? `${d.getFullYear()}-${String(d.getMo
   const rst=$('#emReset');
   if(rst) rst.onclick=()=>{ if(!confirm('사원 명부를 모두 지울까요? 되돌릴 수 없습니다.')) return; empSave([]); };
 })();
+
+/* =========================================================
+   근무확인서 → 근태코드
+   수기 확인서(스캔 PDF)를 화면에 띄워 보며 입력하거나,
+   파일로 된 확인서(엑셀)를 올리면 자동으로 읽습니다.
+
+   확정된 계산 규칙 (실제 확인서 3장으로 맞춰 확인함)
+   ① 주 기준 요일 = 확인서 상단에 적어 둔 요일 (예 「수-화」 → 수요일 시작).
+      입사일 요일과 같은 경우가 많지만 항상 그렇지는 않아서, 반드시 상단 값을 씁니다.
+      안 고르면 입사일 요일로 짐작하되 화면에 경고를 띄웁니다.
+   ② 주휴 — 주 시작일이 입사일 이후이고 주 끝이 마지막 근무일 이내면 '온전한 주'라
+      결근이 없으면 1개. 입사·퇴사로 잘린 주는 그 주 출근일수 ÷ 5 (최대 1). 결근 있으면 0.
+   ③ 출근일수 = 실제 근무시간이 있는 날 + 법일. 교육이 8시간이면 그 날도 1일로 합산,
+      4시간이면 「7+1」처럼 따로 표기.
+   ④ 연장(분) = 퇴근 − (출근 + 8시간), 음수는 0. 적어 둔 값이 있으면 그 값을 씁니다.
+   ⑤ 근태코드 — 휴무 → 정일, 법일 → 법일, 결근 → 결근.
+   ========================================================= */
+const WCK='aprs.wcf.v1';
+const WKD='일월화수목금토';                    /* getDay() 순서 */
+const WCF_KIND=[['','근무'],['휴무','휴무 · 정일 → 정일'],['법일','법일'],
+                ['공가','공가 (예비군 등 · 유급)'],['교육','교육'],
+                ['결근','결근'],['지각','지각 (근무 + 지각)']];
+const WCF_CODE={'휴무':'정일','법일':'법일','공가':'공가','결근':'결근','지각':'지각'};
+
+const W={ pdfUrl:null, pdfName:'', rows:[], list:[] };
+
+/* ---- 담아둔 사원 ---- */
+function wcfLoad(){ try{ const l=JSON.parse(LS.get(WCK)||'[]'); return Array.isArray(l)? l : []; }catch(e){ return []; } }
+function wcfSaveList(){ LS.set(WCK, JSON.stringify(W.list)); wcfListRender(); }
+
+/* ---- 시각 ---- */
+const wMin=t=>{ const m=String(t==null?'':t).trim().match(/^(\d{1,2})\s*[:시.]?\s*(\d{2})?$/);
+  if(!m) return null; const h=+m[1], mi=+(m[2]||0); return (h<48&&mi<60)? h*60+mi : null; };
+const wHM=n=>n==null? '' : `${String(Math.floor(n/60)).padStart(2,'0')}:${String(n%60).padStart(2,'0')}`;
+
+/* ---- 기간(여러 달)의 날짜 줄 만들기 ----
+   8월에 입사한 사원은 8월 확인서 + 9월 확인서를 이어서 봐야
+   주가 제대로 나뉩니다. 그래서 기간을 '시작 월 ~ 끝 월'로 받습니다. */
+function wcfSpan(){
+  const a=$('#wYm1').value, b=$('#wYm2').value||a;
+  if(!a) return null;
+  const [y1,m1]=a.split('-').map(Number);
+  const [y2,m2]=(b||a).split('-').map(Number);
+  let lo=new Date(y1,m1-1,1), hi=new Date(y2,m2,0);
+  if(hi<lo){ const t=lo; lo=new Date(y2,m2-1,1); hi=new Date(y1,m1,0); }
+  return [lo,hi];
+}
+function wcfBuildRows(keep){
+  const sp=wcfSpan(); if(!sp) return;
+  const [lo,hi]=sp;
+  const old=new Map((keep? W.rows : []).map(r=>[r.k,r]));
+  W.rows=[];
+  for(let dt=new Date(lo); dt<=hi; dt.setDate(dt.getDate()+1)){
+    const d=new Date(dt), k=dKey(d), o=old.get(k);
+    W.rows.push(o? Object.assign({},o,{d,k}) : {d,k,kind:'',in:'',out:'',ot:'',memo:''});
+  }
+  wcfRowsRender();
+}
+/* 읽어들인 날짜가 기간 밖이면 기간을 넓힌다 */
+function wcfWiden(dates){
+  if(!dates.length) return false;
+  const ymOf=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+  const lo=new Date(Math.min(...dates)), hi=new Date(Math.max(...dates));
+  const sp=wcfSpan();
+  let a=ymOf(lo), b=ymOf(hi);
+  if(sp){ if(sp[0]<=lo) a=ymOf(sp[0]); if(sp[1]>=hi) b=ymOf(sp[1]); }
+  const ch = $('#wYm1').value!==a || ($('#wYm2').value||$('#wYm1').value)!==b;
+  $('#wYm1').value=a; $('#wYm2').value=b;
+  return ch;
+}
+
+/* ---- 계산 ---- */
+function wcfCalc(){
+  const id=$('#wId').value.trim(), name=$('#wName').value.trim();
+  const hire=pDate($('#wHire').value), last=pDate($('#wLast').value);
+  const wkSel=$('#wWk').value;            /* 확인서 상단에 적힌 요일 — 비면 짐작 */
+  const guessed = wkSel==='';
+  const base = guessed? (hire? hire.getDay() : 1) : +wkSel;
+
+  const work=[], off=[], hol=[], abs=[], res=[], late=[]; let edu=null, otMin=0, otDays=0;
+  W.rows.forEach(r=>{
+    const kd=r.kind||'';
+    if(kd==='휴무'){ off.push(r); return; }
+    if(kd==='결근'){ abs.push(r); return; }
+    /* 공가(예비군 훈련 등)는 유급 휴무일이라 출근일수에 더합니다 */
+    if(kd==='공가'||kd==='예비군'){ res.push(r); return; }
+    if(kd==='교육'){
+      const src=`${r.memo} ${r.in} ${r.out}`;
+      const h=(src.match(/(\d+)\s*(시간|h|H)/)||[])[1];
+      edu={r, h: h? +h : 8}; return; }
+    if(kd==='법일'){ hol.push(r); return; }
+    if(kd==='지각') late.push(r);                   /* 지각은 근무로 세고 근태코드도 만듭니다 */
+    const a=wMin(r.in), b=wMin(r.out);
+    if(a==null && b==null) return;                              /* 빈 줄 */
+    let o = String(r.ot).trim()!==''? Math.max(0, +String(r.ot).replace(/[^\d.-]/g,'')||0)
+                                    : (a!=null&&b!=null? Math.max(0, b-(a+480)) : 0);
+    work.push({r,a,b,o});
+    if(o>0){ otMin+=o; otDays++; }
+  });
+
+  /* 기간 — 입사일·마지막 근무일이 비면 기록으로 짐작한다 */
+  const marked=W.rows.filter(r=>r.kind || String(r.in).trim() || String(r.out).trim());
+  void marked;
+  const h0 = hire || (marked.length? marked[0].d : null);
+  const l0 = last || (marked.length? marked[marked.length-1].d : null);
+
+  /* 출근일수 */
+  const cnt = work.length + hol.length + res.length;   /* 실근무 + 법일 + 공가(유급) */
+  const disp = edu? (edu.h>=8? String(cnt+1) : `${cnt}+1`) : String(cnt);
+
+  /* 주 나누기 · 주휴 */
+  const weeks=[];
+  if(h0 && l0){
+    let cur=new Date(h0); cur.setDate(cur.getDate() - ((cur.getDay()-base)+7)%7);
+    let guard=0;
+    while(cur<=l0 && guard++<80){
+      const end=new Date(cur); end.setDate(end.getDate()+6);
+      const inW=x=>x>=cur && x<=end;
+      const n = work.filter(w=>inW(w.r.d)).length + hol.filter(r=>inW(r.d)).length
+              + (edu && inW(edu.r.d)? 1 : 0);
+      const ab = abs.filter(r=>inW(r.d)).length;
+      const full = (cur>=h0) && (end<=l0);
+      let val, note;
+      if(ab){ val=0; note='결근'; }
+      else if(full){ val=1; note='온전한 주'; }
+      else { val=Math.round(Math.min(1,n/5)*100)/100; note='잘린 주 — 출근 ÷ 5'; }
+      weeks.push({from:new Date(cur), to:end, n, ab, val, note, full});
+      cur=new Date(end); cur.setDate(cur.getDate()+1);
+    }
+  }
+  const wh=Math.round(weeks.reduce((s,x)=>s+x.val,0)*100)/100;
+
+  return { id, name, hire:h0, last:l0, base, guessed, work, off, hol, abs, res, late, edu,
+           cnt, disp, otMin, otDays, weeks, wh, nwk:weeks.filter(x=>x.val>0).length };
+}
+
+/* ---- 근태코드 줄 ---- */
+function wcfCodes(c){
+  const out=[];
+  const add=(r,kind)=>out.push({date:`${r.d.getFullYear()}.${String(r.d.getMonth()+1).padStart(2,'0')}.${String(r.d.getDate()).padStart(2,'0')}`,
+    wd:WKD[r.d.getDay()], id:c.id, name:c.name, kind, memo:String(r.memo||'').trim()});
+  c.off.forEach(r=>add(r,'정일'));
+  c.hol.forEach(r=>add(r,'법일'));
+  c.abs.forEach(r=>add(r,'결근'));
+  (c.res||[]).forEach(r=>add(r,'공가'));
+  (c.late||[]).forEach(r=>add(r,'지각'));
+  return out.sort((a,b)=>a.date<b.date?-1:1);
+}
+
+/* ---- 화면 ---- */
+function wcfRowsRender(){
+  const box=$('#wTbl'); if(!box) return;
+  if(!W.rows.length){ box.innerHTML='<div class="empty" style="padding:26px 14px">위에서 기간(년·월)을 고르면 날짜 줄이 만들어집니다.</div>'; return; }
+  const c=wcfCalc();
+  const base=c.base;
+  const opt=k=>WCF_KIND.map(([v,t])=>`<option value="${v}"${v===k?' selected':''}>${t}</option>`).join('');
+  box.innerHTML=`<div class="tblwrap" style="max-height:640px"><table><thead><tr>
+      <th>일자</th><th>요일</th><th>근태</th><th>출근</th><th>퇴근</th>
+      <th class="num">연장(분)</th><th>비고</th></tr></thead><tbody>${
+    W.rows.map((r,i)=>{
+      const wkTop = r.d.getDay()===base;                    /* 주가 시작되는 줄 */
+      const a=wMin(r.in), b=wMin(r.out);
+      const auto=(a!=null&&b!=null)? Math.max(0,b-(a+480)) : null;
+      const sun=r.d.getDay()===0, sat=r.d.getDay()===6;
+      return `<tr${wkTop? ' style="border-top:2px solid var(--pri)"':''}>
+        <td class="mono">${r.k.slice(5).replace('-','/')}</td>
+        <td${sun?' style="color:var(--bad)"':(sat?' style="color:var(--pri)"':'')}>${WKD[r.d.getDay()]}</td>
+        <td><select data-wk="${i}" style="min-width:126px;padding:3px 6px">${opt(r.kind)}</select></td>
+        <td><input type="text" data-wi="${i}" value="${esc(r.in)}" placeholder="${r.kind?'':'10:30'}"
+             style="width:76px;padding:3px 6px" spellcheck="false"${r.kind?' disabled':''}></td>
+        <td><input type="text" data-wo="${i}" value="${esc(r.out)}" placeholder="${r.kind?'':'18:30'}"
+             style="width:76px;padding:3px 6px" spellcheck="false"${r.kind?' disabled':''}></td>
+        <td class="num"><input type="text" data-wt="${i}" value="${esc(r.ot)}" placeholder="${(!r.kind&&auto!=null)? auto : ''}"
+             style="width:72px;padding:3px 6px;text-align:right" spellcheck="false"${r.kind?' disabled':''}></td>
+        <td><input type="text" data-wm="${i}" value="${esc(r.memo)}" placeholder="${r.kind==='교육'? '4시간' : ''}" style="width:130px;padding:3px 6px"></td></tr>`;
+    }).join('')}</tbody></table></div>`;
+  const bind=(at,key,re)=>box.querySelectorAll('['+at+']').forEach(el=>{
+    const f=()=>{ W.rows[+el.getAttribute(at)][key]=el.value; if(re) wcfRowsRender(); else wcfSum(); };
+    el.onchange=f; if(!re) el.oninput=()=>{ W.rows[+el.getAttribute(at)][key]=el.value; wcfSum(); };
+  });
+  box.querySelectorAll('[data-wk]').forEach(el=>el.onchange=()=>{
+    const r=W.rows[+el.getAttribute('data-wk')];
+    r.kind=el.value;
+    if(r.kind && r.kind!=='교육'){ r.in=''; r.out=''; r.ot=''; }   /* 휴무·법일·결근은 시각이 없다 */
+    wcfRowsRender();
+  });
+  bind('data-wi','in'); bind('data-wo','out');
+  bind('data-wt','ot'); bind('data-wm','memo');
+  wcfSum();
+}
+
+function wcfSum(){
+  const box=$('#wSum'); if(!box) return;
+  const c=wcfCalc();
+  const kpi=[['출근일수',c.disp,'일',c.cnt?'v-ok':''],
+             ['연장 합계',c.otMin,'분',c.otMin?'v-bad':''],
+             ['연장 발생',c.otDays,'일',c.otDays?'v-bad':''],
+             ['주 개수',c.nwk,'개',''],
+             ['주휴',c.wh,'개',c.wh?'v-ok':''],
+             ['정일(휴무)',c.off.length,'일','']];
+  box.innerHTML=`<div class="cards">${kpi.map(([l,v,u,k])=>
+      `<div class="kpi"><div class="l">${l}</div><div class="v ${k}">${v}<span class="u">${u}</span></div></div>`).join('')}</div>
+    ${c.guessed? `<div class="note b"><b>확인서 상단의 주 기준을 골라주세요.</b>
+      주를 나누는 기준이라 주휴 개수가 여기서 갈립니다 — 입사일 요일과 다를 수 있으니
+      확인서 맨 위에 적힌 대로(예 「수-화」 → <b>수</b>) 위 2번에서 골라주세요.<br>
+      <span class="muted">지금 아래 값은 입사일 요일(${WKD[c.base]})로 짐작한 것입니다.</span></div>`:''}
+    <div class="note ${c.hire&&c.last?'i':'w'}">
+      ${c.hire&&c.last? `<b>주 기준 ${WKD[c.base]}요일 시작</b> — ${dKey(c.hire)} ~ ${dKey(c.last)}
+        ${c.guessed? '<span style="color:var(--bad)">(짐작 — 확인해 주세요)</span>':'<span class="muted">(확인서 상단 값)</span>'}`
+        : '<b>입사일과 마지막 근무일을 넣어주세요.</b> 비워두면 기록이 있는 첫날·마지막날로 짐작합니다.'}
+      ${c.edu? `<br>교육 <b>${c.edu.h}시간</b> (${c.edu.r.k}) — ${c.edu.h>=8? '하루로 합산' : '「+1」로 따로 표기'}`:''}
+      ${c.abs.length? `<br><span style="color:var(--bad)">결근 ${c.abs.length}일 — 그 주 주휴는 0</span>`:''}
+      ${c.hol.length? `<br>법일 <b>${c.hol.length}일</b> — 출근일수에 <b>더해집니다</b>`:''}
+      ${(c.res||[]).length? `<br>공가 <b>${c.res.length}일</b> (예비군 등) — <b>유급</b>이라 출근일수에 더해집니다`:''}
+    </div>
+    ${c.off.length? `<div class="note w" style="margin-top:8px">
+      <b>정일 ${c.off.length}일 중에 법일이 섞여 있지 않은지 봐주세요.</b>
+      <span class="mono">${c.off.map(r=>esc(r.k.slice(5).replace('-','/'))).join(' · ')}</span><br>
+      확인서에 <b>법일 · 법정휴무 · 대체공휴일 · 대체 휴무</b>로 적힌 날은 법일로 읽지만,
+      공휴일에 해당하는데 그냥 <b>「휴무」 「휴무일」</b>로만 적힌 날은 정일로 읽습니다.
+      <b>법일은 출근일수에 더해지므로 하루가 차이 납니다</b> — 그런 날은 위 표의 「근태」 칸에서 <b>법일</b>로 바꿔주세요.<br>
+      <span class="muted">대체공휴일에 쉰 날이 법일이고, 그날 못 쉬어 <b>다른 날로 옮겨 받은 휴무도 법일</b>입니다.
+      「백화점 휴무 · 백화점 휴일」처럼 회사가 정기로 쉬는 날은 <b>무급 정일</b>입니다 (주휴에는 영향 없음).</span></div>`:''}
+    ${c.hol.length? `<div class="note i" style="margin-top:8px">
+      <b>법정공휴일이 지난 뒤에 입사한 사원은 법일이 생기지 않습니다.</b>
+      이 사원의 입사일은 <b>${dKey(c.hire)}</b> 입니다 — 법일로 잡힌
+      <span class="mono">${c.hol.map(r=>esc(r.k.slice(5).replace('-','/'))).join(' · ')}</span> 이
+      입사 전 공휴일에서 온 것이 아닌지 한 번 봐주세요.</div>`:''}
+    ${c.weeks.length? `<div class="tblwrap" style="margin-top:10px"><table><thead><tr>
+      <th>주</th><th>요일 범위</th><th class="num">그 주 출근일수</th><th>구분</th><th class="num">주휴</th></tr></thead><tbody>${
+      c.weeks.map(w=>`<tr><td class="mono">${dKey(w.from)} ~ ${dKey(w.to)}</td>
+        <td>${WKD[w.from.getDay()]}~${WKD[w.to.getDay()]}</td><td class="num">${w.n}</td>
+        <td>${esc(w.note)}</td><td class="num"><b>${w.val}</b></td></tr>`).join('')}</tbody></table></div>`:''}
+    ${(()=>{ const cd=wcfCodes(c); return cd.length? `<div class="mh" style="margin-top:18px">만들어질 근태코드 ${cd.length}줄</div>
+      <div class="tblwrap" style="margin-top:8px"><table><thead><tr><th>일자</th><th>요일</th><th>사번</th><th>성명</th><th>근태명</th><th>비고</th></tr></thead><tbody>${
+      cd.map(x=>`<tr><td class="mono">${esc(x.date)}</td><td>${esc(x.wd)}</td>
+        <td class="mono"${x.id?'':' style="color:var(--bad)"'}>${esc(x.id||'없음')}</td>
+        <td><b>${esc(x.name)}</b></td><td><b>${esc(x.kind)}</b></td><td>${esc(x.memo)}</td></tr>`).join('')}</tbody></table></div>`
+      : '<div class="note w" style="margin-top:10px">아직 만들어질 근태코드가 없습니다 — 휴무·법일·결근을 표시해 주세요.</div>'; })()}`;
+}
+
+/* ---- 사원 담기 · 목록 ---- */
+function wcfListRender(){
+  const box=$('#wList'), n=W.list.length;
+  const chip=$('#navWcf'); if(chip) chip.textContent = n? String(n) : '';
+  if(!box) return;
+  if(!n){ box.innerHTML='<div class="empty" style="padding:24px 14px">담아둔 사원이 없습니다. 한 명씩 입력하고 「이 사원 담기」를 누르면 여기에 쌓입니다.</div>';
+    const b=$('#wExp'); if(b) b.disabled=true; return; }
+  const b=$('#wExp'); if(b) b.disabled=false;
+  box.innerHTML=`<div class="tblwrap"><table><thead><tr>
+      <th>사번</th><th>성명</th><th>주 기준</th><th>기간</th><th class="num">출근일수</th>
+      <th class="num">연장(분)</th><th class="num">연장일</th><th class="num">주</th><th class="num">주휴</th>
+      <th class="num">근태코드</th><th></th></tr></thead><tbody>${
+    W.list.map((x,i)=>`<tr><td class="mono">${esc(x.id)}</td><td><b>${esc(x.name)}</b></td>
+      <td>${esc(x.wk)}</td><td class="mono">${esc(x.span)}</td><td class="num"><b>${esc(x.disp)}</b></td>
+      <td class="num">${x.otMin}</td><td class="num">${x.otDays}</td><td class="num">${x.nwk}</td>
+      <td class="num"><b>${x.wh}</b></td><td class="num">${x.codes.length}</td>
+      <td><button class="sm" data-wload="${i}">불러오기</button>
+          <button class="sm" data-wdel="${i}">삭제</button></td></tr>`).join('')}</tbody></table></div>`;
+  box.querySelectorAll('[data-wdel]').forEach(bt=>bt.onclick=()=>{
+    W.list.splice(+bt.dataset.wdel,1); wcfSaveList(); });
+  box.querySelectorAll('[data-wload]').forEach(bt=>bt.onclick=()=>{
+    const x=W.list[+bt.dataset.wload]; if(!x||!x.raw) return;
+    $('#wId').value=x.id; $('#wName').value=x.name;
+    $('#wHire').value=x.hire||''; $('#wLast').value=x.last||'';
+    $('#wWk').value=x.wkSel||''; $('#wYm1').value=x.ym||''; $('#wYm2').value=x.ym2||'';
+    W.rows=x.raw.map(r=>Object.assign({},r,{d:pDate(r.k)}));
+    wcfRowsRender();
+    window.scrollTo({top:$('#wc3').offsetTop-80, behavior:'smooth'});
+  });
+}
+
+/* ---- 엑셀 확인서 자동 읽기 ---- */
+function wcfExcel(file, then){
+  const fr=new FileReader();
+  fr.onload=ev=>{
+    try{
+      const wb=XLSX.read(new Uint8Array(ev.target.result),{type:'array'});
+      let best=null;
+      wb.SheetNames.forEach(sn=>{
+        const aoa=XLSX.utils.sheet_to_json(wb.Sheets[sn],{header:1,defval:null,blankrows:true,raw:true});
+        /* 머리글 줄 — 「일자」와 「출근」이 같이 있는 줄 */
+        for(let i=0;i<Math.min(14,aoa.length);i++){
+          const r=(aoa[i]||[]).map(v=>String(v==null?'':v).replace(/\s+/g,''));
+          const ci={};
+          r.forEach((h,c)=>{
+            if(/^일자|^날짜/.test(h)) ci.date=c;
+            else if(/^요일/.test(h)) ci.wd=c;
+            else if(/^출근/.test(h)) ci.in=c;
+            else if(/^퇴근/.test(h)) ci.out=c;
+            else if(/^연장/.test(h)) ci.ot=c;
+            else if(/^비고/.test(h)) ci.memo=c;
+          });
+          if(ci.date!=null && ci.in!=null && (!best || i<best.hi)) best={sn,aoa,hi:i,ci};
+        }
+      });
+      if(!best) return alert('확인서 머리글을 찾지 못했습니다.\n\n「일자 · 출근시간」 열이 있는 파일인지 확인해 주세요.');
+      /* 사번 · 이름 · 주 기준 — 상단 몇 줄에서 줍는다 */
+      let gid='', gnm='', gwk='';
+      best.aoa.slice(0,best.hi).forEach(r=>(r||[]).forEach((v,c)=>{
+        const t=String(v==null?'':v);
+        let m=t.match(/사번\s*[::]\s*(\S+)/); if(m&&!gid) gid=m[1];
+        else if(/사번\s*[::]?\s*$/.test(t)&&!gid){ const nx=(r[c+1]!=null?String(r[c+1]):'').trim(); if(nx) gid=nx; }
+        m=t.match(/이름\s*[::]\s*(\S+)/);     if(m&&!gnm) gnm=m[1];
+        else if(/이름\s*[::]?\s*$/.test(t)&&!gnm){ const nx=(r[c+1]!=null?String(r[c+1]):'').trim(); if(nx) gnm=nx; }
+        /* 「수-화」 「주 기준 : 일~토」 처럼 적힌 주 기준
+           단 「예) …」 처럼 보기로 적어 둔 문구는 건너뜁니다 */
+        if(!/(예\s*[)）:：]|보기|샘플|example)/i.test(t)){
+          m=t.replace(/\s+/g,'').match(/([일월화수목금토])[-~–]([일월화수목금토])/);
+          if(m&&!gwk) gwk=m[1];
+        }
+      }));
+      const ci=best.ci, got=[];
+      best.aoa.slice(best.hi+1).forEach(r=>{
+        if(!r) return;
+        const d=pDate(r[ci.date]); if(!d) return;
+        const cell=k=>k==null? '' : String(r[k]==null?'':r[k]).trim();
+        const inV=cell(ci.in), outV=cell(ci.out), memo=cell(ci.memo), otV=cell(ci.ot);
+        let kind='';
+        /* 달마다 쓰는 말이 달라서 널리 받아 줍니다 —
+           8월 확인서는 「정일」 「휴일」 「대체공휴일」 「백화점 휴일」,
+           9월 확인서는 「휴무」 를 씁니다. 둘 다 정일로 봅니다. */
+        const tag=t=>{
+          const x=String(t==null?'':t).replace(/\s+/g,'');
+          if(!x) return '';
+          if(/결근/.test(x)) return '결근';
+          if(/예비군|민방위|공가/.test(x)) return '공가';
+          if(/교육/.test(x)) return '교육';
+          /* ── 법일 판정을 먼저 합니다 ──────────────────────────
+             회사 기준으로 8/15 광복절 자체는 법정공휴일이 아니고
+             8/17 대체공휴일만 법정공휴일입니다. 그날 쉬면 법일이고,
+             그날 못 쉰 사람은 그 휴무를 다른 날로 옮겨 받는데
+             그걸 「대체 휴무」로 적는 사람도 있고 「법일」로 적는 사람도 있습니다.
+             둘 다 같은 것이라 모두 법일로 읽습니다.
+             「백화점 휴일」 처럼 회사가 쉬는 날은 법일이 아니라 정일입니다. */
+          if(/법일|법정|대체/.test(x) && !/백화점/.test(x)) return '법일';
+          if(/정일|휴무|휴일|오프|^OFF$/i.test(x)) return '휴무';
+          if(/지각/.test(x)) return '지각';
+          return '';
+        };
+        kind = tag(inV) || tag(cell(ci.out)) || tag(memo) || tag(cell(ci.wd));
+        got.push({ k:dKey(d), d,
+          kind, in: kind? '' : inV, out: kind? '' : outV,
+          ot: String(otV).replace(/[^\d]/g,''), memo });
+      });
+      if(!got.length) return alert('확인서에서 날짜 줄을 읽지 못했습니다.');
+      const filled=got.filter(g=>g.kind||String(g.in).trim()||String(g.out).trim()).length;
+      if(!filled){
+        $('#wRead').innerHTML=`<div class="note w"><b>${esc(file.name)}</b> — 날짜 ${got.length}줄은 읽었지만
+          <b>적힌 기록이 없습니다.</b> 아직 작성 전인 빈 양식 같습니다.<br>
+          <span class="muted">출근·퇴근 시각이나 「휴무 · 법일 · 교육 · 결근」이 적힌 확인서를 올려주세요.
+          아래 3번 표에 직접 입력하셔도 됩니다.</span></div>`;
+        const y0=got[0].d;
+        $('#wYm1').value=`${y0.getFullYear()}-${String(y0.getMonth()+1).padStart(2,'0')}`;
+        $('#wYm2').value=''; wcfBuildRows(false);
+        if(then) setTimeout(then,60);
+        return;
+      }
+      /* 이미 다른 사람 것이 들어 있으면 덮어쓸지 묻는다 */
+      const cur=$('#wId').value.trim(), curN=$('#wName').value.trim();
+      const same = (!cur && !curN) || (gid && cur && idKey(gid)===idKey(cur)) || (gnm && curN && gnm===curN);
+      if(!same && !confirm(`지금 화면에는 ${esc(curN||cur)} 님 내용이 있습니다.\n\n`
+        + `${gnm||gid} 님 확인서를 새로 읽으면 화면 내용이 바뀝니다. 계속할까요?\n\n`
+        + `같은 사람의 다른 달 확인서라면 「예」를 누르셔도 두 달이 합쳐집니다.`)) return;
+      if(gid) $('#wId').value=gid;
+      if(gnm) $('#wName').value=gnm;
+      if(gwk) $('#wWk').value=String(WKD.indexOf(gwk));
+      wcfFillEmp();
+      /* 같은 사람이면 기간을 넓혀 이어붙이고, 다른 사람이면 처음부터 */
+      if(same){ wcfWiden(got.map(g=>g.d)); wcfBuildRows(true); }
+      else { $('#wYm1').value=''; $('#wYm2').value='';
+             wcfWiden(got.map(g=>g.d)); wcfBuildRows(false); }
+      const by=new Map(got.map(g=>[g.k,g]));
+      W.rows.forEach(r=>{ const g=by.get(r.k); if(g){ r.kind=g.kind; r.in=g.in; r.out=g.out; r.ot=g.ot; r.memo=g.memo; } });
+      /* 기록이 있는 첫날·마지막날을 입사일·마지막 근무일로 채워 둔다
+         (다른 달을 이어붙이면 범위가 넓어지므로 매번 다시 맞춘다) */
+      const mk=W.rows.filter(r=>r.kind||String(r.in).trim()||String(r.out).trim());
+      if(mk.length){ $('#wHire').value=mk[0].k; $('#wLast').value=mk[mk.length-1].k; }
+      wcfRowsRender();
+      if(then) setTimeout(then,60);
+      const spn=wcfSpan();
+      $('#wRead').innerHTML=(W.read||[]).concat([file.name]).length>1
+        ? `<div class="note g"><b>확인서 ${(W.read||[]).length+1}장</b>을 이어붙였습니다 —
+            ${esc([...(W.read||[]),file.name].join(' + '))}<br>
+            기간 <b>${spn? dKey(spn[0])+' ~ '+dKey(spn[1]) : ''}</b> ·
+            입사 <b>${esc($('#wHire').value)}</b> · 마지막 <b>${esc($('#wLast').value)}</b>
+            ${gwk? `· 주 기준 <b>${esc(gwk)}</b>요일` : ''}<br>
+            <span class="muted">8월 입사자는 8월 확인서까지 올리셔야 주가 제대로 나뉩니다.</span></div>`
+        : `<div class="note g"><b>${esc(file.name)}</b> 에서 <b>${got.length}줄</b>을 읽었습니다
+        ${gid||gnm? `· <b>${esc(gid)} ${esc(gnm)}</b>`:''}
+        ${gwk? `· 주 기준 <b>${esc(gwk)}</b>요일 시작` : ''}
+        <span class="muted">(${esc(best.sn)} 시트 · ${best.hi+1}번째 줄이 머리글)</span><br>
+        <span class="muted">입사일·마지막 근무일은 기록의 첫날·마지막날로 채웠습니다 — 다르면 고쳐주세요.
+        ${gwk? '' : '<b>주 기준은 파일에 없어서 못 채웠습니다 — 위 2번에서 골라주세요.</b>'}</span></div>`;
+      W.read=(same? (W.read||[]) : []).concat([file.name]);
+    }catch(err){ alert('확인서를 읽지 못했습니다. '+(err.message||err)); }
+  };
+  fr.readAsArrayBuffer(file);
+}
+
+/* 사번으로 사원 명부에서 이름·입사일 채우기 */
+function wcfFillEmp(){
+  try{
+    const id=$('#wId').value.trim(), nm=$('#wName').value.trim();
+    let e=null;
+    if(id && typeof empFindId==='function') e=empFindId(id);
+    if(!e && nm && typeof empFind==='function') e=empFind(nm);
+    if(!e) return;
+    if(!$('#wName').value && e.name) $('#wName').value=e.name;
+    if(!$('#wId').value && e.id) $('#wId').value=e.id;
+    if(!$('#wHire').value && e.hire) $('#wHire').value=e.hire;
+    if(!$('#wLast').value && e.quit) $('#wLast').value=e.quit;
+    const i=$('#wEmp');
+    if(i) i.innerHTML=`<span class="pill ok">명부</span> <span class="muted">${esc(e.name)} · ${esc(e.dept||'')} ${esc(e.rank||'')}
+      ${e.hire? `· 입사 ${esc(e.hire)}`:''}${e.__dup? ' · <b style="color:var(--warn)">동명이인 있음</b>':''}</span>`;
+  }catch(e){}
+}
+
+/* ---- 내려받기 ---- */
+function wcfExport(){
+  if(!W.list.length) return alert('담아둔 사원이 없습니다.');
+  const FM=(typeof scForm==='function')? scForm() : {head:['일자','사번','성명','근태명','비고']};
+  const H=FM.head.slice();
+  const pick=H.map(h=>{ const f=(typeof scField==='function')? scField(h) : null; return f? f.k : null; });
+  const fix=(typeof scFix==='function')? scFix() : {site:'',dept:'',rank:'',etype:''};
+  const val=(k,x)=>({date:x.date, wd:x.wd, id:x.id, name:x.name, kind:x.kind, memo:x.memo,
+    dept:x.dept||fix.dept, site:fix.site, rank:x.rank||fix.rank, etype:x.etype||fix.etype})[k] ?? '';
+  const rows=[];
+  W.list.forEach(p=>p.codes.forEach(x=>rows.push(Object.assign({},x,{dept:p.dept,rank:p.rank,etype:p.etype}))));
+  if(!rows.length) return alert('만들어질 근태코드가 없습니다.');
+
+  const wb=XLSX.utils.book_new();
+  const mk=(aoa,name)=>{
+    const ws=XLSX.utils.aoa_to_sheet(aoa.map(r=>r.map(v=>String(v==null?'':v))));
+    const rng=XLSX.utils.decode_range(ws['!ref']);
+    for(let R=rng.s.r;R<=rng.e.r;R++) for(let C=rng.s.c;C<=rng.e.c;C++){
+      const ref=XLSX.utils.encode_cell({r:R,c:C}), cell=ws[ref];
+      if(cell){ cell.t='s'; cell.v=String(cell.v==null?'':cell.v); delete cell.z; delete cell.w; }
+      else ws[ref]={t:'s',v:''};
+    }
+    XLSX.utils.book_append_sheet(wb,ws,name); return ws;
+  };
+  mk([H].concat(rows.map(x=>pick.map(k=>k? val(k,x) : ''))), '근태코드');
+  mk([['사번','성명','주 기준','입사일','마지막 근무일','실근무일','법일','교육(시간)','출근일수 표기',
+       '정일(휴무)','결근','연장 합계(분)','연장 발생일수','주 개수','주휴 합계']]
+     .concat(W.list.map(p=>[p.id,p.name,p.wk,p.hire,p.last,p.nWork,p.nHol,p.eduH,p.disp,
+                            p.nOff,p.nAbs,p.otMin,p.otDays,p.nwk,p.wh])), '사원별 집계');
+  mk([['사번','성명','주','요일 범위','그 주 출근일수','결근','구분','주휴']]
+     .concat(W.list.flatMap(p=>p.weeks.map(w=>[p.id,p.name,w.from+' ~ '+w.to,w.wd,w.n,w.ab,w.note,w.val]))), '주별 상세');
+
+  const t=new Date(), st=`${t.getFullYear()}${String(t.getMonth()+1).padStart(2,'0')}${String(t.getDate()).padStart(2,'0')}`;
+  XLSX.writeFile(wb, `근무확인서_근태코드_${W.list.length}명_${st}.xlsx`, {bookSST:true});
+  $('#wDone').innerHTML=`<div class="note g"><b>${W.list.length}명 · 근태코드 ${rows.length}줄</b>을 담은 파일을 내려받았습니다.
+    <span class="muted">「근태코드」 시트를 시스템 업로드 창에 올리시면 됩니다. 머리글은 ${esc(H.join(' · '))} 입니다
+    — 바꾸시려면 「근무표 → 근태코드」 화면의 4번에서 양식을 고르세요.</span></div>`;
+}
+
+/* ---- 배선 ---- */
+(function wcfWire(){
+  if(!$('#wYm1')) return;
+  W.list=wcfLoad();
+
+  const y1=$('#wYm1'), y2=$('#wYm2');
+  if(!y1.value){ const t=new Date(); y1.value=`${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}`; }
+  y1.onchange=()=>wcfBuildRows(true);
+  y2.onchange=()=>wcfBuildRows(true);
+
+  ['wId','wName'].forEach(id=>{ const el=$('#'+id); if(el) el.onchange=()=>{ wcfFillEmp(); wcfSum(); }; });
+  ['wHire','wLast','wWk'].forEach(id=>{ const el=$('#'+id); if(el) el.onchange=()=>wcfRowsRender(); });
+
+  /* 엑셀 확인서 */
+  const dE=$('#dropWx'), fE=$('#wxFile');
+  if(dE&&fE){ dE.onclick=()=>fE.click();
+    ['dragenter','dragover'].forEach(e=>dE.addEventListener(e,ev=>{ev.preventDefault();dE.classList.add('on')}));
+    ['dragleave','drop'].forEach(e=>dE.addEventListener(e,ev=>{ev.preventDefault();dE.classList.remove('on')}));
+    dE.addEventListener('drop',ev=>{ const fs=[...ev.dataTransfer.files];
+      if(fs.length){ dE.classList.add('done');
+        (function next(i){ if(i>=fs.length) return; wcfExcel(fs[i], ()=>next(i+1)); })(0); } });
+    fE.onchange=ev=>{ const fs=[...ev.target.files];
+      if(fs.length){ dE.classList.add('done');
+        /* 여러 장을 한 번에 골라도 순서대로 이어붙인다 */
+        (function next(i){ if(i>=fs.length) return; wcfExcel(fs[i], ()=>next(i+1)); })(0); }
+      ev.target.value=''; }; }
+
+  /* 스캔 PDF */
+  const dP=$('#dropWp'), fP=$('#wpFile');
+  const setPdf=f=>{
+    try{ if(W.pdfUrl) URL.revokeObjectURL(W.pdfUrl); }catch(e){}
+    W.pdfUrl=URL.createObjectURL(f); W.pdfName=f.name;
+    const fr=$('#wPdfBox');
+    if(fr) fr.innerHTML=`<iframe src="${W.pdfUrl}" style="width:100%;height:100%;border:0;border-radius:10px;background:#fff"></iframe>`;
+    $('#wPdfInfo').innerHTML=`✓ <b>${esc(f.name)}</b> <span class="muted">· ${(f.size/1024/1024).toFixed(1)} MB</span>
+      <button class="sm" style="margin-left:8px" onclick="window.open(W.pdfUrl,'_blank')">새 창으로 크게 보기</button>`;
+    dP.classList.add('done');
+    document.body.classList.add('wsplit');
+  };
+  if(dP&&fP){ dP.onclick=()=>fP.click();
+    ['dragenter','dragover'].forEach(e=>dP.addEventListener(e,ev=>{ev.preventDefault();dP.classList.add('on')}));
+    ['dragleave','drop'].forEach(e=>dP.addEventListener(e,ev=>{ev.preventDefault();dP.classList.remove('on')}));
+    dP.addEventListener('drop',ev=>{ const f=ev.dataTransfer.files[0]; if(f) setPdf(f); });
+    fP.onchange=ev=>{ const f=ev.target.files[0]; if(f) setPdf(f); ev.target.value=''; }; }
+
+  $('#wClear').onclick=()=>{
+    if(!confirm('지금 입력한 내용을 비울까요? 담아둔 사원 목록은 그대로 둡니다.')) return;
+    ['wId','wName','wHire','wLast'].forEach(i=>$('#'+i).value='');
+    $('#wWk').value=''; $('#wEmp').innerHTML=''; $('#wRead').innerHTML=''; W.read=[];
+    wcfBuildRows(false);
+  };
+
+  $('#wAdd').onclick=()=>{
+    const c=wcfCalc();
+    if(!c.id && !c.name) return alert('사번이나 이름을 넣어주세요.');
+    if(!c.hire || !c.last) return alert('입사일과 마지막 근무일을 넣어주세요.\n\n주를 나누는 기준이라 꼭 필요합니다.');
+    if(c.guessed && !confirm(`확인서 상단의 「주 기준」을 아직 안 고르셨습니다.\n\n`
+      + `지금은 입사일 요일(${WKD[c.base]})로 짐작해 계산했습니다 — 주휴가 달라질 수 있습니다.\n\n그대로 담을까요?`)) return;
+    const codes=wcfCodes(c);
+    const e=(typeof empFindId==='function' && c.id)? empFindId(c.id) : null;
+    const rec={ id:c.id, name:c.name, wk:`${WKD[c.base]}~${WKD[(c.base+6)%7]}`,
+      wkSel:$('#wWk').value, ym:$('#wYm1').value, ym2:$('#wYm2').value,
+      hire:dKey(c.hire), last:dKey(c.last), span:`${dKey(c.hire)} ~ ${dKey(c.last)}`,
+      nWork:c.work.length, nHol:c.hol.length, nOff:c.off.length, nAbs:c.abs.length,
+      eduH:(c.edu? c.edu.h : ''), disp:c.disp, otMin:c.otMin, otDays:c.otDays,
+      nwk:c.nwk, wh:c.wh,
+      dept:(e&&e.dept)||'', rank:(e&&e.rank)||'', etype:(e&&e.etype)||'',
+      weeks:c.weeks.map(w=>({from:dKey(w.from),to:dKey(w.to),wd:`${WKD[w.from.getDay()]}~${WKD[w.to.getDay()]}`,
+                             n:w.n,ab:w.ab,note:w.note,val:w.val})),
+      codes, raw:W.rows.map(r=>({k:r.k,kind:r.kind,in:r.in,out:r.out,ot:r.ot,memo:r.memo})) };
+    const j=W.list.findIndex(x=>x.id && rec.id && idKey(x.id)===idKey(rec.id) && x.ym===rec.ym);
+    if(j>=0){ if(!confirm(`${rec.name} 님이 이미 담겨 있습니다. 덮어쓸까요?`)) return; W.list[j]=rec; }
+    else W.list.push(rec);
+    wcfSaveList();
+    $('#wDone').innerHTML=`<div class="note g"><b>${esc(rec.name||rec.id)}</b> 님을 담았습니다 —
+      출근 <b>${esc(rec.disp)}</b>일 · 연장 ${rec.otMin}분(${rec.otDays}일) · 주 ${rec.nwk}개 · 주휴 <b>${rec.wh}</b> · 근태코드 ${codes.length}줄.
+      <span class="muted">다음 사원을 입력하시고 또 담으시면 됩니다.</span></div>`;
+  };
+  $('#wExp').onclick=wcfExport;
+  $('#wWipe').onclick=()=>{ if(!confirm('담아둔 사원 목록을 모두 지울까요?')) return; W.list=[]; wcfSaveList(); };
+
+  wcfBuildRows(false); wcfListRender();
+})();
+function wcfRender(){ try{ wcfListRender(); wcfSum(); }catch(e){} }
 
 renderRules(null);
 go(hashView(), false);
