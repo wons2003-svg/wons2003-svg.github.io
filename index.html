@@ -650,7 +650,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
     <button data-v="owner"><span class="ni"><svg viewBox="0 0 18 18"><path d="M6.6 2.2a3.2 3.2 0 1 1 0 6.4 3.2 3.2 0 0 1 0-6.4m0 2a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4M13.1 3.4a2.4 2.4 0 1 1 0 4.8 2.4 2.4 0 0 1 0-4.8M6.6 9.7c2.7 0 4.9 1.4 4.9 3.1v2.1a1 1 0 0 1-1 1H2.7a1 1 0 0 1-1-1v-2.1c0-1.7 2.2-3.1 4.9-3.1m6.5.4c2 0 3.6 1.1 3.6 2.5v1.6a1 1 0 0 1-1 1h-2.3v-2.4c0-1-.5-1.9-1.4-2.6z"/></svg></span>담당자 관리<span class="navp" id="navOwner"></span></button>
   </nav>
   <div class="side-foot">
-    <b>APRS</b><span class="ver">v10.6 · 2026-09</span>
+    <b>APRS</b><span class="ver">v10.7 · 2026-09</span>
     <span class="who" id="gWho"></span>
     <button class="sfout" id="btnOut" title="로그아웃">로그아웃</button>
   </div>
@@ -1310,6 +1310,35 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
     <b>법일 · 법정휴무 · 대체공휴일 · 대체 휴무</b>로 적혀 있으면 <b>법일</b>로 읽습니다
     (대체공휴일 휴무를 다른 날로 옮겨 받은 것도 법일입니다). 교육은 비고에 <b>4시간</b>처럼 적어주시면 됩니다.
     파란 굵은 선이 <b>주가 시작되는 줄</b>입니다.</p>
+  <div id="wGuide"></div>
+  <div class="note i" style="margin:0 0 12px">
+    <b>빠른 채우기</b> — 같은 시간이 되풀이되는 구간을 <b>한 번에</b> 넣습니다. 하나하나 치지 않으셔도 됩니다.
+    <div class="row" style="margin-top:10px">
+      <div class="f" style="min-width:150px"><label>시작</label><input type="date" id="wfFrom"></div>
+      <div class="f" style="min-width:150px"><label>끝</label><input type="date" id="wfTo"></div>
+      <div class="f" style="min-width:170px"><label>근태</label>
+        <select id="wfKind"><option value="">근무 (시간 넣기)</option>
+          <option value="휴무">휴무 → 정일</option><option value="법일">법일</option>
+          <option value="공가">공가 (예비군 등)</option><option value="교육">교육</option>
+          <option value="결근">결근</option><option value="지각">지각</option></select></div>
+      <div class="f" style="min-width:100px"><label>출근</label><input type="text" id="wfIn" placeholder="10:00" spellcheck="false"></div>
+      <div class="f" style="min-width:100px"><label>퇴근</label><input type="text" id="wfOut" placeholder="18:00" spellcheck="false"></div>
+      <div class="f" style="min-width:110px"><label>비고 <span class="muted">교육 4시간</span></label><input type="text" id="wfMemo" placeholder=""></div>
+    </div>
+    <div class="split" style="margin-top:8px">
+      <span style="font-size:12.5px;font-weight:660;align-self:center">이 요일만</span>
+      <span id="wfDows" style="display:flex;gap:2px;flex-wrap:wrap"></span>
+      <button class="sm" id="wfAll">전체 요일</button>
+      <span class="grow"></span>
+      <button class="pri" id="wfGo">이 구간 채우기</button>
+      <button class="sm" id="wfClr">이 구간 비우기</button>
+    </div>
+    <div style="margin-top:8px;font-size:12px" class="muted">
+      예 — <b>8/10 ~ 8/31</b> 출근 10:00 퇴근 18:00 로 한 번,
+      그다음 같은 구간에 「토·일」만 체크하고 근태 <b>휴무</b>로 한 번. 두 번에 한 달이 채워집니다.
+    </div>
+    <div id="wfInfo" style="margin-top:6px"></div>
+  </div>
   <div class="wgrid">
     <div class="wpdf" id="wPdfBox"><div class="empty" style="padding:40px 14px">위 1번에 스캔 PDF를 넣으면 여기에 띄웁니다</div></div>
     <div id="wTbl"></div>
@@ -1539,7 +1568,7 @@ kbd{background:var(--fill);border:0;border-radius:5px;padding:2px 6px;font-size:
 </div>
 
 <footer>
-  <b>APRS v10.6 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
+  <b>APRS v10.7 (2026-09 빌드 · 연장 기준 = 근무시작+8시간)</b> · 문의는 이 파일을 배포한 담당자에게<br>
   ⓘ 이 도구는 업로드한 파일을 브라우저 메모리에서만 계산합니다. 네트워크 전송·서버 저장이 없습니다.<br>
   ⓘ 총근로시간 = 기본(소정) + 연장 + 휴일근로. <b>야간·심야는 가산수당 산정용으로 따로 표시</b>하며 총합에 중복 더하지 않습니다 — 심야 연장은 이미 연장시간에 포함돼 있는 경우가 많아 더하면 이중 계산이 됩니다.<br>
   ⓘ 급여일수 = 평일(월~금, 법정공휴일 제외) + 법정공휴일. 인정 일요일수 = 데이터상 일요일 수 − 결근이 있는 주(월~일)의 일요일 수.<br>
@@ -8276,6 +8305,41 @@ function wcfSum(){
       : '<div class="note w" style="margin-top:10px">아직 만들어질 근태코드가 없습니다 — 휴무·법일·결근을 표시해 주세요.</div>'; })()}`;
 }
 
+/* ---- 빠른 채우기 ----
+   근무확인서는 같은 시간대가 되풀이되므로, 구간과 요일로 한 번에 채웁니다. */
+function wfRender(){
+  const box=$('#wfDows'); if(!box || box.dataset.on) return;
+  box.dataset.on='1';
+  box.innerHTML=WKD.split('').map((d,i)=>
+    `<label class="muted" style="display:flex;align-items:center;gap:3px;font-size:12.5px;font-weight:600;padding:0 4px">
+       <input type="checkbox" data-wfd="${i}" checked> ${d}</label>`).join('');
+}
+function wfApply(clear){
+  const a=pDate($('#wfFrom').value), b=pDate($('#wfTo').value);
+  if(!a||!b) return alert('시작과 끝 날짜를 넣어주세요.');
+  const lo=a<=b? a:b, hi=a<=b? b:a;
+  const dows=new Set([...document.querySelectorAll('[data-wfd]')].filter(x=>x.checked).map(x=>+x.dataset.wfd));
+  if(!dows.size) return alert('요일을 하나 이상 고르세요.');
+  const kind=$('#wfKind').value, iv=$('#wfIn').value.trim(), ov=$('#wfOut').value.trim(), mv=$('#wfMemo').value.trim();
+  let n=0;
+  W.rows.forEach(r=>{
+    if(r.d<lo || r.d>hi) return;
+    if(!dows.has(r.d.getDay())) return;
+    n++;
+    if(clear){ r.kind=''; r.in=''; r.out=''; r.ot=''; r.memo=''; return; }
+    r.kind=kind;
+    if(kind && kind!=='지각'){ r.in=''; r.out=''; r.ot=''; }
+    else { if(iv) r.in=iv; if(ov) r.out=ov; }
+    if(mv) r.memo=mv;
+  });
+  if(!n){ const sp=wcfSpan();
+    return alert(`그 구간에 해당하는 줄이 없습니다.\n\n지금 표의 기간은 ${sp? dKey(sp[0])+' ~ '+dKey(sp[1]) : '없음'} 입니다.\n위 2번에서 기간을 먼저 맞춰주세요.`); }
+  wcfRowsRender();
+  const w=$('#wfInfo');
+  if(w) w.innerHTML=`<div class="note g" style="margin:0">${dKey(lo)} ~ ${dKey(hi)} 중 <b>${n}줄</b>을
+    ${clear? '비웠습니다' : `<b>${esc(kind||'근무'+(iv||ov? ` ${iv}~${ov}`:''))}</b> 로 채웠습니다`}.</div>`;
+}
+
 /* ---- 사원 담기 · 목록 ---- */
 function wcfListRender(){
   const box=$('#wList'), n=W.list.length;
@@ -8309,6 +8373,14 @@ function wcfListRender(){
 
 /* ---- 엑셀 확인서 자동 읽기 ---- */
 function wcfExcel(file, then){
+  if(/\.pdf$/i.test(file.name)){
+    $('#wRead').innerHTML=`<div class="note b"><b>${esc(file.name)}</b> 는 PDF라서 이 칸으로는 읽을 수 없습니다.<br>
+      스캔한 확인서는 <b>오른쪽 「수기 확인서 PDF」 칸</b>에 넣으시고, 화면에 띄워 보면서
+      아래 <b>빠른 채우기</b>로 입력해 주세요 — 계산은 전부 자동입니다.<br>
+      <span class="muted">손글씨는 브라우저 안에서 자동으로 읽지 못합니다. 틀려도 틀린 줄 모르고 넘어가는 위험이 있어서 그렇게 만들었습니다.</span></div>`;
+    if(then) setTimeout(then,60);
+    return;
+  }
   const fr=new FileReader();
   fr.onload=ev=>{
     try{
@@ -8522,6 +8594,11 @@ function wcfExport(){
   /* 스캔 PDF */
   const dP=$('#dropWp'), fP=$('#wpFile');
   const setPdf=f=>{
+    if(!/\.pdf$/i.test(f.name)){
+      $('#wPdfInfo').innerHTML=`<span style="color:var(--bad)">${esc(f.name)} 은 PDF가 아닙니다 —
+        엑셀 확인서는 <b>왼쪽 칸</b>에 넣으시면 자동으로 읽습니다.</span>`;
+      return;
+    }
     try{ if(W.pdfUrl) URL.revokeObjectURL(W.pdfUrl); }catch(e){}
     W.pdfUrl=URL.createObjectURL(f); W.pdfName=f.name;
     const fr=$('#wPdfBox');
@@ -8530,6 +8607,15 @@ function wcfExport(){
       <button class="sm" style="margin-left:8px" onclick="window.open(W.pdfUrl,'_blank')">새 창으로 크게 보기</button>`;
     dP.classList.add('done');
     document.body.classList.add('wsplit');
+    const g=$('#wGuide');
+    if(g) g.innerHTML=`<div class="note w" style="margin:0 0 12px">
+      <b>스캔한 손글씨는 자동으로 읽지 못합니다 — 여기서 직접 넣어주세요.</b>
+      왼쪽에 띄운 확인서를 보면서 <b>출근 · 퇴근</b>만 넣으시면
+      주 나누기 · 주휴 · 출근일수 · 교육시간 · 연장은 <b>전부 자동</b>으로 계산됩니다.<br>
+      <b>순서</b> — ① 위 2번에 <b>사번 · 입사일 · 마지막 근무일 · 주 기준</b>(확인서 맨 위 요일) 넣기
+      → ② 아래 <b>빠른 채우기</b>로 구간별로 한 번에 넣기 → ③ 4번에서 숫자 확인 → ④ 5번에서 담고 내려받기<br>
+      <span class="muted">엑셀로 된 확인서라면 위 1번의 <b>왼쪽 칸</b>에 넣으시면 자동으로 읽습니다.</span></div>`;
+    setTimeout(()=>{ const c=$('#wc3'); if(c) window.scrollTo({top:c.offsetTop-70, behavior:'smooth'}); }, 250);
   };
   if(dP&&fP){ dP.onclick=()=>fP.click();
     ['dragenter','dragover'].forEach(e=>dP.addEventListener(e,ev=>{ev.preventDefault();dP.classList.add('on')}));
@@ -8570,6 +8656,12 @@ function wcfExport(){
       출근 <b>${esc(rec.disp)}</b>일 · 연장 ${rec.otMin}분(${rec.otDays}일) · 주 ${rec.nwk}개 · 주휴 <b>${rec.wh}</b> · 근태코드 ${codes.length}줄.
       <span class="muted">다음 사원을 입력하시고 또 담으시면 됩니다.</span></div>`;
   };
+  wfRender();
+  $('#wfGo').onclick=()=>wfApply(false);
+  $('#wfClr').onclick=()=>wfApply(true);
+  $('#wfAll').onclick=()=>{ document.querySelectorAll('[data-wfd]').forEach(x=>x.checked=true); };
+  $('#wfKind').onchange=()=>{ const k=$('#wfKind').value, on=(k===''||k==='지각');
+    ['wfIn','wfOut'].forEach(i=>{ $('#'+i).disabled=!on; if(!on) $('#'+i).value=''; }); };
   $('#wExp').onclick=wcfExport;
   $('#wWipe').onclick=()=>{ if(!confirm('담아둔 사원 목록을 모두 지울까요?')) return; W.list=[]; wcfSaveList(); };
 
